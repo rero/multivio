@@ -1,0 +1,288 @@
+/*
+==============================================================================
+  Project:    Multivio - https://www.multivio.org/
+  Copyright:  (c) 2009-2010 RERO
+  License:    See file license.js
+==============================================================================
+*/
+
+
+
+/*
+==========================================================================
+  Overridden base SproutCore theme style rules
+    => keep original declarations, for reference, but commented out
+==========================================================================
+*/
+
+body.sc-theme {
+  /*
+  font: 12px/18px "Lucida Grande", "Lucida Sans", Verdana, Arial, sans-serif;
+  background-color: #57647f ;
+  padding: 0px;
+  */
+  background-color: #444;
+  color: #fff;
+  font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+}
+
+.sc-theme .sc-list-view {
+  /*
+  background-color: white ;
+  */
+  background-color: #aaa;
+}
+
+.sc-theme #loading {
+  /*
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
+  color: white;
+  */
+  background: #fff;
+}
+
+.sc-theme .sc-pane.sc-main {
+  /*
+  background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
+  color: white;
+  */
+  background: #444;
+}
+
+.sc-theme #loading {
+  /*
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
+  color: white;
+  */
+}
+
+/* for button icon positioning */
+
+.sc-theme .sc-button-view.icon img.icon {
+  /*
+  position: relative;
+  vertical-align: middle;
+  top: -2px;
+  margin-right: 2px;
+  height: 16px;
+  width: 16px;
+  */
+  position: relative;
+  vertical-align: middle;
+  margin: 0px auto;
+  top: auto;
+  height: auto;
+  width: auto;
+}
+
+/* for LabelView */
+
+.sc-label-view.selected {
+  background-color:#DDDDDD;
+  color:#333333;
+}
+
+.sc-theme.focus .sc-collection-view.focus .sc-label-view.selected {
+  background-color:#2370D8;
+  color:white;
+}
+
+.sc-split-divider-view {
+  /*
+  background-color: #ddd;
+  border-left: 1px #999 solid;
+  border-right: 1px #999 solid;
+  z-index: 1;
+  */
+  border: none;
+  background-color: #444;
+}
+
+/*
+==========================================================================
+ Rules for the general Multivio layout
+==========================================================================
+*/
+
+
+.shadow_light {
+   box-shadow:inset 0 0 10px #000000;
+   -moz-box-shadow:inset 0 0 10px #000000;
+   -webkit-box-shadow:inset 0 0 10px #000000;
+}
+
+.shadow_dark {
+   box-shadow:inset 0 0 10px #000000;
+   -moz-box-shadow:inset 0 0 10px #000000;
+   -webkit-box-shadow:inset 0 0 10px #000000;
+}
+
+.inner_content_view {
+  background-color: #666;
+  border: 1px solid #666666;
+}
+
+.inner_view {
+  background-color: #aaa;
+  border: 1px solid #666666;
+}
+
+
+
+.blank-bg {
+  background-color: #fff;
+}
+
+
+.mvo_transparent {
+  background: 'transparent';
+  background-color: 'none';
+}
+
+.centered-image {
+  margin: auto auto;
+}
+
+
+.workspace_black h1 {
+ border: none ;
+ padding: 0px;
+ margin: 0px;
+ letter-spacing: -1px;
+ font: normal 3.4em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+}
+
+.workspace_black h3 {
+ margin: 8px 0px;
+ padding: 0px;
+ font: 1.5em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+ color: #808080;
+}
+
+.workspace_black .metadata_primary {
+ font: 1.3em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+ font-weight: bold;
+ color: #fff;
+}
+
+.workspace_black .metadata_secondary {
+ font: 1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+ font-weight: bold;
+ color: #aaa;
+}
+
+.workspace_black .toolbox_icon {
+  padding: 5px;
+}
+
+
+
+/*
+==========================================================================
+ Rules for Multivio's usage page
+==========================================================================
+*/
+
+.mvo_info_full {
+  color: #000;
+}
+
+.mvo_info_full_outer {
+  height: 100%;
+  overflow: hidden;
+  width: 1%;
+  display: table;
+  position: static;
+  margin: 0 auto;
+}
+
+.mvo_info_full_middle {
+  display: table-cell;
+  vertical-align: middle;
+  width: 1%;
+  text-align: center;
+}
+
+.mvo_info_full_inner {
+  width: 100%;
+  text-align: left;
+}
+
+.mvo_info_full h1 {
+  border: none;
+  padding: 0;
+  margin: 0;
+  letter-spacing: -3px;
+  font: normal 6.4em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+  color: #000;
+}
+
+.mvo_info_full h3 {
+  padding: 0;
+  letter-spacing: 2px;
+  margin: -5px 6px;
+  font: 2.2em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+  color: #808080;
+}
+
+.mvo_info_full_progress {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.mvo_info_full_message {
+  position: absolute;
+  top: 10px;
+  left: 70px;
+}
+
+
+.top-edge {
+  background: static_url('images/mvo-sprite-x.png') repeat-x 0px -10px;
+  position: absolute;
+  height: 10px;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
+.bottom-edge {
+  background: static_url('images/mvo-sprite-x.png') repeat-x 0px 0px;
+  position: absolute;
+  height: 10px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
+.left-edge {
+  background: static_url('images/mvo-sprite-y.png') repeat-y -10px 0px;
+  position: absolute;
+  width: 10px;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
+.right-edge {
+  background: static_url('images/mvo-sprite-y.png') repeat-y 0px 0px;
+  position: absolute;
+  width: 10px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  z-index: 2;
+}

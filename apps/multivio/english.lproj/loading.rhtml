@@ -1,11 +1,10 @@
 <!--
 ==============================================================================
   Project:    Multivio - https://www.multivio.org/
-  Copyright:  (c) 2009 RERO
+  Copyright:  (c) 2009-2010 RERO
   License:    See file license.js
 ==============================================================================
 -->
-
 
 <% content_for :loading do %>
 <% # Any HTML in this file will be visible on screen while your page loads
@@ -13,6 +12,17 @@
    # caching and startup very fast, so your users will often only see this 
    # content for a brief moment on their first app load, if at all.
 %>
-<p class="loading">Loading...<p>
+
+  <div class="mvo_info_full_outer">
+    <div class="mvo_info_full_middle">
+      <div class="mvo_info_full_inner mvo_info_full">
+        <h1>Multivio</h1>
+        <h3>loading...</h3>
+        <div class="mvo_info_full_progress">
+          <img src="<%= static_url('images/progress_wheel_medium.gif') %>">
+        </div>
+      </div>
+    </div>
+  </div>
 
 <% end %>

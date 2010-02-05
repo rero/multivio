@@ -1,7 +1,7 @@
 /**
 ==============================================================================
   Project:    Multivio - https://www.multivio.org/
-  Copyright:  (c) 2009 RERO
+  Copyright:  (c) 2009-2010 RERO
   License:    See file license.js
 ==============================================================================
 */
@@ -38,7 +38,8 @@
     All the content mentioned in the templates is mandatory (except if marked
     as "if applicable")
   
-    {TYPE} can be, in all cases: {Integer}, {String}, {Double}, {Float},
+
+    {TYPE} can be, in all cases: {Number}, {String}, {Double}, {Float},
     {Object}, or any other custom class
 
 
@@ -72,7 +73,7 @@
       - preformatted text --> if you want to show code examples such as:
         {{{
           if (!objectIdInArray) {
-            this.set('masterSelection', objectIds.firstObject());
+            this.set('masterSelection', cdmLeafNodeIds.firstObject());
           }
         }}}
     - lists --> just add a dash and a space "- " in front of a sentence to make it a bullet in a list (but don't break the sentence)

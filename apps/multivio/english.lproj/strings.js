@@ -1,12 +1,10 @@
 /**
 ==============================================================================
   Project:    Multivio - https://www.multivio.org/
-  Copyright:  (c) 2009 RERO
+  Copyright:  (c) 2009-2010 RERO
   License:    See file license.js
 ==============================================================================
 */
-
-/*globals Multivio */
 
 // Place strings you want to localize here.  In your app, use the key and
 // localize it using "key string".loc().  HINT: For your key names, use the
@@ -15,5 +13,13 @@
 // localized string added to this file!
 //
 SC.stringsFor('English', {
-  // "_String Key": "Localized String"
+
+  // Strings for "application usage" text
+  '_How to launch Multivio': 'How to launch Multivio',
+  '_The calling syntax is': 'The calling syntax is',
+  '_The {TARGET} URL can link to': 'The {TARGET} URL can link to',
+  '_A Dublin Core record': 'A Dublin Core record',
+  '_A METS record (supported profiles only)': 'A METS record (supported profiles only)',
+  '_Examples': 'Examples'
+
 });
