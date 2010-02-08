@@ -443,8 +443,7 @@ Multivio.waitingPane = SC.PanelPane.create({
     childViews: [
       SC.LabelView.design({
         layout: { centerX: 0, centerY: -33, width: 230, height: 33 },
-        tagName: 'h3',
-        classNames: 'mvo-pane'.w(),
+        classNames: 'mvo-pane sc-large-size'.w(),
         value: 'Fetching data...'
       }),
       SC.ImageView.design({
@@ -453,5 +452,5 @@ Multivio.waitingPane = SC.PanelPane.create({
         classNames: 'mvo_info_full_progress'.w()
       })
     ]
-  }).classNames(''.w())
+  }).classNames('mvo-pane'.w())
 });
