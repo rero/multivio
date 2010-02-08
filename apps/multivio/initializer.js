@@ -68,7 +68,7 @@ Multivio.initializer = SC.Object.create(
       Multivio.getPath('mainPage.mainPane').append();
 
       this._showWaitingPage();
-      
+
       var scenario = this.get('inputParameters').scenario;
       var success = NO;
 
