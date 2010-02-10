@@ -48,8 +48,7 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
       //if needed scroll to the new position
       if (needToScroll) {
         var selectionIndex = Multivio.thumbnailController.indexOf(selection);
-        this.scrollTo(null, selectionIndex *
-            this.get('contentView').get('rowHeight'));
+        this.get('contentView').scrollToContentIndex(selectionIndex);
         Multivio.logger.debug('update thumbnail scroll'); 
       }
     }
