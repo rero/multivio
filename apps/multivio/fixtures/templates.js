@@ -13,9 +13,9 @@
   
   (Add the class description - see *Notes about the class template below)
 
-  @author {NAME}      (author's name - repeatable)
-  @extends {TYPE}     (superclass' name - repeatable)
-  @since {VERSION}    (version of Multivio in which this class was created)
+  @author NAME      (author's name - repeatable)
+  @extends TYPE     (superclass' name - repeatable)
+  @since VERSION    (version of Multivio in which this class was created)
 */
 
 
@@ -93,10 +93,9 @@
 
 
   /**
-    @property {TYPE}
-
     (Add a one-sentence description of the property)
 
+    @property {TYPE}
     @private                    (if applicable)
     @observes {PROPERTY}        (if applicable)
     @default {DEFAULT_VALUE}    (if applicable)
@@ -105,26 +104,23 @@
 
 
   /**
-    @binding {TYPE}
-
     (Add a one-sentence description of the binding)
 
+    @binding {TYPE}
     @private                    (if applicable)
   */
 
 
 
   /**
-    @method
-
     (Add a one-sentence summary of the method)
 
     (Add a detailed method description, if applicable)
 
     @private                              (if applicable)
-    @param {TYPE} {NAME} {DESCRIPTION}    (if applicable; repeatable)
-    @observes {PROPERTY}                  (if applicable)
-    @returns {TYPE} {DESCRIPTION}         (if applicable)
+    @param {TYPE} NAME DESCRIPTION        (if applicable; repeatable)
+    @observes PROPERTY                    (if applicable)
+    @returns {TYPE} DESCRIPTION           (if applicable)
   */
 
 

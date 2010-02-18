@@ -12,8 +12,8 @@
   A tree is a Record width a guid, a label, children, a targetCdmLeaf and 
   a list of cdmLeafNodesIds
 
-  @extends {SC.Record}
-  @version {0.1.0}
+  @extends SC.Record
+  @version 0.1.0
 */
 Multivio.Tree = SC.Record.extend(
 /** @scope Multivio.Tree.prototype */ {

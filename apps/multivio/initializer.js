@@ -11,9 +11,9 @@
 
   Object that retrieves CDM and initialize all components. 
 
-  @author {che}      
-  @extends {Object}   
-  @since {0.1.0} 
+  @author che      
+  @extends Object   
+  @since 0.1.0 
 */
 
 Multivio.initializer = SC.Object.create( 
@@ -21,42 +21,38 @@ Multivio.initializer = SC.Object.create(
 
 
   /**
-    @method
-
     Main initializer function.
   */
   initialize: function () {
   },
 
   /**
-    @property {Boolean}
-    
     Is the first time the _inputParametersDidChange method is call
     This method is call a first time to create the binding => do nothing
+    
+    @property {Boolean}
   */
   isFirstTime: YES,
 
   /**
-    @binding {Multivio.configurator.inputParameters}
-    
     Binds to the inputParameters of the configurator
+    
+    @binding {Multivio.configurator.inputParameters}
   */
   inputParametersBinding: "Multivio.configurator.inputParameters",
 
   /**
-    @property {String}
-    
     The name of the fixture set used
+    
+    @property {String}
   */
   fixtureSet: '',
 
   /**
-    @method
-
     Read input parameters in order to decide how to fetch application data
   
     @private
-    @observes {inputParameters}
+    @observes inputParameters
   */
   _inputParametersDidChange: function () {
     if (this.isFirstTime) {
@@ -110,11 +106,10 @@ Multivio.initializer = SC.Object.create(
   }.observes('inputParameters'),
 
   /**
-    @method
-
     Fetch CoreDocumentModel from the server.
     
     @private
+    @returns {Boolean}
   */
   _fetchCDMFromServer: function () {
     // use location.hash to prevent splitting the url
@@ -138,11 +133,10 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Fetch CoreDocumentModel from fixture data.
     
     @private
+    @returns {Boolean}
   */
   _fetchCDMFromFixtures: function () {
     var name = this.get('inputParameters').name;
@@ -192,8 +186,6 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Parse and store the CDM response 
 
     @private  
@@ -232,8 +224,6 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Initialize controllers with document data
 
     @private  
@@ -276,8 +266,6 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Lay out components on window according to application scenario
 
     @private  
@@ -306,8 +294,6 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Show usage page
 
     @private  
@@ -327,8 +313,6 @@ Multivio.initializer = SC.Object.create(
   },
   
   /**
-    @method
-
     Show error page
 
     @private  
@@ -348,8 +332,6 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Show waiting page
 
     @private  
@@ -362,8 +344,6 @@ Multivio.initializer = SC.Object.create(
   },
 
   /**
-    @method
-
     Hide waiting page
 
     @private  

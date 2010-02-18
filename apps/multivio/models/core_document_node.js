@@ -13,8 +13,8 @@
   a previousId, a sequenceNumber, a localSequenceNumber, a label, a metadata,
   an url and children.
 
-  @extends {SC.Record}
-  @version {0.1.0}
+  @extends SC.Record
+  @version 0.1.0
 */
 Multivio.CoreDocumentNode = SC.Record.extend(
 /** @scope Multivio.CoreDocumentNode.prototype */ {
@@ -32,15 +32,15 @@ Multivio.CoreDocumentNode = SC.Record.extend(
 
   
   /**
-    @property {Boolean}
-    
     Is this a leaf CDM node?
     A CDM leaf node has:
       - no children;
       - a urlDefault;
       - a sequenceNumber;
     
-    @default {NO}
+
+    @property {Boolean}
+    @default NO
   */
   isLeafNode: function () {
     // TODO check function logic (compare with previous version c24c9996)
@@ -49,12 +49,12 @@ Multivio.CoreDocumentNode = SC.Record.extend(
   }.property('urlDefault').cacheable(),
 
   /**
-    @property {Boolean}
-    
     Is this an inner CDM node?
     An inner CDM node has children
     
-    @default {NO}
+
+    @property {Boolean}
+    @default NO
   */
   isInnerNode: function () {
     // TODO check function logic (compare with previous version c24c9996)

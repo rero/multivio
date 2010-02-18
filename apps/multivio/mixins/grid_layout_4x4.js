@@ -7,6 +7,7 @@
 */
 
 /**
+  @namespace
   @mixin
 
   Adds support for grid-based interface layout.
@@ -16,31 +17,30 @@
   columns so that components can be laid out according to grid-based
   coordinates.
 
-  @author {mmo}
-  @extends {SC.Object}
-  @since {0.1.0}
+  @author mmo
+  @extends SC.Object
+  @since 0.1.0
 */
 Multivio.GridLayout4x4 = {
 
   /**
-    @property {Array}
-
     Grid cell occupancy matrix
     
     Each position of this 2D array, if not null, points to a component in the
     componentsOnGrid table, and indicates that the cell is occupied by that
     component.
 
+
+    @property {Array}
     @private
     @default []
   */
   _gridCells: [],
 
   /**
-    @property {Array}
-
     Registered components
 
+    @property {Array}
     @private
     @default []
   */
@@ -64,8 +64,6 @@ Multivio.GridLayout4x4 = {
   _yCenter         : 0,
 
   /**
-    @method
-
     Initilize grid
 
     @param {Number} leftStripWidth
@@ -94,11 +92,9 @@ Multivio.GridLayout4x4 = {
   },
 
   /**
-    @method
-
     Lay out a component on this view's grid
 
-    @param {Object}  component
+    @param {Object} component
     @param {Number} xCoord x coordinate on grid
     @param {Number} xLen   x length on grid
     @param {Number} yCoord y coordinate on grid
@@ -208,8 +204,6 @@ Multivio.GridLayout4x4 = {
   },
 
   /**
-    @method
-
     Remove a component from the view
 
     @param {Object} component

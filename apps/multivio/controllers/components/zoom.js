@@ -11,53 +11,73 @@
 
   This controller is used to zoom in the document.
 
-  @author {fma, che, mmo}
-  @extends {SC.ObjectController}
-  @since {0.1.0}
+  @author fma, che, mmo
+  @extends SC.ObjectController
+  @since 0.1.0
 */
 Multivio.zoomController = SC.ObjectController.create(
 /** @scope Multivio.zoomController.prototype */ {
 
-  /** Zoom parameter @property */
+  /** 
+    Zoom parameter 
+    @property {Integer}
+    @final
+  */
   ZOOM_FACTOR: 1.3,
-  /** Zoom parameter @property */
+  /** 
+    Zoom parameter 
+    @property {Integer}
+    @final
+  */
   ZOOM_ORIGINAL_FACTOR: 1,
-  /** Zoom parameter @property */
+  /** 
+    Zoom parameter 
+    @property {Integer}
+    @final
+  */
   ZOOM_MAX_STEP: 3,
-  /** Zoom parameter @property */
+  /** 
+    Zoom parameter 
+    @property {Integer}
+    @final
+  */
   ZOOM_MIN_STEP: -5,
-  /** Zoom parameter @property */
+  /** 
+    Zoom parameter 
+    @property {Integer}
+    @final
+  */
   ZOOM_MAX_SIZE: 2000,
-  /** Zoom parameter @property */
+  /** 
+    Zoom parameter 
+    @property {Integer}
+    @final
+  */
   ZOOM_MIN_SIZE: 100,
 
   /** 
-    @property {Number}
-    
     Current zoom factor: multiplicative value applied to the original image
     size; it is exponentially proportional to the current zoom step:
 
     current_zoom_factor = ZOOM_FACTOR ^ _current_zoom_step 
 
-    @default {1}
+    @property {Number}
+    @default 1
   */
   current_zoom_factor: 1,
 
   /**
-    @property {Number}
-    
     Current zoom step: its value always equals one of the possible discrete
     values within the zoom range [ZOOM_MIN_STEP, ZOOM_MAX_STEP]
-
+    
+    @property {Number}
     @private
-    @default {0}
+    @default 0
   */
   _current_zoom_step: 0,
 
   /**
-    @method
-    
-    Zoom in.
+    Zoom in._current_zoom_step + 1
   */  
   doZoomIn: function () {
     if (this._current_zoom_step < this.ZOOM_MAX_STEP) {
@@ -65,10 +85,8 @@ Multivio.zoomController = SC.ObjectController.create(
     }
   },
 
-  /**
-    @method
-    
-    Zoom out.
+  /** 
+    Zoom out. _current_zoom_step - 1
   */   
   doZoomOut: function () {
     if (this._current_zoom_step > this.ZOOM_MIN_STEP) {
@@ -77,8 +95,6 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    @method
-    
     Zoom original. _current_zoom_step = 0 & current_zoom_factor = 1.3 
   */  
   doZoomOriginal: function () {
@@ -87,24 +103,22 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    @method
-    
     Return the zoomFactor for a specific step
     
     @param {Number} step
     @private
+    @returns {Integer}
   */
   _zoomFactorForStep: function (step) {
     return Math.pow(this.ZOOM_FACTOR, step);
   },
   
   /**
-    @method
-    
     Return YES if ZOOM_MIN_STEP =< step <=  ZOOM_MAX_STEP else return NO
     
     @param {Number} step
     @private
+    @returns {Boolean}
   */  
   _isZoomStepValid: function (step) {
     if (step >= this.ZOOM_MIN_STEP && step <=  this.ZOOM_MAX_STEP) {
@@ -116,8 +130,6 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    @method
-    
     Set _current_zoom_step and current_zoomFactor
     
     @param {Number} step
@@ -134,8 +146,6 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    @method
-    
     Set zoomFactor and zoomStep according to the size of the first image 
     and to the size of the view. The goal is to resize the image so that it is
     totally visible

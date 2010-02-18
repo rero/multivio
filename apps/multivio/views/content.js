@@ -6,64 +6,62 @@
 ==============================================================================
 */
 
-/** @class
+/** 
+  @class
 
   The mainContentView of the application
 
-  @author {che}
-  @extends {SC.ScrollView}
-  @since {0.1.0}
+  @author che
+  @extends SC.ScrollView
+  @since 0.1.0
 */
 Multivio.ContentView = SC.ScrollView.extend(
-/** @scope Multivio.Content.prototype */ {
+/** @scope Multivio.ContentView.prototype */ {
 
   /**
-    @binding {Number}
-    
     Binds to the zoomValue in the zoom controller.
+    
+    @binding {Number}
    */
   zoomValueBinding:
       SC.Binding.oneWay('Multivio.zoomController.current_zoom_factor'), 
   
   /**
-    @binding {Multivio.CoreDocumentNode}
-    
     Binds to the masterController' masterSelection
+
+    @binding {Multivio.CoreDocumentNode}
   */
   masterSelectionBinding: 'Multivio.masterController.masterSelection', 
   
   /**
-    @binding {Boolean}
-    
     Binds to the isFirstFile property of the masterController
+
+    @binding {Boolean}
   */   
   isFirstFileBinding: 'Multivio.masterController.isFirstFile',
   
   /** 
-    @property {Number}
     Original width.
 
+    @property {Number}
     @private
-    @default {null}
+    @default null
   */  
   _originalWidth: null,
   
   /** 
-    @property {Number}
-    
     Original height.
     
+    @property {Number}
     @private
     @default {null}
   */    
   _originalHeight: null,  
   
   /**
-    @method
-
     Zoom in the picture.
 
-    @observes {zoomValue}
+    @observes zoomValue
   */  
   doZoom: function () {
     var zoomVal = this.get('zoomValue');
@@ -103,14 +101,12 @@ Multivio.ContentView = SC.ScrollView.extend(
   }.observes('zoomValue'),
 
   /**
-    @method 
-    
     Callback applied after image has been loaded.
     
     It puts the image in the container and applies the current zoom factor.
 
     @private
-    @callback {SC.imageCache.load}
+    @callback SC.imageCache.load
     @param {String} url
     @param {Image} image
   */
@@ -132,13 +128,11 @@ Multivio.ContentView = SC.ScrollView.extend(
   
 
   /**
-    @method
-    
     Updates value by observing changes in master controller's master
     selection
     
     @private
-    @observes {masterSelection}
+    @observes masterSelection
   */
   _masterSelectionDidChange: function () {
     var currentMasterSelection = this.get('masterSelection');
@@ -156,8 +150,6 @@ Multivio.ContentView = SC.ScrollView.extend(
   }.observes('masterSelection'),
   
   /**
-    @method
-    
     Set zoomFactor and zoomStep according to the size of the first image 
     and to the size of this view. The goal is to resize the image so that it is
     totally visible

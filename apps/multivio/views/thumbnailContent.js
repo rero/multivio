@@ -15,19 +15,18 @@
   For more explanation see:  
   http://frozencanuck.wordpress.com/2009/09/06/creating-a-simple-custom-list-item-view-part-1/
 
-  @author {che}     
-  @extends {View}  
-  @since {0.1.0}    
+  @author che
+  @extends View
+  @since 0.1.0
 */
-Multivio.ThumbnailContentView = SC.View.extend(SC.ContentDisplay, {
+Multivio.ThumbnailContentView = SC.View.extend(SC.ContentDisplay, 
+/** @scope Multivio.ThumbnailContentView.prototype */ {
 
   classNames: ['custom-thumbnail-item-view'],
     
   displayProperties: 'isSelected'.w(),
   
   /**
-    @method
-    
     Override render method to add 'isSelected' property
     
     @param {Object} context
@@ -48,8 +47,6 @@ Multivio.ThumbnailContentView = SC.View.extend(SC.ContentDisplay, {
   },
 
   /**
-    @method
-    
     Overwrite createChildViews to set up the internal child view 
   */
   createChildViews: function () {
@@ -95,15 +92,14 @@ Multivio.ThumbnailContentView = SC.View.extend(SC.ContentDisplay, {
   
   this class contains only the render method
 
-  @author {che}     
-  @extends {LabelView}  
-  @since {0.1.0}    
+  @author che     
+  @extends LabelView  
+  @since 0.1.0    
 */
-Multivio.LabelView = SC.LabelView.extend({
+Multivio.LabelView = SC.LabelView.extend(
+/** @scope Multivio.LabelView.prototype */ {
   
   /**
-    @method
-    
     Override render method to add 'isSelected' property 
 
     @param {Object} context

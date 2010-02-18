@@ -12,8 +12,8 @@
   A thumbnail is a Record with an url, a pageNumber and 
   a reference to a CDM Node
 
-  @extends {SC.Record}
-  @version {0.1.0}
+  @extends SC.Record
+  @version 0.1.0
 */
 Multivio.Thumbnail = SC.Record.extend(
 /** @scope Multivio.Thumbnail.prototype */ {
