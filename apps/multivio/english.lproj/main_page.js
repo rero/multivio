@@ -9,9 +9,9 @@
 /**
   @class
 
-  Create the page main page of Multivio.
+  Create the main page of Multivio.
   
-  @since {0.1.0}
+  @since 0.1.0
 */
 
 Multivio.mainPage = SC.Page.design({

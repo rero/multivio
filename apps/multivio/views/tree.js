@@ -11,35 +11,36 @@
 
   View that contains the tree
 
-  @author {che}     
-  @extends {ScrollView}  
-  @since {0.1.0}    
+  @author che
+  @extends SC.ListView
+  @since 0.1.0
 */
 Multivio.TreeView = SC.ScrollView.extend(
 /** @scope Multivio.TreeView.prototype */ {
   
   /**
-    @binding {String}
-    
     Binds to the tree selection in the tree controller
+    
+    @binding {String}
    */
   treeSelectionBinding: "Multivio.treeController.selection",
   
   /**
-    @property {Boolean}
-    
-    _treeSelectiondidChange is called every time the treeSelection changes. 
     IsFirstTime ensures we adjust the view only one time.
+    
+    _childViewsDidChange is called every time the user 
+    expand or collapse a branch of the tree. 
+    
+    @property {Boolean}
   */
   isFirstTime: YES,
 
   /**
-    @method
-  
     Adjust the treeView width and scroll to the treeSelection.
     The new width is the width of the largest label.
 
-    @observes {treeSelection}
+    @observes treeSelection
+    @private
   */
   _treeSelectionDidChange: function () {
     var childViews = this.get('contentView').get('childViews');

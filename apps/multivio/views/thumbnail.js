@@ -11,26 +11,25 @@
 
   View that contains thumbnails
 
-  @author {che}     
-  @extends {SC.ScrollView}  
-  @since {0.1.0}    
+  @author che
+  @extends SC.ScrollView
+  @since 0.1.0
 */
 Multivio.ThumbnailView = SC.ScrollView.extend(
-/** @scope Multivio.Thumbnail.prototype */ {
+/** @scope Multivio.ThumbnailView.prototype */ {
   
   /**
-    @binding {String}
-    
     Binds to the thumbnail selection in the thumbnail controller
+
+    @binding {String}
    */
   thumbnailSelectionBinding: "Multivio.thumbnailController.selection",
 
   /**
-    @method
-    
     Update the position of the scroll in the view if needed.
 
-    @observes {thumbnailSelection}
+    @private
+    @observes thumbnailSelection
   */
   _thumbnailSelectionDidChange: function () {
     var selection = this.get('thumbnailSelection').firstObject();

@@ -7,6 +7,7 @@
 */
 
 /**
+  @namespace
   @mixin
 
   Adds support for a 3x3-cell grid-based interface layout.
@@ -32,29 +33,27 @@
   columns have fixed width, whereas the central row and column are elastic in
   order to fit the canvas.
 
-  @author {mmo}
-  @extends {SC.Object}
-  @since {0.1.0}
+  @author mmo
+  @extends SC.Object
+  @since 0.1.0
 */
 Multivio.GridLayout3x3 = {
 
   /**
-    @property {Array}
-
     Grid cell occupancy matrix
     
     Each position of this 3x3 array, if not null, contains the name of a
     component in the _componentsOnGrid table, and indicates that the
     corresponding grid cell is occupied by that component.
 
+
+    @property {Array}
     @private
     @default []
   */
   _gridCells: [],
 
   /**
-    @property {Object}
-
     Registered components
     
     Each entry is composed as follows
@@ -63,6 +62,7 @@ Multivio.GridLayout3x3 = {
         coordinates: [x, y, xlen, ylen]
         coveredCells: [[x, y], [x, y], [x, y] ... ]
 
+    @property {Object}
     @private
   */
   _componentsOnGrid: {},
@@ -71,20 +71,33 @@ Multivio.GridLayout3x3 = {
     Grid dimension properties
   */
 
-  /** @property {Number} */
+  /** 
+    @property {Number}
+    @private 
+  */
   _leftStripWidth  : 0,
-  /** @property {Number} */
+  /** 
+    @property {Number}
+    @private 
+  */
   _rightStripWidth : 0,
-  /** @property {Number} */
+  /** 
+    @property {Number}
+    @private 
+  */
   _headerHeight    : 0,
-  /** @property {Number} */
+  /** 
+    @property {Number}
+    @private 
+  */
   _footerHeight    : 0,
-  /** @property {Number} */
+  /** 
+    @property {Number}
+    @private 
+  */
   _margin          : 0,
 
   /**
-    @method
-
     Initilize grid
 
     @param {Object} params layout parameters hash with the following content:
@@ -127,8 +140,6 @@ Multivio.GridLayout3x3 = {
   },
 
   /**
-    @method
-
     Lay out a component on this view's grid
 
     @param {Object} params layout parameters hash with the following content:
@@ -253,8 +264,6 @@ Multivio.GridLayout3x3 = {
   },
 
   /**
-    @method
-
     Remove a component from the view
 
     @param {String} componentName
@@ -287,6 +296,9 @@ Multivio.GridLayout3x3 = {
     }
   },
   
+  /**
+    @private
+  */
   _resetLayout: function () {
     // remove all current components from the view
     for (var componentName in this._componentsOnGrid) {

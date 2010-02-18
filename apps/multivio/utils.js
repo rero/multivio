@@ -12,8 +12,7 @@
 
 
 /**
-  @function
-
+  @namespace
   Validates a hash of parameters against a set of conditions
 
   This method is useful for validating a set of parameters given to a

@@ -6,8 +6,8 @@
 ==============================================================================
 */
 
-//require('configurator');
-//require('models/core_document_node');
+require('configurator');
+require('models/core_document_node');
  
 /**
 Define Log levels
@@ -23,9 +23,9 @@ Multivio.LOG_DEBUG = 10000;
  
   Object logger.
  
-  @author {che, fca, mmo}
-  @extends {Object}
-  @since {0.1.0}
+  @author che, fca, mmo
+  @extends Object
+  @since 0.1.0
 */
  
 Multivio.logger = SC.Object.create(
@@ -39,8 +39,6 @@ Multivio.logger = SC.Object.create(
   loggers: [],
  
   /**
-    @method
- 
     Initialize loggers, set level and add appender(s)
 
     We use 4 loggers => error, warning, info, debug; each one corresponds to a
@@ -105,8 +103,6 @@ Multivio.logger = SC.Object.create(
   },
   
   /**
-    @method
- 
     Attach the given appender to the appropriate log level logger
  
     It also attaches it to all log levels above it. For example, if log level =
@@ -128,8 +124,6 @@ Multivio.logger = SC.Object.create(
   },
   
   /**
-    @method
-    
     Create a log of error
     
     @param {String} message
@@ -141,8 +135,6 @@ Multivio.logger = SC.Object.create(
   },
 
   /**
-    @method
-    
     Create a log of warning
     
     @param {String} message
@@ -154,8 +146,6 @@ Multivio.logger = SC.Object.create(
   },
  
   /**
-    @method
-    
     Create a log of info
     
     @param {String} message
@@ -167,8 +157,6 @@ Multivio.logger = SC.Object.create(
   },
  
   /**
-    @method
-    
     Create a log of debug
     
     @param {String} message
@@ -180,11 +168,10 @@ Multivio.logger = SC.Object.create(
   },
  
   /**
-    @method
-    
     Create a log of logException
     
-    @param {String} message
+    @param {String} ex the exception
+    @param {String} customMessage the message
   */ 
   logException: function (ex, customMessage) {
     var exDetails = "\n\t{";

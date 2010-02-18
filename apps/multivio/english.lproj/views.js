@@ -6,12 +6,18 @@
 ==============================================================================
 */
 
-//require('views/content');
-//require('views/thumbnail');
-//require('views/thumbnailContent');
-//require('views/tree');
+require('views/content');
+require('views/thumbnail');
+require('views/thumbnailContent');
+require('views/tree');
 
-Multivio.views = SC.Page.design({
+/**
+  @class
+  
+  The main page object contains all views configuration
+*/  
+Multivio.views = SC.Page.design(
+/** @scope Multivio.views.prototype */ {
 
   /**
     Title view
@@ -24,6 +30,9 @@ Multivio.views = SC.Page.design({
     value: 'Multivio prototype Edge'
   }),
 
+  /**
+    Split View with tree and main content views
+  */
   treeAndContentView: SC.SplitView.design({
     layoutDirection: SC.LAYOUT_HORIZONTAL,
     autoresizeBehavior: SC.RESIZE_BOTTOM_RIGHT,

@@ -11,7 +11,7 @@
 
   Multivio is a web application for digital documents.
   
-  @extends {SC.Object}
+  @extends SC.Object
 */
 Multivio = SC.Object.create(
   /** @scope Multivio.prototype */ {

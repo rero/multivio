@@ -6,23 +6,24 @@
 ==============================================================================
 */
 
-/** @class
+/** 
+  @class
 
   This controller manages the behavior of the tree view. It depends on
   the master controller.
 
-  @author {che}
-  @extends {SC.TreeController}
-  @since {0.1.0}  
+  @author che
+  @extends SC.TreeController
+  @since 0.1.0  
 */
 
 Multivio.treeController = SC.TreeController.create(
 /** @scope Multivio.treeController.prototype */ {
 
   /**
-    @binding {Multivio.CoreDocumentNode}
-    
     Binds to the masterController's masterSelection
+    
+    @binding {Multivio.CoreDocumentNode}
   */
   masterSelectionBinding: "Multivio.masterController.masterSelection",
 
@@ -42,11 +43,9 @@ Multivio.treeController = SC.TreeController.create(
   _treeNodeById: {},
   
   /**
-    @method
-
     Initialize this controller, create the sub-model and the tree model
 
-    @param {SC.RecordArray} nodes are records of the CDM
+    @param {SC.RecordArray} nodes records of the CDM
   */
   initialize: function (nodes) {
     this._createSubmodel(nodes);
@@ -55,12 +54,10 @@ Multivio.treeController = SC.TreeController.create(
   },
 
   /**
-    @method
-
     Creates the tree submodel
 
     @private
-    @param {SC.RecordArray} cdmNodes
+    @param {SC.RecordArray} cdmNodes records of the CDM
   */
   _createSubmodel: function (cdmNodes) {
     // create a fake node to be used as the root Node
@@ -79,8 +76,6 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
-    @method
-
     Create the Tree structure using a mixin between 
     Multivio.Tree & Multivio.TreeContent
 
@@ -93,8 +88,6 @@ Multivio.treeController = SC.TreeController.create(
   },
 
   /**
-    @method
-
     Recursive function that handles a CDM node during the construction of the
     tree submodel.
 
@@ -133,12 +126,14 @@ Multivio.treeController = SC.TreeController.create(
           else (CDM node of kind B.2, without label):
             return L1
 
-    @returns {Object} hash table with keys {newNode, leaves};
+    @returns {Object} Returns hash table with keys {newNode, leaves};
     - 'newNode' is the id of a newly created tree node;
     - 'leaves' is a list of CDM leaf nodes collected during the execution;
     the properties are not both returned each time the function is called; if
     a new tree node is created, then 'newNode' holds a value, otherwise it is
     'leaves' that holds a value;
+    @param {SC.RecordArray} cdmNode records of the CDM
+    @private
   */
   _visitCdmNode: function (cdmNode) {
     var cdmNodeLabel    = cdmNode.get('label'),
@@ -235,13 +230,11 @@ Multivio.treeController = SC.TreeController.create(
   },
 
   /**
-    @method
-    
     Updates the masterSelection binding if the currently 
     selected tree node has changed.
 
     @private
-    @observes {selection}
+    @observes selection
    */
   _selectionDidChange: function () {
     var needToChange =  YES;
@@ -291,13 +284,11 @@ Multivio.treeController = SC.TreeController.create(
   }.observes('selection'),
 
   /**
-    @method
-
     Updates selection by observing changes in master controller's master
     selection
 
     @private
-    @observes {masterSelection}
+    @observes masterSelection
   */
   _masterSelectionDidChange: function () {
     var needToChange = YES;
@@ -345,8 +336,6 @@ Multivio.treeController = SC.TreeController.create(
   }.observes('masterSelection'),
   
   /**
-    @method
-    
     Write on the logger console the tree sub-model
     
     @private

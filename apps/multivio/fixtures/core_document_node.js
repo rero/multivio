@@ -6,7 +6,7 @@
 ==============================================================================
 */
 
-sc_require('models/core_document_node');
+require('models/core_document_node');
 
 Multivio.CoreDocumentNode.FIXTURES = [
 
