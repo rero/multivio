@@ -11,55 +11,42 @@ var myZoomController;
 module("Test zoomController", {
   setup: function () {
     myZoomController = Multivio.zoomController;
-    SC.Observers.suspendPropertyObserving();
+    /*SC.Observers.suspendPropertyObserving();
     myZoomController.set('isZooming', NO);
     myZoomController.set('factor', null);
-    SC.Observers.resumePropertyObserving();
+    SC.Observers.resumePropertyObserving();*/
   },
   
   teardown: function () {
-    delete myZoomController;
+    myZoomController = null;
   }
 });
 
-test("_changeZoom method", function () {
-  var oldVal = myZoomController.get('isZooming');
-  myZoomController._changeZoom();
-  ok(myZoomController.get('isZooming') !== oldVal, "should find the zoom status");
+test("_isZoomStepValid method", function () {
+  equals(myZoomController._isZoomStepValid(0), YES, "should find step 0 is a valid zoom step");
+  equals(myZoomController._isZoomStepValid(3), YES, "should find step 3 is a valid zoom step");
+  equals(myZoomController._isZoomStepValid(-5), YES, "should find step -5 is a valid zoom step");
+  equals(myZoomController._isZoomStepValid(5), NO, "should find step 5 is a non valid zoom step");
+  equals(myZoomController._isZoomStepValid(-6), NO, "should find step -6 is a non valid zoom step");    
 });
 
 test("doZoomIn method", function () {
   myZoomController.doZoomIn();
-  equals(myZoomController.get('factor'), Multivio.ZOOM_IN_FACTOR, "should find the zoomIn factor with the input zoom value 'null'");
-  
-  myZoomController.doZoomIn();
-  equals(myZoomController.get('isZooming'), YES, "should change the zoom status");  
-    
-  myZoomController.set('factor', 2);
-  myZoomController.doZoomIn();
-  equals(myZoomController.get('factor'), Multivio.ZOOM_IN_FACTOR, "should find the zoomIn factor with the input zoom value '2'");
+  equals(myZoomController.get('_current_zoom_step'), 1, "should find the _current_zoom_step with the value 1");
+  equals(myZoomController.get('current_zoom_factor'), 1.3, "should find the current_zoom_factor with the value 1.3");  
 });
 
 test("doZoomOut method", function () {
   myZoomController.doZoomOut();
-  equals(myZoomController.get('factor'), Multivio.ZOOM_OUT_FACTOR, "should find the zoomOut factor with the input zoom value 'null'");
-  
+  equals(myZoomController.get('_current_zoom_step'), 0, "should find the _current_zoom_step with the value 0");
+  equals(myZoomController.get('current_zoom_factor'), 1, "should find the current_zoom_factor with the value 1");
   myZoomController.doZoomOut();
-  equals(myZoomController.get('isZooming'), YES, "should change the zoom status");   
-  
-  myZoomController.set('factor', 2);
-  myZoomController.doZoomOut();
-  equals(myZoomController.get('factor'), Multivio.ZOOM_OUT_FACTOR, "should find the zoomOut factor with the input zoom value '2'");  
+  equals(myZoomController.get('_current_zoom_step'), -1, "should find the _current_zoom_step with the value -1");
+  equals(myZoomController.get('current_zoom_factor'), myZoomController._zoomFactorForStep(-1), "should find the current_zoom_factor with the value 0.7"); 
 });
 
 test("doZoomOriginal method", function () {
   myZoomController.doZoomOriginal();
-  equals(myZoomController.get('factor'), Multivio.ZOOM_ORIGINAL_FACTOR, "should find the zoomOriginal factor with the input zoom value 'null'");
-  
-  myZoomController.doZoomOriginal();
-  equals(myZoomController.get('isZooming'), YES, "should change the zoom status");   
-  
-  myZoomController.set('factor', 2);
-  myZoomController.doZoomOriginal();
-  equals(myZoomController.get('factor'), Multivio.ZOOM_ORIGINAL_FACTOR, "should find the zoom factor with the input zoom value '2'");  
+  equals(myZoomController.get('_current_zoom_step'), 0, "should find the _current_zoom_step with the value 0");
+  equals(myZoomController.get('current_zoom_factor'), myZoomController.ZOOM_ORIGINAL_FACTOR, "should find the current_zoom_factor with the value ZOOM_ORIGINAL_FACTOR");  
 });
