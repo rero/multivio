@@ -24,7 +24,7 @@ module("Test thumbnailController", {
     Multivio.treeController.initialize(nodes);
     Multivio.navigationController.initialize();    
         
-    rec = Multivio.store.find(Multivio.Thumbnail,"fn00004");   
+    rec = Multivio.store.find(Multivio.Thumbnail, "fn00004");   
     sel1 = SC.SelectionSet.create().addObject(rec);
     
     rec2 = Multivio.store.find(Multivio.Thumbnail, "fn00006");
@@ -43,12 +43,12 @@ module("Test thumbnailController", {
   }
 });
 
-test("_selectionDidChange method with no selection and no masterSelection", function () {
-  myThumbnailController._selectionDidChange();
-  equals(myMasterController.get('masterSelection'), undefined, "shouldn't find the record (no selection and no masterSelection)");
+test("after initialization no selection and no masterSelection", function () {
+  equals(myMasterController.get('masterSelection'), undefined, "should find masterSelection is undefined");
+  equals(myThumbnailController.get('selection').firstObject(), undefined, "should find selection is undefined");
 }); 
 
-test("_selectionDidChange method with a masterSelection and no selection", function () {  
+test("set masterSelection with first leafNode method", function () {  
   SC.RunLoop.begin();
   var sortedNodes = nodes.sortProperty('guid');
   for (var i = 0; i < sortedNodes.length; i++) {
@@ -71,13 +71,6 @@ test("_selectionDidChange method with two different selection", function () {
   myThumbnailController.set('selection', sel2);
   SC.RunLoop.end();
   ok(myMasterController.get('masterSelection').get('guid') !== 'n00004', "shouldn't find the 'n00004' record but the 'n00006' record");
-});
-
-test("_masterSelectionDidChange method with a selection and no masterSelection", function () {
-  SC.RunLoop.begin();
-  myThumbnailController.set('selection', sel1);
-  SC.RunLoop.end();
-  equals(myMasterController.get('masterSelection').get('guid'), 'n00004', "should find the selection");
 });
 
 test("_masterSelectionDidChange method with two different masterSelection", function () {
