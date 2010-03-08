@@ -15,17 +15,15 @@
   It provides a set of methods for displaying information on the screen using
   different kinds of panels.
   
-  @author {fca}
-  @extends {Object}
-  @since {0.1.0}
+  @author fca
+  @extends Object
+  @since 0.1.0
 */
  
 Multivio.usco = SC.Object.create(
-/** @scope Multivio.logger.prototype */ {
+/** @scope Multivio.usco.prototype */ {
  
   /**
-    @method showAlertPaneError, showAlertPaneInfo,
-
     Displays an alert panel with different icon and button, according to the
     case.
 
@@ -44,7 +42,15 @@ Multivio.usco = SC.Object.create(
         this);
     pane.append();
   },
- 
+
+  /**
+    Displays an alert panel with different icon and button, according to the
+    case.
+
+    @param {String} message panel main message
+    @param {String} description panel secondary message
+    @param {String} button1 text inside button1 (tipically in the "OK" position)
+  */ 
   showAlertPaneInfo: function (message, description, button1) {
     var pane = SC.AlertPane.info(
         '%@'.loc(message),
@@ -58,8 +64,6 @@ Multivio.usco = SC.Object.create(
   },
 
   /**
-    @method showAlertPaneWarn
-
     Displays a warning panel.
 
     @param {String} message panel main message
@@ -84,8 +88,6 @@ Multivio.usco = SC.Object.create(
   },
 
   /**
-    @method showAlertPanePlain
-
     Displays an alert w/o any icon.
     
     @param {String} message panel main message

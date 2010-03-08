@@ -7,7 +7,7 @@
 */
 
 /**
-  @mixin
+  @namespace
 
   Model of a tree component.
   A treeController controls objects that implement 
@@ -17,9 +17,9 @@
   To have more information see the documentation of the SC.TreeController, 
   SC.TreeItemContent and the demo outline. 
 
-  @author {che}      
-  @extends {Object}   
-  @since {0.1.0} 
+  @author che      
+  @extends Object   
+  @since 0.1.0 
 */
 
 Multivio.TreeContent = {
@@ -30,15 +30,13 @@ Multivio.TreeContent = {
   treeItemIsExpanded: undefined,
   
   /**
-  @property {Number}
+  The size of the label
   
-  The size of the label  
+  @property {Number}  
   */
   labelWidth: undefined,
 
   /**
-    @method 
-     
     Return the list of the children of this Multivio.Tree as TreeContent
   */
   treeItemChildren: function () {

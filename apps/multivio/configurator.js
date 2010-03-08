@@ -11,26 +11,25 @@
 
   Object that get and store all config parameters.
 
-  @author {che}
-  @extends {SC.Object}
-  @since {0.1.0}
+  @author che
+  @extends SC.Object
+  @since 0.1.0
 */
 Multivio.configurator = SC.Object.create(
 /** @scope Multivio.configurator.prototype */ {
 
   /**
+    This object contains all parameters of the Url
+    
     @property {Object}
-    
-    This object contains all parameters of the Url    
-    
     @default {}
   */
   inputParameters: {},
   
   /**
-    @property {Object}
-  
     This object contains all parameters for logs
+    
+    @property {Object}
   */
   logParameters: {
     log: {
@@ -42,9 +41,9 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
-    @property {Object}
-  
     This object contains all urls used by the application
+    
+    @property {Object}
   */
   baseUrlParameters: {
     get: "/server/cdm/get?url=",
@@ -63,9 +62,9 @@ Multivio.configurator = SC.Object.create(
   },
 
   /**
+    Definition of the different layouts that can be set on the main page
+    
     @property {Object}
-
-    Definition of the different layouts that can be set on the main page 
   */
   layouts: {
     'default': {
@@ -84,11 +83,11 @@ Multivio.configurator = SC.Object.create(
   },
 
   /**
-    @property {Object}
-
     Definition of different possible component arrangements on the screen.
     The 'baseLayout' key points to the one of the members of the property
     'this.layouts'.
+  
+    @property {Object}
   */
   componentLayouts: {
     'pageBased': {
@@ -143,8 +142,6 @@ Multivio.configurator = SC.Object.create(
   },
 
   /**
-    @method
-    
     Read and store parameters of the Url
     
     @param {String} params 
@@ -166,13 +163,12 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
-    @method
-
     Return a configuration value given its path.
 
     Example: if configPath = 'baseUrlParameters.image.small.' the function
     returns the equivalent of this.get('baseUrlParameters').image.small
-
+    
+    @method
     @param {String} configPath
     @returns {String}
   */
@@ -201,12 +197,10 @@ Multivio.configurator = SC.Object.create(
   },
 
   /**
-    @method
-
     Return the adapted url for a file
 
     @param {String} url the url of the file
-    @param {Number} the page number is optional
+    @param {Number} pageNumber the page number is optional
     @return {String} the new encoded url
   */
   getImageUrl: function (url, pageNumber) {
@@ -234,12 +228,10 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
-    @method
-    
     Return the adapted url for the thumbnail image
 
     @param {String} url the default url of the file
-    @param {Number} the page number is optional
+    @param {Number} pageNumber the page number is optional
     @return {String} the new encoded url
   */
   getThumbnailUrl: function (url, pageNumber) {

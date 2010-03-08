@@ -6,13 +6,15 @@
 ==============================================================================
 */
 
-/** @class
+/** 
+  @class
 
   This controller manages the behavior of the thumbnail view. It depends on
   the master controller.
 
-  @extends {SC.ArrayController}
-  @since {0.1.0}
+  @author fma, che, mmo
+  @extends SC.ArrayController
+  @since 0.1.0
 */
 
 Multivio.thumbnailController = SC.ArrayController.create(
@@ -21,9 +23,9 @@ Multivio.thumbnailController = SC.ArrayController.create(
   allowsMultipleSelection: NO,
 
   /**
-    @binding {Multivio.coreDocumentNode}
-    
     Binds to the masterController's masterSelection
+    
+    @binding {Multivio.coreDocumentNode}
    */
   masterSelectionBinding: "Multivio.masterController.masterSelection",
 
@@ -36,11 +38,9 @@ Multivio.thumbnailController = SC.ArrayController.create(
   _cdmNodeToThumbnail: {},
   
   /**
-    @method
-
     Initialize this controller, create the sub-model and then set its content
 
-    @param {SC.RecordArray} nodes are records of the CDM
+    @param {SC.RecordArray} nodes records of the CDM
   */
   initialize: function (nodes) {
     this._createSubmodel(nodes);
@@ -50,12 +50,10 @@ Multivio.thumbnailController = SC.ArrayController.create(
   },
   
   /**
-    @method
-
     Create the thumbnail submodel from the CDM nodes
     
     @private
-    @param {SC.RecordArray} nodes are records of the CDM    
+    @param {SC.RecordArray} nodes records of the CDM    
   */
   _createSubmodel: function (nodes) {
     nodes.forEach(function (node) {
@@ -84,12 +82,10 @@ Multivio.thumbnailController = SC.ArrayController.create(
   },
    
   /**
-    @method 
-    
     If 'content' changes, the _cdmNodeToThumbnail conversion table must
     be updated (this should only happen once, during aplication setup)
 
-    @observes {content}    
+    @observes content    
     @private
   */
   _contentDidChange: function () {
@@ -107,12 +103,11 @@ Multivio.thumbnailController = SC.ArrayController.create(
   }.observes('content'),
 
   /**
-    @method
-    
     Updates the masterSelection binding if the currently selected thumbnail 
     has changed.
     
-    @observes {selection}
+    @observes selection
+    @private
   */
   _selectionDidChange: function () {
     if (!SC.none(this.get('selection')) &&
@@ -133,12 +128,11 @@ Multivio.thumbnailController = SC.ArrayController.create(
   }.observes('selection'),
 
   /**
-    @method
-    
     Updates thumbnail selection by observing changes in master controller's
     master selection
     
-    @observes {masterSelection}
+    @observes masterSelection
+    @private
   */
   _masterSelectionDidChange: function () {
     // find the thumbnail that corresponds to the current master selection

@@ -11,29 +11,28 @@
 
   View that contains the tree
 
-  @author {che}     
-  @extends {ListView}  
-  @since {0.1.0}    
+  @author che
+  @extends SC.ListView
+  @since 0.1.0
 */
 Multivio.TreeView = SC.ListView.extend(
 /** @scope Multivio.TreeView.prototype */ {
   
   /**
-    @property {Boolean}
-    
     _childViewsDidChange is called every time the user 
     expand or collapse a branch of the tree. 
     IsFirstTime ensures we adjust the view only one time.
+    
+    @property {Boolean}
   */
   isFirstTime: YES,
 
   /**
-    @method
-  
     Update the treeView width.
     The new width is the width of the largest label.
 
-    @observes {childViews}
+    @observes childViews
+    @private
   */
   _childViewsDidChange: function () {
     var childViews = this.get('childViews');

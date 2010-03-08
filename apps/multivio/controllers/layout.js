@@ -6,13 +6,14 @@
 ==============================================================================
 */
 
-/** @class
+/** 
+  @class
 
   This class handles the positioning of the interface components on the screen.
 
-  @author {mmo}
-  @extends {SC.Object}
-  @since {0.1.0}
+  @author mmo
+  @extends SC.Object
+  @since 0.1.0
   @see Multivio.mainPage
 */
 
