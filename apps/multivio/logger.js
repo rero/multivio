@@ -56,18 +56,22 @@ Multivio.logger = SC.Object.create(
     // initialize loggers by level
     this.errorLogger = Log4js.getLogger("error");
     this.errorLogger.setLevel(Log4js.Level.ERROR);
+    this.errorLogger.isUsed = NO;
     this.loggers.push(this.errorLogger);
     
     this.warningLogger = Log4js.getLogger("warning");
     this.warningLogger.setLevel(Log4js.Level.WARN);
+    this.warningLogger.isUsed = NO;
     this.loggers.push(this.warningLogger);
     
     this.infoLogger = Log4js.getLogger("info");
     this.infoLogger.setLevel(Log4js.Level.INFO);
+    this.infoLogger.isUsed = NO;
     this.loggers.push(this.infoLogger);
     
     this.debugLogger = Log4js.getLogger("debug");
     this.debugLogger.setLevel(Log4js.Level.DEBUG);
+    this.debugLogger.isUsed = NO;
     this.loggers.push(this.debugLogger);
  
     // create appenders according to the configuration in Multivio.CONFIG.log
@@ -114,6 +118,7 @@ Multivio.logger = SC.Object.create(
       var aLogger = this.loggers[i];
       if (aLogger.level.level >= level) {
         aLogger.addAppender(appender);
+        aLogger.isUsed = YES;
       }
     }
   },
@@ -124,7 +129,9 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */
   error: function (message) {
-    this.errorLogger.error(message);
+    if (this.errorLogger.isUsed) {
+      this.errorLogger.error(message);
+    }
   },
 
   /**
@@ -133,7 +140,9 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */ 
   warning: function (message) {
-    this.warningLogger.warn(message);
+    if (this.warningLogger.isUsed) {
+      this.warningLogger.warn(message);
+    }
   },
  
   /**
@@ -142,7 +151,9 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */
   info: function (message) {
-    this.infoLogger.info(message);
+    if (this.infoLogger.isUsed) {
+      this.infoLogger.info(message);
+    }
   },
  
   /**
@@ -151,7 +162,9 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */
   debug: function (message) {
-    this.debugLogger.debug(message);
+    if (this.debugLogger.isUsed) {
+      this.debugLogger.debug(message);
+    }
   },
  
   /**

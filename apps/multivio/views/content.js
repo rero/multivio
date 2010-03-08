@@ -67,6 +67,9 @@ Multivio.ContentView = SC.ScrollView.extend(
     var zoomVal = this.get('zoomValue');
     if (!SC.none(zoomVal)) {
       var div = this.get('contentView');
+      //TO DO: find another solution
+      //Recalculate the center. Not the best solution.
+      div.adjust('left', undefined);
       if (zoomVal === 1) {
         div.adjust('width', this.get('_originalWidth'));
         div.adjust('height', this.get('_originalHeight'));  
@@ -96,7 +99,7 @@ Multivio.ContentView = SC.ScrollView.extend(
         var newHeight = this._originalHeight * zoomVal;
         div.adjust('width', newWidth);
         div.adjust('height', newHeight);
-      } 
+      }
     }
   }.observes('zoomValue'),
 
