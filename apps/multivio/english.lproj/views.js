@@ -51,11 +51,11 @@ Multivio.views = SC.Page.design(
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
           childViews: 'innerTree'.w(),
-          innerTree: Multivio.TreeView.design({
+          innerTree: SC.ScrollView.design({
             layout: { top: 10, bottom: 10, left: 10, right: 10 },
             borderStyle: SC.BORDER_NONE,
 
-            contentView: SC.ListView.design({
+            contentView: Multivio.TreeView.design({
               layout: { top: 0, bottom: 0, left: 0, right: 0 },
               rowHeight: 18,
               borderStyle: SC.BORDER_NONE,
@@ -180,11 +180,11 @@ Multivio.views = SC.Page.design(
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
     childViews: 'innerTree'.w(),
-    innerTree: Multivio.TreeView.design({
+    innerTree: SC.ScrollView.design({
       layout: { top: 10, bottom: 10, left: 10, right: 10 },
       borderStyle: SC.BORDER_NONE,
 
-      contentView: SC.ListView.design({
+      contentView: Multivio.TreeView.design({
         layout: { top: 0, bottom: 0, left: 0, right: 0 },
         rowHeight: 18,
         borderStyle: SC.BORDER_NONE,
