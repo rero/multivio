@@ -280,7 +280,7 @@ Multivio.treeController = SC.TreeController.create(
           }
         }
       }
-    }      
+    }
   }.observes('selection'),
 
   /**

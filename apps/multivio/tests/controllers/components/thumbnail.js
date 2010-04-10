@@ -7,20 +7,27 @@
 */
 /*globals Multivio module test ok equals same stop start */
 
-var myThumbnailController, myMasterController, rec, sel1, rec2, sel2;
+var  nodes, myThumbnailController, myMasterController, rec, sel1, rec2, sel2;
 
 module("Test thumbnailController", {
   setup: function () {
-    myMasterController = Multivio.masterController;
-    myMasterController.initialize();
+    Multivio.store = SC.Store.create().from(SC.Record.fixtures);
+    nodes = Multivio.store.find(Multivio.CoreDocumentNode);
     
     myThumbnailController = Multivio.thumbnailController;
-    myThumbnailController.initialize();
+    myThumbnailController.initialize(nodes);
+    
+    myMasterController = Multivio.masterController;
+    myMasterController.initialize(nodes);
+    
+    //need to be created to avoid problem
+    Multivio.treeController.initialize(nodes);
+    Multivio.navigationController.initialize();    
         
-    rec = Multivio.store.find(Multivio.Thumbnail, 'f00001');
+    rec = Multivio.store.find(Multivio.Thumbnail, "fn00004");   
     sel1 = SC.SelectionSet.create().addObject(rec);
     
-    rec2 = Multivio.store.find(Multivio.Thumbnail, 'f00002');
+    rec2 = Multivio.store.find(Multivio.Thumbnail, "fn00006");
     sel2 = SC.SelectionSet.create().addObject(rec2);
   },
   
@@ -29,22 +36,27 @@ module("Test thumbnailController", {
     sel1 = null;
     rec2 = null;
     sel2 = null;
-
-    Multivio.store.reset();
+    nodes = null; 
  
     myMasterController = null;
     myThumbnailController = null;
   }
 });
 
-test("_selectionDidChange method with no selection and no masterSelection", function () {
-  myThumbnailController._selectionDidChange();
-  equals(myMasterController.get('masterSelection'), undefined, "shouldn't find the record (no selection and no masterSelection)");
+test("after initialization no selection and no masterSelection", function () {
+  equals(myMasterController.get('masterSelection'), undefined, "should find masterSelection is undefined");
+  equals(myThumbnailController.get('selection').firstObject(), undefined, "should find selection is undefined");
 }); 
 
-test("_selectionDidChange method with a masterSelection and no selection", function () {  
+test("set masterSelection with first leafNode method", function () {  
   SC.RunLoop.begin();
-  myMasterController.set('masterSelection', 'n00004');
+  var sortedNodes = nodes.sortProperty('guid');
+  for (var i = 0; i < sortedNodes.length; i++) {
+    if (sortedNodes[i].get('isLeafNode')) {
+      myMasterController.set('masterSelection', sortedNodes[i]);
+      break;
+    }
+  }
   SC.RunLoop.end();
   equals(myThumbnailController.get('selection').firstObject(), sel1.firstObject(), "should find the record");
 });
@@ -53,29 +65,24 @@ test("_selectionDidChange method with two different selection", function () {
   SC.RunLoop.begin();
   myThumbnailController.set('selection', sel1);
   SC.RunLoop.end();
-  equals(myMasterController.get('masterSelection'), 'n00004', "should find the record");
+  equals(myMasterController.get('masterSelection').get('guid'), 'n00004', "should find the record");
   
   SC.RunLoop.begin();
   myThumbnailController.set('selection', sel2);
   SC.RunLoop.end();
-  ok(myMasterController.get('masterSelection') !== 'n00004', "shouldn't find the 'n00004' record but the 'n00006' record");
-});
-
-test("_masterSelectionDidChange method with a selection and no masterSelection", function () {
-  SC.RunLoop.begin();
-  myThumbnailController.set('selection', sel1);
-  SC.RunLoop.end();
-  equals(myMasterController.get('masterSelection'), 'n00004', "should find the selection");
+  ok(myMasterController.get('masterSelection').get('guid') !== 'n00004', "shouldn't find the 'n00004' record but the 'n00006' record");
 });
 
 test("_masterSelectionDidChange method with two different masterSelection", function () {
   SC.RunLoop.begin();
-  myMasterController.set('masterSelection', 'n00004');
+  var cdmNode =  Multivio.store.find(Multivio.CoreDocumentNode, "n00004");
+  myMasterController.set('masterSelection', cdmNode);
   SC.RunLoop.end();
-  equals(myThumbnailController.get('selection').firstObject().get('id'), 'f00001', "should find the selection");
+  equals(myThumbnailController.get('selection').firstObject().get('guid'), 'fn00004', "should find the selection");
   
   SC.RunLoop.begin();
-  myMasterController.set('masterSelection', 'n00006');
+  cdmNode =  Multivio.store.find(Multivio.CoreDocumentNode, "n00006");  
+  myMasterController.set('masterSelection', cdmNode);
   SC.RunLoop.end();
-  ok(myThumbnailController.get('selection').firstObject().get('id') !== 'f00001', "shouldn't find the 'f00001' selection but the 'f00002' selection");
+  ok(myThumbnailController.get('selection').firstObject().get('guid') !== 'fn00004', "shouldn't find the 'fn00004' selection but the 'fn00006' selection");
 });

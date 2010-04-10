@@ -245,15 +245,6 @@ Multivio.initializer = SC.Object.create(
       Multivio.masterController.initialize(nodes);
 
       Multivio.navigationController.initialize();
-
-      // initialize the selection with the first CDM leaf node
-      var sortedNodes = nodes.sortProperty('guid');
-      for (var i = 0; i < sortedNodes.length; i++) {
-        if (sortedNodes[i].get('isLeafNode')) {
-          Multivio.masterController.set('masterSelection', sortedNodes[i]);
-          break;
-        }
-      }
     }
     catch (e) {
       Multivio.logger.logException(e, 'Error initializing components with data');
@@ -262,6 +253,15 @@ Multivio.initializer = SC.Object.create(
       SC.RunLoop.end();
       this._hideWaitingPage();
       this._layOutComponentsOnWindow();
+      
+      // initialize the selection with the first CDM leaf node after layout
+      var sortedNodes = nodes.sortProperty('guid');
+      for (var i = 0; i < sortedNodes.length; i++) {
+        if (sortedNodes[i].get('isLeafNode')) {
+          Multivio.masterController.set('masterSelection', sortedNodes[i]);
+          break;
+        }
+      }
     }
   },
 

@@ -19,16 +19,17 @@ Multivio.TreeView = SC.ListView.extend(
 /** @scope Multivio.TreeView.prototype */ {
   
   /**
+    IsFirstTime ensures we adjust the view only one time.
+    
     _childViewsDidChange is called every time the user 
     expand or collapse a branch of the tree. 
-    IsFirstTime ensures we adjust the view only one time.
     
     @property {Boolean}
   */
   isFirstTime: YES,
 
   /**
-    Update the treeView width.
+    Adjust the treeView width and scroll to the treeSelection.
     The new width is the width of the largest label.
 
     @observes childViews
@@ -44,12 +45,12 @@ Multivio.TreeView = SC.ListView.extend(
         //maxLabelWidth depends on the labelWidth, the outline and the position
         //of the label in the Tree (outlineLevel)
         var maxLabelWidth = (labelWidth * 6.5) + 
-            (labelView.get('outlineIndent') * 
-            (labelView.get('outlineLevel') + 1));
-        
+          (labelView.get('outlineIndent') * 
+          (labelView.get('outlineLevel') + 1));
+ 
         if (maxLabelWidth > maxWidth) {            
           maxWidth = maxLabelWidth;
-        }  
+        }
       }
       //update the View with the maxWidth
       this.adjust('width', maxWidth);
