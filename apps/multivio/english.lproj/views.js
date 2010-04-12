@@ -368,7 +368,8 @@ Multivio.views = SC.Page.design(
       childViews: [
         SC.ImageView.design({
           layout: { top: 10, height: 44, right: 6, width: 140 },
-          value: static_url('images/multivio_logo_bw_beta_140x44')
+          value: static_url('images/multivio_logo_bw_beta_140x44'),
+          toolTip: 'Go to Multivio website. Client release: ' + Multivio.VERSION
         })
       ],
       render: function (context, firstTime) {
