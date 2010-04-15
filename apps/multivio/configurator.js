@@ -22,9 +22,17 @@ Multivio.configurator = SC.Object.create(
     This object contains all parameters of the Url
     
     @property {Object}
-    @default {}
+    @default undefined
   */
   inputParameters: {},
+  
+  /**
+    The name of the multivio server
+    
+    @property {String}
+    @default server
+  */
+  serverName: '/server',
   
   /**
     This object contains all parameters for logs
@@ -37,7 +45,7 @@ Multivio.configurator = SC.Object.create(
       browserConsole: "LOG_INFO",
       ajax:           "LOG_ERROR"
     },
-    logFile: "/server/log/post"
+    logFile: "/log/post"
   },
   
   /**
@@ -46,14 +54,17 @@ Multivio.configurator = SC.Object.create(
     @property {Object}
   */
   baseUrlParameters: {
-    get: "/server/cdm/get?url=",
+    version: "/version",
+    metadata: "/metadata/get?url=",
+    logicalStructure: "/structure/get_logical?url=",
+    physicalStructure: "/structure/get_physical?url=",
     
-    thumbnail: "/server/document/get?width=100&url=",
+    thumbnail: "/document/get?width=100&url=",
     
     image: {
-      small:  "/server/document/get?width=1000&url=",
-      normal: "/server/document/get?width=1500&url=",
-      big:    "/server/document/get?width=2000&url="
+      small:  "/document/get?width=1000&url=",
+      normal: "/document/get?width=1500&url=",
+      big:    "/document/get?width=2000&url="
     },
     
     fixtures: {
@@ -109,6 +120,23 @@ Multivio.configurator = SC.Object.create(
         {name: 'views.navigationView',     x: 0, y: 2, xlen: 3, ylen: 1}
       ]
     },
+    'init': {
+      baseLayout: 'default',
+      components: [
+        {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1},
+        {name: 'views.treeView',           x: 0, y: 1, xlen: 1, ylen: 1}
+      ]
+    },
+    'textWithSearch': {
+      baseLayout: 'default',
+      components: [
+        {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1},
+        {name: 'views.treeView',           x: 0, y: 1, xlen: 1, ylen: 2},
+        {name: 'views.mainContentView',    x: 1, y: 1, xlen: 1, ylen: 1},
+        {name: 'views.thumbnailView',      x: 2, y: 1, xlen: 1, ylen: 1},
+        {name: 'views.navigationView',     x: 1, y: 2, xlen: 2, ylen: 1}
+      ]
+    },
     'contentFullScreen': {
       baseLayout: 'default',
       components: [
@@ -150,16 +178,78 @@ Multivio.configurator = SC.Object.create(
     var prop = {};
     for (var key in params) {
       if (params.hasOwnProperty(key)) {
-        if (key === "") {
+        switch (key) {
+        case "":
           prop.scenario = params[key];
-        } else {
+          break;
+        case 'url':
+          // use location.hash to prevent splitting the url
+          var url = !SC.none(location.hash) ? location.hash : undefined;
+          if (url !== undefined) {
+            url = url.replace('#get&url=', '');
+            url = url.substring(0, url.indexOf('&'));
+            prop.url = url;
+            Multivio.CDM.setReferer(url);
+          }
+          break;
+        case 'server':
+        //server is an optional parameter
+          this.set('serverName', params[key]);
+          break;
+        default:
           var value = params[key];
           prop[key] = value;
+          break;
         }
       }
     }
     this.set('inputParameters', prop);
+    //need to have serverName before this
+    Multivio.logger.initialize();
     Multivio.logger.debug('end of configurator.readInputParameters()');
+  },
+  
+  /**
+    Observe inputParameters and  after it has changed verify if 
+    the application can start or not. 
+    
+    @observes inputParameters
+  */
+  inputParametersDidChange: function () {
+    var parameters = this.get('inputParameters');
+      //check if Multivio call is valid => get & url parameters
+    if (SC.none(parameters.scenario) || SC.none(parameters.url)) {
+      Multivio.layoutController._showUsagePage();
+    }
+    else {
+      //verify if the server and the client are compatible
+      var versionReq = this.getPath('baseUrlParameters.version');
+      Multivio.requestHandler.sendGetRequest(versionReq, this, 'verifyVersion');
+    }
+  }.observes('inputParameters'),
+  
+  /**
+    Response received about the server version.
+    If client and server are compatible start the application, 
+    if no show the error page.
+  */
+  verifyVersion: function (response) {
+    if (SC.ok(response)) {
+      Multivio.logger.debug('version received from the server: %@'.
+          fmt(response.get("body")));
+      var jsonRes = response.get("body");
+      if (jsonRes.api_version === '0.1') {
+        Multivio.logger.debug('Client and server are compatible');
+        Multivio.masterController.initialize();
+      }
+      else {
+        Multivio.errorController.
+            initialize({'message': 'incompatibility between server and client'});
+        Multivio.logger.
+            logException('Client and server are incompatible: ' + Multivio.VERSION);    
+        Multivio.layoutController._showErrorPage();
+      }
+    } 
   },
   
   /**

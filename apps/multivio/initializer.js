@@ -39,7 +39,7 @@ Multivio.initializer = SC.Object.create(
     
     @binding {Multivio.configurator.inputParameters}
   */
-  inputParametersBinding: "Multivio.configurator.inputParameters",
+ // inputParametersBinding: "Multivio.configurator.inputParameters",
 
   /**
     The name of the fixture set used
@@ -54,7 +54,7 @@ Multivio.initializer = SC.Object.create(
     @private
     @observes inputParameters
   */
-  _inputParametersDidChange: function () {
+ /* _inputParametersDidChange: function () {
     if (this.isFirstTime) {
       this.isFirstTime = NO;
     }
@@ -103,7 +103,7 @@ Multivio.initializer = SC.Object.create(
         this._showUsagePage();
       }
     }
-  }.observes('inputParameters'),
+  }.observes('inputParameters'),*/
 
   /**
     Fetch CoreDocumentModel from the server.

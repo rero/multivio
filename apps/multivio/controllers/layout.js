@@ -20,6 +20,13 @@
 Multivio.layoutController = SC.Object.create(
 /** @scope Multivio.layoutController.prototype */ {
 
+  initialize: function () {
+    // Attach the main page to the browser window in order to initiate the
+    // interface of the application
+    Multivio.getPath('mainPage.mainPane').append();
+    this._showWaitingPage();
+  },
+  
   /**
     Sets up the views in the workspace.
 
@@ -60,6 +67,74 @@ Multivio.layoutController = SC.Object.create(
 
     SC.RunLoop.end();
     Multivio.logger.info('layoutController workspace initialized');
+  },
+  
+  /**
+    Show usage page
+
+    @private  
+  */
+  _showUsagePage: function () {
+    SC.RunLoop.begin();
+    // Call the layout controller in order to setup the interface components
+    try {
+      this.configureWorkspace('usage');
+    }
+    catch (e) {
+      Multivio.logger.logException(e, 'Error showing usage page');
+    }
+    finally {
+      SC.RunLoop.end();
+    }
+  },
+  
+ /**
+    Show error page
+
+    @private  
+  */
+  _showErrorPage: function () {
+    SC.RunLoop.begin();
+    // Call the layout controller in order to setup the interface components
+    try {
+      this.configureWorkspace('error');
+    }
+    catch (e) {
+      Multivio.logger.logException(e, 'Error from server show error page');
+    }
+    finally {
+      SC.RunLoop.end();
+    }
+  },
+  
+  /**
+    Show waiting page
+
+    @private  
+  */
+  _showWaitingPage: function () {
+    // show waiting pane
+    SC.RunLoop.begin();
+    Multivio.waitingPane.append();
+    SC.RunLoop.end();
+  },
+
+  /**
+    Hide waiting page
+
+    @private  
+  */
+  _hideWaitingPage: function () {
+    // remove waiting pane
+    SC.RunLoop.begin();
+    Multivio.waitingPane.remove();
+    SC.RunLoop.end();
+  },
+  
+  setBasicLayout: function () {
+    console.info('init workspace');
+    this._hideWaitingPage();
+    this.configureWorkspace('init');   
   }
 
 });

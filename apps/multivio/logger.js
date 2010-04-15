@@ -6,8 +6,8 @@
 ==============================================================================
 */
 
-require('configurator');
-require('models/core_document_node');
+//require('configurator');
+//require('models/core_document_node');
  
 /**
 Define Log levels
@@ -46,7 +46,7 @@ Multivio.logger = SC.Object.create(
     single global logger, is because log4js does not allow different appenders
     to receive different log levels.
   */
-  init: function () {
+  initialize: function () {
 
     // force deactivation of console logging associated with Ajax loggging,
     // as done by Log4js (this overrides the last lines of code in log4js.js)

@@ -12,30 +12,30 @@
   Controller for errors that occured on the server side.
 
   @author che
-  @extends SC.ArrayController
+  @extends SC.ObjectController
   @since 0.1.0
 */
 
-Multivio.errorController = SC.ArrayController.create(
+Multivio.errorController = SC.ObjectController.create(
 /** @scope Multivio.errorController.prototype */ {
   
   /**
     Initialize the content of the controller
 
-    @param {SC.RecordArray} nodes records of the CDM
+    @param {hash} message to show
   */
-  initialize: function (nodes) {
-    this.set('content', nodes);
+  initialize: function (message) {
+    this.set('content', message);
     Multivio.logger.info('errorController initialized');
   },
 
   /**
-    Return the serverMessage that contains infomation about the error
+    Return the message that explains the error
     
-    @property {Object} firstObject of the CDM with serverMessage key
+    @property {String} ths message
   */
   serverMessage: function () {
-    return this.get('content').firstObject().get('serverMessage');
+    return this.get('content').get('message');
   }.property('content')
   
 });

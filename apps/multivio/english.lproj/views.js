@@ -6,10 +6,10 @@
 ==============================================================================
 */
 
-require('views/content');
-require('views/thumbnail');
-require('views/thumbnailContent');
-require('views/tree');
+//require('views/content');
+//require('views/thumbnail');
+//require('views/thumbnailContent');
+//require('views/tree');
 
 /**
   @class
