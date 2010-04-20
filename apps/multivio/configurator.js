@@ -123,18 +123,7 @@ Multivio.configurator = SC.Object.create(
     'init': {
       baseLayout: 'default',
       components: [
-        {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1},
-        {name: 'views.treeView',           x: 0, y: 1, xlen: 1, ylen: 1}
-      ]
-    },
-    'textWithSearch': {
-      baseLayout: 'default',
-      components: [
-        {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1},
-        {name: 'views.treeView',           x: 0, y: 1, xlen: 1, ylen: 2},
-        {name: 'views.mainContentView',    x: 1, y: 1, xlen: 1, ylen: 1},
-        {name: 'views.thumbnailView',      x: 2, y: 1, xlen: 1, ylen: 1},
-        {name: 'views.navigationView',     x: 1, y: 2, xlen: 2, ylen: 1}
+        {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1}
       ]
     },
     'contentFullScreen': {

@@ -22,7 +22,7 @@
   @since 0.1.0 
 */
 
-Multivio.TreeContent = {
+Multivio.TreeContent =  SC.Object.extend({
   
   /**
   @property {Boolean}
@@ -41,26 +41,22 @@ Multivio.TreeContent = {
   */
   treeItemChildren: function () {
     var ret = [];
-    var children = this.get('children');
-    this.labelWidth = this.get('label').length;
-    if (children.get('length') > 0) {
-      this.treeItemIsExpanded = YES;
+    var children = this.childs;
+    var label = this.label;
+    this.labelWidth = label.length;
+    if (SC.none(children)) {
+      this.treeItemIsExpanded = NO;
     }
     else {
-      this.treeItemIsExpanded = NO;
-    } 
-    
-    for (var i = 0; i < children.get('length'); i++) {
-      var oneChild = Multivio.store.find(
-          Multivio.Tree, children.objectAt(i).get('guid'));
-      var newTreeContent = SC.mixin(oneChild, Multivio.TreeContent);
-      Multivio.treeController._treeNodeById[newTreeContent.get('guid')] = 
-          newTreeContent;
-      ret.push(newTreeContent);
+      this.treeItemIsExpanded = YES;
+      for (var i = 0; i < children.length; i++) {
+        var onechild = this.childs[i];
+        var newTreeContent = Multivio.TreeContent.create(onechild);
+        ret.push(newTreeContent);
+      }
     }
-    
     if (ret.length === 0) ret = null;
     return ret;
   }.property().cacheable() 
 
-};
+});

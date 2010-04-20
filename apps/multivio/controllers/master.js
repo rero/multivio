@@ -69,7 +69,7 @@ Multivio.masterController = SC.ObjectController.create(
     }
     else {  
       var mimeType;
-      if (SC.none(this.currentFile)) {
+      if (SC.none(this.get('currentFile'))) {
         var reference = Multivio.CDM.getReferer();
         var meta = Multivio.CDM.getMetadata(reference);
         mimeType = meta.mime;
@@ -78,12 +78,13 @@ Multivio.masterController = SC.ObjectController.create(
         this.set('currentMetadata', meta);
         SC.RunLoop.end();
         Multivio.layoutController.setBasicLayout();
+        //Multivio.treeController.initialize(reference);
         this.descriptiveMetadataDictionary();
       }
       else {
         mimeType = Multivio.CDM.getMetadata(this.get('currentFile')).mime;
       }
-      if (mimeType !== this.currentType) {
+      if (mimeType !== this.get('currentType')) {
         SC.RunLoop.begin();
         this.set('currentType', mimeType);
         SC.RunLoop.end();
@@ -94,16 +95,20 @@ Multivio.masterController = SC.ObjectController.create(
   currentTypeDidChange: function () {
     console.info('currentTypeDidChange...');
     var ct = this.get('currentType');
+    var cf = this.get('currentFile');
     switch (ct) {
     
     case 'application/pdf':
       console.info('pdf');
+      Multivio.treeController.initialize(cf);
+      Multivio.thumbnailController.initialize(cf);
+      Multivio.navigationController.initialize(cf);
       break;
       
     case 'text/xml':
-      var cf = this.get('currentFile');
-      var strLog = Multivio.CDM.getLogicalStructure(cf);
-      var strPh = Multivio.CDM.getPhysicalstructure(cf);
+      Multivio.thumbnailController.initialize(cf);
+      //var strLog = Multivio.CDM.getLogicalStructure(cf);
+      //var strPh = Multivio.CDM.getPhysicalstructure(cf);
       break;
       
     default:
@@ -119,7 +124,10 @@ Multivio.masterController = SC.ObjectController.create(
   currentPositionDidChange: function () {
   },
 
-
+  getCurrentFile: function () {
+    var cf = this.get('currentFile');
+    return cf;
+  },
 
   /**
     The document's descriptive metadata contained in the root node of the

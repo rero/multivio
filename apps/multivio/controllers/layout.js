@@ -69,6 +69,54 @@ Multivio.layoutController = SC.Object.create(
     Multivio.logger.info('layoutController workspace initialized');
   },
   
+  setBasicLayout: function () {
+    this._hideWaitingPage();
+    this.configureWorkspace('init');   
+  },
+  
+  removeComponent: function (component) {
+    var mainPage = Multivio.getPath('mainPage.mainPane');
+    mainPage.removeComponent(component); 
+  },
+  
+  addComponent: function (component) {
+    var mainPage = Multivio.getPath('mainPage.mainPane');
+    switch (component) {
+    case 'views.thumbnailView':
+      mainPage.layOutComponent({
+          name: 'views.thumbnailView', 
+          x: 2, 
+          y: 1, 
+          xlen: 1, 
+          ylen: 1
+        });
+      break;
+        
+    case 'views.treeView':
+      mainPage.layOutComponent({
+          name: 'views.treeView', 
+          x: 0, 
+          y: 1, 
+          xlen: 1, 
+          ylen: 1
+        });
+      break;
+      
+    case 'views.navigationView':
+      mainPage.layOutComponent({
+          name: 'views.navigationView',
+          x: 1, 
+          y: 2, 
+          xlen: 2, 
+          ylen: 1
+        });
+      break;
+    default:
+      console.info('unknown component ' + component);
+      break;
+    }
+  },
+  
   /**
     Show usage page
 
@@ -129,12 +177,6 @@ Multivio.layoutController = SC.Object.create(
     SC.RunLoop.begin();
     Multivio.waitingPane.remove();
     SC.RunLoop.end();
-  },
-  
-  setBasicLayout: function () {
-    console.info('init workspace');
-    this._hideWaitingPage();
-    this.configureWorkspace('init');   
   }
 
 });

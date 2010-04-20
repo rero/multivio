@@ -144,7 +144,9 @@ Multivio.navigationController = SC.ObjectController.create(
     Initialize this controller, retrieve the number of pages.
   */
   initialize: function () {
-    this._numberOfPages = this.get('_retrieveNumberOfPages');
+    var nb =  Multivio.masterController.get('currentMetadata').nPages;
+    this.set('_numberOfPages', nb);
+    Multivio.layoutController.addComponent('views.navigationView');
     Multivio.logger.info('navigationController initialized');
   }
   

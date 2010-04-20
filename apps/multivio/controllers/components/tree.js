@@ -25,7 +25,12 @@ Multivio.treeController = SC.TreeController.create(
     
     @binding {Multivio.CoreDocumentNode}
   */
-  masterSelectionBinding: "Multivio.masterController.masterSelection",
+ // masterSelectionBinding: "Multivio.masterController.masterSelection",
+  
+  //masterBinding: "Multivio.masterController",
+  
+  logicalStructureBinding: "Multivio.CDM.logicalStructure",
+  treeExist: NO,
 
   /**
     A conversion table (masterSelectionId -> treeNodeId) used to quickly
@@ -47,10 +52,38 @@ Multivio.treeController = SC.TreeController.create(
 
     @param {SC.RecordArray} nodes records of the CDM
   */
-  initialize: function (nodes) {
-    this._createSubmodel(nodes);
-    this._buildTree();
-    Multivio.logger.info('treeController initialized');
+  initialize: function (url) {
+    var logStr = Multivio.CDM.getLogicalStructure(url);
+    if (!SC.none(logStr) && logStr !== -1) {
+      this._createTree(logStr);
+    }
+  },
+  
+  logicalStructureDidChange: function () {
+    var cf = Multivio.masterController.get('currentFile');
+    if (!SC.none(cf)) {    
+      var logStr = Multivio.CDM.getLogicalStructure(cf);
+      if (!SC.none(logStr) && logStr !== -1) {
+        this._createTree(logStr);
+      }
+      else if (logStr === -1) {
+        Multivio.layoutController.removeComponent('views.treeView');
+      }
+    }
+  }.observes('logicalStructure'),
+  
+  _createTree: function (structure) {
+    if (!this.get('treeExist')) {
+      this.set('treeExist', YES);
+      var rootNodeHash = {
+        label: "A new PDF",
+        childs: structure
+      };
+      //this.set('treeItemChildrenKey', 'childs');
+      var treeContent = Multivio.TreeContent.create(rootNodeHash);
+      this.set('content', treeContent);
+      Multivio.layoutController.addComponent('views.treeView');
+    }
   },
 
   /**

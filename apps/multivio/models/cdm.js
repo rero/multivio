@@ -69,7 +69,8 @@ Multivio.CDM = SC.Object.create(
           getPath('baseUrlParameters.metadata');
       serverAdress += url;
       Multivio.requestHandler.
-          sendGetRequest(serverAdress, this, 'setMetadata', url);  
+          sendGetRequest(serverAdress, this, 'setMetadata', url);
+      return -1;  
     }
     else {
       var md = this.get('metadata')[url];
@@ -84,7 +85,7 @@ Multivio.CDM = SC.Object.create(
   @param {String} url the url parameter of the input url  
   */
   setReferer: function (url) {
-    Multivio.logger.debug('referer setted to ' + url);
+    //Multivio.logger.debug('referer setted to ' + url);
     this.set('referer', url);
   },
   
@@ -106,6 +107,7 @@ Multivio.CDM = SC.Object.create(
   */
   setLogicalStructure: function (response, url) {
     if (SC.ok(response)) {
+      console.info('set Logical -----');
       Multivio.logger.debug('logicalStructure received from the server: %@'.
           fmt(response.get("body")));    
       var jsonRes = response.get("body");
@@ -145,6 +147,7 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setLogicalStructure', url); 
+      return -1;
     }
     else {
       var lst = this.get('logicalStructure')[url];
@@ -201,6 +204,7 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setPhysicalStructure', url);
+      return -1;
     }
     else {
       var pst = this.get('physicalStructure')[url];
