@@ -39,6 +39,9 @@ Multivio.navigationController = SC.ObjectController.create(
     @binding {Multivio.CoreDocumentNode}
    */
   contentBinding: SC.Binding.single("Multivio.masterController.masterSelection"),
+  
+  metadata: null,
+  metadataBinding: SC.Binding.oneWay("Multivio.CDM.metadata"),
  
   /**
     Updates currentPage by observing changes in master controller's
@@ -143,8 +146,9 @@ Multivio.navigationController = SC.ObjectController.create(
   /**
     Initialize this controller, retrieve the number of pages.
   */
-  initialize: function () {
-    var nb =  Multivio.masterController.get('currentMetadata').nPages;
+  initialize: function (url) {
+    var meta = Multivio.CDM.getMetadata(url);
+    var nb = meta.nPages;
     this.set('_numberOfPages', nb);
     Multivio.layoutController.addComponent('views.navigationView');
     Multivio.logger.info('navigationController initialized');

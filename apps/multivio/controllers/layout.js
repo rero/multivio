@@ -82,6 +82,16 @@ Multivio.layoutController = SC.Object.create(
   addComponent: function (component) {
     var mainPage = Multivio.getPath('mainPage.mainPane');
     switch (component) {
+    case 'views.mainContentView':
+      mainPage.layOutComponent({
+          name: 'views.mainContentView', 
+          x: 1, 
+          y: 1, 
+          xlen: 1, 
+          ylen: 1
+        });
+      break;
+      
     case 'views.thumbnailView':
       mainPage.layOutComponent({
           name: 'views.thumbnailView', 

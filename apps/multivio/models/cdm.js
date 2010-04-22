@@ -18,9 +18,9 @@ Multivio.CDM = SC.Object.create(
 /** @scope Multivio.CDM.prototype */ {
 
   referer: undefined,
-  metadata: null,
-  logicalStructure: null,
-  physicalStructure: null,
+  metadata: undefined,
+  logicalStructure: undefined,
+  physicalStructure: undefined,
 
   /**
   store server metadata for this url
@@ -48,9 +48,7 @@ Multivio.CDM = SC.Object.create(
       else {
         var t2 = {};
         t2[url] =  jsonRes;
-        SC.RunLoop.begin();
         this.set('metadata', t2);
-        SC.RunLoop.end();
       }
     }
   },
@@ -70,11 +68,12 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setMetadata', url);
-      return -1;  
+      return -1;
+        
     }
     else {
       var md = this.get('metadata')[url];
-      Multivio.logger.debug('metadata returned by cdm ' + md);
+      Multivio.logger.debug('metadata returned by cdm ');
       return md;
     }
   },
@@ -107,7 +106,6 @@ Multivio.CDM = SC.Object.create(
   */
   setLogicalStructure: function (response, url) {
     if (SC.ok(response)) {
-      console.info('set Logical -----');
       Multivio.logger.debug('logicalStructure received from the server: %@'.
           fmt(response.get("body")));    
       var jsonRes = response.get("body");
@@ -127,12 +125,10 @@ Multivio.CDM = SC.Object.create(
       else {
         var t2 = {};
         t2[url] =  jsonRes;
-        SC.RunLoop.begin();
         this.set('logicalStructure', t2);
-        SC.RunLoop.end();
       }
     }
-  },  
+  },
 
   /**
   return the logicalStrucure for this url
@@ -183,12 +179,10 @@ Multivio.CDM = SC.Object.create(
       else {
         var t2 = {};
         t2[url] =  jsonRes;
-        SC.RunLoop.begin();
         this.set('physicalStructure', t2);
-        SC.RunLoop.end();
       }
     }
-  },  
+  },
 
   /**
   return the physical strucure for this url or send the request to the 

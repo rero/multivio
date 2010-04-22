@@ -347,7 +347,7 @@ Multivio.views = SC.Page.design(
           isTextSelectable: YES,
           tagName: 'span',
           classNames: 'metadata_primary',
-          contentBinding: 'Multivio.masterController.descriptiveMetadataDictionary',
+          contentBinding: 'Multivio.metadataController.descriptiveMetadataDictionary',
           contentValueKey: 'title'
         }),
         SC.LabelView.design({
@@ -355,7 +355,7 @@ Multivio.views = SC.Page.design(
           isTextSelectable: YES,
           tagName: 'span',
           classNames: 'metadata_secondary',
-          contentBinding: 'Multivio.masterController.descriptiveMetadataDictionary',
+          contentBinding: 'Multivio.metadataController.descriptiveMetadataDictionary',
           contentValueKey: 'creator'
         })
       ]

@@ -31,7 +31,10 @@ Multivio.ContentView = SC.ScrollView.extend(
 
     @binding {Multivio.CoreDocumentNode}
   */
-  masterSelectionBinding: 'Multivio.masterController.masterSelection', 
+  masterSelectionBinding: 'Multivio.masterController.masterSelection',
+  
+  selection: null,
+  selectionBinding: 'Multivio.imageController.selection', 
   
   /**
     Binds to the isFirstFile property of the masterController
@@ -151,6 +154,19 @@ Multivio.ContentView = SC.ScrollView.extend(
     Multivio.logger.debug('ContentView#_masterSelectionDidChange: %@'.
         fmt(this.get('masterSelection').get('guid')));
   }.observes('masterSelection'),
+  
+  _selectionDidChange: function () {
+    var currentSelection = this.get('selection');
+    if (!SC.none(currentSelection)) {
+      var defaultUrl = currentSelection.url;
+      //var pageNumber = currentSelection.pageNumber;
+      //var imageUrl = Multivio.configurator.getImageUrl(defaultUrl, pageNumber);
+      SC.RunLoop.begin();
+      SC.imageCache.loadImage(defaultUrl, this, this._adjustSize);
+      SC.RunLoop.end();
+    }
+    console.info('Selection image changed');
+  }.observes('selection'),
   
   /**
     Set zoomFactor and zoomStep according to the size of the first image 

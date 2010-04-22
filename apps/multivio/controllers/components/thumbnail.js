@@ -23,14 +23,13 @@ Multivio.thumbnailController = SC.ArrayController.create(
   allowsMultipleSelection: NO,
 
   /**
-    Binds to the masterController's masterSelection
+    Binds to the CDM.physicalStructure
     
-    @binding {Multivio.coreDocumentNode}
+    @binding {hash}
    */
-  //masterSelectionBinding: "Multivio.masterController.masterSelection",
-  masterBinding: "Multivio.masterController",
   
-  physicalStructureBinding: "Multivio.CDM.physicalStructure",
+  physicalStructure: null,
+  physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
 
   /**
     A conversion table (masterSelectionId -> thumbnail) used to quickly
@@ -48,34 +47,36 @@ Multivio.thumbnailController = SC.ArrayController.create(
   initialize: function (url) {
     var phSt = Multivio.CDM.getPhysicalstructure(url);
     if (!SC.none(phSt) && phSt !== -1) {
-      this._createThumbnail(phSt);
+      this._createThumbnails(phSt);
     }
+    Multivio.logger.info('thumbnailController initialized');
   },
   
   physicalStructureDidChange: function () {
-    var cf = this.get('master').get('currentFile');
+    var cf = Multivio.masterController.get('currentFile');
     if (!SC.none(cf)) {
-      var phSt = Multivio.CDM.getPhysicalstructure(cf);
-      if (!SC.none(phSt)) {
-        if (phSt === -1) {
+      var ph = this.get('physicalStructure')[cf];
+      if (!SC.none(ph)) {
+        if (ph === -1) {
           Multivio.layoutController.removeComponent('views.thumbnailView');
         }
         else {
-          this._createThumbnail(phSt);
+          this._createThumbnails(ph);
         }
       }
     }
   }.observes('physicalStructure'),
   
   
-  _createThumbnail: function (structure) {
-    var files = structure.pop();
-    var ct = this.get('master').get('currentType');
+  _createThumbnails: function (structure) {
+    var ct = Multivio.masterController.get('currentType');
     var cont = [];
     var newTable = {};
     if (ct === 'application/pdf') {
-      var pdfUrl = files.url;
-      var nbOfPage =  this.get('master').get('currentMetadata').nPages;
+      var firstChild = structure[0];
+      var pdfUrl = firstChild.url;
+      var cf = Multivio.masterController.get('currentFile');
+      var nbOfPage = Multivio.CDM.getMetadata(cf).nPages;
       //create a thumbnail object for each page
       for (var i = 1; i < nbOfPage + 1; i++) {
         var thumbnailUrl = Multivio.configurator.get('serverName') + 
@@ -91,39 +92,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     this.set('content', cont);
     this.set('_cdmNodeToThumbnail', newTable);
     Multivio.layoutController.addComponent('views.thumbnailView');
-  },
-  
-  /**
-    Create the thumbnail submodel from the CDM nodes
-    
-    @private
-    @param {SC.RecordArray} nodes records of the CDM    
-  */
-  _createSubmodel: function (nodes) {
-    nodes.forEach(function (node) {
-      if (node.get('isLeafNode')) {
-        var cdmNodeId = node.get('guid');
-        var id = 'f%@'.fmt(cdmNodeId);
-        // to create thumbnail url
-        var defaultUrl = node.get('urlDefault');
-        var sequenceNumber = node.get('sequenceNumber');
-        var pageNumber = !SC.none(node.get('localSequenceNumber')) ?
-            node.get('localSequenceNumber') : 0;
-        var thumbnailUrl = Multivio.configurator.getThumbnailUrl(
-            defaultUrl, pageNumber);
-
-        var thumbnailHash = {
-            guid: id,
-            url: thumbnailUrl,
-            pageNumber: sequenceNumber,
-            coreDocumentNode: cdmNodeId
-          };
-        // create a new thumbnail record
-        var thumbnail = Multivio.store.createRecord(
-          Multivio.Thumbnail, thumbnailHash, id);
-      }
-    });
-  },
+  }
    
   /**
     If 'content' changes, the _cdmNodeToThumbnail conversion table must
@@ -132,7 +101,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes content    
     @private
   */
-  _contentDidChange: function () {
+ /* _contentDidChange: function () {
     var newTable = {};
     var thumbnails = Multivio.store.find(Multivio.Thumbnail);
     if (thumbnails && thumbnails.isEnumerable) {
@@ -144,7 +113,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
     this.set('_cdmNodeToThumbnail', newTable);
 
-  }.observes('content'),
+  }.observes('content'),*/
 
   /**
     Updates the masterSelection binding if the currently selected thumbnail 
@@ -153,11 +122,11 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes selection
     @private
   */
-  _selectionDidChange: function () {
+ /* _selectionDidChange: function () {
     if (!SC.none(this.get('selection')) &&
         !SC.none(this.get('selection').firstObject())) {
       var pageNumber = this.get('selection').firstObject().pageNumber;
-      //this.get('master').set('currentPosition', pageNumber);
+      //this.get('master').set('currentPosition', pageNumber);*/
       /*var coreDocumentNode =
           this.get('selection').firstObject().get('coreDocumentNode');
       // make sure the selection has actually changed, (to avoid loopbacks)
@@ -170,8 +139,8 @@ Multivio.thumbnailController = SC.ArrayController.create(
         Multivio.logger.debug('thumbnailController#_selectionDidChange: %@'.
             fmt(this.get('selection').firstObject()));
       }*/
-    }
-  }.observes('selection'),
+   /* }
+  }.observes('selection'),*/
 
   /**
     Updates thumbnail selection by observing changes in master controller's
@@ -180,11 +149,11 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes masterSelection
     @private
   */
-  _masterSelectionDidChange: function () {
+ /* _masterSelectionDidChange: function () {
     // find the thumbnail that corresponds to the current master selection
     var currentThumbnailSelection = !SC.none(this.get('selection')) ?
         this.get('selection').firstObject() : undefined;
-    var currentPosition = this.get('master').get('currentPosition'); 
+    var currentPosition = this.get('master').get('currentPosition'); */
     //if (!SC.none(currentPosition)) {    
         
       //this.set('selection', SC.SelectionSet.create().addObject(newThumbnail));
@@ -203,6 +172,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
             fmt(this.get('masterSelection').get('guid')));
       }
     }*/
-  }.observes('masterSelection')
+ // }.observes('masterSelection')
 
 });

@@ -38,16 +38,19 @@ Multivio.masterController = SC.ObjectController.create(
   */
   currentType: null,
   
-  currentMetadata: null,
+  currentMetadata: undefined,
   
   /**
     Binds to the cdm metadata
 
     @binding {String}
    */
-  metadataBinding: "Multivio.CDM.metadata",
+  metadata: null,
+  metadataBinding: SC.Binding.oneWay("Multivio.CDM.metadata"),
    
   isFirstTime: YES,
+  
+  //dataProvider: undefined,
   
   /**
     Initialize masterController
@@ -64,45 +67,34 @@ Multivio.masterController = SC.ObjectController.create(
   Get the first part of the document and set currentFilePosition
   */
   metadataDidChange: function () {
-    if (this.isFirstTime) {
-      this.isFirstTime =  NO;
+    var mimeType;
+    if (SC.none(this.get('currentFile'))) {
+      var reference = Multivio.CDM.getReferer();
+      var meta = Multivio.CDM.getMetadata(reference);
+      mimeType = meta.mime;
+      this.set('currentFile', reference);
+      this.set('currentMetadata', meta);
+      Multivio.layoutController.setBasicLayout();
+      Multivio.metadataController.initialize(reference);
     }
-    else {  
-      var mimeType;
-      if (SC.none(this.get('currentFile'))) {
-        var reference = Multivio.CDM.getReferer();
-        var meta = Multivio.CDM.getMetadata(reference);
-        mimeType = meta.mime;
-        SC.RunLoop.begin();
-        this.set('currentFile', reference);
-        this.set('currentMetadata', meta);
-        SC.RunLoop.end();
-        Multivio.layoutController.setBasicLayout();
-        //Multivio.treeController.initialize(reference);
-        this.descriptiveMetadataDictionary();
-      }
-      else {
-        mimeType = Multivio.CDM.getMetadata(this.get('currentFile')).mime;
-      }
-      if (mimeType !== this.get('currentType')) {
-        SC.RunLoop.begin();
-        this.set('currentType', mimeType);
-        SC.RunLoop.end();
-      }
+    else {
+      mimeType = Multivio.CDM.getMetadata(this.get('currentFile')).mime;
+    }
+    if (mimeType !== this.get('currentType')) {
+      this.set('currentType', mimeType);
     }
   }.observes('metadata'),
   
   currentTypeDidChange: function () {
-    console.info('currentTypeDidChange...');
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
     switch (ct) {
     
     case 'application/pdf':
-      console.info('pdf');
       Multivio.treeController.initialize(cf);
       Multivio.thumbnailController.initialize(cf);
       Multivio.navigationController.initialize(cf);
+      Multivio.imageController.initialize(cf);
       break;
       
     case 'text/xml':
@@ -128,16 +120,11 @@ Multivio.masterController = SC.ObjectController.create(
     var cf = this.get('currentFile');
     return cf;
   },
+  
+  currentMetadataChange: function () {
+    var cm = this.get('currentMetadata');
+  }.observes('currentMetadata')
 
-  /**
-    The document's descriptive metadata contained in the root node of the
-    CoreDocumentModel
-    
-    @observes content first node contains the descriptiveMetadataDictionary
-  */
-  descriptiveMetadataDictionary: function () { 
-    var cmt = this.get('currentMetadata');
-    return cmt;
-  }.property('content')  
+
 
 });

@@ -28,7 +28,7 @@ Multivio.treeController = SC.TreeController.create(
  // masterSelectionBinding: "Multivio.masterController.masterSelection",
   
   //masterBinding: "Multivio.masterController",
-  
+  logicalStructure: null,
   logicalStructureBinding: "Multivio.CDM.logicalStructure",
   treeExist: NO,
 
@@ -57,12 +57,13 @@ Multivio.treeController = SC.TreeController.create(
     if (!SC.none(logStr) && logStr !== -1) {
       this._createTree(logStr);
     }
+    Multivio.logger.info('treeController initialized');
   },
   
   logicalStructureDidChange: function () {
     var cf = Multivio.masterController.get('currentFile');
     if (!SC.none(cf)) {    
-      var logStr = Multivio.CDM.getLogicalStructure(cf);
+      var logStr = this.get('logicalStructure')[cf];
       if (!SC.none(logStr) && logStr !== -1) {
         this._createTree(logStr);
       }
@@ -86,181 +87,6 @@ Multivio.treeController = SC.TreeController.create(
     }
   },
 
-  /**
-    Creates the tree submodel
-
-    @private
-    @param {SC.RecordArray} cdmNodes records of the CDM
-  */
-  _createSubmodel: function (cdmNodes) {
-    // create a fake node to be used as the root Node
-    var listOfChildren = [];
-    listOfChildren.push("t" + cdmNodes.firstObject().get('guid'));
-    var rootNodeHash = {
-        guid:         "tn00000",
-        label:        "Root",
-        children:     listOfChildren
-      };
-    var newTreeNode = Multivio.store.createRecord(
-        Multivio.Tree, rootNodeHash, "tn00000");
-    
-    // start the submodel creation from the CDM root node
-    this._visitCdmNode(cdmNodes.firstObject());
-  },
-  
-  /**
-    Create the Tree structure using a mixin between 
-    Multivio.Tree & Multivio.TreeContent
-
-    @private
-  */  
-  _buildTree: function () {
-    var treeNodes = Multivio.store.find(Multivio.Tree).sortProperty('guid');
-    var treeContent = SC.mixin(treeNodes.firstObject(), Multivio.TreeContent);
-    this.set('content', treeContent);
-  },
-
-  /**
-    Recursive function that handles a CDM node during the construction of the
-    tree submodel.
-
-    There are 2 main kinds of CDM nodes:
-    - A: leaf:
-        they have a sequenceNumber, a urlDefault and no children; these are
-        the nodes with content to be displayed
-    - B: inner nodes, with two subkinds:
-        - B.1: inner nodes with label
-            they have a label and children; a new tree node is created for
-            each CDM node of this kind
-        - B.2: inner nodes without label:
-            they have no label but they have children; they exist mainly in
-            order to group a list of leaf nodes under no specific label, which
-            means that the user cannot navigate
-
-    General algorithm:
-      start by visit(CDM root node)
-      visit(CDM node):
-        if CDM node is a leaf:
-          return leaf id
-        else:
-          initialize list L1 of CDM leaf node ids (empty)
-          initialize list L2 of child tree nodes (empty)
-          for all CDM node children:
-            visit(child)
-            if child returned one or more ids:
-              add id(s) to L1
-            else if child returned a new tree node:
-              add new tree node to L2
-          if CDM node of kind B.1 (with label):
-            return new tree node using:
-              - L1 as associated CDM leaf node ids;
-              - L2 as children;
-              - first element of L1 as target CDM node
-          else (CDM node of kind B.2, without label):
-            return L1
-
-    @returns {Object} Returns hash table with keys {newNode, leaves};
-    - 'newNode' is the id of a newly created tree node;
-    - 'leaves' is a list of CDM leaf nodes collected during the execution;
-    the properties are not both returned each time the function is called; if
-    a new tree node is created, then 'newNode' holds a value, otherwise it is
-    'leaves' that holds a value;
-    @param {SC.RecordArray} cdmNode records of the CDM
-    @private
-  */
-  _visitCdmNode: function (cdmNode) {
-    var cdmNodeLabel    = cdmNode.get('label'),
-        cdmNodeChildren = cdmNode.get('children');
-
-    // integrity check: cdmNode should be either a leaf node or an inner node
-    if (!cdmNode.get('isLeafNode') && !cdmNode.get('isInnerNode')) {
-      throw {message: "cdmNode does not qualify either as leaf or as inner node"};
-    }
-
-    // if CDM node is a leaf:
-    if (cdmNode.get('isLeafNode')) {
-      return {leaves: [cdmNode.get('guid')]};
-    }
-    else { // inner node
-      var listOfLeaves   = [],
-          listOfChildren = [];
-
-      // visit cdmNode children
-      if (!SC.none(cdmNodeChildren) && cdmNodeChildren.isEnumerable) {
-        // recursively visit child nodes of cdmNode
-        for (var i = 0; i < cdmNodeChildren.length(); i++) {
-          var cdmChild = cdmNodeChildren.objectAt(i);
-          if (!SC.none(cdmChild)) {
-            var result = this._visitCdmNode(cdmChild);
-            // if child returned a new tree node id
-            if (!SC.none(result.newNode)) {
-              listOfChildren.push(result.newNode.get('guid'));
-            }
-            else if (!SC.none(result.leaves)) { // child returned list of leaves
-              listOfLeaves = listOfLeaves.concat(result.leaves);
-            }
-          }
-        }
-      }
-      // if CDM node of kind B.1 (with label)
-      if (SC.typeOf(cdmNodeLabel) === SC.T_STRING && cdmNodeLabel.length > 0) {
-        // tree node guid is based on the id of cdmNode, for easier tracing
-        var newTreeNodeId = 't%@'.fmt(cdmNode.get('guid'));
-        // create hash
-        var treeNodeHash = {
-            guid:             newTreeNodeId,
-            label:            cdmNodeLabel,
-            cdmLeafNodeIds:   listOfLeaves
-          };
-          
-        // if the new tree node has CDM leaf nodes of its own then the
-        // 'targetCdmLeaf' property corresponds to its first CDM leaf node; if
-        // the new tree node has child tree nodes, then its 'targetCdmLeaf'
-        // property is inherited from its first child; if both are present, then
-        // the 'targetCdmLeaf' property corresponds to the earliest of them in
-        // the sequence
-        if (listOfChildren.length > 0) {
-          treeNodeHash.children = listOfChildren;
-
-          var firstTreeChild =
-              Multivio.store.find(Multivio.Tree, listOfChildren[0]);
-          var firstTreeChildCdmLeaf =
-              firstTreeChild.get('targetCdmLeaf').get('guid');
-
-          if (SC.typeOf(firstTreeChildCdmLeaf) === SC.T_STRING) {
-            if (SC.typeOf(listOfLeaves[0]) === SC.T_STRING) {
-              // there is both a 'firstTreeChildCdmLeaf' and a first direct leaf;
-              // pick the earliest (TODO: based on the id - not trustworthy!)
-              if (firstTreeChildCdmLeaf < listOfLeaves[0]) {
-                treeNodeHash.targetCdmLeaf = firstTreeChildCdmLeaf;
-              }
-              else {
-                treeNodeHash.targetCdmLeaf = listOfLeaves[0];
-              }
-            }
-            else {
-              treeNodeHash.targetCdmLeaf = firstTreeChildCdmLeaf;
-            }
-          }
-        }
-        else {
-          // 'targetCdmLeaf' is the first direct CDM leaf
-          treeNodeHash.targetCdmLeaf = listOfLeaves[0];
-        }
-        // add the new tree node to the store and commit
-        var newTreeNode = Multivio.store.createRecord(
-            Multivio.Tree, treeNodeHash, newTreeNodeId);
-        // update the table _cdmNodeToTreeNode
-        for (var j = 0; j < listOfLeaves.length; j++) {
-          this._cdmNodeToTreeNode[listOfLeaves[j]] = treeNodeHash.guid;
-        }
-        return { newNode: newTreeNode };
-      }
-      else { // CDM node of kind B.2 (without label)
-        return {leaves: listOfLeaves};
-      }
-    }
-  },
 
   /**
     Updates the masterSelection binding if the currently 
