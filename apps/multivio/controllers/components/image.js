@@ -13,7 +13,7 @@
 
   @author che
   @extends SC.ArrayController
-  @since 0.1.0
+  @since 0.1.1
 */
 Multivio.imageController = SC.ArrayController.create(
 /** @scope Multivio.imageController.prototype */ {
@@ -27,10 +27,18 @@ Multivio.imageController = SC.ArrayController.create(
    */
   physicalStructure: null,
   physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
+ 
+  /**
+    Binds to the currentPosition of the masterController
+    
+    @binding {hash}
+   */ 
+  position: null,
+  positionBinding: "Multivio.masterController.currentPosition",
   
   /**
-  Initialize this controller. This controller need to know 
-  the physical structure of the document to show.
+  Initialize the controller. This controller need to know 
+  the physical structure of the document.
   
   @param {String} url
   */   
@@ -48,7 +56,7 @@ Multivio.imageController = SC.ArrayController.create(
     the imageController.
 
     @observes physicalStructure
-   */ 
+  */ 
   physicalStructureDidChange: function () {
     var cf = Multivio.masterController.get('currentFile');
     if (!SC.none(cf)) {
@@ -69,7 +77,7 @@ Multivio.imageController = SC.ArrayController.create(
     Create imageController content
 
     @private
-   */ 
+  */ 
   _createImages: function (structure, nb) {
     //TO do verify the currentType to know what to do
     var files = structure[0];
@@ -86,6 +94,25 @@ Multivio.imageController = SC.ArrayController.create(
     }
     this.set('content', cont);
     Multivio.layoutController.addComponent('views.mainContentView');
-  }
+    Multivio.logger.info('imageController#content created and layout setted');
+  },
+  
+  /**
+    Change image in the view by observing changes of the position. 
+    
+    @observes position
+  */
+  positionDidChange: function () {
+    var newPosition = this.get('position');
+    if (!SC.none(newPosition)) {
+      //need to sub 1 because array start at 0 and page start at 1
+      newPosition--;  
+      var cont = this.get('content');
+      var image = cont[newPosition];
+      this.set('selection', SC.SelectionSet.create().addObject(image));
+      Multivio.logger.info('imageController#positionDidChange: %@'.
+          fmt(this.get('selection').firstObject()));
+    }
+  }.observes('position')
   
 });

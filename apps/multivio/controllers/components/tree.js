@@ -21,16 +21,23 @@ Multivio.treeController = SC.TreeController.create(
 /** @scope Multivio.treeController.prototype */ {
 
   /**
-    Binds to the masterController's masterSelection
+    Binds to the CDM.logicalStructure
     
-    @binding {Multivio.CoreDocumentNode}
+    @binding {hash}
   */
- // masterSelectionBinding: "Multivio.masterController.masterSelection",
-  
-  //masterBinding: "Multivio.masterController",
   logicalStructure: null,
   logicalStructureBinding: "Multivio.CDM.logicalStructure",
+  
+  /**
+    Binds to the masterController's currentPosition
+    
+    @binding {hash}
+  */
+  position: null,
+  positionBinding: "Multivio.masterController.currentPosition",
+  
   treeExist: NO,
+  
 
   /**
     A conversion table (masterSelectionId -> treeNodeId) used to quickly
@@ -41,16 +48,17 @@ Multivio.treeController = SC.TreeController.create(
   _cdmNodeToTreeNode: {},
   
   /**
-    An Array that contains all nodes of the tree with there id.
+    An Array that contains all nodes of the tree for a position.
   
     @private
   */
-  _treeNodeById: {},
+  _treeLabelByPosition: undefined,
   
   /**
-    Initialize this controller, create the sub-model and the tree model
+    Initialize this controller and verify if the sub-model can be created. 
+    The sub-model need to have the logical structure of the document.
 
-    @param {SC.RecordArray} nodes records of the CDM
+    @param {String} url the current file url
   */
   initialize: function (url) {
     var logStr = Multivio.CDM.getLogicalStructure(url);
@@ -59,7 +67,12 @@ Multivio.treeController = SC.TreeController.create(
     }
     Multivio.logger.info('treeController initialized');
   },
-  
+
+  /**
+    CDM.logicalStructure has changed. Verify if we can create the sub-model.
+
+    @observes logicalStructure
+  */  
   logicalStructureDidChange: function () {
     var cf = Multivio.masterController.get('currentFile');
     if (!SC.none(cf)) {    
@@ -72,146 +85,139 @@ Multivio.treeController = SC.TreeController.create(
       }
     }
   }.observes('logicalStructure'),
-  
+
+  /**
+    Create the sub-model of this controller and set the content.
+    
+    @param {Object} logicalStructure
+    @private
+  */  
   _createTree: function (structure) {
-    if (!this.get('treeExist')) {
+    if (! this.get('treeExist')) {
       this.set('treeExist', YES);
       var rootNodeHash = {
+        file_postition: {
+          index: 0
+        },
         label: "A new PDF",
         childs: structure
       };
-      //this.set('treeItemChildrenKey', 'childs');
+      this._treeLabelByPosition = [];
+      this._treeLabelByPosition[0] = [rootNodeHash];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
       this.set('content', treeContent);
       Multivio.layoutController.addComponent('views.treeView');
+      Multivio.logger.info('treeController#_createTree');
     }
   },
 
-
   /**
-    Updates the masterSelection binding if the currently 
-    selected tree node has changed.
-
-    @private
-    @observes selection
-   */
-  _selectionDidChange: function () {
-    var needToChange =  YES;
-    var treeSelectionId = this.get('selection');
-    // if selection is not undefined, retrieve the corresponding Tree record
-    if (!SC.none(this.get('selection')) && 
-      !SC.none(this.get('selection').firstObject()))  {
-      treeSelectionId = this.get('selection').firstObject().get('guid');
-      var treeSelection = Multivio.store.find(Multivio.Tree, treeSelectionId);
-      
-      // retrieve target and leaf of this Tree record
-      if (!SC.none(treeSelection)) {
-        var target = treeSelection.get('targetCdmLeaf');
-        var cdmLeafNodeIds = treeSelection.get('cdmLeafNodeIds');
-        
-        // retrieve the master selection
-        var currentMasterSelection = this.get('masterSelection');
-        if (!SC.none(currentMasterSelection)) {
-          var masterSelectionId = currentMasterSelection.get('guid');
-          
-          // verify if the selection is not the selected Tree Node
-          if (SC.typeOf(cdmLeafNodeIds) === SC.T_ARRAY) {
-            for (var i = 0; i < cdmLeafNodeIds.length; i++) {
-              if (cdmLeafNodeIds[i] === masterSelectionId) {
-                // the change in the three selection does not imply a change of
-                // the master selection
-                needToChange = NO;
-                break;
-              }
-            }
-          }
-        }
-        // verify target !== masterSelection
-        if (!SC.none(target) && this.get('masterSelection') !== target) {
-          // change the masterSelection if needed
-          if (needToChange) {
-            SC.RunLoop.begin();
-            this.set('masterSelection', treeSelection.get('targetCdmLeaf'));
-            SC.RunLoop.end();
-            
-            Multivio.logger.debug('treeController#_selectionDidChange: %@'.
-                fmt(treeSelectionId));
-          }
-        }
-      }
-    }
-  }.observes('selection'),
-
-  /**
-    Updates selection by observing changes in master controller's master
-    selection
-
-    @private
-    @observes masterSelection
+    Updates selection by observing changes of the position property.
+    
+    @observes position
   */
-  _masterSelectionDidChange: function () {
-    var needToChange = YES;
-    var currentMasterSelection = this.get('masterSelection');
-    // if masterSelection is not undefined retrieve the guid
-    if (!SC.none(currentMasterSelection)) {
-      var masterSelectionId = currentMasterSelection.get('guid');      
-      
-      // verify that the new masterSelection is not a leaf of the TreeNode
-      if (!SC.none(this.get('selection')) && 
-          !SC.none(this.get('selection').firstObject())) {
-        var currentSelection = 
-            this.get('selection').firstObject().get('guid');
-        var treeSelection = Multivio.store.find(Multivio.Tree, currentSelection);
-        if (!SC.none(treeSelection)) {
-          var cdmLeafNodeIds = treeSelection.get('cdmLeafNodeIds');
-
-          if (SC.typeOf(cdmLeafNodeIds) === SC.T_ARRAY) {
-            for (var i = 0; i < cdmLeafNodeIds.length; i++) {
-              if (cdmLeafNodeIds[i] === masterSelectionId) {
-                // the change in the content selection does not imply 
-                // a change of the tree selection
-                needToChange = NO;
-                break;
-              }
-            }
-            if (treeSelection.get('targetCdmLeaf').get('guid') ===
-                masterSelectionId) {
-              needToChange = NO;
-            }
+  positionDidChange: function () {
+    var newPosition = this.get('position');
+    if (!SC.none(newPosition)) {  
+      //retreive the list of labels for this position
+      var labels = this._getListOfLabelsForIndex(newPosition);
+      if (!SC.none(labels)) {
+        //verify if we really need to set selection
+        //var currentSelection = ;
+        var currentSelection = !SC.none(this.get('selection')) ?
+            this.get('selection').firstObject() : undefined;
+        if (labels.length === 1) {
+          var treeLabelToSelect = labels[0];
+          if (currentSelection !== treeLabelToSelect) {
+            this.set('selection', 
+                SC.SelectionSet.create().addObject(treeLabelToSelect));
+            Multivio.logger.info('treeController#positionDidChange case 1: %@'.
+                fmt(this.get('selection').firstObject()));
           }
         }
-      }
-      // change the selection if needed
-      if (needToChange) {
-        var newSelection = 
-            this.get('_cdmNodeToTreeNode')[currentMasterSelection.get('guid')];
-        this.set('selection', 
-            SC.SelectionSet.create().addObject(this._treeNodeById[newSelection]));
-        
-        Multivio.logger.debug('treeController#_masterSelectionDidChange: %@'.
-            fmt(this.get('masterSelection').get('guid')));
+        else {
+          //verify if label is already selected
+          var isAlreadySelected = NO;
+          for (var i = 0; i < labels.length; i++) {
+            var tempLabel = labels[i];
+            if (currentSelection === tempLabel) {
+              isAlreadySelected = YES;
+              break;
+            }
+          }
+          if (!isAlreadySelected) {
+            this.set('selection', 
+                SC.SelectionSet.create().addObject(labels[0]));
+            Multivio.logger.info('treeController#positionDidChange case 2: %@'.
+                fmt(this.get('selection').firstObject()));
+          }
+        } 
       }
     }
-  }.observes('masterSelection'),
+  }.observes('position'),
   
   /**
-    Write on the logger console the tree sub-model
+    Return a list of treeLabel link to this index.
     
+    @param {number} index
     @private
-    */
-  _showTreeSubModel: function () {
-    // TODO document this and define where to put it
-    var treeNodes = Multivio.store.find(Multivio.Tree)
-        .sortProperty('guid').enumerator();
-    
-    var treeNodesArray = [];
-    for (var t = 0; t < treeNodes._length; t++) {
-      var treeNodeHash = JSON.stringify(treeNodes.nextObject().attributes());
-      treeNodesArray.push(treeNodeHash);
+  */
+  _getListOfLabelsForIndex: function (index) {
+    var listToReturn = undefined;
+    //case simple the position is an index
+    if (!SC.none(this._treeLabelByPosition) && !SC.none(index)) {
+      var label = this._treeLabelByPosition[index];
+      if (!SC.none(label)) {
+        listToReturn = label;
+      }
+      else {
+        //found the right label
+        var lastIndex = 0;
+        var newIndex = 0;
+        for (var key in this._treeLabelByPosition) {
+          //TO DO How to have only key = number
+          if (this._treeLabelByPosition.hasOwnProperty(key)) {
+            newIndex = key;
+            if (newIndex < index) {
+              lastIndex = newIndex;
+            }
+            else {
+              //get the lastIndex
+              listToReturn = this._treeLabelByPosition[lastIndex];
+              break;
+            }
+          }
+          else {
+            listToReturn = this._treeLabelByPosition[lastIndex];
+            break;
+          }
+        }
+      }
     }
-    treeNodes.reset();
-    var treeNodesJSON = JSON.stringify(treeNodesArray);
-    Multivio.logger.info(treeNodesJSON);
-  }
+    return listToReturn;
+  },
+  
+  /**
+    Updates position by observing changes of the selection property.
+    
+    @observes selection
+  */
+  _selectionDidChange: function () {
+    var newSelection = this.get('selection'); 
+    if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
+      var selectionIndex = newSelection.firstObject().file_postition.index;
+      var currentPosition = this.get('position');
+      var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
+      if (!SC.none(labelFCPosition)) {
+        labelFCPosition = labelFCPosition[0];
+      }
+      var selectionLabel = newSelection.firstObject();
+      if (selectionIndex !== currentPosition && selectionLabel !== labelFCPosition) {
+        this.set('position', selectionIndex);
+        Multivio.logger.info('treeController#selectionDidChange: %@'.
+            fmt(this.get('position')));
+      }
+    }
+  }.observes('selection')
 
 });

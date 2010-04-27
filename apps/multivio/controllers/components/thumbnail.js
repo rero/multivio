@@ -26,21 +26,29 @@ Multivio.thumbnailController = SC.ArrayController.create(
     Binds to the CDM.physicalStructure
     
     @binding {hash}
-   */
-  
+  */
   physicalStructure: null,
   physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
 
   /**
-    A conversion table (masterSelectionId -> thumbnail) used to quickly
-    determine the thumbnail associated with a certain master selection
+    Binds to the masterController's currentPosition
+    
+    @binding {hash}
+  */  
+  position: null,
+  positionBinding: "Multivio.masterController.currentPosition",
+
+  /**
+    A conversion table (position-> thumbnail) used to quickly
+    determine the thumbnail associated with a certain position
     
     @private
    */
-  _cdmNodeToThumbnail: {},
+  _positionToThumbnail: {},
   
   /**
-    Initialize this controller, create the sub-model and then set its content
+    Initialize this controller and verify if the sub-model can be created. 
+    The sub-model need to have the physical structure of the document.
 
     @param {String} url the current file url
   */
@@ -51,7 +59,12 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
     Multivio.logger.info('thumbnailController initialized');
   },
-  
+
+  /**
+    CDM.physicalStructure has changed. Verify if we can create the sub-model.
+
+    @observes physicalStructure
+  */
   physicalStructureDidChange: function () {
     var cf = Multivio.masterController.get('currentFile');
     if (!SC.none(cf)) {
@@ -67,17 +80,23 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
   }.observes('physicalStructure'),
   
-  
+  /**
+    Create the sub-model of this controller and set the content.
+    
+    @param {Object} physicalStructure
+    @private
+  */  
   _createThumbnails: function (structure) {
     var ct = Multivio.masterController.get('currentType');
     var cont = [];
     var newTable = {};
+    //TO DO strategy depending of the type
     if (ct === 'application/pdf') {
       var firstChild = structure[0];
       var pdfUrl = firstChild.url;
       var cf = Multivio.masterController.get('currentFile');
       var nbOfPage = Multivio.CDM.getMetadata(cf).nPages;
-      //create a thumbnail object for each page
+      //PDF =>create a thumbnail object for each page
       for (var i = 1; i < nbOfPage + 1; i++) {
         var thumbnailUrl = Multivio.configurator.get('serverName') + 
             Multivio.configurator.getThumbnailUrl(pdfUrl, i);
@@ -92,86 +111,49 @@ Multivio.thumbnailController = SC.ArrayController.create(
     this.set('content', cont);
     this.set('_cdmNodeToThumbnail', newTable);
     Multivio.layoutController.addComponent('views.thumbnailView');
-  }
-   
+    Multivio.logger.info('thumbnailController#_createThumbnails');
+  },
+  
   /**
-    If 'content' changes, the _cdmNodeToThumbnail conversion table must
-    be updated (this should only happen once, during aplication setup)
-
-    @observes content    
-    @private
-  */
- /* _contentDidChange: function () {
-    var newTable = {};
-    var thumbnails = Multivio.store.find(Multivio.Thumbnail);
-    if (thumbnails && thumbnails.isEnumerable) {
-      for (var i = 0; i < thumbnails.length(); i++) {
-        var thumbnail = thumbnails.objectAt(i);
-        var coreDocumentNodeId = thumbnail.get('coreDocumentNode').get('guid');
-        newTable[coreDocumentNodeId] = thumbnail;
+    Updates selection by observing changes of the position property.
+    
+    @observes position
+  */  
+  positionDidChange: function () {
+    var newPosition = this.get('position');
+    if (!SC.none(newPosition)) {
+      var currentSelection = !SC.none(this.get('selection')) ?
+          this.get('selection').firstObject() : undefined;
+      var currentPageNumber = !SC.none(currentSelection) ?
+          currentSelection.pageNumber : 0;
+      //verify if we need to set selection (avoid loopbacks)
+      if (currentPageNumber !== newPosition) {
+        var thumbnailToSelect = this.get('_cdmNodeToThumbnail')[newPosition];
+        this.set('selection', 
+            SC.SelectionSet.create().addObject(thumbnailToSelect));
+        Multivio.logger.info('thumbnailController#positionDidChange: %@'.
+            fmt(this.get('selection').firstObject()));
       }
     }
-    this.set('_cdmNodeToThumbnail', newTable);
-
-  }.observes('content'),*/
+  }.observes('position'),
 
   /**
-    Updates the masterSelection binding if the currently selected thumbnail 
-    has changed.
+    Updates position by observing changes of the selection property.
     
     @observes selection
-    @private
-  */
- /* _selectionDidChange: function () {
-    if (!SC.none(this.get('selection')) &&
-        !SC.none(this.get('selection').firstObject())) {
-      var pageNumber = this.get('selection').firstObject().pageNumber;
-      //this.get('master').set('currentPosition', pageNumber);*/
-      /*var coreDocumentNode =
-          this.get('selection').firstObject().get('coreDocumentNode');
-      // make sure the selection has actually changed, (to avoid loopbacks)
-      if (SC.none(this.get('masterSelection')) ||
-          coreDocumentNode !== this.get('masterSelection')) {
-        SC.RunLoop.begin();
-        this.set('masterSelection', coreDocumentNode);
-        SC.RunLoop.end();
-
-        Multivio.logger.debug('thumbnailController#_selectionDidChange: %@'.
-            fmt(this.get('selection').firstObject()));
-      }*/
-   /* }
-  }.observes('selection'),*/
-
-  /**
-    Updates thumbnail selection by observing changes in master controller's
-    master selection
-    
-    @observes masterSelection
-    @private
-  */
- /* _masterSelectionDidChange: function () {
-    // find the thumbnail that corresponds to the current master selection
-    var currentThumbnailSelection = !SC.none(this.get('selection')) ?
-        this.get('selection').firstObject() : undefined;
-    var currentPosition = this.get('master').get('currentPosition'); */
-    //if (!SC.none(currentPosition)) {    
-        
-      //this.set('selection', SC.SelectionSet.create().addObject(newThumbnail));
-    /*var currentMasterSelection = this.get('masterSelection');
-    if (!SC.none(currentMasterSelection)) {
-      var newThumbnail =
-          this.get('_cdmNodeToThumbnail')[currentMasterSelection.get('guid')];
-
-      // make sure the selection has actually changed, (to avoid loopbacks)
-      if (SC.none(currentThumbnailSelection) ||
-          (newThumbnail && newThumbnail !== currentThumbnailSelection)) {
-        SC.RunLoop.begin();
-        this.set('selection', SC.SelectionSet.create().addObject(newThumbnail));
-        SC.RunLoop.end();
-        Multivio.logger.debug('thumbnailController#_masterSelectionDidChange: %@'.
-            fmt(this.get('masterSelection').get('guid')));
+  */  
+  selectionDidChange: function () {
+    var newSelection =  this.get('selection');
+    if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) { 
+      var pageNumber = newSelection.firstObject().pageNumber;
+      var currentPosition = this.get('position');
+      //verify if we need to set position (avoid loopbacks)
+      if (currentPosition !== pageNumber) {
+        this.set('position', pageNumber);
+        Multivio.logger.info('thumbnailController#selectionDidChange: %@'.
+            fmt(this.get('position')));
       }
-    }*/
- // }.observes('masterSelection')
+    }
+  }.observes('selection')
 
 });

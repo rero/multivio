@@ -31,8 +31,13 @@ Multivio.ContentView = SC.ScrollView.extend(
 
     @binding {Multivio.CoreDocumentNode}
   */
-  masterSelectionBinding: 'Multivio.masterController.masterSelection',
-  
+ // masterSelectionBinding: 'Multivio.masterController.masterSelection',
+ 
+  /**
+    Binds to the imageController's selection
+
+    @binding {url}
+  */ 
   selection: null,
   selectionBinding: 'Multivio.imageController.selection', 
   
@@ -41,7 +46,9 @@ Multivio.ContentView = SC.ScrollView.extend(
 
     @binding {Boolean}
   */   
-  isFirstFileBinding: 'Multivio.masterController.isFirstFile',
+ // isFirstFileBinding: 'Multivio.masterController.isFirstFile',
+  
+  isFirstFile: YES,
   
   /** 
     Original width.
@@ -131,41 +138,22 @@ Multivio.ContentView = SC.ScrollView.extend(
       
     Multivio.logger.debug('ContentView#_adjustSize');
   },
-  
-
+ 
   /**
-    Updates value by observing changes in master controller's master
+    Updates value by observing changes in the imageController's
     selection
     
     @private
-    @observes masterSelection
-  */
-  _masterSelectionDidChange: function () {
-    var currentMasterSelection = this.get('masterSelection');
-    if (!SC.none(currentMasterSelection)) {
-      var defaultUrl = currentMasterSelection.get('urlDefault');
-      var pageNumber = !SC.none(currentMasterSelection.get('localSequenceNumber')) ?
-          currentMasterSelection.get('localSequenceNumber') : 0;
-      var imageUrl = Multivio.configurator.getImageUrl(defaultUrl, pageNumber);
-      SC.RunLoop.begin();
-      SC.imageCache.loadImage(imageUrl, this, this._adjustSize);
-      SC.RunLoop.end();
-    }
-    Multivio.logger.debug('ContentView#_masterSelectionDidChange: %@'.
-        fmt(this.get('masterSelection').get('guid')));
-  }.observes('masterSelection'),
-  
+    @observes selection
+  */ 
   _selectionDidChange: function () {
     var currentSelection = this.get('selection');
-    if (!SC.none(currentSelection)) {
-      var defaultUrl = currentSelection.url;
-      //var pageNumber = currentSelection.pageNumber;
-      //var imageUrl = Multivio.configurator.getImageUrl(defaultUrl, pageNumber);
-      SC.RunLoop.begin();
+    if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
+      var defaultUrl = currentSelection.firstObject().url;
+      Multivio.logger.info('ContentView#_selectionDidChange: %@'.
+          fmt(defaultUrl));
       SC.imageCache.loadImage(defaultUrl, this, this._adjustSize);
-      SC.RunLoop.end();
     }
-    console.info('Selection image changed');
   }.observes('selection'),
   
   /**

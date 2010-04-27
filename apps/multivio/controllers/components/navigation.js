@@ -11,7 +11,7 @@
 
   This controller is used to navigate in the document.
 
-  @author fma
+  @author fma, che
   @extends SC.ObjectController
   @since 0.1.0
 */
@@ -34,65 +34,71 @@ Multivio.navigationController = SC.ObjectController.create(
   _numberOfPages: null,
   
   /**
-    Binds to the masterController's masterSelection.
+    Binds to the masterController's currentPosition.
     
     @binding {Multivio.CoreDocumentNode}
-   */
-  contentBinding: SC.Binding.single("Multivio.masterController.masterSelection"),
-  
-  metadata: null,
-  metadataBinding: SC.Binding.oneWay("Multivio.CDM.metadata"),
- 
-  /**
-    Updates currentPage by observing changes in master controller's
-    master selection.
-    
-    @private
-    @observes content
   */
-  _contentDidChange: function () {
-    // find the page that corresponds to the current master selection
-    var currentNavigationValue = !SC.none(this.get('currentPage')) ?
-        this.get('currentPage') : undefined;
-    var currentMasterSelection = this.get('content');
-    if (!SC.none(currentMasterSelection)) {
-      var newPage = currentMasterSelection.get('sequenceNumber');
-      // make sure the selection has actually changed, (to avoid loopbacks)
-      if (SC.none(currentNavigationValue) ||
-          (!SC.none(newPage) && newPage !== currentNavigationValue)) {
-        this.set('currentPage', newPage);
-      }    
-    } else {
-      var errMess = "Unable to retrieve the masterSelection !!";
-      Multivio.logger.error(errMess);
-      throw {message: errMess};
-    }
-    
-  }.observes('content'),
+  position: null,
+  positionBinding: "Multivio.masterController.currentPosition",
 
   /**
-    Updates content by observing changes in navigation controller's
+    Initialize this controller, retrieve the number of pages.
+  */
+  initialize: function (url) {
+    var meta = Multivio.CDM.getMetadata(url);
+    var nb = meta.nPages;
+    this.set('_numberOfPages', nb);
+    Multivio.layoutController.addComponent('views.navigationView');
+    Multivio.logger.info('navigationController initialized');
+  },
+  
+  /**
+    Updates currentPage by observing changes of the position property
+    
+    @observes position
+  */
+  positionDidChange: function () {
+    var newPosition = this.get('position');
+    if (!SC.none(newPosition)) {
+      //verify if we need to set selection (avoid loopbacks)
+      var currentPageNumber = this.get('currentPage');
+      if (currentPageNumber !== newPosition) {
+        this.set('currentPage', newPosition);
+        Multivio.logger.info('navigationController#positionDidChange: %@'.
+            fmt(this.get('currentPage')));
+      }
+    }
+  }.observes('position'),
+ 
+  /**
+    Updates position by observing changes in navigation controller's
     currentPage.
     
     @private
     @observes currentPage
   */  
   _currentPageDidChange: function () {
-    if (!SC.none(this.get('currentPage'))) {
-      var currentContent = this.get('content');
-      if (SC.none(currentContent) ||
-          this.get('currentPage') !== currentContent.get('sequenceNumber')) { 
-        var cdmStore = Multivio.store.find(Multivio.CoreDocumentNode);
-        var q = SC.Query.create({ recordType: Multivio.CoreDocumentNode, 
-            conditions: "sequenceNumber = %@".fmt(this.get('currentPage'))});
-        var imageObjects = cdmStore.find(q);
-        var cdmObject = imageObjects.firstObject();
-        if (!SC.none(cdmObject)) {
-          SC.RunLoop.begin();
-          this.set('content', cdmObject);
-          SC.RunLoop.end();
+    try {
+      //TO DO Problem with negative number
+      var newCurrentPage = this.get('currentPage');     
+      if (newCurrentPage <= 0 || newCurrentPage > this.get('_numberOfPages')) {
+        Multivio.usco.showAlertPaneInfo('Invalid number', 
+            newCurrentPage + ' must be between 0 and %@'. 
+            fmt(this.get('_numberOfPages')));
+      }
+      else {
+        if (!SC.none(newCurrentPage)) {
+          var currentPosition = this.get('position');
+          if (currentPosition !== newCurrentPage) {
+            this.set('position', newCurrentPage);
+            Multivio.logger.info('navigationController#_currentPageDidChange: %@'.
+                fmt(this.get('position')));
+          }
         }
       }
+    }
+    catch (err) {
+      Multivio.usco.showAlertPaneInfo('Problem: ' + err);
     }
   }.observes('currentPage'),
   
@@ -129,29 +135,6 @@ Multivio.navigationController = SC.ObjectController.create(
   goToLastPage: function () {
     var nbp = this.get('_numberOfPages');
     this.set('currentPage', nbp);
-  },
-  
-  /**
-    Retrieve the number of pages.
-    
-    @private
-    @property _numberOfPages
-    @returns {Number} Returns the number of pages.
-  */ 
-  _retrieveNumberOfPages: function () {
-    var thumbnails = Multivio.store.find(Multivio.Thumbnail);
-    return thumbnails.get('length');
-  }.property('_numberOfPages').cacheable(),
-  
-  /**
-    Initialize this controller, retrieve the number of pages.
-  */
-  initialize: function (url) {
-    var meta = Multivio.CDM.getMetadata(url);
-    var nb = meta.nPages;
-    this.set('_numberOfPages', nb);
-    Multivio.layoutController.addComponent('views.navigationView');
-    Multivio.logger.info('navigationController initialized');
   }
-  
+
 });

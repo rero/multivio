@@ -15,7 +15,7 @@
   In this case it holds a reference to the currently selected object (image),
   in order to keep the thumbnail and tree views synchronized.
 
-  @author mmo
+  @author mmo, che
   @extends SC.Objectcontroller
   @since 0.1.0
 */
@@ -95,6 +95,7 @@ Multivio.masterController = SC.ObjectController.create(
       Multivio.thumbnailController.initialize(cf);
       Multivio.navigationController.initialize(cf);
       Multivio.imageController.initialize(cf);
+      //this.set('currentPosition', 7);
       break;
       
     case 'text/xml':
@@ -114,7 +115,9 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentFile'),
   
   currentPositionDidChange: function () {
-  },
+    console.info('currentPosition did Change....');
+    console.info('new Val = ' + this.get('currentPosition'));
+  }.observes('currentPosition'),
 
   getCurrentFile: function () {
     var cf = this.get('currentFile');
