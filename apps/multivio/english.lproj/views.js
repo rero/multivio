@@ -204,6 +204,38 @@ Multivio.views = SC.Page.design(
       }
     }
   }).classNames('shadow_light inner_view'.w()),
+  
+  /**
+    TreeStrucure view
+  */
+  treeSTView: SC.View.design({
+    layout: { top: 0, bottom: 0, left: 0, right: 0 },
+
+    childViews: 'innerTree'.w(),
+    innerTree: SC.ScrollView.design({
+      layout: { top: 10, bottom: 10, left: 10, right: 10 },
+      borderStyle: SC.BORDER_NONE,
+
+      contentView: Multivio.TreeView.design({
+        layout: { top: 0, bottom: 0, left: 0, right: 0 },
+        rowHeight: 18,
+        borderStyle: SC.BORDER_NONE,
+        contentValueKey: 'label',
+        contentBinding: 'Multivio.treeStructureController.arrangedObjects',
+        selectionBinding: 'Multivio.treeStructureController.selection'
+      })
+    }),
+    render: function (context, firstTime) {
+      if (context.needsContent) {
+        this.renderChildViews(context, firstTime);
+        context.push(
+          "<div class='top-edge'></div>",
+          "<div class='right-edge'></div>",
+          "<div class='bottom-edge'></div>",
+          "<div class='left-edge'></div>");
+      }
+    }
+  }).classNames('shadow_light inner_view'.w()),
 
   /**
     Navigation view

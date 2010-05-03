@@ -39,12 +39,13 @@ Multivio.navigationController = SC.ObjectController.create(
     @binding {Multivio.CoreDocumentNode}
   */
   position: null,
-  positionBinding: "Multivio.masterController.currentPosition",
+  //positionBinding: "Multivio.masterController.currentPosition",
 
   /**
     Initialize this controller, retrieve the number of pages.
   */
   initialize: function (url) {
+    this.bind('position', 'Multivio.masterController.currentPosition');
     var meta = Multivio.CDM.getMetadata(url);
     var nb = meta.nPages;
     this.set('_numberOfPages', nb);

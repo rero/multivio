@@ -14,11 +14,11 @@
 
   @author che
   @extends SC.TreeController
-  @since 0.1.0  
+  @since 0.1.1  
 */
 
-Multivio.treeController = SC.TreeController.create(
-/** @scope Multivio.treeController.prototype */ {
+Multivio.treeStructureController = SC.TreeController.create(
+/** @scope Multivio.treeStructureController.prototype */ {
   
   /**
     Binds to the masterController's currentPosition
@@ -26,8 +26,6 @@ Multivio.treeController = SC.TreeController.create(
     @binding {hash}
   */
   position: null,
-  selection: null,
-  //positionBinding: "Multivio.masterController.currentPosition",
   
   treeExist: NO,
   
@@ -45,12 +43,11 @@ Multivio.treeController = SC.TreeController.create(
 
     @param {String} url the current file url
   */
-  initialize: function (url) {
+  initialize: function () {
     this.set('treeExist', NO);
     this.bind('position', 'Multivio.masterController.currentPosition');
-    Multivio.logger.info('treeController initialized');
+    Multivio.logger.info('treeStructureController initialized');
   },
-
 
 
   /**
@@ -60,10 +57,10 @@ Multivio.treeController = SC.TreeController.create(
     @private
   */  
   _createTree: function (structure) {
-    console.info('TR: treeExist ' + this.get('treeExist'));
+    console.info('TRST: treeExist ' + this.get('treeExist'));
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
-      console.info('TR: createTree ' + structure);
+      console.info('TRST: createTree ' + structure);
       var rootNodeHash = {
         file_postition: {
           index: 0,
@@ -76,8 +73,8 @@ Multivio.treeController = SC.TreeController.create(
       this._treeLabelByPosition[0] = [rootNodeHash];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
       this.set('content', treeContent);
-      Multivio.layoutController.addComponent('views.treeView');
-      Multivio.logger.info('treeController#_createTree');
+      Multivio.layoutController.addComponent('views.treeSTView');
+      Multivio.logger.info('treeStructureController#_createTree');
     }
   },
 
@@ -87,9 +84,7 @@ Multivio.treeController = SC.TreeController.create(
     @observes position
   */
   positionDidChange: function () {
-
     var newPosition = this.get('position');
-    console.info('TR: position did change ' + newPosition);
     if (!SC.none(newPosition)) {  
       //retreive the list of labels for this position
       var labels = this._getListOfLabelsForIndex(newPosition);
@@ -176,19 +171,30 @@ Multivio.treeController = SC.TreeController.create(
   */
   _selectionDidChange: function () {
     var newSelection = this.get('selection'); 
-    console.info('TR: selectionDidChange ' + newSelection);
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
       var selectionIndex = newSelection.firstObject().file_postition.index;
-      var currentPosition = this.get('position');
-      var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
-      if (!SC.none(labelFCPosition)) {
-        labelFCPosition = labelFCPosition[0];
+      console.info('ICI ' + selectionIndex);
+      /*var currentType = Multivio.masterController.get('currentType');
+      console.info('currentType = '+ currentType);*/
+      //if no index => change file
+      if (SC.none(selectionIndex)) {
+        var url = newSelection.firstObject().file_postition.url;
+        //console.info('set url ' + url);
+        //this.reset();
+        Multivio.masterController.set('currentFile', url);
       }
-      var selectionLabel = newSelection.firstObject();
-      if (selectionIndex !== currentPosition && selectionLabel !== labelFCPosition) {
-        this.set('position', selectionIndex);
-        Multivio.logger.info('treeController#selectionDidChange: %@'.
-            fmt(this.get('position')));
+      else {
+        var currentPosition = this.get('position');
+        var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
+        if (!SC.none(labelFCPosition)) {
+          labelFCPosition = labelFCPosition[0];
+        }
+        var selectionLabel = newSelection.firstObject();
+        if (selectionIndex !== currentPosition && selectionLabel !== labelFCPosition) {
+          this.set('position', selectionIndex);
+          Multivio.logger.info('treeController#selectionDidChange: %@'.
+              fmt(this.get('position')));
+        }
       }
     }
   }.observes('selection')

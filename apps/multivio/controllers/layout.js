@@ -19,6 +19,8 @@
 
 Multivio.layoutController = SC.Object.create(
 /** @scope Multivio.layoutController.prototype */ {
+  
+  isBasicLayoutUp: NO,
 
   initialize: function () {
     // Attach the main page to the browser window in order to initiate the
@@ -70,8 +72,10 @@ Multivio.layoutController = SC.Object.create(
   },
   
   setBasicLayout: function () {
+    console.info('LAYOUT SET BASIC');
     this._hideWaitingPage();
-    this.configureWorkspace('init');   
+    this.configureWorkspace('init');
+    this.set('isBasicLayoutUp', YES);   
   },
   
   removeComponent: function (component) {
@@ -105,6 +109,16 @@ Multivio.layoutController = SC.Object.create(
     case 'views.treeView':
       mainPage.layOutComponent({
           name: 'views.treeView', 
+          x: 0, 
+          y: 1, 
+          xlen: 1, 
+          ylen: 1
+        });
+      break;
+      
+    case 'views.treeSTView':
+      mainPage.layOutComponent({
+          name: 'views.treeSTView', 
           x: 0, 
           y: 1, 
           xlen: 1, 

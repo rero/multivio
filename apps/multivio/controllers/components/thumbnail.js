@@ -21,6 +21,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
 /** @scope Multivio.thumbnailController.prototype */ {
 
   allowsMultipleSelection: NO,
+  
 
   /**
     Binds to the CDM.physicalStructure
@@ -28,7 +29,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @binding {hash}
   */
   physicalStructure: null,
-  physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
+  //physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
 
   /**
     Binds to the masterController's currentPosition
@@ -36,7 +37,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @binding {hash}
   */  
   position: null,
-  positionBinding: "Multivio.masterController.currentPosition",
+  //positionBinding: "Multivio.masterController.currentPosition",
 
   /**
     A conversion table (position-> thumbnail) used to quickly
@@ -53,6 +54,8 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @param {String} url the current file url
   */
   initialize: function (url) {
+    this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    this.bind('position', 'Multivio.masterController.currentPosition');
     var phSt = Multivio.CDM.getPhysicalstructure(url);
     if (!SC.none(phSt) && phSt !== -1) {
       this._createThumbnails(phSt);
@@ -66,15 +69,19 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes physicalStructure
   */
   physicalStructureDidChange: function () {
-    var cf = Multivio.masterController.get('currentFile');
-    if (!SC.none(cf)) {
-      var ph = this.get('physicalStructure')[cf];
-      if (!SC.none(ph)) {
-        if (ph === -1) {
-          Multivio.layoutController.removeComponent('views.thumbnailView');
-        }
-        else {
-          this._createThumbnails(ph);
+    console.info('TH: physical did change');
+    var phStr = this.get('physicalStructure');
+    if (!SC.none(phStr)) {
+      var cf = Multivio.masterController.get('currentFile');
+      if (!SC.none(cf)) {
+        var ph = this.get('physicalStructure')[cf];
+        if (!SC.none(ph)) {
+          if (ph === -1) {
+            Multivio.layoutController.removeComponent('views.thumbnailView');
+          }
+          else {
+            this._createThumbnails(ph);
+          }
         }
       }
     }
@@ -120,6 +127,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes position
   */  
   positionDidChange: function () {
+    console.info('TH: position did change ');
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {
       var currentSelection = !SC.none(this.get('selection')) ?
@@ -143,6 +151,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes selection
   */  
   selectionDidChange: function () {
+    console.info('TH: selection did change');
     var newSelection =  this.get('selection');
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) { 
       var pageNumber = newSelection.firstObject().pageNumber;

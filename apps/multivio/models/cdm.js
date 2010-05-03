@@ -123,9 +123,23 @@ Multivio.CDM = SC.Object.create(
         Multivio.layoutController._showErrorPage();
       }
       else {
+        /*if (SC.none(jsonRes)) {
+          console.info('response === null');
+          var meta = this.getMetadata(url);
+          console.info('TITLE '+ meta.title);
+          jsonRes = [{
+            "file_postition": {
+              "index": 1, 
+              "url": url
+            }, 
+            "label": meta.title,
+          }];
+        }*/
+
         var t2 = {};
         t2[url] =  jsonRes;
         this.set('logicalStructure', t2);
+        console.info('CDM: set Logical for ' + url);
       }
     }
   },
@@ -136,18 +150,20 @@ Multivio.CDM = SC.Object.create(
   @return Array
   */
   getLogicalStructure: function (url) {
+    console.info('CDM: getLogical for ' + url);
     if (SC.none(this.get('logicalStructure')) ||
         SC.none(this.get('logicalStructure')[url])) {
       var serverAdress = Multivio.configurator.
           getPath('baseUrlParameters.logicalStructure');
       serverAdress += url;
       Multivio.requestHandler.
-          sendGetRequest(serverAdress, this, 'setLogicalStructure', url); 
+          sendGetRequest(serverAdress, this, 'setLogicalStructure', url);
+      console.info('CDM no logical'); 
       return -1;
     }
     else {
       var lst = this.get('logicalStructure')[url];
-      Multivio.logger.debug('logicalStructure returned by cdm ' + lst);
+      Multivio.logger.info('logicalStructure returned by cdm ' + lst);
       return lst;
     }
   },
@@ -177,6 +193,7 @@ Multivio.CDM = SC.Object.create(
         Multivio.layoutController._showErrorPage();
       }
       else {
+        console.info('CDM physicalStructure setted for ' + url);
         var t2 = {};
         t2[url] =  jsonRes;
         this.set('physicalStructure', t2);
@@ -191,6 +208,7 @@ Multivio.CDM = SC.Object.create(
   @return Hash
   */
   getPhysicalstructure: function (url) {
+    console.info('CDM get PH');
     if (SC.none(this.get('physicalStructure')) || 
         SC.none(this.get('physicalStructure')[url])) {
       var serverAdress = Multivio.configurator.
@@ -198,11 +216,13 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setPhysicalStructure', url);
+      console.info('CDM : return -1');
       return -1;
     }
     else {
       var pst = this.get('physicalStructure')[url];
       Multivio.logger.debug('physicalStructure returned by cdm ' + pst);
+      console.info('CDM return this ' + pst);
       return pst;
     }
   }

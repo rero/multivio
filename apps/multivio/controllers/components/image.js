@@ -26,7 +26,7 @@ Multivio.imageController = SC.ArrayController.create(
     @binding {hash}
    */
   physicalStructure: null,
-  physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
+  //physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
  
   /**
     Binds to the currentPosition of the masterController
@@ -34,7 +34,7 @@ Multivio.imageController = SC.ArrayController.create(
     @binding {hash}
    */ 
   position: null,
-  positionBinding: "Multivio.masterController.currentPosition",
+  //positionBinding: "Multivio.masterController.currentPosition",
   
   /**
   Initialize the controller. This controller need to know 
@@ -43,6 +43,8 @@ Multivio.imageController = SC.ArrayController.create(
   @param {String} url
   */   
   initialize: function (url) {
+    this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    this.bind('position', 'Multivio.masterController.currentPosition');
     var meta = Multivio.CDM.getMetadata(url);
     var structure = Multivio.CDM.getPhysicalstructure(url);
     if (!SC.none(meta) && meta !== -1 && !SC.none(structure) && structure !== -1) {
@@ -58,16 +60,18 @@ Multivio.imageController = SC.ArrayController.create(
     @observes physicalStructure
   */ 
   physicalStructureDidChange: function () {
-    var cf = Multivio.masterController.get('currentFile');
-    if (!SC.none(cf)) {
-      var phSt = this.get('physicalStructure')[cf];
-      if (!SC.none(phSt)) {
-        if (phSt === -1) {
-          Multivio.layoutController.removeComponent('views.thumbnailView');
-        }
-        else {
-          var meta = Multivio.CDM.getMetadata(cf);
-          this._createImages(phSt, meta.nPages);
+    if (!SC.none(this.get('physicalStructure'))) {    
+      var cf = Multivio.masterController.get('currentFile');
+      if (!SC.none(cf)) {
+        var phSt = this.get('physicalStructure')[cf];
+        if (!SC.none(phSt)) {
+          if (phSt === -1) {
+            Multivio.layoutController.removeComponent('views.thumbnailView');
+          }
+          else {
+            var meta = Multivio.CDM.getMetadata(cf);
+            this._createImages(phSt, meta.nPages);
+          }
         }
       }
     }

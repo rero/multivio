@@ -38,8 +38,6 @@ Multivio.masterController = SC.ObjectController.create(
   */
   currentType: null,
   
-  currentMetadata: undefined,
-  
   /**
     Binds to the cdm metadata
 
@@ -50,7 +48,6 @@ Multivio.masterController = SC.ObjectController.create(
    
   isFirstTime: YES,
   
-  //dataProvider: undefined,
   
   /**
     Initialize masterController
@@ -58,8 +55,8 @@ Multivio.masterController = SC.ObjectController.create(
   initialize: function () {
     //start layoutController => show waiting page
     Multivio.layoutController.initialize();
-    //request for metadata
-    Multivio.CDM.getMetadata();
+    var reference = Multivio.CDM.getReferer();
+    this.set('currentFile', reference);
     Multivio.logger.info('masterController initialized');
   },
 
@@ -67,21 +64,20 @@ Multivio.masterController = SC.ObjectController.create(
   Get the first part of the document and set currentFilePosition
   */
   metadataDidChange: function () {
-    var mimeType;
-    if (SC.none(this.get('currentFile'))) {
-      var reference = Multivio.CDM.getReferer();
-      var meta = Multivio.CDM.getMetadata(reference);
-      mimeType = meta.mime;
-      this.set('currentFile', reference);
-      this.set('currentMetadata', meta);
-      Multivio.layoutController.setBasicLayout();
-      Multivio.metadataController.initialize(reference);
-    }
-    else {
-      mimeType = Multivio.CDM.getMetadata(this.get('currentFile')).mime;
-    }
-    if (mimeType !== this.get('currentType')) {
-      this.set('currentType', mimeType);
+    console.info('MS: metadata change');
+    var meta = this.get('metadata');
+    if (!SC.none(meta)) { 
+      var cf = this.get('currentFile');
+      console.info('MS: metadata change for ' + cf);
+      var currentMeta = this.get('metadata')[cf];
+      if (currentMeta !== -1) {
+        console.info('MS: metadata set type ' + currentMeta.mime);
+        if (!Multivio.layoutController.get('isBasicLayoutUp')) {
+          Multivio.layoutController.setBasicLayout();
+          Multivio.metadataController.initialize(cf);
+        }
+        this.set('currentType', currentMeta.mime);
+      }
     }
   }.observes('metadata'),
   
@@ -91,17 +87,15 @@ Multivio.masterController = SC.ObjectController.create(
     switch (ct) {
     
     case 'application/pdf':
-      Multivio.treeController.initialize(cf);
+      console.info('MS: current type = pdf');
+      Multivio.treeDispatcher.initialize(cf);
       Multivio.thumbnailController.initialize(cf);
       Multivio.navigationController.initialize(cf);
       Multivio.imageController.initialize(cf);
-      //this.set('currentPosition', 7);
       break;
       
     case 'text/xml':
-      Multivio.thumbnailController.initialize(cf);
-      //var strLog = Multivio.CDM.getLogicalStructure(cf);
-      //var strPh = Multivio.CDM.getPhysicalstructure(cf);
+      Multivio.treeDispatcher.initialize(cf);
       break;
       
     default:
@@ -111,22 +105,34 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentType'),
   
   currentFileDidChange: function () {
+    console.info('MS: currentFileDidChange');
     var cf = this.get('currentFile');
+    console.info('MS: new file ' + cf);
+    this.getMetadataForFile(cf);
   }.observes('currentFile'),
+  
+  getMetadataForFile: function (fileUrl) {
+    console.info('MS: getMetadataForFile ' + fileUrl);
+    var meta = Multivio.CDM.getMetadata(fileUrl);
+    if (meta !== -1) {
+      console.info('MS: get MetadataFF set mime');
+      this.set('currentType', meta.mime);
+    }
+  },
   
   currentPositionDidChange: function () {
     console.info('currentPosition did Change....');
     console.info('new Val = ' + this.get('currentPosition'));
-  }.observes('currentPosition'),
+  }.observes('currentPosition')
 
-  getCurrentFile: function () {
+ /* getCurrentFile: function () {
     var cf = this.get('currentFile');
     return cf;
   },
   
   currentMetadataChange: function () {
     var cm = this.get('currentMetadata');
-  }.observes('currentMetadata')
+  }.observes('currentMetadata')*/
 
 
 

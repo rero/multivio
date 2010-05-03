@@ -36,6 +36,7 @@ Multivio.TreeView = SC.ListView.extend(
     @private
   */
   _childViewsDidChange: function () {
+    console.info('!----!childViewDidChange ' + this.isFirstTime);
     var childViews = this.get('childViews');
     if (childViews.get('length') > 0 & this.isFirstTime) {
       var maxWidth = 0;
