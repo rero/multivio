@@ -26,8 +26,10 @@ Multivio.treeStructureController = SC.TreeController.create(
     @binding {hash}
   */
   position: null,
+  logical: null,
   
   treeExist: NO,
+  globalStructure: null,
   
   /**
     An Array that contains all nodes of the tree for a position.
@@ -61,6 +63,10 @@ Multivio.treeStructureController = SC.TreeController.create(
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
       console.info('TRST: createTree ' + structure);
+      if (SC.none(this.get('globalStructure'))) {
+        console.info('!set globalStructure!');
+        this.set('globalStructure', structure);
+      }
       var rootNodeHash = {
         file_postition: {
           index: 0,
@@ -85,6 +91,7 @@ Multivio.treeStructureController = SC.TreeController.create(
   */
   positionDidChange: function () {
     var newPosition = this.get('position');
+    console.info('TRST new position '+ newPosition);
     if (!SC.none(newPosition)) {  
       //retreive the list of labels for this position
       var labels = this._getListOfLabelsForIndex(newPosition);
@@ -164,6 +171,30 @@ Multivio.treeStructureController = SC.TreeController.create(
     return listToReturn;
   },
   
+  updateTree: function (lgs) {
+    console.info('update Tree');
+    this.set('treeExist', NO);
+    this.set('selection', null);
+    this.set('content', null);
+    var globs = this.get('globalStructure');
+    var selected = Multivio.masterController.get('currentFile');
+    console.info('currentF = '+ selected );
+    var newStruct = [];
+    for (var i = 0; i < globs.length; i++){
+      var temp = globs[i];
+      if(!SC.none(temp.childs)) {
+        temp.childs = undefined;
+      }
+      console.info('Childs '+ temp.file_postition.url +' '+temp.childs);
+      if(temp.file_postition.url === selected) {
+        temp.childs = lgs;
+      }
+      newStruct.push(temp);
+    }
+    this._createTree(newStruct); 
+    // console.info('TEST ' +Multivio.TreeView.get('isFirstTime'));    
+  },
+  
   /**
     Updates position by observing changes of the selection property.
     
@@ -182,6 +213,8 @@ Multivio.treeStructureController = SC.TreeController.create(
         //console.info('set url ' + url);
         //this.reset();
         Multivio.masterController.set('currentFile', url);
+        //Multivio.masterController.currentFile = url;
+        //this.addFileStructure(url);
       }
       else {
         var currentPosition = this.get('position');

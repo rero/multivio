@@ -46,12 +46,46 @@ Multivio.CDM = SC.Object.create(
         Multivio.layoutController._showErrorPage();
       }
       else {
+        //add the entry
         var t2 = {};
-        t2[url] =  jsonRes;
-        this.set('metadata', t2);
+        if(SC.none(this.get('metadata'))) {
+          //create new entry
+          console.info('CDM metadata new Entry');
+          //t2[url] =  jsonRes;
+
+        }
+        else {
+          var oldMeta = this.get('metadata');
+          console.info('CDM metadata add object');
+          t2 = this.clone(oldMeta);
+
+          //this.set('metadata', oldMeta);
+        }
+                  t2[url] = jsonRes;
+      this.set('metadata', t2);
       }
+      
+      console.info('Metadata length ' + this.get('metadata'));
     }
   },
+  
+    clone: function(srcInstance)
+    {
+    	/*Si l'instance source n'est pas un objet ou qu'elle ne vaut rien c'est une feuille donc on la retourne*/
+    	if(typeof(srcInstance) != 'object' || srcInstance == null)
+    	{
+    		return srcInstance;
+    	}
+    	/*On appel le constructeur de l'instance source pour crée une nouvelle instance de la même classe*/
+    	var newInstance = srcInstance.constructor();
+    	/*On parcourt les propriétés de l'objet et on les recopies dans la nouvelle instance*/
+    	for(var i in srcInstance)
+    	{
+    		newInstance[i] = this.clone(srcInstance[i]);
+    	}
+    	/*On retourne la nouvelle instance*/
+    	return newInstance;
+    },
   
   /**
   return the metadata hash
@@ -123,20 +157,11 @@ Multivio.CDM = SC.Object.create(
         Multivio.layoutController._showErrorPage();
       }
       else {
-        /*if (SC.none(jsonRes)) {
-          console.info('response === null');
-          var meta = this.getMetadata(url);
-          console.info('TITLE '+ meta.title);
-          jsonRes = [{
-            "file_postition": {
-              "index": 1, 
-              "url": url
-            }, 
-            "label": meta.title,
-          }];
-        }*/
-
         var t2 = {};
+        if(!SC.none(this.get('logicalStructure'))) {
+          var oldLogic = this.get('logicalStructure');
+          t2 = this.clone(oldLogic);
+        }
         t2[url] =  jsonRes;
         this.set('logicalStructure', t2);
         console.info('CDM: set Logical for ' + url);
@@ -193,8 +218,11 @@ Multivio.CDM = SC.Object.create(
         Multivio.layoutController._showErrorPage();
       }
       else {
-        console.info('CDM physicalStructure setted for ' + url);
         var t2 = {};
+        if(!SC.none(this.get('physicalStructure'))) {
+          var oldLogic = this.get('physicalStructure');
+          t2 = this.clone(oldLogic);
+        }
         t2[url] =  jsonRes;
         this.set('physicalStructure', t2);
       }

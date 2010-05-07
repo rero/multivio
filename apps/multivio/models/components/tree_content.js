@@ -46,6 +46,7 @@ Multivio.TreeContent =  SC.Object.extend({
     var fp = this.file_postition;
     var position = !SC.none(fp.index) ? fp.index : 0;
     if (position !== 0) {
+      if (!SC.none(Multivio.treeController._treeLabelByPosition)){
       var isPositionEmpty = Multivio.treeController._treeLabelByPosition[position];
 
       //add treeContent to the _treeLabelByPosition
@@ -55,6 +56,18 @@ Multivio.TreeContent =  SC.Object.extend({
       else {
         Multivio.treeController._treeLabelByPosition[position] = isPositionEmpty.concat(this);
       }
+    }
+    else{
+      var isPositionEmpty = Multivio.treeStructureController._treeLabelByPosition[position];
+
+      //add treeContent to the _treeLabelByPosition
+      if (SC.none(isPositionEmpty)) {
+        Multivio.treeStructureController._treeLabelByPosition[position] = [this];
+      }
+      else {
+        Multivio.treeStructureController._treeLabelByPosition[position] = isPositionEmpty.concat(this);
+      }
+    }
     }
     
     this.labelWidth = label.length;

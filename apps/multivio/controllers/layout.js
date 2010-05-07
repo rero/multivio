@@ -21,6 +21,12 @@ Multivio.layoutController = SC.Object.create(
 /** @scope Multivio.layoutController.prototype */ {
   
   isBasicLayoutUp: NO,
+  
+  listOfControllersForType: {
+    'application/pdf': 4,
+    'text/xml': 1},
+  
+  currentListOfWidget: 0,
 
   initialize: function () {
     // Attach the main page to the browser window in order to initiate the
@@ -29,6 +35,24 @@ Multivio.layoutController = SC.Object.create(
     this._showWaitingPage();
   },
   
+  getListOfController: function (type) {
+    switch (type) {
+      case 'application/pdf':
+         console.info('Layout: current type = pdf');
+         this.set('currentListOfWidget', 4);
+         break;
+      
+      default:
+      break;
+    }
+  },
+  
+  currentListOfWidgetDidChange: function () {
+    console.info('Layout '+ this.get('currentListOfWidget'));
+    if(this.get('currentListOfWidget') === 0){
+      Multivio.masterController.set('currentPosition', 1);
+    }
+  }.observes('currentListOfWidget'),
   /**
     Sets up the views in the workspace.
 
@@ -94,6 +118,7 @@ Multivio.layoutController = SC.Object.create(
           xlen: 1, 
           ylen: 1
         });
+      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
       
     case 'views.thumbnailView':
@@ -104,6 +129,7 @@ Multivio.layoutController = SC.Object.create(
           xlen: 1, 
           ylen: 1
         });
+      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
         
     case 'views.treeView':
@@ -114,6 +140,7 @@ Multivio.layoutController = SC.Object.create(
           xlen: 1, 
           ylen: 1
         });
+      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
       
     case 'views.treeSTView':
@@ -124,6 +151,7 @@ Multivio.layoutController = SC.Object.create(
           xlen: 1, 
           ylen: 1
         });
+      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
       
     case 'views.navigationView':
@@ -134,6 +162,7 @@ Multivio.layoutController = SC.Object.create(
           xlen: 2, 
           ylen: 1
         });
+      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
     default:
       console.info('unknown component ' + component);

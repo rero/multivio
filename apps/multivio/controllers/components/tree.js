@@ -64,13 +64,23 @@ Multivio.treeController = SC.TreeController.create(
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
       console.info('TR: createTree ' + structure);
+      var ref = Multivio.CDM.getReferer();
+      var meta = Multivio.CDM.getMetadata(ref); 
+      var referer = [{
+        file_postition: {
+          index: 1,
+          url: 'http://referer'  
+        },
+        label: meta.title,
+        childs: structure
+      }];
       var rootNodeHash = {
         file_postition: {
           index: 0,
           url: 'http://badUrl.pdf'
         },
         label: "A new PDF",
-        childs: structure
+        childs: referer
       };
       this._treeLabelByPosition = [];
       this._treeLabelByPosition[0] = [rootNodeHash];
@@ -78,6 +88,7 @@ Multivio.treeController = SC.TreeController.create(
       this.set('content', treeContent);
       Multivio.layoutController.addComponent('views.treeView');
       Multivio.logger.info('treeController#_createTree');
+      //Multivio.TreeView.set('isFirstTime', YES);
     }
   },
 

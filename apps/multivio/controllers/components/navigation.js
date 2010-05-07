@@ -82,12 +82,12 @@ Multivio.navigationController = SC.ObjectController.create(
     try {
       //TO DO Problem with negative number
       var newCurrentPage = this.get('currentPage');     
-      if (newCurrentPage <= 0 || newCurrentPage > this.get('_numberOfPages')) {
+     /* if (newCurrentPage <= 0 || newCurrentPage > this.get('_numberOfPages')) {
         Multivio.usco.showAlertPaneInfo('Invalid number', 
             newCurrentPage + ' must be between 0 and %@'. 
             fmt(this.get('_numberOfPages')));
       }
-      else {
+      else {*/
         if (!SC.none(newCurrentPage)) {
           var currentPosition = this.get('position');
           if (currentPosition !== newCurrentPage) {
@@ -96,7 +96,7 @@ Multivio.navigationController = SC.ObjectController.create(
                 fmt(this.get('position')));
           }
         }
-      }
+      //}
     }
     catch (err) {
       Multivio.usco.showAlertPaneInfo('Problem: ' + err);

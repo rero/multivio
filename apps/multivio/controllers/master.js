@@ -23,6 +23,7 @@
 Multivio.masterController = SC.ObjectController.create(
 /** @scope Multivio.masterController.prototype */ {
   
+  //history: [],
   /**
   @property {file}
   */
@@ -82,12 +83,14 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('metadata'),
   
   currentTypeDidChange: function () {
+    console.info('currentTYPE DID CHANGE');
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
     switch (ct) {
     
     case 'application/pdf':
       console.info('MS: current type = pdf');
+      Multivio.layoutController.getListOfController(ct);
       Multivio.treeDispatcher.initialize(cf);
       Multivio.thumbnailController.initialize(cf);
       Multivio.navigationController.initialize(cf);
@@ -98,6 +101,19 @@ Multivio.masterController = SC.ObjectController.create(
       Multivio.treeDispatcher.initialize(cf);
       break;
       
+    case 'image/jpg':
+      // create thumbnailcontroller and navigationController
+      // add index to the treeController
+    var historyLength = this.get('history').length;
+    
+    var lastXML = this.get('history')[length - 2];
+      Multivio.thumbnailController.initialize(lastXML);
+      Multivio.navigationController.initialize(lastXML);
+      Multivio.imageController.initialize(lastXML);
+      Multivio.treeController.addIndex(lastXML);
+      Multivio.treeController.setSelection(cf);
+    break;
+      
     default:
       console.info('undefined type ' + ct);
       break;
@@ -106,8 +122,11 @@ Multivio.masterController = SC.ObjectController.create(
   
   currentFileDidChange: function () {
     console.info('MS: currentFileDidChange');
+    this.set('currentType', null);
+    //this.set('currentPosition', 0);
     var cf = this.get('currentFile');
     console.info('MS: new file ' + cf);
+    //history.push(cf);
     this.getMetadataForFile(cf);
   }.observes('currentFile'),
   

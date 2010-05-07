@@ -26,8 +26,9 @@ Multivio.treeDispatcher = SC.Object.create(
     @binding {hash}
   */
   lS: null,
-  lSBinding: SC.Binding.oneWay('Multivio.CDM.logicalStructure'),
+  //lSBinding: SC.Binding.oneWay('Multivio.CDM.logicalStructure'),
   pS: null,
+  isTreeStructure: NO,
   //pSBinding: SC.Binding.oneWay('Multivio.CDM.physicalStructure')
   
   
@@ -38,11 +39,25 @@ Multivio.treeDispatcher = SC.Object.create(
     @param {String} url the current file url
   */
   initialize: function (url) {
-    //this.bind('lS', 'Multivio.CDM.logicalStructure');
+    var listOfBindings = this.get('bindings');
+    console.info('TDS: bindins length init = ' + listOfBindings.length);
+    for (var i = 0; i < listOfBindings.length; i++){
+      var oneBinding = listOfBindings[i];
+      oneBinding.disconnect();
+    }
+    console.info('TDS: bindins length init2 = ' + this.get('bindings').length);   
+    this.set('bindings', []);
+    this.bind('lS', 'Multivio.CDM.logicalStructure');
     var logStr = Multivio.CDM.getLogicalStructure(url);
     console.info('TDS: initialize logS = ' + logStr);
     if (logStr !== -1) {
-      this.checkStructure(logStr);
+      if (this.get('isTreeStructure')) {
+        Multivio.treeStructureController.updateTree(logStr);
+      }
+      else{
+        Multivio.treeController.initialize();
+        Multivio.treeController._createTree(logStr);
+      }
     }
     console.info('TDS: bindins length = ' + this.get('bindings').length);
     Multivio.logger.info('documentStructure initialized');
@@ -76,8 +91,13 @@ Multivio.treeDispatcher = SC.Object.create(
           }
             //create tree
           else {
-            Multivio.treeController.initialize();
-            Multivio.treeController._createTree(logStr);
+            if (this.get('isTreeStructure')) {
+              Multivio.treeStructureController.updateTree(logStr);
+            }
+            else{
+              Multivio.treeController.initialize();
+              Multivio.treeController._createTree(logStr);
+            }
           }
         }
         else {
@@ -112,6 +132,7 @@ Multivio.treeDispatcher = SC.Object.create(
           }
           Multivio.treeStructureController.initialize();
           Multivio.treeStructureController._createTree(res);
+          this.set('isTreeStructure', YES);
         }
         else {
           console.info('TDS: phS Probleme ' + phStr + ' ' + phSFCDM);
