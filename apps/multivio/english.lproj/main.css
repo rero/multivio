@@ -92,6 +92,10 @@ body.sc-theme {
   color:#333333;
 }
 
+label.document-label-view {
+  font-weight: bold;  
+}
+
 .sc-theme.focus .sc-collection-view.focus .sc-label-view.selected {
   background-color:#2370D8;
   color:white;

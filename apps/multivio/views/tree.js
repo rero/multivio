@@ -27,6 +27,7 @@ Multivio.TreeView = SC.ListView.extend(
     @property {Boolean}
   */
   isFirstTime: YES,
+  
 
   /**
     Adjust the treeView width and scroll to the treeSelection.
@@ -43,6 +44,7 @@ Multivio.TreeView = SC.ListView.extend(
       for (var i = 0; i < childViews.get('length'); i++) {
         var labelView = childViews[i];
         var labelWidth = labelView.content.get('labelWidth');
+        
         //maxLabelWidth depends on the labelWidth, the outline and the position
         //of the label in the Tree (outlineLevel)
         var maxLabelWidth = (labelWidth * 6.5) + 
@@ -57,6 +59,26 @@ Multivio.TreeView = SC.ListView.extend(
       this.adjust('width', maxWidth);
       this.isFirstTime = NO;
     }
-  }.observes('childViews')
+  }.observes('childViews'),
+  
+});
+
+Multivio.TreeLabelView = SC.ListItemView.extend(
+  /** @scope Multivio.TreeLabelView.prototype */ {
+
+  /**
+    Override renderLabel method to set some labels in bold 
+
+    @param {Object} context
+    @param {String} label
+  */    
+  renderLabel: function(context, label) {
+    if (this.content.get('position') === 0) {
+      context.push('<label class="document-label-view">', label || '', '</label>') ;
+    }
+    else {
+      context.push('<label>', label || '', '</label>') ;
+    }
+  }
 
 });

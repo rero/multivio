@@ -188,6 +188,7 @@ Multivio.views = SC.Page.design(
         layout: { top: 0, bottom: 0, left: 0, right: 0 },
         rowHeight: 18,
         borderStyle: SC.BORDER_NONE,
+        exampleView: Multivio.TreeLabelView,
         contentValueKey: 'label',
         contentBinding: 'Multivio.treeController.arrangedObjects',
         selectionBinding: 'Multivio.treeController.selection'
@@ -220,6 +221,7 @@ Multivio.views = SC.Page.design(
         layout: { top: 0, bottom: 0, left: 0, right: 0 },
         rowHeight: 18,
         borderStyle: SC.BORDER_NONE,
+        exampleView: Multivio.TreeLabelView,        
         contentValueKey: 'label',
         contentBinding: 'Multivio.treeStructureController.arrangedObjects',
         selectionBinding: 'Multivio.treeStructureController.selection'

@@ -35,6 +35,8 @@ Multivio.TreeContent =  SC.Object.extend({
   @property {Number}  
   */
   labelWidth: undefined,
+  
+  position: undefined,
 
   /**
     Return the list of the children of this Multivio.Tree as TreeContent
@@ -45,6 +47,7 @@ Multivio.TreeContent =  SC.Object.extend({
     var label = this.label;
     var fp = this.file_postition;
     var position = !SC.none(fp.index) ? fp.index : 0;
+    this.position = position;
     if (position !== 0) {
       if (!SC.none(Multivio.treeController._treeLabelByPosition)){
       var isPositionEmpty = Multivio.treeController._treeLabelByPosition[position];
