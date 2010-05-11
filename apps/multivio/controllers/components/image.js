@@ -21,20 +21,10 @@ Multivio.imageController = SC.ArrayController.create(
   allowsMultipleSelection: NO,
   
   /**
-    Binds to the CDM physicalStructure
-    
-    @binding {hash}
+    local variable for bindings
    */
   physicalStructure: null,
-  //physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
- 
-  /**
-    Binds to the currentPosition of the masterController
-    
-    @binding {hash}
-   */ 
   position: null,
-  //positionBinding: "Multivio.masterController.currentPosition",
   
   /**
   Initialize the controller. This controller need to know 
@@ -43,14 +33,37 @@ Multivio.imageController = SC.ArrayController.create(
   @param {String} url
   */   
   initialize: function (url) {
-    this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    if (this.get('bindings').length !== 0) {
+      this.reset();
+    }
     this.bind('position', 'Multivio.masterController.currentPosition');
-    var meta = Multivio.CDM.getMetadata(url);
     var structure = Multivio.CDM.getPhysicalstructure(url);
-    if (!SC.none(meta) && meta !== -1 && !SC.none(structure) && structure !== -1) {
-      this._createImages(structure, meta.nPages);
-    }    
+    if (structure !== -1) {
+      var meta = Multivio.CDM.getMetadata(url);
+      if (meta !== -1) {
+        this._createImages(structure, meta.nPages);       
+      }
+    }
+    else {
+      this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    }   
     Multivio.logger.info('imageController initialized');
+  },
+  
+  /**
+  Reset variables and disconnect bindings
+  */
+  reset: function () {
+    //first disconnect bindings
+    var listOfBindings = this.get('bindings');
+    for (var i = 0; i < listOfBindings.length; i++) {
+      var oneBinding = listOfBindings[i];
+      oneBinding.disconnect();
+    }
+    this.set('bindings', []);
+    this.position = null;
+    this.set('content', null);
+    this.set('selection', null);
   },
 
   /**
@@ -60,6 +73,7 @@ Multivio.imageController = SC.ArrayController.create(
     @observes physicalStructure
   */ 
   physicalStructureDidChange: function () {
+    console.info('IM: physicalStructure did change');
     if (!SC.none(this.get('physicalStructure'))) {    
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {

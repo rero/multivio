@@ -54,13 +54,34 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @param {String} url the current file url
   */
   initialize: function (url) {
+    if (this.get('bindings').length !== 0) {
+      this.reset();
+    }
     this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
     this.bind('position', 'Multivio.masterController.currentPosition');
     var phSt = Multivio.CDM.getPhysicalstructure(url);
     if (!SC.none(phSt) && phSt !== -1) {
       this._createThumbnails(phSt);
     }
-    Multivio.logger.info('thumbnailController initialized');
+    Multivio.logger.info('thumbnailController initialized ');
+  },
+  
+  /**
+  Reset variables and disconnect bindings
+  */
+  reset: function () {
+    //first disconnect bindings
+    var listOfBindings = this.get('bindings');
+    for (var i = 0; i < listOfBindings.length; i++) {
+      var oneBinding = listOfBindings[i];
+      oneBinding.disconnect();
+    }
+    this.set('bindings', []);
+    this._positionToThumbnail = {};
+    this.position = null;
+    //this.set('physicalStructure', null);
+    this.set('content', null);
+    this.set('selection', null);
   },
 
   /**
@@ -69,7 +90,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes physicalStructure
   */
   physicalStructureDidChange: function () {
-    console.info('TH: physical did change');
     var phStr = this.get('physicalStructure');
     if (!SC.none(phStr)) {
       var cf = Multivio.masterController.get('currentFile');

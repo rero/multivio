@@ -62,9 +62,7 @@ Multivio.treeStructureController = SC.TreeController.create(
     console.info('TRST: treeExist ' + this.get('treeExist'));
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
-      console.info('TRST: createTree ' + structure);
       if (SC.none(this.get('globalStructure'))) {
-        console.info('!set globalStructure!');
         this.set('globalStructure', structure);
       }
       var rootNodeHash = {
@@ -76,7 +74,7 @@ Multivio.treeStructureController = SC.TreeController.create(
         childs: structure
       };
       this._treeLabelByPosition = [];
-      this._treeLabelByPosition[0] = [rootNodeHash];
+      //this._treeLabelByPosition[0] = [rootNodeHash];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
       this.set('content', treeContent);
       Multivio.layoutController.addComponent('views.treeSTView');
@@ -91,7 +89,7 @@ Multivio.treeStructureController = SC.TreeController.create(
   */
   positionDidChange: function () {
     var newPosition = this.get('position');
-    console.info('TRST new position '+ newPosition);
+    console.info('TRST new position ' + newPosition);
     if (!SC.none(newPosition)) {  
       //retreive the list of labels for this position
       var labels = this._getListOfLabelsForIndex(newPosition);
@@ -173,20 +171,28 @@ Multivio.treeStructureController = SC.TreeController.create(
   
   updateTree: function (lgs) {
     console.info('update Tree');
+    var listOfBindings = this.get('bindings');
+    for (var j = 0; j < listOfBindings.length; j++) {
+      var oneBinding = listOfBindings[j];
+      oneBinding.disconnect();
+    }
+    this.set('bindings', []);
+    this.position = null;
+    this.bind('position', 'Multivio.masterController.currentPosition');    
     this.set('treeExist', NO);
     this.set('selection', null);
     this.set('content', null);
     var globs = this.get('globalStructure');
     var selected = Multivio.masterController.get('currentFile');
-    console.info('currentF = '+ selected );
+    console.info('currentF = ' + selected);
     var newStruct = [];
-    for (var i = 0; i < globs.length; i++){
+    for (var i = 0; i < globs.length; i++) {
       var temp = globs[i];
-      if(!SC.none(temp.childs)) {
+      if (!SC.none(temp.childs)) {
         temp.childs = undefined;
       }
-      console.info('Childs '+ temp.file_postition.url +' '+temp.childs);
-      if(temp.file_postition.url === selected) {
+
+      if (temp.file_postition.url === selected) {
         temp.childs = lgs;
       }
       newStruct.push(temp);
@@ -212,6 +218,7 @@ Multivio.treeStructureController = SC.TreeController.create(
         var url = newSelection.firstObject().file_postition.url;
         //console.info('set url ' + url);
         //this.reset();
+        //this.set('position', null);
         Multivio.masterController.set('currentFile', url);
         //Multivio.masterController.currentFile = url;
         //this.addFileStructure(url);

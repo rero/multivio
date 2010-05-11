@@ -47,6 +47,7 @@ Multivio.treeController = SC.TreeController.create(
   */
   initialize: function (url) {
     this.set('treeExist', NO);
+    this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
     Multivio.logger.info('treeController initialized');
   },
@@ -60,7 +61,6 @@ Multivio.treeController = SC.TreeController.create(
     @private
   */  
   _createTree: function (structure) {
-    console.info('TR: treeExist ' + this.get('treeExist'));
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
       console.info('TR: createTree ' + structure);
@@ -83,12 +83,11 @@ Multivio.treeController = SC.TreeController.create(
         childs: referer
       };
       this._treeLabelByPosition = [];
-      this._treeLabelByPosition[0] = [rootNodeHash];
+      //this._treeLabelByPosition[0] = [rootNodeHash];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
       this.set('content', treeContent);
       Multivio.layoutController.addComponent('views.treeView');
       Multivio.logger.info('treeController#_createTree');
-      //Multivio.TreeView.set('isFirstTime', YES);
     }
   },
 
@@ -98,7 +97,6 @@ Multivio.treeController = SC.TreeController.create(
     @observes position
   */
   positionDidChange: function () {
-
     var newPosition = this.get('position');
     console.info('TR: position did change ' + newPosition);
     if (!SC.none(newPosition)) {  

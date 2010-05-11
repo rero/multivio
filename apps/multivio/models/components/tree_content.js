@@ -46,31 +46,35 @@ Multivio.TreeContent =  SC.Object.extend({
     var children = this.childs;
     var label = this.label;
     var fp = this.file_postition;
-    var position = !SC.none(fp.index) ? fp.index : 0;
-    this.position = position;
-    if (position !== 0) {
-      if (!SC.none(Multivio.treeController._treeLabelByPosition)){
-      var isPositionEmpty = Multivio.treeController._treeLabelByPosition[position];
+    var pos = !SC.none(fp.index) ? fp.index : 0;
+    this.position = pos;
+    var isPositionEmpty = undefined;
+    if (!SC.none(Multivio.treeController._treeLabelByPosition)) {
+      isPositionEmpty = Multivio.treeController._treeLabelByPosition[pos];
+  
+      //add treeContent to the _treeLabelByPosition
+      if (SC.none(isPositionEmpty)) {
+        Multivio.treeController._treeLabelByPosition[pos] = 
+            [this];
+      }
+      else {
+        Multivio.treeController._treeLabelByPosition[pos] = 
+            isPositionEmpty.concat(this);
+      }
+    }
+    else {
+      isPositionEmpty = 
+          Multivio.treeStructureController._treeLabelByPosition[pos];
 
       //add treeContent to the _treeLabelByPosition
       if (SC.none(isPositionEmpty)) {
-        Multivio.treeController._treeLabelByPosition[position] = [this];
+        Multivio.treeStructureController._treeLabelByPosition[pos] = 
+            [this];
       }
       else {
-        Multivio.treeController._treeLabelByPosition[position] = isPositionEmpty.concat(this);
+        Multivio.treeStructureController._treeLabelByPosition[pos] = 
+            isPositionEmpty.concat(this);
       }
-    }
-    else{
-      var isPositionEmpty = Multivio.treeStructureController._treeLabelByPosition[position];
-
-      //add treeContent to the _treeLabelByPosition
-      if (SC.none(isPositionEmpty)) {
-        Multivio.treeStructureController._treeLabelByPosition[position] = [this];
-      }
-      else {
-        Multivio.treeStructureController._treeLabelByPosition[position] = isPositionEmpty.concat(this);
-      }
-    }
     }
     
     this.labelWidth = label.length;

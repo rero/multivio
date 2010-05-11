@@ -22,10 +22,6 @@ Multivio.layoutController = SC.Object.create(
   
   isBasicLayoutUp: NO,
   
-  listOfControllersForType: {
-    'application/pdf': 4,
-    'text/xml': 1},
-  
   currentListOfWidget: 0,
 
   initialize: function () {
@@ -36,21 +32,29 @@ Multivio.layoutController = SC.Object.create(
   },
   
   getListOfController: function (type) {
-    switch (type) {
-      case 'application/pdf':
-         console.info('Layout: current type = pdf');
-         this.set('currentListOfWidget', 4);
-         break;
-      
-      default:
-      break;
-    }
+    var list = Multivio.configurator.get('widgetsByType')[type];
+    this.set('currentListOfWidget', list.length);
   },
   
   currentListOfWidgetDidChange: function () {
-    console.info('Layout '+ this.get('currentListOfWidget'));
-    if(this.get('currentListOfWidget') === 0){
-      Multivio.masterController.set('currentPosition', 1);
+    console.info('Layout ' + this.get('currentListOfWidget'));
+    if (this.get('currentListOfWidget') === 0) {
+      var currentType = Multivio.masterController.get('currentType');
+      console.info('Layout current type = ' + currentType);
+      switch (currentType) {
+
+      case 'application/pdf':
+        console.info('Layout setFirstPos?');
+        Multivio.masterController.selectFirstPosition();
+        break;
+      case 'text/xml':
+        Multivio.masterController.selectFirstFile();
+        break;
+
+      default:
+        console.info('LAYOUT undefined type ' + currentType);
+        break;
+      }
     }
   }.observes('currentListOfWidget'),
   /**
@@ -111,6 +115,7 @@ Multivio.layoutController = SC.Object.create(
     var mainPage = Multivio.getPath('mainPage.mainPane');
     switch (component) {
     case 'views.mainContentView':
+      console.info('Layout add views.mainContentView');
       mainPage.layOutComponent({
           name: 'views.mainContentView', 
           x: 1, 
@@ -122,6 +127,7 @@ Multivio.layoutController = SC.Object.create(
       break;
       
     case 'views.thumbnailView':
+      console.info('Layout add views.thumbnailView');
       mainPage.layOutComponent({
           name: 'views.thumbnailView', 
           x: 2, 
@@ -133,6 +139,7 @@ Multivio.layoutController = SC.Object.create(
       break;
         
     case 'views.treeView':
+      console.info('Layout add views.treeView');
       mainPage.layOutComponent({
           name: 'views.treeView', 
           x: 0, 
@@ -144,6 +151,7 @@ Multivio.layoutController = SC.Object.create(
       break;
       
     case 'views.treeSTView':
+      console.info('Layout add views.treeSTView');
       mainPage.layOutComponent({
           name: 'views.treeSTView', 
           x: 0, 
@@ -155,6 +163,7 @@ Multivio.layoutController = SC.Object.create(
       break;
       
     case 'views.navigationView':
+      console.info('Layout add views.navigationView');
       mainPage.layOutComponent({
           name: 'views.navigationView',
           x: 1, 

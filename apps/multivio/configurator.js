@@ -157,6 +157,14 @@ Multivio.configurator = SC.Object.create(
       componentLayout: 'pageBasedWithDivider'
     }
   },
+  
+  widgetsByType: {
+    'text/xml' : ['treeDispatcher'],
+    'application/pdf' : ['treeDispatcher',
+        'imageController', 'navigationController', 'thumbnailController'],
+    'image/jpeg': ['treeDispatcher', 
+        'imageController', 'navigationController', 'thumbnailController']
+  },
 
   /**
     Read and store parameters of the Url

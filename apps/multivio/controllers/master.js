@@ -60,6 +60,12 @@ Multivio.masterController = SC.ObjectController.create(
     this.set('currentFile', reference);
     Multivio.logger.info('masterController initialized');
   },
+  
+  reset: function () {
+    this.set('currentFile', null);
+    this.set('currentPosition', null);
+    this.set('currentType', null);
+  },
 
   /**
   Get the first part of the document and set currentFilePosition
@@ -82,10 +88,22 @@ Multivio.masterController = SC.ObjectController.create(
     }
   }.observes('metadata'),
   
+  selectFirstPosition: function () {
+    console.info('masterController set currentPosition 1');
+    this.set('currentPosition', 1);
+  },
+  
+  selectFirstFile: function () {
+    var firstFile = Multivio.treeStructureController._treeLabelByPosition[0];
+    console.info('set first = ' + firstFile[1].file_postition.url);
+    this.set('currentFile', firstFile[1].file_postition.url);
+  },
+  
   currentTypeDidChange: function () {
     console.info('currentTYPE DID CHANGE');
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
+          //Multivio.layoutController.getListOfController(ct);
     switch (ct) {
     
     case 'application/pdf':
@@ -98,21 +116,22 @@ Multivio.masterController = SC.ObjectController.create(
       break;
       
     case 'text/xml':
+      Multivio.layoutController.getListOfController(ct);
       Multivio.treeDispatcher.initialize(cf);
       break;
       
     case 'image/jpg':
       // create thumbnailcontroller and navigationController
       // add index to the treeController
-    var historyLength = this.get('history').length;
+    //var historyLength = this.get('history').length;
     
-    var lastXML = this.get('history')[length - 2];
+    /*var lastXML = this.get('history')[length - 2];
       Multivio.thumbnailController.initialize(lastXML);
       Multivio.navigationController.initialize(lastXML);
       Multivio.imageController.initialize(lastXML);
       Multivio.treeController.addIndex(lastXML);
-      Multivio.treeController.setSelection(cf);
-    break;
+      Multivio.treeController.setSelection(cf);*/
+      break;
       
     default:
       console.info('undefined type ' + ct);
@@ -121,13 +140,14 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentType'),
   
   currentFileDidChange: function () {
-    console.info('MS: currentFileDidChange');
-    this.set('currentType', null);
-    //this.set('currentPosition', 0);
-    var cf = this.get('currentFile');
-    console.info('MS: new file ' + cf);
-    //history.push(cf);
-    this.getMetadataForFile(cf);
+    console.info('MS: currentFileDidChange ?');
+    if (!SC.none('currentFile')) {
+      this.set('currentType', null);
+      this.set('currentPosition', null);
+      var cf = this.get('currentFile');
+      console.info('MS: new file ' + cf);
+      this.getMetadataForFile(cf);
+    }
   }.observes('currentFile'),
   
   getMetadataForFile: function (fileUrl) {
