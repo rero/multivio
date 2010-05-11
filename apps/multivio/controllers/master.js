@@ -95,8 +95,8 @@ Multivio.masterController = SC.ObjectController.create(
   
   selectFirstFile: function () {
     var firstFile = Multivio.treeStructureController._treeLabelByPosition[0];
-    console.info('set first = ' + firstFile[1].file_postition.url);
-    this.set('currentFile', firstFile[1].file_postition.url);
+    console.info('set first = ' + firstFile[1].file_position.url);
+    this.set('currentFile', firstFile[1].file_position.url);
   },
   
   currentTypeDidChange: function () {

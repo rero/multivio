@@ -132,7 +132,7 @@ Multivio.treeDispatcher = SC.Object.create(
           for (var i = 0; i < phStr.length; i++) {
             var oneEl = phStr[i];
             var oneLabel = {
-              "file_postition": {
+              "file_position": {
                 "url": oneEl.url
               }, 
               "label": oneEl.label

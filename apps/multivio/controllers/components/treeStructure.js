@@ -66,7 +66,7 @@ Multivio.treeStructureController = SC.TreeController.create(
         this.set('globalStructure', structure);
       }
       var rootNodeHash = {
-        file_postition: {
+        file_position: {
           index: 0,
           url: 'http://badUrl.pdf'
         },
@@ -192,7 +192,7 @@ Multivio.treeStructureController = SC.TreeController.create(
         temp.childs = undefined;
       }
 
-      if (temp.file_postition.url === selected) {
+      if (temp.file_position.url === selected) {
         temp.childs = lgs;
       }
       newStruct.push(temp);
@@ -209,13 +209,13 @@ Multivio.treeStructureController = SC.TreeController.create(
   _selectionDidChange: function () {
     var newSelection = this.get('selection'); 
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
-      var selectionIndex = newSelection.firstObject().file_postition.index;
+      var selectionIndex = newSelection.firstObject().file_position.index;
       console.info('ICI ' + selectionIndex);
       /*var currentType = Multivio.masterController.get('currentType');
       console.info('currentType = '+ currentType);*/
       //if no index => change file
       if (SC.none(selectionIndex)) {
-        var url = newSelection.firstObject().file_postition.url;
+        var url = newSelection.firstObject().file_position.url;
         //console.info('set url ' + url);
         //this.reset();
         //this.set('position', null);

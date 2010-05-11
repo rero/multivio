@@ -67,7 +67,7 @@ Multivio.treeController = SC.TreeController.create(
       var ref = Multivio.CDM.getReferer();
       var meta = Multivio.CDM.getMetadata(ref); 
       var referer = [{
-        file_postition: {
+        file_position: {
           index: 1,
           url: 'http://referer'  
         },
@@ -75,7 +75,7 @@ Multivio.treeController = SC.TreeController.create(
         childs: structure
       }];
       var rootNodeHash = {
-        file_postition: {
+        file_position: {
           index: 0,
           url: 'http://badUrl.pdf'
         },
@@ -187,7 +187,7 @@ Multivio.treeController = SC.TreeController.create(
     var newSelection = this.get('selection'); 
     console.info('TR: selectionDidChange ' + newSelection);
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
-      var selectionIndex = newSelection.firstObject().file_postition.index;
+      var selectionIndex = newSelection.firstObject().file_position.index;
       var currentPosition = this.get('position');
       var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
       if (!SC.none(labelFCPosition)) {
