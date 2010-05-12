@@ -116,13 +116,13 @@ Multivio.layoutController = SC.Object.create(
     switch (component) {
     case 'views.mainContentView':
       console.info('Layout add views.mainContentView');
-      mainPage.layOutComponent({
+      /*mainPage.layOutComponent({
           name: 'views.mainContentView', 
           x: 1, 
           y: 1, 
           xlen: 1, 
           ylen: 1
-        });
+        });*/
       this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
       
@@ -140,25 +140,39 @@ Multivio.layoutController = SC.Object.create(
         
     case 'views.treeView':
       console.info('Layout add views.treeView');
-      mainPage.layOutComponent({
+      /*mainPage.layOutComponent({
           name: 'views.treeView', 
           x: 0, 
           y: 1, 
           xlen: 1, 
           ylen: 1
-        });
+        });*/
+         mainPage.layOutComponent({
+           name: 'views.treeAndContentView', 
+           x: 0, 
+           y: 1, 
+           xlen: 2, 
+           ylen: 1
+           }),
       this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
       
     case 'views.treeSTView':
       console.info('Layout add views.treeSTView');
-      mainPage.layOutComponent({
+      /*mainPage.layOutComponent({
           name: 'views.treeSTView', 
           x: 0, 
           y: 1, 
           xlen: 1, 
           ylen: 1
-        });
+        });*/
+      mainPage.layOutComponent({
+        name: 'views.StreeAndContentView', 
+        x: 0, 
+        y: 1, 
+        xlen: 2, 
+        ylen: 1
+        }),
       this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
       

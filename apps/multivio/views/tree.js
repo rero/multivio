@@ -12,54 +12,44 @@
   View that contains the tree
 
   @author che
-  @extends SC.ListView
+  @extends SC.ScrollView
   @since 0.1.0
 */
-Multivio.TreeView = SC.ListView.extend(
+Multivio.TreeView = SC.ScrollView.extend(
 /** @scope Multivio.TreeView.prototype */ {
-  
-  /**
-    IsFirstTime ensures we adjust the view only one time.
-    
-    _childViewsDidChange is called every time the user 
-    expand or collapse a branch of the tree. 
-    
-    @property {Boolean}
-  */
-  isFirstTime: YES,
-  
 
   /**
-    Adjust the treeView width and scroll to the treeSelection.
-    The new width is the width of the largest label.
-
-    @observes childViews
-    @private
-  */
-  _childViewsDidChange: function () {
-    console.info('!----!childViewDidChange ' + this.isFirstTime);
-    var childViews = this.get('childViews');
-    if (childViews.get('length') > 0 & this.isFirstTime) {
-      var maxWidth = 0;
-      for (var i = 0; i < childViews.get('length'); i++) {
-        var labelView = childViews[i];
-        var labelWidth = labelView.content.get('labelWidth');
-        
-        //maxLabelWidth depends on the labelWidth, the outline and the position
-        //of the label in the Tree (outlineLevel)
-        var maxLabelWidth = (labelWidth * 6.5) + 
-          (labelView.get('outlineIndent') * 
-          (labelView.get('outlineLevel') + 1));
- 
-        if (maxLabelWidth > maxWidth) {            
-          maxWidth = maxLabelWidth;
+    Binds to the treeController's selection
+    
+    @binding
+  */  
+  treeSelection: null,
+  treeSelectionBinding: SC.Binding.oneWay('Multivio.treeController.selection'), 
+  
+  /**
+    Updates scollposition by observing changes of the treeController selection.
+    
+    @observes treeSelection
+  */  
+  treeSelectionDidChange: function() {
+    var selection = this.get('treeSelection').firstObject();
+    if (!SC.none(selection)) {
+      var needToScroll = YES;
+      var childViews = this.get('contentView').get('childViews');
+      for (var j = 0; j < childViews.get('length'); j++) {
+        var treeBranch = childViews[j].content;
+        if (treeBranch === selection) {
+          needToScroll = NO;
         }
       }
-      //update the View with the maxWidth
-      this.adjust('width', maxWidth);
-      this.isFirstTime = NO;
+      if (needToScroll) {
+        var arrayOfTree = Multivio.treeController.get('arrangedObjects');
+        var selectionIndex = arrayOfTree.indexOf(selection);
+        this.get('contentView').scrollToContentIndex(selectionIndex);
+        Multivio.logger.debug('update tree scroll'); 
+      }
     }
-  }.observes('childViews'),
+  }.observes('treeSelection')
   
 });
 
@@ -72,7 +62,7 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {Object} context
     @param {String} label
   */    
-  renderLabel: function(context, label) {
+  renderLabel: function (context, label) {
     if (this.content.get('position') === 0) {
       context.push('<label class="document-label-view">', label || '', '</label>') ;
     }
