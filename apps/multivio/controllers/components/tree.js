@@ -26,10 +26,11 @@ Multivio.treeController = SC.TreeController.create(
     @binding {hash}
   */
   position: null,
-  selection: null,
+  //selection: null,
   //positionBinding: "Multivio.masterController.currentPosition",
   
   treeExist: NO,
+  globalStructure: null,
   
   /**
     An Array that contains all nodes of the tree for a position.
@@ -45,7 +46,7 @@ Multivio.treeController = SC.TreeController.create(
 
     @param {String} url the current file url
   */
-  initialize: function (url) {
+  initialize: function () {
     this.set('treeExist', NO);
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
@@ -60,28 +61,44 @@ Multivio.treeController = SC.TreeController.create(
     @param {Object} logicalStructure
     @private
   */  
-  _createTree: function (structure) {
+  _createTree: function (structure, isMultiLevel) {
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
-      console.info('TR: createTree ' + structure);
-      var ref = Multivio.CDM.getReferer();
-      var meta = Multivio.CDM.getMetadata(ref); 
-      var referer = [{
-        file_position: {
-          index: 1,
-          url: 'http://referer'  
-        },
-        label: meta.title,
-        childs: structure
-      }];
-      var rootNodeHash = {
-        file_position: {
-          index: 0,
-          url: 'http://badUrl.pdf'
-        },
-        label: "A new PDF",
-        childs: referer
-      };
+      console.info('TR: createTree ' + structure + isMultiLevel);
+      var rootNodeHash = undefined;
+      if (isMultiLevel) {
+        if (SC.none(this.get('globalStructure'))) {
+          this.set('globalStructure', structure);
+        }
+        rootNodeHash = {
+          file_position: {
+            index: 0,
+            url: 'http://badUrl.pdf'
+          },
+          label: "A new PDF",
+          childs: structure
+        };
+      }
+      else {
+        var ref = Multivio.CDM.getReferer();
+        var meta = Multivio.CDM.getMetadata(ref); 
+        var referer = [{
+          file_position: {
+            index: 1,
+            url: 'http://referer'  
+          },
+          label: meta.title,
+          childs: structure
+        }];
+        rootNodeHash = {
+          file_position: {
+            index: 0,
+            url: 'http://badUrl.pdf'
+          },
+          label: "A new PDF",
+          childs: referer
+        };
+      }
       this._treeLabelByPosition = [];
       //this._treeLabelByPosition[0] = [rootNodeHash];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
@@ -178,6 +195,37 @@ Multivio.treeController = SC.TreeController.create(
     return listToReturn;
   },
   
+  updateTree: function (lgs) {
+    console.info('update Tree');
+    var listOfBindings = this.get('bindings');
+    for (var j = 0; j < listOfBindings.length; j++) {
+      var oneBinding = listOfBindings[j];
+      oneBinding.disconnect();
+    }
+    this.set('bindings', []);
+    this.position = null;
+    this.bind('position', 'Multivio.masterController.currentPosition');    
+    this.set('treeExist', NO);
+    this.set('selection', null);
+    this.set('content', null);
+    var globs = this.get('globalStructure');
+    var selected = Multivio.masterController.get('currentFile');
+    console.info('currentF = ' + selected);
+    var newStruct = [];
+    for (var i = 0; i < globs.length; i++) {
+      var temp = globs[i];
+      if (!SC.none(temp.childs)) {
+        temp.childs = undefined;
+      }
+
+      if (temp.file_position.url === selected) {
+        temp.childs = lgs;
+      }
+      newStruct.push(temp);
+    }
+    this._createTree(newStruct, YES);    
+  },
+  
   /**
     Updates position by observing changes of the selection property.
     
@@ -188,16 +236,24 @@ Multivio.treeController = SC.TreeController.create(
     console.info('TR: selectionDidChange ' + newSelection);
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
       var selectionIndex = newSelection.firstObject().file_position.index;
-      var currentPosition = this.get('position');
-      var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
-      if (!SC.none(labelFCPosition)) {
-        labelFCPosition = labelFCPosition[0];
+      console.info('ICI ' + selectionIndex);
+      //if no index => change file
+      if (SC.none(selectionIndex)) {
+        var url = newSelection.firstObject().file_position.url;
+        Multivio.masterController.set('currentFile', url);
       }
-      var selectionLabel = newSelection.firstObject();
-      if (selectionIndex !== currentPosition && selectionLabel !== labelFCPosition) {
-        this.set('position', selectionIndex);
-        Multivio.logger.info('treeController#selectionDidChange: %@'.
-            fmt(this.get('position')));
+      else {
+        var currentPosition = this.get('position');
+        var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
+        if (!SC.none(labelFCPosition)) {
+          labelFCPosition = labelFCPosition[0];
+        }
+        var selectionLabel = newSelection.firstObject();
+        if (selectionIndex !== currentPosition && selectionLabel !== labelFCPosition) {
+          this.set('position', selectionIndex);
+          Multivio.logger.info('treeController#selectionDidChange: %@'.
+              fmt(this.get('position')));
+        }
       }
     }
   }.observes('selection')

@@ -94,7 +94,8 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   selectFirstFile: function () {
-    var firstFile = Multivio.treeStructureController._treeLabelByPosition[0];
+    //var firstFile = Multivio.treeStructureController._treeLabelByPosition[0];
+    var firstFile = Multivio.treeController._treeLabelByPosition[0];
     console.info('set first = ' + firstFile[1].file_position.url);
     this.set('currentFile', firstFile[1].file_position.url);
   },
@@ -142,7 +143,7 @@ Multivio.masterController = SC.ObjectController.create(
   currentFileDidChange: function () {
     console.info('MS: currentFileDidChange ?');
     if (!SC.none('currentFile')) {
-      this.set('currentType', null);
+      this.currentType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
       console.info('MS: new file ' + cf);

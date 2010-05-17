@@ -47,11 +47,14 @@ Multivio.treeDispatcher = SC.Object.create(
     console.info('TDS: initialize logS = ' + logStr);
     if (logStr !== -1) {
       if (this.get('isTreeStructure')) {
-        Multivio.treeStructureController.updateTree(logStr);
+        //Multivio.treeStructureController.updateTree(logStr);
+        console.info('updateTree dans init');
+        Multivio.treeController.updateTree(logStr);
       }
       else {
+        console.info('createTree dans init');
         Multivio.treeController.initialize();
-        Multivio.treeController._createTree(logStr);
+        Multivio.treeController._createTree(logStr, NO);
       }
     }
     console.info('TDS: bindins length = ' + this.get('bindings').length);
@@ -67,8 +70,6 @@ Multivio.treeDispatcher = SC.Object.create(
     }
     console.info('TDS: bindins length init2 = ' + this.get('bindings').length);   
     this.set('bindings', []);
-    //this.set('lS', null);
-    //this.set('pS', null);
   },
   
   /**
@@ -89,23 +90,26 @@ Multivio.treeDispatcher = SC.Object.create(
             //if logStr === undefined we need physicalStructure
           if (SC.none(logStr)) {
             console.info('TDS: reset binding');
-            this.set('bindings', []);
-            //this.reset();
+            //this.set('bindings', []);
+            this.reset();
             this.bind('pS',  'Multivio.CDM.physicalStructure');
             var phSt = Multivio.CDM.getPhysicalstructure(cf);
             console.info('TDS: physical = -1? ' + phSt);
             if (phSt !== -1) {
-              Multivio.treeStructure.initialize(phSt);
+              console.info('PROB');
+              
+              //Multivio.treeStructure.initialize(phSt);
             }
           }
             //create tree
           else {
             if (this.get('isTreeStructure')) {
-              Multivio.treeStructureController.updateTree(logStr);
+              //Multivio.treeStructureController.updateTree(logStr);
+              Multivio.treeController.updateTree(logStr);
             }
             else {
               Multivio.treeController.initialize();
-              Multivio.treeController._createTree(logStr);
+              Multivio.treeController._createTree(logStr, NO);
             }
           }
         }
@@ -139,8 +143,11 @@ Multivio.treeDispatcher = SC.Object.create(
             };
             res.push(oneLabel);
           }
-          Multivio.treeStructureController.initialize();
-          Multivio.treeStructureController._createTree(res);
+          //Multivio.treeStructureController.initialize();
+          //Multivio.treeStructureController._createTree(res);
+          Multivio.treeController.initialize();
+          console.info('res length '+ res.length);
+          Multivio.treeController._createTree(res, YES);          
           this.set('isTreeStructure', YES);
         }
         else {

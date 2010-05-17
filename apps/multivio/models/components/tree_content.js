@@ -47,34 +47,20 @@ Multivio.TreeContent =  SC.Object.extend({
     var label = this.label;
     var fp = this.file_position;
     var pos = !SC.none(fp.index) ? fp.index : 0;
-    this.position = pos;
-    var isPositionEmpty = undefined;
-    if (!SC.none(Multivio.treeController._treeLabelByPosition)) {
-      isPositionEmpty = Multivio.treeController._treeLabelByPosition[pos];
-  
-      //add treeContent to the _treeLabelByPosition
-      if (SC.none(isPositionEmpty)) {
-        Multivio.treeController._treeLabelByPosition[pos] = 
-            [this];
-      }
-      else {
-        Multivio.treeController._treeLabelByPosition[pos] = 
-            isPositionEmpty.concat(this);
-      }
+    if (label === (Multivio.CDM.getMetadata(Multivio.CDM.getReferer())).title) {
+      this.position = 0;
     }
     else {
-      isPositionEmpty = 
-          Multivio.treeStructureController._treeLabelByPosition[pos];
-
-      //add treeContent to the _treeLabelByPosition
-      if (SC.none(isPositionEmpty)) {
-        Multivio.treeStructureController._treeLabelByPosition[pos] = 
-            [this];
-      }
-      else {
-        Multivio.treeStructureController._treeLabelByPosition[pos] = 
-            isPositionEmpty.concat(this);
-      }
+      this.position = pos;
+    }
+    var isPositionEmpty = Multivio.treeController._treeLabelByPosition[pos];
+    //add or concat treeContent to the _treeLabelByPosition
+    if (SC.none(isPositionEmpty)) {
+      Multivio.treeController._treeLabelByPosition[pos] = [this];
+    }
+    else {
+      Multivio.treeController._treeLabelByPosition[pos] = 
+          isPositionEmpty.concat(this);
     }
     
     this.labelWidth = label.length;

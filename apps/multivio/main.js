@@ -22,7 +22,7 @@ Multivio.main = function main() {
   SC.routes.add(':', Multivio.configurator, 'readInputParameters');
   
   // Launch the initalization process using Multivio.initializer
-  Multivio.initializer.initialize();
+  //Multivio.initializer.initialize();
 };
 
 function main() {

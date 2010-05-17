@@ -110,85 +110,6 @@ Multivio.views = SC.Page.design(
         }).classNames('inner_content_view'.w())
       ]
     })
-  }),
-  
-  StreeAndContentView: SC.SplitView.design({
-    layoutDirection: SC.LAYOUT_HORIZONTAL,
-    autoresizeBehavior: SC.RESIZE_BOTTOM_RIGHT,
-    defaultThickness: 200,
-    topLeftMinThickness: 100,
-    topLeftMaxThickness: 2000,
-    dividerThickness: 20,
-    canCollapseViews: NO,
-
-    topLeftView: SC.View.design({
-      layout: { top: 0, bottom: 0, left: 0, right: 0 },
-      childViews: [
-        // this intermediate view level is required due to odd behavior of
-        // the SplitdDivider view
-        SC.View.design({
-          layout: { top: 0, bottom: 0, left: 0, right: 0 },
-
-          childViews: 'innerTree'.w(),
-          innerTree: Multivio.TreeView.design({
-            layout: { top: 10, bottom: 10, left: 10, right: 10 },
-            borderStyle: SC.BORDER_NONE,
-
-            contentView: SC.ListView.design({
-              layout: { top: 0, bottom: 0, left: 0, right: 0 },
-              rowHeight: 18,
-              borderStyle: SC.BORDER_NONE,
-              contentValueKey: 'label',
-              exampleView: Multivio.TreeLabelView,
-              contentBinding: 'Multivio.treeStructureController.arrangedObjects',
-              selectionBinding: 'Multivio.treeStructureController.selection'
-            })
-          }),
-          render: function (context, firstTime) {
-            if (context.needsContent) {
-              this.renderChildViews(context, firstTime);
-              context.push(
-                "<div class='top-edge'></div>",
-                "<div class='right-edge'></div>",
-                "<div class='bottom-edge'></div>",
-                "<div class='left-edge'></div>");
-            }
-          }
-        }).classNames('shadow_light inner_view'.w())
-      ]
-    }),
-
-    bottomRightView: SC.View.design({
-      layout: { top: 0, bottom: 0, left: 0, right: 0 },
-      childViews: [
-        // this intermediate view level is required due to odd behavior of
-        // the SplitdDivider view
-        SC.View.design({
-          layout: { top: 0, bottom: 0, left: 0, right: 0 },
-
-          childViews: 'innerMainContent'.w(),
-          innerMainContent: Multivio.ContentView.design({
-            layout: { top: 10, bottom: 10, left: 10, right: 10 },
-            borderStyle: SC.BORDER_NONE,
-
-            contentView: SC.ImageView.design({
-              layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
-              useImageCache: NO
-            })
-          }),
-          render: function (context, firstTime) {
-            if (context.needsContent) {
-              this.renderChildViews(context, firstTime);
-              context.push(
-                "<div class='top-edge'></div>",
-                "<div class='right-edge'></div>",
-                "<div class='bottom-edge'></div>",
-                "<div class='left-edge'></div>");
-            }
-          }
-        }).classNames('inner_content_view'.w())
-      ]
-    })
   }),  
 
   /**
@@ -286,38 +207,7 @@ Multivio.views = SC.Page.design(
     }
   }).classNames('shadow_light inner_view'.w()),
   
-  /**
-    TreeStrucure view
-  */
-  treeSTView: SC.View.design({
-    layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
-    childViews: 'innerTree'.w(),
-    innerTree:  Multivio.TreeView.design({
-      layout: { top: 10, bottom: 10, left: 10, right: 10 },
-      borderStyle: SC.BORDER_NONE,
-
-      contentView: SC.ListView.design({
-        layout: { top: 0, bottom: 0, left: 0, right: 0 },
-        rowHeight: 18,
-        borderStyle: SC.BORDER_NONE,
-        exampleView: Multivio.TreeLabelView,        
-        contentValueKey: 'label',
-        contentBinding: 'Multivio.treeStructureController.arrangedObjects',
-        selectionBinding: 'Multivio.treeStructureController.selection'
-      })
-    }),
-    render: function (context, firstTime) {
-      if (context.needsContent) {
-        this.renderChildViews(context, firstTime);
-        context.push(
-          "<div class='top-edge'></div>",
-          "<div class='right-edge'></div>",
-          "<div class='bottom-edge'></div>",
-          "<div class='left-edge'></div>");
-      }
-    }
-  }).classNames('shadow_light inner_view'.w()),
 
   /**
     Navigation view

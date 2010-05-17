@@ -8,7 +8,7 @@
 
 //require('models/core_document_node');
 
-Multivio.CoreDocumentNode.FIXTURES = [
+/*Multivio.CoreDocumentNode.FIXTURES = [
 
   { guid: 'n00001', parentId: [], nextId: 'n00002', previousId: 'undefined', children: ['n00002', 'n00015', 'n00071'], label: 'The Problem of Practical Eugenics',
   metadata: {language: 'ang', creator: 'Karl Pearson', title: 'The Problem of Practical Eugenics'} },
@@ -85,4 +85,4 @@ Multivio.CoreDocumentNode.FIXTURES = [
   { guid: 'n00072', parentId: ['n00071'], nextId: 'n00073', previousId: 'n00071', label: 'Preservation colophon', children: ['n00073'] }, 
   { guid: 'n00073', parentId: ['n00072'], nextId: 'undefined', previousId: 'n00072', sequenceNumber: 51, urlDefault: 'http://purl.dlib.indiana.edu/iudl/brittlebooks/page/VAA1194-51-screen.gif' }
   
-];
+];*/
