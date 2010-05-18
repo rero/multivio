@@ -121,17 +121,14 @@ Multivio.masterController = SC.ObjectController.create(
       Multivio.treeDispatcher.initialize(cf);
       break;
       
-    case 'image/jpg':
-      // create thumbnailcontroller and navigationController
-      // add index to the treeController
-    //var historyLength = this.get('history').length;
-    
-    /*var lastXML = this.get('history')[length - 2];
-      Multivio.thumbnailController.initialize(lastXML);
-      Multivio.navigationController.initialize(lastXML);
-      Multivio.imageController.initialize(lastXML);
-      Multivio.treeController.addIndex(lastXML);
-      Multivio.treeController.setSelection(cf);*/
+    case 'image/jpeg':
+      var ref = Multivio.CDM.getReferer();
+      Multivio.layoutController.getListOfController(ct);
+      Multivio.thumbnailController.initialize(ref);
+      //Multivio.metadataController.initialize(ref);
+      Multivio.treeDispatcher.createIndex(ref);    
+      Multivio.imageController.initialize(ref); 
+      Multivio.navigationController.initialize(ref);   
       break;
       
     default:

@@ -117,9 +117,10 @@ Multivio.thumbnailController = SC.ArrayController.create(
     var ct = Multivio.masterController.get('currentType');
     var cont = [];
     var newTable = {};
+    var firstChild = undefined;
     //TO DO strategy depending of the type
     if (ct === 'application/pdf') {
-      var firstChild = structure[0];
+      firstChild = structure[0];
       var pdfUrl = firstChild.url;
       var cf = Multivio.masterController.get('currentFile');
       var nbOfPage = Multivio.CDM.getMetadata(cf).nPages;
@@ -133,6 +134,20 @@ Multivio.thumbnailController = SC.ArrayController.create(
           };
         newTable[i] = thumbnailHash;
         cont.push(thumbnailHash);
+      }
+    }
+    else {
+      for (var j = 0; j < structure.length; j++) {
+        firstChild = structure[j];
+        var imageUrl = firstChild.url;
+        var thumbnailImageUrl = Multivio.configurator.get('serverName') + 
+            Multivio.configurator.getThumbnailUrl(imageUrl, 0);
+        var thumbnailImageHash = {
+            url:  thumbnailImageUrl,
+            pageNumber: j + 1
+          };
+        newTable[j + 1] = thumbnailImageHash;
+        cont.push(thumbnailImageHash);     
       }
     }
     this.set('content', cont);

@@ -73,6 +73,31 @@ Multivio.treeDispatcher = SC.Object.create(
   },
   
   /**
+  Create the index for the physicalStructure
+  
+  @param {String} ref url of the document
+  */
+  createIndex: function (ref) {
+    var ph = Multivio.CDM.getPhysicalstructure(ref);
+    if (ph !== -1) {
+      var logical = [];
+      for (var i = 0; i < ph.length; i++) {
+        var oneElem = ph[i];
+        var newElem = {
+          file_position: {
+            index: i + 1,
+            url: oneElem.url
+          },
+          label: oneElem.label
+        };
+        logical.push(newElem);
+      }
+      Multivio.treeController.initialize();
+      Multivio.treeController._createTree(logical, NO);
+    }
+  },
+  
+  /**
     CDM.logicalStructure has changed. Verify if we can create the sub-model.
 
     @observes logicalStructure
@@ -121,10 +146,14 @@ Multivio.treeDispatcher = SC.Object.create(
     }
   }.observes('lS'),
   
+  /**
+    CDM.physicalStructure has changed. Verify if we can create the sub-model.
+
+    @observes physicalStructure
+  */  
   physicalStructureDidChange: function () {
     console.info('TDS: physicalDidChange ' + this.get('pS'));
     if (!SC.none(this.get('pS'))) {
-      console.info('DEDANS------');
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {    
         var phStr = this.get('pS')[cf];
@@ -136,17 +165,15 @@ Multivio.treeDispatcher = SC.Object.create(
           for (var i = 0; i < phStr.length; i++) {
             var oneEl = phStr[i];
             var oneLabel = {
-              "file_position": {
-                "url": oneEl.url
+              file_position: {
+                url: oneEl.url
               }, 
-              "label": oneEl.label
+              label: oneEl.label
             };
             res.push(oneLabel);
           }
-          //Multivio.treeStructureController.initialize();
-          //Multivio.treeStructureController._createTree(res);
           Multivio.treeController.initialize();
-          console.info('res length '+ res.length);
+          console.info('res length ' + res.length);
           Multivio.treeController._createTree(res, YES);          
           this.set('isTreeStructure', YES);
         }

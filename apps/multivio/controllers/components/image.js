@@ -41,7 +41,12 @@ Multivio.imageController = SC.ArrayController.create(
     if (structure !== -1) {
       var meta = Multivio.CDM.getMetadata(url);
       if (meta !== -1) {
-        this._createImages(structure, meta.nPages);       
+        if (SC.none(meta.nPages)) {
+          this._createImages(structure);
+        }
+        else {
+          this._createPDFImages(structure, meta.nPages);
+        }
       }
     }
     else {
@@ -84,7 +89,12 @@ Multivio.imageController = SC.ArrayController.create(
           }
           else {
             var meta = Multivio.CDM.getMetadata(cf);
-            this._createImages(phSt, meta.nPages);
+            if (SC.none(meta.nPages)) {
+              this._createImages(phSt);
+            }
+            else {
+              this._createPDFImages(phSt, meta.nPages);
+            }
           }
         }
       }
@@ -92,11 +102,11 @@ Multivio.imageController = SC.ArrayController.create(
   }.observes('physicalStructure'),
  
   /**
-    Create imageController content
+    Create imageController content for PDF
 
     @private
   */ 
-  _createImages: function (structure, nb) {
+  _createPDFImages: function (structure, nb) {
     //TO do verify the currentType to know what to do
     var files = structure[0];
     var pdfUrl = files.url; 
@@ -107,6 +117,30 @@ Multivio.imageController = SC.ArrayController.create(
       var imageHash = {
           url:  imageUrl,
           pageNumber: i
+        };
+      cont.push(imageHash);
+    }
+    this.set('content', cont);
+    Multivio.layoutController.addComponent('views.mainContentView');
+    Multivio.logger.info('imageController#content created and layout setted');
+  },
+  
+  /**
+    Create imageController content for images
+
+    @private
+  */  
+  _createImages: function (structure) {
+    //TO do verify the currentType to know what to do
+    var cont = [];
+    for (var i = 0; i < structure.length; i++) {
+      var files = structure[i];
+      var pdfUrl = files.url;
+      var imageUrl = Multivio.configurator.get('serverName') + 
+          Multivio.configurator.getImageUrl(pdfUrl, 0);
+      var imageHash = {
+          url:  imageUrl,
+          pageNumber: i + 1
         };
       cont.push(imageHash);
     }

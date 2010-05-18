@@ -48,7 +48,14 @@ Multivio.navigationController = SC.ObjectController.create(
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
     var meta = Multivio.CDM.getMetadata(url);
-    var nb = meta.nPages;
+    var nb = 0;
+    if (SC.none(meta.nPages)) {
+      var ph = Multivio.CDM.getPhysicalstructure(url);
+      nb = ph.length;
+    }
+    else {
+      nb = meta.nPages;
+    }
     this.set('_numberOfPages', nb);
     Multivio.layoutController.addComponent('views.navigationView');
     Multivio.logger.info('navigationController initialized');

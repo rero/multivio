@@ -50,6 +50,9 @@ Multivio.layoutController = SC.Object.create(
       case 'text/xml':
         Multivio.masterController.selectFirstFile();
         break;
+      case 'image/jpeg':
+        Multivio.masterController.selectFirstPosition();
+        break;
 
       default:
         console.info('LAYOUT undefined type ' + currentType);
@@ -147,13 +150,13 @@ Multivio.layoutController = SC.Object.create(
           xlen: 1, 
           ylen: 1
         });*/
-         mainPage.layOutComponent({
-           name: 'views.treeAndContentView', 
-           x: 0, 
-           y: 1, 
-           xlen: 2, 
-           ylen: 1
-           }),
+      mainPage.layOutComponent({
+        name: 'views.treeAndContentView', 
+        x: 0, 
+        y: 1, 
+        xlen: 2, 
+        ylen: 1
+      });
       this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
 
