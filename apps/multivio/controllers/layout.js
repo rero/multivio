@@ -31,13 +31,23 @@ Multivio.layoutController = SC.Object.create(
     this._showWaitingPage();
   },
   
+  /**
+  For each type of Document retreive the number of controller needed
+  
+  @param {String} type
+  */
   getListOfController: function (type) {
     var list = Multivio.configurator.get('widgetsByType')[type];
     this.set('currentListOfWidget', list.length);
   },
   
+  /**
+  currentListOfWidget has changed, verify if all controller have create the
+  view and if YES select the first element to show it.
+  
+  @observes currentListOfWidget
+  */
   currentListOfWidgetDidChange: function () {
-    console.info('Layout ' + this.get('currentListOfWidget'));
     if (this.get('currentListOfWidget') === 0) {
       var currentType = Multivio.masterController.get('currentType');
       console.info('Layout current type = ' + currentType);
@@ -47,10 +57,14 @@ Multivio.layoutController = SC.Object.create(
         console.info('Layout setFirstPos?');
         Multivio.masterController.selectFirstPosition();
         break;
+  
       case 'text/xml':
+      case 'text/xml;charset=utf-8':
         Multivio.masterController.selectFirstFile();
         break;
+  
       case 'image/jpeg':
+      case 'image/jpg':
         Multivio.masterController.selectFirstPosition();
         break;
 
@@ -60,6 +74,7 @@ Multivio.layoutController = SC.Object.create(
       }
     }
   }.observes('currentListOfWidget'),
+  
   /**
     Sets up the views in the workspace.
 
@@ -102,6 +117,9 @@ Multivio.layoutController = SC.Object.create(
     Multivio.logger.info('layoutController workspace initialized');
   },
   
+  /**
+  Set the basic Layout. Remove the waiting panel and add the header view
+  */
   setBasicLayout: function () {
     console.info('LAYOUT SET BASIC');
     this._hideWaitingPage();
@@ -109,11 +127,21 @@ Multivio.layoutController = SC.Object.create(
     this.set('isBasicLayoutUp', YES);   
   },
   
+  /**
+  Removed a view 
+  
+  @param {String} component the name of the component
+  */
   removeComponent: function (component) {
     var mainPage = Multivio.getPath('mainPage.mainPane');
     mainPage.removeComponent(component); 
   },
   
+  /**
+  Add a new component to the main page
+  
+  @param {String} component the name of the component
+  */
   addComponent: function (component) {
     var mainPage = Multivio.getPath('mainPage.mainPane');
     switch (component) {

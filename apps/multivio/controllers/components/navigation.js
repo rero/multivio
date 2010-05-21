@@ -34,35 +34,110 @@ Multivio.navigationController = SC.ObjectController.create(
   _numberOfPages: null,
   
   /**
-    Binds to the masterController's currentPosition.
-    
-    @binding {Multivio.CoreDocumentNode}
+    local variables used to create bindings
   */
   position: null,
-  //positionBinding: "Multivio.masterController.currentPosition",
+  meta: null,
+  physicalStructure: null,
 
   /**
-    Initialize this controller, retrieve the number of pages.
+    Initialize this controller, try to retrieve the number of pages.
+    The number of pages can be find in the metadata if we have a PDF or
+    we can find it by calculating the number of elements contains 
+    in the physical structure
+    
+    @param {String} url
   */
   initialize: function (url) {
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
     var meta = Multivio.CDM.getMetadata(url);
     var nb = 0;
-    if (SC.none(meta.nPages)) {
-      var ph = Multivio.CDM.getPhysicalstructure(url);
-      nb = ph.length;
+    //meta = -1 response not on client => create binding
+    if (meta === -1) {
+      this.bind('meta', 'Multivio.CDM.metadata');
     }
     else {
-      nb = meta.nPages;
+      //don't have the nb of pages get the physicalStructure to known it
+      if (SC.none(meta.nPages)) {
+        var ph = Multivio.CDM.getPhysicalstructure(url);
+        //ph = -1 response not on client => create binding
+        if (ph === -1) {
+          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+        }
+        else {
+          nb = ph.length;
+        }
+      }
+      else {
+        nb = meta.nPages;
+      }
     }
-    this.set('_numberOfPages', nb);
+    if (nb !== 0) {
+      this.set('_numberOfPages', nb);
+    }
     Multivio.layoutController.addComponent('views.navigationView');
     Multivio.logger.info('navigationController initialized');
   },
   
   /**
-    Updates currentPage by observing changes of the position property
+  Multivio.CDM.metadata has changed, verify if we have now the metadata
+  for the current file. If YES set the number of pages.
+  
+  @observes meta
+  */
+  metadataDidChange: function () {
+    var metadata = this.get('meta');
+    if (!SC.none(metadata)) {
+      var cf = Multivio.masterController.get('currentFile');
+      if (!SC.none(cf)) {
+        var currentMeta = this.get('meta')[cf];
+        var nb = 0;
+        //we have metadata
+        if (currentMeta !== -1) {
+          if (SC.none(currentMeta.nPages)) {
+            var ph = Multivio.CDM.getPhysicalstructure(cf);
+            if (ph !== -1) {
+              this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+            }
+            else {
+              nb = ph.length;
+            }
+          }
+          else {
+            nb = currentMeta.nPages;
+          }
+        }
+        if (nb !== 0) {
+          this.set('_numberOfPages', nb);
+        }
+      }
+    }
+  }.observes('meta'),
+  
+  /**
+  Multivio.CDM.physicalstructure has changed, verify if we have now 
+  the physicalStructure for the current file. If YES set the number of pages.
+  
+  @observes physicalStructure
+  */
+  physicalStructureDidChange: function () {
+    var ph = this.get('physicalStructure');
+    if (!SC.none(ph)) {
+      var cf = Multivio.masterController.get('currentFile');
+      if (!SC.none(cf)) {
+        var currentPh = this.get('physicalStructure')[cf];
+        //we have physicalstructure
+        if (currentPh !== -1) {
+          this.set('_numberOfPages', currentPh.length);
+        }
+      }
+    }
+  }.observes('physicalStructure'),
+  
+  /**
+    Updates currentPage by observing changes of the position property of the 
+    masterController
     
     @observes position
   */
@@ -89,7 +164,7 @@ Multivio.navigationController = SC.ObjectController.create(
   _currentPageDidChange: function () {
     try {
       //TO DO Problem with negative number
-      var newCurrentPage = this.get('currentPage');     
+      var newCurrentPage = this.get('currentPage');    
      /* if (newCurrentPage <= 0 || newCurrentPage > this.get('_numberOfPages')) {
         Multivio.usco.showAlertPaneInfo('Invalid number', 
             newCurrentPage + ' must be between 0 and %@'. 

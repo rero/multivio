@@ -42,7 +42,6 @@ Multivio.treeDispatcher = SC.Object.create(
     if (this.get('bindings').length !== 0) {
       this.reset();
     }
-    this.bind('lS', 'Multivio.CDM.logicalStructure');
     var logStr = Multivio.CDM.getLogicalStructure(url);
     console.info('TDS: initialize logS = ' + logStr);
     if (logStr !== -1) {
@@ -57,10 +56,17 @@ Multivio.treeDispatcher = SC.Object.create(
         Multivio.treeController._createTree(logStr, NO);
       }
     }
+    //logicalStructure not in the client create a binding
+    else {
+      this.bind('lS', 'Multivio.CDM.logicalStructure');
+    }
     console.info('TDS: bindins length = ' + this.get('bindings').length);
     Multivio.logger.info('documentStructure initialized');
   },
   
+  /**
+  Reset bindings and variables
+  */
   reset: function () {
     var listOfBindings = this.get('bindings');
     console.info('TDS: bindins length init = ' + listOfBindings.length);
@@ -73,28 +79,89 @@ Multivio.treeDispatcher = SC.Object.create(
   },
   
   /**
-  Create the index for the physicalStructure
+  Create the index for the physicalStructure or for a logicalStructure
+  if we have a Mets (Mets: position_file.index = null).
   
   @param {String} ref url of the document
   */
   createIndex: function (ref) {
-    var ph = Multivio.CDM.getPhysicalstructure(ref);
-    if (ph !== -1) {
+    console.info('Create index for ' + ref);
+    var lg = Multivio.CDM.getLogicalStructure(ref);
+    if (lg !== -1) {
+      var ph = Multivio.CDM.getPhysicalstructure(ref);
       var logical = [];
-      for (var i = 0; i < ph.length; i++) {
-        var oneElem = ph[i];
-        var newElem = {
-          file_position: {
-            index: i + 1,
-            url: oneElem.url
-          },
-          label: oneElem.label
-        };
-        logical.push(newElem);
+      //we have images => no logicalStructure
+      if (SC.none(lg)) {
+        if (ph !== -1) {
+          for (var i = 0; i < ph.length; i++) {
+            var oneElem = ph[i];
+            var newElem = {
+              file_position: {
+                index: i + 1,
+                url: oneElem.url
+              },
+              label: oneElem.label
+            };
+            logical.push(newElem);
+          }
+        }
+        else {
+          this.bind('lS', 'Multivio.CDM.logicalStructure');
+        }
       }
-      Multivio.treeController.initialize();
-      Multivio.treeController._createTree(logical, NO);
+      //we have a METS
+      else {
+        if (ph === -1) {
+          this.bind('pS',  'Multivio.CDM.physicalStructure');
+        }
+        else {
+          var firstNode = lg[0];
+          var newNode = {
+            file_position: {
+              index: 0,
+              url: 'url.bidon'
+            },
+            label: 'label Bidon',
+            childs: lg          
+          };
+          logical = this.setLogicalIndex(newNode, ph, []);        
+        }
+      }
+      if (!SC.none(logical)) {
+        Multivio.treeController.initialize();
+        Multivio.treeController._createTree(logical, NO);
+      }
     }
+  },
+  
+  /**
+  Create the index for a Mets logicalstructure. To do it we compare urls
+  of the logical and the physicalstructure
+  
+  @param {Object} oneNode a node of the logicalStructure. At the first call,
+      this node has as childs the logicalStructure file
+  @param {Objet} list the physicalStructure of the file
+  @param {Array} toReturn
+  */
+  setLogicalIndex: function (oneNode, list, toReturn) { 
+    var url = oneNode.file_position.url;
+    console.info('URL = ' + url);
+    var hasChildren = oneNode.childs;
+    if (!SC.none(hasChildren)) {
+      for (var i = 0; i < hasChildren.length; i++) {
+        var onechild = oneNode.childs[i];
+        this.setLogicalIndex(onechild, list, toReturn);
+      }
+    }
+    for (var j = 0; j < list.length; j++) {
+      var physicalUrl = list[j].url;
+      if (physicalUrl === url) {
+        oneNode.file_position.index = j + 1;
+        toReturn.push(oneNode);
+        break;
+      }
+    }
+    return toReturn;
   },
   
   /**
@@ -162,20 +229,27 @@ Multivio.treeDispatcher = SC.Object.create(
         if (phStr !== -1 && phStr === phSFCDM) {
           console.info('TDS: valid physicalStructure');
           var res = [];
-          for (var i = 0; i < phStr.length; i++) {
-            var oneEl = phStr[i];
-            var oneLabel = {
-              file_position: {
-                url: oneEl.url
-              }, 
-              label: oneEl.label
-            };
-            res.push(oneLabel);
+          var logST = Multivio.CDM.getLogicalStructure(cf);
+          if (!SC.none(logST)) {
+            console.info('logical & physical valid');
+            this.createIndex(cf);
           }
-          Multivio.treeController.initialize();
-          console.info('res length ' + res.length);
-          Multivio.treeController._createTree(res, YES);          
-          this.set('isTreeStructure', YES);
+          else {
+            for (var i = 0; i < phStr.length; i++) {
+              var oneEl = phStr[i];
+              var oneLabel = {
+                file_position: {
+                  url: oneEl.url
+                }, 
+                label: oneEl.label
+              };
+              res.push(oneLabel);
+            }
+            Multivio.treeController.initialize();
+            console.info('res length ' + res.length);
+            Multivio.treeController._createTree(res, YES);          
+            this.set('isTreeStructure', YES);
+          }
         }
         else {
           console.info('TDS: phS Probleme ' + phStr + ' ' + phSFCDM);

@@ -47,6 +47,7 @@ Multivio.TreeContent =  SC.Object.extend({
     var label = this.label;
     var fp = this.file_position;
     var pos = !SC.none(fp.index) ? fp.index : 0;
+    //console.info('Tree_cont '+label+' pos '+pos);
     if (label === (Multivio.CDM.getMetadata(Multivio.CDM.getReferer())).title) {
       this.position = 0;
     }

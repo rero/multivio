@@ -21,13 +21,9 @@ Multivio.treeController = SC.TreeController.create(
 /** @scope Multivio.treeController.prototype */ {
   
   /**
-    Binds to the masterController's currentPosition
-    
-    @binding {hash}
+    Local variable for binding
   */
   position: null,
-  //selection: null,
-  //positionBinding: "Multivio.masterController.currentPosition",
   
   treeExist: NO,
   globalStructure: null,
@@ -52,8 +48,6 @@ Multivio.treeController = SC.TreeController.create(
     this.bind('position', 'Multivio.masterController.currentPosition');
     Multivio.logger.info('treeController initialized');
   },
-
-
 
   /**
     Create the sub-model of this controller and set the content.
@@ -100,11 +94,18 @@ Multivio.treeController = SC.TreeController.create(
         };
       }
       this._treeLabelByPosition = [];
-      //this._treeLabelByPosition[0] = [rootNodeHash];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
       this.set('content', treeContent);
       Multivio.layoutController.addComponent('views.treeView');
       Multivio.logger.info('treeController#_createTree');
+      //order keys to use correctly this._getListOfLabelsForIndex
+      var keys = this.ascendingKeys(this._treeLabelByPosition);
+      var temp = [];
+      for (var i = 0; i < keys.length; i++) {
+        var oneKey = keys[i];
+        temp[oneKey] = this._treeLabelByPosition[oneKey];
+      }
+      this._treeLabelByPosition = temp;
     }
   },
 
@@ -115,7 +116,6 @@ Multivio.treeController = SC.TreeController.create(
   */
   positionDidChange: function () {
     var newPosition = this.get('position');
-    console.info('TR: position did change ' + newPosition);
     if (!SC.none(newPosition)) {  
       //retreive the list of labels for this position
       var labels = this._getListOfLabelsForIndex(newPosition);
@@ -172,6 +172,7 @@ Multivio.treeController = SC.TreeController.create(
         //found the right label
         var lastIndex = 0;
         var newIndex = 0;
+        //this._treeLabelByPosition.sort( function (a,b) {return a[0]-b[0];});
         for (var key in this._treeLabelByPosition) {
           //TO DO How to have only key = number
           if (this._treeLabelByPosition.hasOwnProperty(key)) {
@@ -195,8 +196,29 @@ Multivio.treeController = SC.TreeController.create(
     return listToReturn;
   },
   
+  /**
+  Order keys increasingly
+  
+  @param {Array} oneArray the array to order the keys
+  */
+  ascendingKeys: function (oneArray) { 
+    var keys = [];
+    for (var k in oneArray) {
+      if (oneArray.hasOwnProperty(k)) {
+        keys.push(parseInt(k));
+      }
+    }
+    keys.sort(function (a, b) {return (a > b) - (a < b); });
+    return keys;
+  },
+  
+  /**
+  Add new labels to the tree
+  
+  @param {Object} lgs the logicalstructure of the file to added
+  */
   updateTree: function (lgs) {
-    console.info('update Tree');
+    //first remove old bindings and create news
     var listOfBindings = this.get('bindings');
     for (var j = 0; j < listOfBindings.length; j++) {
       var oneBinding = listOfBindings[j];
@@ -208,6 +230,7 @@ Multivio.treeController = SC.TreeController.create(
     this.set('treeExist', NO);
     this.set('selection', null);
     this.set('content', null);
+    //retreive the old structure and append at the right position the new one
     var globs = this.get('globalStructure');
     var selected = Multivio.masterController.get('currentFile');
     console.info('currentF = ' + selected);

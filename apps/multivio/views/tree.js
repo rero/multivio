@@ -27,7 +27,7 @@ Multivio.TreeView = SC.ScrollView.extend(
   treeSelectionBinding: SC.Binding.oneWay('Multivio.treeController.selection'), 
   
   /**
-    Updates scollposition by observing changes of the treeController selection.
+    Updates scrollposition by observing changes of the treeController selection.
     
     @observes treeSelection
   */  
@@ -36,7 +36,8 @@ Multivio.TreeView = SC.ScrollView.extend(
     if (!SC.none(selection)) {
       var needToScroll = YES;
       var childViews = this.get('contentView').get('childViews');
-      for (var j = 0; j < childViews.get('length'); j++) {
+      //Don't verify the first and the last child to force to scroll
+      for (var j = 1; j < childViews.get('length') -1 ; j++) {
         var treeBranch = childViews[j].content;
         if (treeBranch === selection) {
           needToScroll = NO;
@@ -55,6 +56,20 @@ Multivio.TreeView = SC.ScrollView.extend(
 
 Multivio.TreeLabelView = SC.ListItemView.extend(
   /** @scope Multivio.TreeLabelView.prototype */ {
+    hasContentIcon: YES,
+    
+  /**
+    Override renderIcon method to add a generic icon 
+
+    @param {Object} context
+    @param {String} icon a URL or class name
+  */
+  renderIcon: function(context, icon) {
+    if (this.content.get('position') === 0) {
+      context.begin('img').addClass('icon').addClass('')
+          .attr('src', static_url('images/icons/mute')).end();
+    }
+  }, 
 
   /**
     Override renderLabel method to set some labels in bold 
@@ -63,7 +78,6 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {String} label
   */    
   renderLabel: function (context, label) {
-    console.info('renderLabel '+ label + ' pso '+ this.content.get('position'));
     if (this.content.get('position') === 0) {
       context.push('<label class="document-label-view">', label || '', '</label>') ;
     }

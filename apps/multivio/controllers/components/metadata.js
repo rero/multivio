@@ -9,8 +9,8 @@
 /** 
   @class
 
-  This controller manages the behavior of the header view. It depends on
-  the master controller.
+  This controller manages the behavior of the header view. The header view
+  contains only metadata about the global document
 
   @author che
   @extends SC.ObjectController

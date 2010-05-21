@@ -158,11 +158,15 @@ Multivio.configurator = SC.Object.create(
     }
   },
   
+  //list of controllers for each type of document
   widgetsByType: {
     'text/xml' : ['treeDispatcher'],
+    'text/xml;charset=utf-8' : ['treeDispatcher'],
     'application/pdf' : ['treeDispatcher',
         'imageController', 'navigationController', 'thumbnailController'],
     'image/jpeg': ['treeDispatcher', 
+        'imageController', 'navigationController', 'thumbnailController'],
+    'image/jpg': ['treeDispatcher', 
         'imageController', 'navigationController', 'thumbnailController']
   },
 
@@ -184,7 +188,7 @@ Multivio.configurator = SC.Object.create(
           var url = !SC.none(location.hash) ? location.hash : undefined;
           if (url !== undefined) {
             url = url.replace('#get&url=', '');
-            url = url.substring(0, url.indexOf('&'));
+            url = url.substring(0, url.lastIndexOf('&'));
             prop.url = url;
             Multivio.CDM.setReferer(url);
           }

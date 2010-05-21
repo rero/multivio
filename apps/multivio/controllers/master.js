@@ -22,19 +22,26 @@
 
 Multivio.masterController = SC.ObjectController.create(
 /** @scope Multivio.masterController.prototype */ {
-  
-  //history: [],
+
   /**
+  The url of the file_position object
+  
   @property {file}
   */
   currentFile: null,
   
   /**
+  The index of the file_position
+  
+  Now it's a number but it can be something else
+  
   @property {position}
   */
   currentPosition: null,
     
   /**
+  The type of the currentDocument
+  
   @property {currentType}
   */
   currentType: null,
@@ -51,7 +58,8 @@ Multivio.masterController = SC.ObjectController.create(
   
   
   /**
-    Initialize masterController
+    Initialize masterController. Get the referer (the url given to multivio) 
+    of the document and set it as the currentFile
   */
   initialize: function () {
     //start layoutController => show waiting page
@@ -61,6 +69,9 @@ Multivio.masterController = SC.ObjectController.create(
     Multivio.logger.info('masterController initialized');
   },
   
+  /**
+  Reset variables
+  */
   reset: function () {
     this.set('currentFile', null);
     this.set('currentPosition', null);
@@ -68,7 +79,9 @@ Multivio.masterController = SC.ObjectController.create(
   },
 
   /**
-  Get the first part of the document and set currentFilePosition
+  Multivio.CDM.metadata has changed.Set new type.
+  
+  @observe metadata
   */
   metadataDidChange: function () {
     console.info('MS: metadata change');
@@ -88,11 +101,17 @@ Multivio.masterController = SC.ObjectController.create(
     }
   }.observes('metadata'),
   
+  /**
+  Set current position to 1
+  */
   selectFirstPosition: function () {
     console.info('masterController set currentPosition 1');
     this.set('currentPosition', 1);
   },
   
+  /**
+  Select the first file of the Document and set currentfile with this value
+  */ 
   selectFirstFile: function () {
     //var firstFile = Multivio.treeStructureController._treeLabelByPosition[0];
     var firstFile = Multivio.treeController._treeLabelByPosition[0];
@@ -100,6 +119,11 @@ Multivio.masterController = SC.ObjectController.create(
     this.set('currentFile', firstFile[1].file_position.url);
   },
   
+  /**
+  Initialize new controllers depending of the currentType
+  
+  @observes currentType
+  */
   currentTypeDidChange: function () {
     console.info('currentTYPE DID CHANGE');
     var ct = this.get('currentType');
@@ -117,18 +141,21 @@ Multivio.masterController = SC.ObjectController.create(
       break;
       
     case 'text/xml':
+    case 'text/xml;charset=utf-8':
       Multivio.layoutController.getListOfController(ct);
       Multivio.treeDispatcher.initialize(cf);
       break;
       
     case 'image/jpeg':
+    case 'image/jpg':
       var ref = Multivio.CDM.getReferer();
+      this.currentFile = ref;
       Multivio.layoutController.getListOfController(ct);
+      Multivio.treeDispatcher.createIndex(ref);
       Multivio.thumbnailController.initialize(ref);
       //Multivio.metadataController.initialize(ref);
-      Multivio.treeDispatcher.createIndex(ref);    
       Multivio.imageController.initialize(ref); 
-      Multivio.navigationController.initialize(ref);   
+      Multivio.navigationController.initialize(ref);  
       break;
       
     default:
@@ -137,6 +164,11 @@ Multivio.masterController = SC.ObjectController.create(
     }
   }.observes('currentType'),
   
+  /**
+  A new file has been selected, retreives metadata for it
+  
+  @observes currentFile
+  */ 
   currentFileDidChange: function () {
     console.info('MS: currentFileDidChange ?');
     if (!SC.none('currentFile')) {
@@ -148,6 +180,11 @@ Multivio.masterController = SC.ObjectController.create(
     }
   }.observes('currentFile'),
   
+  /**
+  Retreive metadata for this url
+  
+  @param {String} fileUrl
+  */
   getMetadataForFile: function (fileUrl) {
     console.info('MS: getMetadataForFile ' + fileUrl);
     var meta = Multivio.CDM.getMetadata(fileUrl);
@@ -157,20 +194,15 @@ Multivio.masterController = SC.ObjectController.create(
     }
   },
   
+  /**
+  CurrentPosition has changed. This method is only used to verify 
+  that synchronisation works fine.
+  
+  @observe currentPosition
+  */
   currentPositionDidChange: function () {
     console.info('currentPosition did Change....');
     console.info('new Val = ' + this.get('currentPosition'));
   }.observes('currentPosition')
-
- /* getCurrentFile: function () {
-    var cf = this.get('currentFile');
-    return cf;
-  },
   
-  currentMetadataChange: function () {
-    var cm = this.get('currentMetadata');
-  }.observes('currentMetadata')*/
-
-
-
 });

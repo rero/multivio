@@ -24,20 +24,10 @@ Multivio.thumbnailController = SC.ArrayController.create(
   
 
   /**
-    Binds to the CDM.physicalStructure
-    
-    @binding {hash}
+    Local variables for bindings
   */
   physicalStructure: null,
-  //physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
-
-  /**
-    Binds to the masterController's currentPosition
-    
-    @binding {hash}
-  */  
   position: null,
-  //positionBinding: "Multivio.masterController.currentPosition",
 
   /**
     A conversion table (position-> thumbnail) used to quickly
@@ -95,8 +85,8 @@ Multivio.thumbnailController = SC.ArrayController.create(
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {
         var ph = this.get('physicalStructure')[cf];
-        if (!SC.none(ph)) {
-          if (ph === -1) {
+        if (ph !== -1) {
+          if (SC.none(ph)) {
             Multivio.layoutController.removeComponent('views.thumbnailView');
           }
           else {

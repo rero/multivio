@@ -78,13 +78,15 @@ Multivio.imageController = SC.ArrayController.create(
     @observes physicalStructure
   */ 
   physicalStructureDidChange: function () {
-    console.info('IM: physicalStructure did change');
     if (!SC.none(this.get('physicalStructure'))) {    
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {
         var phSt = this.get('physicalStructure')[cf];
-        if (!SC.none(phSt)) {
-          if (phSt === -1) {
+        //if phSt = -1 response is not on the client now, wait
+        if (phSt !== -1) {
+          //we don't have a physicalStrcuture for this file, we can't create
+          //images' url
+          if (SC.none(phSt)) {
             Multivio.layoutController.removeComponent('views.thumbnailView');
           }
           else {
@@ -102,12 +104,14 @@ Multivio.imageController = SC.ArrayController.create(
   }.observes('physicalStructure'),
  
   /**
-    Create imageController content for PDF
+    Create images urls and set this content for a PDF document
 
+    @param {Object} structure the physicalstructure for the file
+    @param {Number} nb the number of pages of this PDF
     @private
   */ 
   _createPDFImages: function (structure, nb) {
-    //TO do verify the currentType to know what to do
+    //physicalstructure of a PDF contains only one url
     var files = structure[0];
     var pdfUrl = files.url; 
     var cont = [];
@@ -126,12 +130,12 @@ Multivio.imageController = SC.ArrayController.create(
   },
   
   /**
-    Create imageController content for images
+    Create image urls and set this content for images
 
     @private
   */  
   _createImages: function (structure) {
-    //TO do verify the currentType to know what to do
+    //each images has its own url => create each new url
     var cont = [];
     for (var i = 0; i < structure.length; i++) {
       var files = structure[i];
