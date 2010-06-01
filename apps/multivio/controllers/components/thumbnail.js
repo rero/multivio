@@ -130,8 +130,15 @@ Multivio.thumbnailController = SC.ArrayController.create(
       for (var j = 0; j < structure.length; j++) {
         firstChild = structure[j];
         var imageUrl = firstChild.url;
-        var thumbnailImageUrl = Multivio.configurator.get('serverName') + 
+        var thumbnailImageUrl = undefined;
+        //If we have fixtures we don't need a server
+        if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
+          thumbnailImageUrl = Multivio.configurator.getThumbnailUrl(imageUrl, 0);
+        }
+        else {
+          thumbnailImageUrl = Multivio.configurator.get('serverName') + 
             Multivio.configurator.getThumbnailUrl(imageUrl, 0);
+        }
         var thumbnailImageHash = {
             url:  thumbnailImageUrl,
             pageNumber: j + 1

@@ -140,8 +140,15 @@ Multivio.imageController = SC.ArrayController.create(
     for (var i = 0; i < structure.length; i++) {
       var files = structure[i];
       var pdfUrl = files.url;
-      var imageUrl = Multivio.configurator.get('serverName') + 
+      var imageUrl = undefined;
+      //if we have fixtures we don't need to have a server
+      if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
+        imageUrl = Multivio.configurator.getImageUrl(pdfUrl, 0);
+      }
+      else {
+        imageUrl = Multivio.configurator.get('serverName') + 
           Multivio.configurator.getImageUrl(pdfUrl, 0);
+      }
       var imageHash = {
           url:  imageUrl,
           pageNumber: i + 1

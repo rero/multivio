@@ -142,6 +142,7 @@ Multivio.masterController = SC.ObjectController.create(
       
     case 'text/xml':
     case 'text/xml;charset=utf-8':
+    console.info('text/xml');
       Multivio.layoutController.getListOfController(ct);
       Multivio.treeDispatcher.initialize(cf);
       break;
@@ -189,7 +190,11 @@ Multivio.masterController = SC.ObjectController.create(
     console.info('MS: getMetadataForFile ' + fileUrl);
     var meta = Multivio.CDM.getMetadata(fileUrl);
     if (meta !== -1) {
-      console.info('MS: get MetadataFF set mime');
+      console.info('MS: get MetadataFF set mime ' + meta.mime);
+      if (!Multivio.layoutController.get('isBasicLayoutUp')) {
+        Multivio.layoutController.setBasicLayout();
+        Multivio.metadataController.initialize(fileUrl);
+      }
       this.set('currentType', meta.mime);
     }
   },

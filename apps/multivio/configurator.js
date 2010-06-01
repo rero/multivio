@@ -181,6 +181,7 @@ Multivio.configurator = SC.Object.create(
       if (params.hasOwnProperty(key)) {
         switch (key) {
         case "":
+          console.info('Key null ' + params[key]);
           prop.scenario = params[key];
           break;
         case 'url':
@@ -220,7 +221,13 @@ Multivio.configurator = SC.Object.create(
     var parameters = this.get('inputParameters');
       //check if Multivio call is valid => get & url parameters
     if (SC.none(parameters.scenario) || SC.none(parameters.url)) {
-      Multivio.layoutController._showUsagePage();
+      //if no url see if it is fixtures
+      if (parameters.scenario === 'fixtures') {
+        this.setFixtures();
+      }
+      else {
+        Multivio.layoutController._showUsagePage();
+      }
     }
     else {
       //verify if the server and the client are compatible
@@ -251,6 +258,49 @@ Multivio.configurator = SC.Object.create(
         Multivio.layoutController._showErrorPage();
       }
     } 
+  },
+  
+  /**
+  Set CDM from fixture data.
+  */
+  setFixtures: function () {
+    var name = this.get('inputParameters').name;
+    console.info('setFixtures ' + name);
+    if (SC.none(name)) {
+      Multivio.layoutController._showUsagePage();
+    }
+    else {
+      //set CDM value
+      switch (name) {
+      
+      case 'VAA':
+        Multivio.CDM.setReferer('VAA');
+        //get and set metadata
+        var metadata = {};
+        metadata[name] = Multivio.CDM.FIXTURES.metadata[name];
+        var firstUrl = Multivio.CDM.FIXTURES.logical[name];
+        metadata[firstUrl[0].file_position.url] = 
+            Multivio.CDM.FIXTURES.metadata[firstUrl[0].file_position.url];
+        Multivio.CDM.metadata = metadata;
+        //get and set logicalStructure
+        var logical = {};
+        logical[name] = Multivio.CDM.FIXTURES.logical[name];
+        Multivio.CDM.logicalStructure = logical;
+        //get and set physicalStructure
+        var physical = {};
+        physical[name] = Multivio.CDM.FIXTURES.physical[name];
+        Multivio.CDM.physicalStructure = physical;
+        Multivio.logger.debug('Fixtures VAA setted');
+        break;
+      
+      default: 
+        Multivio.logger.error('configurator: the value "%@" '.fmt(name) +
+            'for the "name" parameter is configured in the application ' +
+            'but seems invalid at this point');
+        break;
+      }
+      Multivio.masterController.initialize();   
+    }
   },
   
   /**

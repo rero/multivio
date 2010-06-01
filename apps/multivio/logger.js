@@ -7,7 +7,6 @@
 */
 
 //require('configurator');
-//require('models/core_document_node');
  
 /**
 Define Log levels
@@ -47,7 +46,7 @@ Multivio.logger = SC.Object.create(
     to receive different log levels.
   */
   initialize: function () {
-
+    console.info('LOGGER initilaize');
     // force deactivation of console logging associated with Ajax loggging,
     // as done by Log4js (this overrides the last lines of code in log4js.js)
     var log4jsLogger = Log4js.getLogger("Log4js");
@@ -73,7 +72,7 @@ Multivio.logger = SC.Object.create(
     this.debugLogger.setLevel(Log4js.Level.DEBUG);
     this.debugLogger.isUsed = NO;
     this.loggers.push(this.debugLogger);
- 
+    console.info('LOGGER ADD appenders');
     // create appenders according to the configuration in Multivio.CONFIG.log
     // (see file core.js)
     var appenders = Multivio.configurator.getPath('logParameters.log');
@@ -129,7 +128,7 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */
   error: function (message) {
-    if (this.errorLogger.isUsed) {
+    if (!SC.none(this.errorLogger) && this.errorLogger.isUsed) {
       this.errorLogger.error(message);
     }
   },
@@ -140,7 +139,7 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */ 
   warning: function (message) {
-    if (this.warningLogger.isUsed) {
+    if (!SC.none(this.warningLogger) && this.warningLogger.isUsed) {
       this.warningLogger.warn(message);
     }
   },
@@ -151,7 +150,7 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */
   info: function (message) {
-    if (this.infoLogger.isUsed) {
+    if (!SC.none(this.infoLogger) && this.infoLogger.isUsed) {
       this.infoLogger.info(message);
     }
   },
@@ -162,7 +161,7 @@ Multivio.logger = SC.Object.create(
     @param {String} message
   */
   debug: function (message) {
-    if (this.debugLogger.isUsed) {
+    if (!SC.none(this.debugLogger) && this.debugLogger.isUsed) {
       this.debugLogger.debug(message);
     }
   },
