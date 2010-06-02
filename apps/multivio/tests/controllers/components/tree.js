@@ -7,92 +7,101 @@
 */
 /*globals Multivio module test ok equals same stop start */
 
-var  nodes, myTreeController, myMasterController, rec1, sel1, rec2, sel2;
+var myTreeController, myMasterController, myTreeDispatcher;
 
 module("Test treeController", {
   
-  setup: function () {
-    Multivio.store = SC.Store.create().from(SC.Record.fixtures);
-    nodes = Multivio.store.find(Multivio.CoreDocumentNode);
-    
-    myTreeController = Multivio.treeController;
-    myTreeController.initialize(nodes);
-    
+  setup: function () { 
+      
+    //load Fixtures VAA
+    Multivio.CDM.setReferer('VAA');
+    //get and set metadata
+    var metadata = {};
+    metadata['VAA'] = Multivio.CDM.FIXTURES.metadata['VAA'];
+    Multivio.CDM.metadata = metadata;
+    //get and set logicalStructure
+    var logical = {};
+    logical['VAA'] = Multivio.CDM.FIXTURES.logical['VAA'];
+    Multivio.CDM.logicalStructure = logical;
+    //get and set physicalStructure
+    var physical = {};
+    physical['VAA'] = Multivio.CDM.FIXTURES.physical['VAA'];
+    Multivio.CDM.physicalStructure = physical;
+  
+    //initialize masterController, treeDispatcher & treeController
     myMasterController = Multivio.masterController;
-    myMasterController.initialize(nodes);
+    myMasterController.currentFile = 'VAA';
     
-    //need to be created to avoid problem
-    Multivio.thumbnailController.initialize(nodes);
-    Multivio.navigationController.initialize();    
-        
-    rec1 = myTreeController._treeNodeById[myTreeController.get('_cdmNodeToTreeNode')['n00004']];   
-    sel1 = SC.SelectionSet.create().addObject(rec1);
+    myTreeDispatcher = Multivio.treeDispatcher;
+    myTreeController = Multivio.treeController;
+    myTreeController.bind('position', 'Multivio.masterController.currentPosition');
     
-    rec2 = myTreeController._treeNodeById[myTreeController.get('_cdmNodeToTreeNode')['n00017']];
-    sel2 = SC.SelectionSet.create().addObject(rec2);
+    myTreeDispatcher.createIndex('VAA');
   },
   
   teardown: function () {
-    rec1 = null;
-    sel1 = null;
-    rec2 = null;
-    sel2 = null;
-    nodes = null; 
- 
-    myMasterController = null;
-    myTreeController = null;
+    delete myMasterController;
+    delete myTreeController;
+    delete myTreeDispatcher;
   }
 });
   
-test("after initialization no selection and no masterSelection", function () {
-  equals(myMasterController.get('masterSelection'), undefined, "should find masterSelection is undefined");
-  equals(myTreeController.get('selection').firstObject(), undefined, "should find selection is undefined");
+test("after initialization no selection and no currentPosition", function () {
+  equals(myMasterController.get('currentPosition'), null,
+      "should find currentPosition is null");
+  equals(myTreeController.get('selection').firstObject(), undefined,
+      "should find selection is undefined");
 });
 
-test("set masterSelection with first leafNode method", function () {
-  SC.RunLoop.begin();
-  var sortedNodes = nodes.sortProperty('guid');
-  for (var i = 0; i < sortedNodes.length; i++) {
-    if (sortedNodes[i].get('isLeafNode')) {
-      myMasterController.set('masterSelection', sortedNodes[i]);
-      break;
-    }
-  }
-  SC.RunLoop.end();
-  equals(myTreeController.get('selection').firstObject(), sel1.firstObject(), "should find the record");
-});
-
-test("_selectionDidChange method with two different selection", function () {  
-  SC.RunLoop.begin();
-  myTreeController.set('selection', sel1);
-  SC.RunLoop.end();
-  equals(myMasterController.get('masterSelection').get('guid'), 'n00004', "should find the record");
+test("masterController select first file: currentPosition = 1", function () {  
   
   SC.RunLoop.begin();
-  myTreeController.set('selection', sel2);
+  myMasterController.selectFirstPosition();
   SC.RunLoop.end();
-  ok(myMasterController.get('masterSelection').get('guid') !== 'n00004', "shouldn't find the 'n00004' record but the 'n00017' record");
-  equals(myMasterController.get('masterSelection').get('guid'), 'n00017', "should find the record");
+  
+  equals(myTreeController.get('selection').firstObject().file_position.index, 1,
+      "treeController first index of the selection is 1");
+  equals(myTreeController.get('position'), 1,
+      "treeController first position is 1");
+  equals(myMasterController.get('currentPosition'), 1, 
+      "masterController currentPosition is 1");
+    console.info('K');
 });
 
-test("_masterSelectionDidChange method with three different masterSelection", function () {
-  SC.RunLoop.begin();
-  var cdmNode =  Multivio.store.find(Multivio.CoreDocumentNode, "n00018");
-  myMasterController.set('masterSelection', cdmNode);
-  SC.RunLoop.end();
-  equals(myTreeController.get('selection').firstObject().get('guid'), 'tn00015', "should find the selection");
+test("treeController._selectionDidChange", function () { 
   
   SC.RunLoop.begin();
-  cdmNode =  Multivio.store.find(Multivio.CoreDocumentNode, "n00019");  
-  myMasterController.set('masterSelection', cdmNode);
+  myTreeController.position = 1;
   SC.RunLoop.end();
-  equals(myTreeController.get('selection').firstObject().get('guid'), 'tn00015', "should find the same selection");
   
-  SC.RunLoop.begin();
-  cdmNode =  Multivio.store.find(Multivio.CoreDocumentNode, "n00047");  
-  myMasterController.set('masterSelection', cdmNode);
+  SC.RunLoop.begin();  
+  var treeLabelToSelect = myTreeController._getListOfLabelsForIndex(5);
+  myTreeController.set('selection', 
+        SC.SelectionSet.create().addObject(treeLabelToSelect[0])); 
   SC.RunLoop.end();
-  ok(myTreeController.get('selection').firstObject().get('guid') !== 'tn00015', "shouldn't find the same selection as before");  
+
+  equals(myMasterController.get('currentPosition'), 5, 
+      "masterController currentPosition should be 5");
+  equals(myTreeController.get('position'), 5, 
+    "treeController position should be 5");
 });
 
-
+test("masterController.set('currentPosition')", function () {
+  
+  SC.RunLoop.begin();
+  myMasterController.set('currentPosition', 7);
+  SC.RunLoop.end();
+  
+  equals(myTreeController.get('selection').firstObject().file_position.index, 7, 
+      "treeController selection index should be 7");
+  
+  SC.RunLoop.begin();
+  myMasterController.set('currentPosition', 19);
+  SC.RunLoop.end();
+  
+  equals(myTreeController.get('selection').firstObject().file_position.index, 19,
+      "treeController selection index should be 19");
+  ok(myTreeController.get('position') ===  
+      myTreeController.get('selection').firstObject().file_position.index,
+      "treeController selection index should be the same as position")
+});

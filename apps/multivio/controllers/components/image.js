@@ -156,7 +156,9 @@ Multivio.imageController = SC.ArrayController.create(
       cont.push(imageHash);
     }
     this.set('content', cont);
-    Multivio.layoutController.addComponent('views.mainContentView');
+    if (Multivio.layoutController.get('isBasicLayoutUp')) {
+      Multivio.layoutController.addComponent('views.mainContentView');
+    }
     Multivio.logger.info('imageController#content created and layout setted');
   },
   

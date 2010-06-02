@@ -96,7 +96,9 @@ Multivio.treeController = SC.TreeController.create(
       this._treeLabelByPosition = [];
       var treeContent = Multivio.TreeContent.create(rootNodeHash);
       this.set('content', treeContent);
-      Multivio.layoutController.addComponent('views.treeView');
+      if (Multivio.layoutController.get('isBasicLayoutUp')) {
+        Multivio.layoutController.addComponent('views.treeView');
+      }
       Multivio.logger.info('treeController#_createTree');
       //order keys to use correctly this._getListOfLabelsForIndex
       var keys = this.ascendingKeys(this._treeLabelByPosition);
