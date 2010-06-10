@@ -179,7 +179,6 @@ Multivio.GridLayout3x3 = {
         y < 0 || y > 2 || ylen <= 0 || y + ylen > 3) {
       errMess = 'Coordinates are invalid: (%@, %@, %@, %@)'.fmt(
           x, y, xlen, ylen);
-      console.error(errMess);
       throw {message: errMess}; 
     }
 

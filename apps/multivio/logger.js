@@ -46,7 +46,6 @@ Multivio.logger = SC.Object.create(
     to receive different log levels.
   */
   initialize: function () {
-    console.info('LOGGER initilaize');
     // force deactivation of console logging associated with Ajax loggging,
     // as done by Log4js (this overrides the last lines of code in log4js.js)
     var log4jsLogger = Log4js.getLogger("Log4js");
@@ -72,7 +71,6 @@ Multivio.logger = SC.Object.create(
     this.debugLogger.setLevel(Log4js.Level.DEBUG);
     this.debugLogger.isUsed = NO;
     this.loggers.push(this.debugLogger);
-    console.info('LOGGER ADD appenders');
     // create appenders according to the configuration in Multivio.CONFIG.log
     // (see file core.js)
     var appenders = Multivio.configurator.getPath('logParameters.log');

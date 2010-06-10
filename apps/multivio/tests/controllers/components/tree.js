@@ -65,7 +65,6 @@ test("masterController select first file: currentPosition = 1", function () {
       "treeController first position is 1");
   equals(myMasterController.get('currentPosition'), 1, 
       "masterController currentPosition is 1");
-    console.info('K');
 });
 
 test("treeController._selectionDidChange", function () { 

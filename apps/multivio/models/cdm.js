@@ -53,40 +53,35 @@ Multivio.CDM = SC.Object.create(
       else {
         //add the entry
         var t2 = {};
-        if(SC.none(this.get('metadata'))) {
-          //create new entry
-          console.info('CDM metadata new Entry');
-          //t2[url] =  jsonRes;
-
-        }
-        else {
+        if(!SC.none(this.get('metadata'))) {
           var oldMeta = this.get('metadata');
-          console.info('CDM metadata add object');
           t2 = this.clone(oldMeta);
-
-          //this.set('metadata', oldMeta);
         }
-                  t2[url] = jsonRes;
+        t2[url] = jsonRes;
       this.set('metadata', t2);
+      Multivio.logger.debug('New metadata added for ' + url);
       }
-      
-      console.info('Metadata length ' + this.get('metadata'));
     }
   },
   
-  clone: function(srcInstance) {
-    /*Si l'instance source n'est pas un objet ou qu'elle ne vaut rien c'est une feuille donc on la retourne*/
-    if(typeof(srcInstance) != 'object' || srcInstance == null) {
-      return srcInstance;
+  /**
+  Clone the structure
+  
+  @param {Object} instance the instance to clone
+  @return {Object} the cloned instance
+  */
+  clone: function(instance) {
+    
+    if(typeof(instance) != 'object' || instance == null) {
+      return instance;
     }
     
-    /*On appel le constructeur de l'instance source pour crée une nouvelle instance de la même classe*/
-    var newInstance = srcInstance.constructor();
-    /*On parcourt les propriétés de l'objet et on les recopies dans la nouvelle instance*/
-    for(var i in srcInstance) {
-      newInstance[i] = this.clone(srcInstance[i]);
+    //create new instance
+    var newInstance = instance.constructor();
+    //clone the instance
+    for(var i in instance) {
+      newInstance[i] = this.clone(instance[i]);
     }
-    /*On retourne la nouvelle instance*/
     return newInstance;
   },
   
@@ -117,8 +112,7 @@ Multivio.CDM = SC.Object.create(
         t2 = this.clone(oldMeta);
       }
       t2[url] =  -1;
-      this.set('metadata', t2);
-      console.info('CDM: set Metadata -1 for ' + url);    
+      this.set('metadata', t2);    
       return -1;  
     }
     else {
@@ -181,7 +175,7 @@ Multivio.CDM = SC.Object.create(
         }
         t2[url] =  jsonRes;
         this.set('logicalStructure', t2);
-        console.info('CDM: set Logical for ' + url);
+        Multivio.logger.debug('New logicalStructure added for ' + url);
       }
     }
   },
@@ -194,7 +188,7 @@ Multivio.CDM = SC.Object.create(
   @return {Object}
   */
   getLogicalStructure: function (url) {
-    console.info('CDM: getLogical for ' + url);
+    
     if (SC.none(this.get('logicalStructure')) ||
         this.get('logicalStructure')[url] === undefined) {
       //ask the server
@@ -203,7 +197,7 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setLogicalStructure', url);
-      console.info('CDM no logical');
+
       //put -1 as logicalStructure for this url
       var t2 = {};
       if(!SC.none(this.get('logicalStructure'))) {
@@ -253,6 +247,7 @@ Multivio.CDM = SC.Object.create(
         }
         t2[url] =  jsonRes;
         this.set('physicalStructure', t2);
+        Multivio.logger.debug('New physicalStructure added for ' + url);
       }
     }
   },
@@ -264,7 +259,6 @@ Multivio.CDM = SC.Object.create(
   @return Hash
   */
   getPhysicalstructure: function (url) {
-    console.info('CDM get PH');
     if (SC.none(this.get('physicalStructure')) || 
         this.get('physicalStructure')[url] === undefined) {
       //ask the server    
@@ -273,7 +267,6 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setPhysicalStructure', url);
-      console.info('CDM : physical return -1');
       var t2 = {};
       if(!SC.none(this.get('physicalStructure'))) {
         var oldPhysic = this.get('physicalStructure');
@@ -286,7 +279,6 @@ Multivio.CDM = SC.Object.create(
     else {
       var pst = this.get('physicalStructure')[url];
       Multivio.logger.debug('physicalStructure returned by cdm ' + pst);
-      console.info('CDM return this ph ' + pst);
       return pst;
     }
   }

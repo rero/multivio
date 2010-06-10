@@ -126,7 +126,7 @@ Multivio.imageController = SC.ArrayController.create(
     }
     this.set('content', cont);
     Multivio.layoutController.addComponent('views.mainContentView');
-    Multivio.logger.info('imageController#content created and layout setted');
+    Multivio.logger.info('imageController#createPDFImages created and layout setted' + this.get('content').length);
   },
   
   /**
@@ -159,7 +159,7 @@ Multivio.imageController = SC.ArrayController.create(
     if (Multivio.layoutController.get('isBasicLayoutUp')) {
       Multivio.layoutController.addComponent('views.mainContentView');
     }
-    Multivio.logger.info('imageController#content created and layout setted');
+    Multivio.logger.info('imageController#createImages created and layout setted' + this.get('content').length);
   },
   
   /**

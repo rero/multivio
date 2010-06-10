@@ -94,14 +94,14 @@ Multivio.CDM.FIXTURES = {
         {
           "file_position": {
             "index": null, 
-            "url": "http://purl.dlib.indiana.edu/iudl/brittlebooks/page/VAA1194-51-screen.gif'"
+            "url": "http://purl.dlib.indiana.edu/iudl/brittlebooks/page/VAA1194-51-screen.gif"
           }, 
           "label": "Back Matter"
         }, 
         {
           "file_position": {
             "index": null, 
-            "url": "http://purl.dlib.indiana.edu/iudl/brittlebooks/page/VAA1194-51-screen.gif'"
+            "url": "http://purl.dlib.indiana.edu/iudl/brittlebooks/page/VAA1194-51-screen.gif"
           }, 
           "label": "Preservation colophon"
         }          

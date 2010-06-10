@@ -65,7 +65,7 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {String} icon a URL or class name
   */
   renderIcon: function(context, icon) {
-    if (this.content.get('position') === 0) {
+    if (this.content.get('level') === 0 || this.content.get('level') === 1) {
       context.begin('img').addClass('icon').addClass('')
           .attr('src', static_url('images/icons/mute')).end();
     }
@@ -78,7 +78,7 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {String} label
   */    
   renderLabel: function (context, label) {
-    if (this.content.get('position') === 0) {
+    if (this.content.get('level') === 0 || this.content.get('level') === 1) {
       context.push('<label class="document-label-view">', label || '', '</label>') ;
     }
     else {

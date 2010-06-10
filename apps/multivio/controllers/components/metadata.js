@@ -28,7 +28,6 @@ Multivio.metadataController = SC.ObjectController.create(
   initialize: function (url) {
     var meta = Multivio.CDM.getMetadata(url);
     if (!SC.none(meta) && meta !== -1) {
-      console.info('MEtadata set content');
       this.set('content', meta);
     }
     Multivio.logger.info('metadataController initialized');    

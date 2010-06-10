@@ -35,8 +35,6 @@ Multivio.TreeContent =  SC.Object.extend({
   @property {Number}  
   */
   labelWidth: undefined,
-  
-  position: undefined,
 
   /**
     Return the list of the children of this Multivio.Tree as TreeContent
@@ -47,21 +45,17 @@ Multivio.TreeContent =  SC.Object.extend({
     var label = this.label;
     var fp = this.file_position;
     var pos = !SC.none(fp.index) ? fp.index : 0;
-    //console.info('Tree_cont '+label+' pos '+pos);
-    if (label === (Multivio.CDM.getMetadata(Multivio.CDM.getReferer())).title) {
-      this.position = 0;
-    }
-    else {
-      this.position = pos;
-    }
-    var isPositionEmpty = Multivio.treeController._treeLabelByPosition[pos];
-    //add or concat treeContent to the _treeLabelByPosition
-    if (SC.none(isPositionEmpty)) {
-      Multivio.treeController._treeLabelByPosition[pos] = [this];
-    }
-    else {
-      Multivio.treeController._treeLabelByPosition[pos] = 
+    var level = !SC.none(this.level) ? this.level : this.level = 2;
+    if (this.level === 2) {
+      var isPositionEmpty = Multivio.treeController._treeLabelByPosition[pos];
+      //add or concat treeContent to the _treeLabelByPosition
+      if (SC.none(isPositionEmpty)) {
+        Multivio.treeController._treeLabelByPosition[pos] = [this];
+      }
+      else {
+        Multivio.treeController._treeLabelByPosition[pos] = 
           isPositionEmpty.concat(this);
+      }
     }
     
     this.labelWidth = label.length;

@@ -47,11 +47,18 @@ Multivio.thumbnailController = SC.ArrayController.create(
     if (this.get('bindings').length !== 0) {
       this.reset();
     }
-    this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
     this.bind('position', 'Multivio.masterController.currentPosition');
     var phSt = Multivio.CDM.getPhysicalstructure(url);
-    if (!SC.none(phSt) && phSt !== -1) {
-      this._createThumbnails(phSt);
+    if (phSt !== -1) {
+      if (!SC.none(phSt)) {
+        this._createThumbnails(phSt);
+      }
+      else {
+        Multivio.logger.error('thumbnailController has no physical structure');
+      }
+    }
+    else {
+      this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
     }
     Multivio.logger.info('thumbnailController initialized ');
   },
@@ -161,12 +168,10 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes position
   */  
   positionDidChange: function () {
-    console.info('TH: position did change '+this.get('position'));
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {
       var currentSelection = !SC.none(this.get('selection')) ?
           this.get('selection').firstObject() : undefined;
-        //console.info('currentselection = '+ currentSelection.pageNumber);
       var currentPageNumber = !SC.none(currentSelection) ?
           currentSelection.pageNumber : 0;
       //verify if we need to set selection (avoid loopbacks)
@@ -174,9 +179,8 @@ Multivio.thumbnailController = SC.ArrayController.create(
         var thumbnailToSelect = this.get('_cdmNodeToThumbnail')[newPosition];
         this.set('selection', 
             SC.SelectionSet.create().addObject(thumbnailToSelect));
-          console.info('set selection '+thumbnailToSelect.pageNumber);
         Multivio.logger.info('thumbnailController#positionDidChange: %@'.
-            fmt(this.get('selection').firstObject()));
+            fmt(this.get('selection').firstObject().pageNumber));
       }
     }
   }.observes('position'),
@@ -187,7 +191,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @observes selection
   */  
   selectionDidChange: function () {
-    console.info('TH: selection did change '+ this.get('selection'));
     var newSelection =  this.get('selection');
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) { 
       var pageNumber = newSelection.firstObject().pageNumber;
@@ -195,7 +198,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
       //verify if we need to set position (avoid loopbacks)
       if (currentPosition !== pageNumber) {
         this.set('position', pageNumber);
-        console.info('SET POSITION '+ pageNumber);
         Multivio.logger.info('thumbnailController#selectionDidChange: %@'.
             fmt(this.get('position')));
       }

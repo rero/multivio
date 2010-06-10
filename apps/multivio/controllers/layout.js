@@ -50,11 +50,9 @@ Multivio.layoutController = SC.Object.create(
   currentListOfWidgetDidChange: function () {
     if (this.get('currentListOfWidget') === 0) {
       var currentType = Multivio.masterController.get('currentType');
-      console.info('Layout current type = ' + currentType);
       switch (currentType) {
 
       case 'application/pdf':
-        console.info('Layout setFirstPos?');
         Multivio.masterController.selectFirstPosition();
         break;
   
@@ -69,7 +67,7 @@ Multivio.layoutController = SC.Object.create(
         break;
 
       default:
-        console.info('LAYOUT undefined type ' + currentType);
+        Multivio.logger.info(currentType + 'is an undefined type ');
         break;
       }
     }
@@ -121,7 +119,6 @@ Multivio.layoutController = SC.Object.create(
   Set the basic Layout. Remove the waiting panel and add the header view
   */
   setBasicLayout: function () {
-    console.info('LAYOUT SET BASIC');
     this._hideWaitingPage();
     this.configureWorkspace('init');
     this.set('isBasicLayoutUp', YES);   
@@ -146,7 +143,6 @@ Multivio.layoutController = SC.Object.create(
     var mainPage = Multivio.getPath('mainPage.mainPane');
     switch (component) {
     case 'views.mainContentView':
-      console.info('Layout add views.mainContentView');
       /*mainPage.layOutComponent({
           name: 'views.mainContentView', 
           x: 1, 
@@ -158,7 +154,6 @@ Multivio.layoutController = SC.Object.create(
       break;
       
     case 'views.thumbnailView':
-      console.info('Layout add views.thumbnailView');
       mainPage.layOutComponent({
           name: 'views.thumbnailView', 
           x: 2, 
@@ -170,7 +165,6 @@ Multivio.layoutController = SC.Object.create(
       break;
         
     case 'views.treeView':
-      console.info('Layout add views.treeView');
       /*mainPage.layOutComponent({
           name: 'views.treeView', 
           x: 0, 
@@ -189,7 +183,6 @@ Multivio.layoutController = SC.Object.create(
       break;
 
     case 'views.navigationView':
-      console.info('Layout add views.navigationView');
       mainPage.layOutComponent({
           name: 'views.navigationView',
           x: 1, 
@@ -200,7 +193,7 @@ Multivio.layoutController = SC.Object.create(
       this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
       break;
     default:
-      console.info('unknown component ' + component);
+      Multivio.logger.info(component + 'is an unknown component ');
       break;
     }
   },

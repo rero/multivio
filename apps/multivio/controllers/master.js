@@ -84,14 +84,11 @@ Multivio.masterController = SC.ObjectController.create(
   @observe metadata
   */
   metadataDidChange: function () {
-    console.info('MS: metadata change');
     var meta = this.get('metadata');
     if (!SC.none(meta)) { 
       var cf = this.get('currentFile');
-      console.info('MS: metadata change for ' + cf);
       var currentMeta = this.get('metadata')[cf];
       if (currentMeta !== -1) {
-        console.info('MS: metadata set type ' + currentMeta.mime);
         if (!Multivio.layoutController.get('isBasicLayoutUp')) {
           Multivio.layoutController.setBasicLayout();
           Multivio.metadataController.initialize(cf);
@@ -105,18 +102,24 @@ Multivio.masterController = SC.ObjectController.create(
   Set current position to 1
   */
   selectFirstPosition: function () {
-    console.info('masterController set currentPosition 1');
     this.set('currentPosition', 1);
+    Multivio.logger.debug('MasterController set currentPosition 1');
   },
   
   /**
   Select the first file of the Document and set currentfile with this value
   */ 
   selectFirstFile: function () {
-    //var firstFile = Multivio.treeStructureController._treeLabelByPosition[0];
-    var firstFile = Multivio.treeController._treeLabelByPosition[0];
-    console.info('set first = ' + firstFile[1].file_position.url);
-    this.set('currentFile', firstFile[1].file_position.url);
+    //get logical structure of the document
+    var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
+    if (!SC.none(logSt)) {
+      this.set('currentFile', logSt[0].file_position.url);
+    }
+    else {
+      //get physical structure
+      var phSt = Multivio.CDM.getPhysicalstructure(this.get('currentFile'));
+      this.set('currentFile', phSt[0].url);
+    }
   },
   
   /**
@@ -125,14 +128,12 @@ Multivio.masterController = SC.ObjectController.create(
   @observes currentType
   */
   currentTypeDidChange: function () {
-    console.info('currentTYPE DID CHANGE');
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
           //Multivio.layoutController.getListOfController(ct);
     switch (ct) {
     
     case 'application/pdf':
-      console.info('MS: current type = pdf');
       Multivio.layoutController.getListOfController(ct);
       Multivio.treeDispatcher.initialize(cf);
       Multivio.thumbnailController.initialize(cf);
@@ -141,8 +142,8 @@ Multivio.masterController = SC.ObjectController.create(
       break;
       
     case 'text/xml':
+    case 'application/xml':
     case 'text/xml;charset=utf-8':
-    console.info('text/xml');
       Multivio.layoutController.getListOfController(ct);
       Multivio.treeDispatcher.initialize(cf);
       break;
@@ -152,15 +153,13 @@ Multivio.masterController = SC.ObjectController.create(
       var ref = Multivio.CDM.getReferer();
       this.currentFile = ref;
       Multivio.layoutController.getListOfController(ct);
-      Multivio.treeDispatcher.createIndex(ref);
       Multivio.thumbnailController.initialize(ref);
-      //Multivio.metadataController.initialize(ref);
       Multivio.imageController.initialize(ref); 
       Multivio.navigationController.initialize(ref);  
       break;
       
     default:
-      console.info('undefined type ' + ct);
+      Multivio.logger.info(ct + 'is an undefined type for the masterController');
       break;
     }
   }.observes('currentType'),
@@ -171,12 +170,11 @@ Multivio.masterController = SC.ObjectController.create(
   @observes currentFile
   */ 
   currentFileDidChange: function () {
-    console.info('MS: currentFileDidChange ?');
     if (!SC.none('currentFile')) {
       this.currentType = null;
+      //this.currentPosition = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
-      console.info('MS: new file ' + cf);
       this.getMetadataForFile(cf);
     }
   }.observes('currentFile'),
@@ -187,10 +185,8 @@ Multivio.masterController = SC.ObjectController.create(
   @param {String} fileUrl
   */
   getMetadataForFile: function (fileUrl) {
-    console.info('MS: getMetadataForFile ' + fileUrl);
     var meta = Multivio.CDM.getMetadata(fileUrl);
     if (meta !== -1) {
-      console.info('MS: get MetadataFF set mime ' + meta.mime);
       if (!Multivio.layoutController.get('isBasicLayoutUp')) {
         Multivio.layoutController.setBasicLayout();
         Multivio.metadataController.initialize(fileUrl);

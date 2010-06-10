@@ -164,10 +164,14 @@ Multivio.configurator = SC.Object.create(
     'text/xml;charset=utf-8' : ['treeDispatcher'],
     'application/pdf' : ['treeDispatcher',
         'imageController', 'navigationController', 'thumbnailController'],
-    'image/jpeg': ['treeDispatcher', 
+    /*'image/jpeg': ['treeDispatcher', 
         'imageController', 'navigationController', 'thumbnailController'],
     'image/jpg': ['treeDispatcher', 
-        'imageController', 'navigationController', 'thumbnailController']
+        'imageController', 'navigationController', 'thumbnailController']*/
+    'image/jpeg': ['imageController',
+        'navigationController', 'thumbnailController'],
+    'image/jpg': ['imageController', 
+        'navigationController', 'thumbnailController']   
   },
 
   /**
@@ -181,7 +185,6 @@ Multivio.configurator = SC.Object.create(
       if (params.hasOwnProperty(key)) {
         switch (key) {
         case "":
-          console.info('Key null ' + params[key]);
           prop.scenario = params[key];
           break;
         case 'url':
@@ -265,7 +268,6 @@ Multivio.configurator = SC.Object.create(
   */
   setFixtures: function () {
     var name = this.get('inputParameters').name;
-    console.info('setFixtures ' + name);
     if (SC.none(name)) {
       Multivio.layoutController._showUsagePage();
     }
