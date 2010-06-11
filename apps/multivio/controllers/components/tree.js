@@ -73,11 +73,26 @@ Multivio.treeController = SC.TreeController.create(
   _createTree: function (structure) {
     if (! this.get('treeExist')) {
       this.set('treeExist', YES);
+      var isGlobalStValid = NO;
+      var subT = [];
+      //remove rootNode and referNode
+      for (var j = 2; j < structure.length; j++) {
+        if (structure[j].level !== 0) {
+          isGlobalStValid = YES;
+        }
+        subT.push(structure[j]);
+      }
+      if (!isGlobalStValid) {
+        var t = this.createNewStructure(subT, []);
+        structure = structure.concat(t);        
+      }
+
       this.set('globalStructure', structure);
       this._treeLabelByPosition = [];
       //create treeContent and set content
       var treeContent = Multivio.TreeContent.create(structure[0]);
       this.set('content', treeContent);
+      //this.set('globalStructure', treeContent);
       //add view
       if (Multivio.layoutController.get('isBasicLayoutUp')) {
         Multivio.layoutController.addComponent('views.treeView');
@@ -194,6 +209,20 @@ Multivio.treeController = SC.TreeController.create(
     return keys;
   },
   
+  createNewStructure: function (st, ret) {
+    for (var i = 0; i < st.length; i++) {
+      if (!SC.none(st[i].childs)) {
+        st[i].level = 0;
+        this.createNewStructure(st[i].childs, ret);
+      }
+      else {
+        st[i].level = 1;
+        ret.push(st[i]);
+      }
+    }
+    return ret;
+  },
+  
   /**
   Add new labels to the tree
   
@@ -259,10 +288,22 @@ Multivio.treeController = SC.TreeController.create(
     var newSelection = this.get('selection'); 
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
       var selectionLevel = newSelection.firstObject().level;
+      
       //if level != 2 => change file
       if (selectionLevel !== 2) {
         var url = newSelection.firstObject().file_position.url;
-        Multivio.masterController.set('currentFile', url);
+        if (!SC.none(url)) {
+          Multivio.masterController.set('currentFile', url);
+        }
+        else {
+          var listOfTree = this.get('arrangedObjects');
+          var ind = listOfTree.indexOf(newSelection.firstObject());
+          //get next element (normaly the first child)
+          // TO DO Verify if url is not null else find next valid url
+          ind++;
+          Multivio.masterController.set('currentFile', 
+              listOfTree.objectAt(ind).file_position.url);
+        }
       }
       //set new position
       else {

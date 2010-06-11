@@ -113,7 +113,18 @@ Multivio.masterController = SC.ObjectController.create(
     //get logical structure of the document
     var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
     if (!SC.none(logSt)) {
-      this.set('currentFile', logSt[0].file_position.url);
+      var validUrl = logSt[0].file_position.url;
+      if (SC.none(validUrl)) {
+        var childs = logSt[0].childs
+        for (var i = 0; i < childs.length; i++) {
+          var temp = childs[i];  
+          if (!SC.none(temp.file_position.url)) {
+            validUrl = temp.file_position.url;
+            break;
+          }
+        }
+      }
+      this.set('currentFile', validUrl);
     }
     else {
       //get physical structure

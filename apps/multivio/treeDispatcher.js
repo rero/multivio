@@ -129,9 +129,9 @@ Multivio.treeDispatcher = SC.Object.create(
                 label: 'fake node',
                 childs: logStr          
               };
-              var newLogSt = this.setLogicalIndex(fakeNode, phyStr, []);
-
-              this._addSubtree(newLogSt);
+              var newLogSt = this.setLogicalIndex(fakeNode, phyStr);
+              //remove the fake node
+              this._addSubtree(newLogSt.childs);
               Multivio.treeController.initialize(); 
             }
           }
@@ -211,9 +211,15 @@ Multivio.treeDispatcher = SC.Object.create(
       newStructure.push(this.treeStructure[0]);
       newStructure.push(refererNode[0]);
     }
-    //set level = 2 for new children
-    for (var i = 0; i < list.length; i++) {
-      list[i].level = 2;
+    for (var i = 0; i < list.length; i++) {  
+      if (SC.none(list[i].level)) {
+        if (list[i].childs && SC.none(list[i].file_position.url)) {
+          list[i].level = 0;
+        }
+        else{
+          list[i].level = 2;
+        }
+      }
       newStructure.push(list[i]);
     }
     this.treeStructure = newStructure;
@@ -240,28 +246,25 @@ Multivio.treeDispatcher = SC.Object.create(
   @param {Object} oneNode a node of the logicalStructure. At the first call,
       this node has as childs the logical structure file
   @param {Objet} list the physical structure of the file
-  @param {Array} toReturn
   */
-  setLogicalIndex: function (oneNode, list, toReturn) { 
-    
+  setLogicalIndex: function (oneNode, list) {  
     var url = oneNode.file_position.url;
-    var hasChildren = oneNode.childs;
-    if (!SC.none(hasChildren)) {
-      for (var i = 0; i < hasChildren.length; i++) {
-        var onechild = oneNode.childs[i];
-        this.setLogicalIndex(onechild, list, toReturn);
-      }
-    }
     
     for (var j = 0; j < list.length; j++) {
       var physicalUrl = list[j].url;
       if (physicalUrl === url) {
         oneNode.file_position.index = j + 1;
-        toReturn.push(oneNode);
         break;
       }
     }
-    return toReturn;
+    var hasChildren = oneNode.childs;
+    if (!SC.none(hasChildren)) {
+      for (var i = 0; i < hasChildren.length; i++) {
+        var onechild = oneNode.childs[i];
+        this.setLogicalIndex(onechild, list);
+      }
+    }
+    return oneNode;
   },
   
   /**
@@ -327,8 +330,9 @@ Multivio.treeDispatcher = SC.Object.create(
                     label: 'fake node',
                     childs: logStr          
                   };
-                  var newLogSt = this.setLogicalIndex(fakeNode, phyStr, []);
-                  this._addSubtree(newLogSt);
+                  var newLogSt = this.setLogicalIndex(fakeNode, phyStr);
+                  //remove the fake node
+                  this._addSubtree(newLogSt.childs);
                   Multivio.treeController.initialize();
                 }
               }
@@ -419,8 +423,9 @@ Multivio.treeDispatcher = SC.Object.create(
                     label: 'fake node',
                     childs: logStr          
                   };
-                  var newLogStr2 = this.setLogicalIndex(fakeNode, phStr, []);
-                  this._addSubtree(newLogStr2);
+                  var newLogStr2 = this.setLogicalIndex(fakeNode, phStr);
+                  //remove the fake node
+                  this._addSubtree(newLogStr2.childs);
                   Multivio.treeController.initialize();
                 }
                 else {
