@@ -27,30 +27,38 @@ module("Test treeController", {
     var physical = {};
     physical['VAA'] = Multivio.CDM.FIXTURES.physical['VAA'];
     Multivio.CDM.physicalStructure = physical;
-  
     //initialize masterController, treeDispatcher & treeController
     myMasterController = Multivio.masterController;
     myMasterController.currentFile = 'VAA';
-    
     myTreeDispatcher = Multivio.treeDispatcher;
-    myTreeController = Multivio.treeController;
-    myTreeController.bind('position', 'Multivio.masterController.currentPosition');
+    Multivio.treeDispatcher.treeStructure = null;
+
+    if (Multivio.treeController.get('treeExist')) {
+      Multivio.treeController.set('treeExist', NO);
+      Multivio.treeController._treeLabelByPosition = [];
+    }
     
-    myTreeDispatcher.createIndex('VAA');
+    myTreeController = Multivio.treeController;
+    myTreeDispatcher.initialize('VAA');
   },
   
   teardown: function () {
+    Multivio.CDM.referer =  undefined;
+    Multivio.CDM.metadata = undefined;
+    Multivio.CDM.logicalStructure =  undefined;
+    Multivio.CDM.physicalStructure = undefined;
     delete myMasterController;
     delete myTreeController;
     delete myTreeDispatcher;
   }
-});
-  
+}); 
+
 test("after initialization no selection and no currentPosition", function () {
   equals(myMasterController.get('currentPosition'), null,
-      "should find currentPosition is null");
+      "should find currentPosition is null");    
   equals(myTreeController.get('selection').firstObject(), undefined,
       "should find selection is undefined");
+
 });
 
 test("masterController select first file: currentPosition = 1", function () {  
@@ -58,7 +66,7 @@ test("masterController select first file: currentPosition = 1", function () {
   SC.RunLoop.begin();
   myMasterController.selectFirstPosition();
   SC.RunLoop.end();
-  
+
   equals(myTreeController.get('selection').firstObject().file_position.index, 1,
       "treeController first index of the selection is 1");
   equals(myTreeController.get('position'), 1,
@@ -68,9 +76,9 @@ test("masterController select first file: currentPosition = 1", function () {
 });
 
 test("treeController._selectionDidChange", function () { 
-  
   SC.RunLoop.begin();
-  myTreeController.position = 1;
+  myTreeController.position = null;
+  myTreeController.set('selection', null);
   SC.RunLoop.end();
   
   SC.RunLoop.begin();  
@@ -78,7 +86,7 @@ test("treeController._selectionDidChange", function () {
   myTreeController.set('selection', 
         SC.SelectionSet.create().addObject(treeLabelToSelect[0])); 
   SC.RunLoop.end();
-
+  
   equals(myMasterController.get('currentPosition'), 5, 
       "masterController currentPosition should be 5");
   equals(myTreeController.get('position'), 5, 
@@ -86,11 +94,10 @@ test("treeController._selectionDidChange", function () {
 });
 
 test("masterController.set('currentPosition')", function () {
-  
   SC.RunLoop.begin();
   myMasterController.set('currentPosition', 7);
   SC.RunLoop.end();
-  
+    
   equals(myTreeController.get('selection').firstObject().file_position.index, 7, 
       "treeController selection index should be 7");
   
