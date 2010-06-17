@@ -216,7 +216,7 @@ Multivio.treeDispatcher = SC.Object.create(
         if (list[i].childs && SC.none(list[i].file_position.url)) {
           list[i].level = 0;
         }
-        else{
+        else {
           list[i].level = 2;
         }
       }

@@ -22,7 +22,29 @@ Multivio.layoutController = SC.Object.create(
   
   isBasicLayoutUp: NO,
   
-  currentListOfWidget: 0,
+  localType: undefined,
+  
+  nbOfComponentToAdd: 0,
+  
+  viewByController: {},
+  
+  layoutPositionByName: {
+    top:           {x: 0, y: 0, xlen: 3, ylen: 1},
+    left:          {x: 0, y: 1, xlen: 1, ylen: 1},
+    center:        {x: 1, y: 1, xlen: 1, ylen: 1},
+    right:         {x: 2, y: 1, xlen: 1, ylen: 1},
+    leftAndCenter: {x: 0, y: 1, xlen: 2, ylen: 1},
+    bottom:        {x: 0, y: 2, xlen: 3, ylen: 1}
+  },
+  
+  typeForMimeType: {
+    'text/xml': 'xml',
+    'text/xml;charset=utf-8': 'xml',
+    'application/xml': 'xml',
+    'application/pdf': 'pdf',
+    'image/jpg': 'image',
+    'image/jpeg': 'image',
+  },
 
   initialize: function () {
     // Attach the main page to the browser window in order to initiate the
@@ -32,38 +54,54 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  For each type of Document retreive the number of controller needed
+  For a mimetype retreives the local type, the list of controller needed
+  and the number of views
   
   @param {String} type
+  @return {Array} list of controllers
   */
   getListOfController: function (type) {
-    var list = Multivio.configurator.get('widgetsByType')[type];
-    this.set('currentListOfWidget', list.length);
+    //set localType using the matching table
+    this.localType = this.get('typeForMimeType')[type];
+
+    //retreive the configuration for layout
+    var config = Multivio.configurator.get('layoutConfig')[this.localType];
+    var components = config.components;
+
+    var listOfController = [];
+    //for each view get the controller(s) and create a hash that contains
+    //for each controller the view associated
+    for (var i = 0; i < components.length; i++) {
+      var oneView = components[i].name;
+      var contr = Multivio.views.get(oneView).controllers;
+      for (var j = 0; j < contr.length; j++) {
+        var oneController = contr[j];
+        this.viewByController[oneController] = components[i];
+        listOfController.push(oneController);
+      }
+    }
+    this.set('nbOfComponentToAdd', listOfController.length);
+    return listOfController;
   },
   
   /**
   currentListOfWidget has changed, verify if all controller have create the
   view and if YES select the first element to show it.
   
-  @observes currentListOfWidget
+  @observes nbOfComponentToAdd
   */
-  currentListOfWidgetDidChange: function () {
-    if (this.get('currentListOfWidget') === 0) {
-      var currentType = Multivio.masterController.get('currentType');
-      switch (currentType) {
+  nbOfComponentDidChange: function () {
+    if (this.get('nbOfComponentToAdd') === 0) {
+      //var currentType = Multivio.masterController.get('currentType');
+      switch (this.get('localType')) {
 
-      case 'application/pdf':
+      case 'pdf':
+      case 'image':
         Multivio.masterController.selectFirstPosition();
         break;
-  
-      case 'text/xml':
-      case 'text/xml;charset=utf-8':
+
+      case 'xml':
         Multivio.masterController.selectFirstFile();
-        break;
-  
-      case 'image/jpeg':
-      case 'image/jpg':
-        Multivio.masterController.selectFirstPosition();
         break;
 
       default:
@@ -71,7 +109,7 @@ Multivio.layoutController = SC.Object.create(
         break;
       }
     }
-  }.observes('currentListOfWidget'),
+  }.observes('nbOfComponentToAdd'),
   
   /**
     Sets up the views in the workspace.
@@ -137,65 +175,30 @@ Multivio.layoutController = SC.Object.create(
   /**
   Add a new component to the main page
   
-  @param {String} component the name of the component
+  @param {String} controller the name of the controller 
   */
-  addComponent: function (component) {
+  addComponent: function (controller) {
+    //Get component for this controller
+    var component = this.viewByController[controller];
+    
+    var componentName = 'views.'+component.name;
+    var componentPosition = component.position;
+    
+    //get the grid position for the component
+    var gridPosition = this.layoutPositionByName[componentPosition];
+    
     var mainPage = Multivio.getPath('mainPage.mainPane');
-    switch (component) {
-    case 'views.mainContentView':
-      /*mainPage.layOutComponent({
-          name: 'views.mainContentView', 
-          x: 1, 
-          y: 1, 
-          xlen: 1, 
-          ylen: 1
-        });*/
-      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
-      break;
-      
-    case 'views.thumbnailView':
+    //Verify if the view already exist if not add the component
+    if (SC.none(mainPage._componentsOnGrid[componentName])) {
       mainPage.layOutComponent({
-          name: 'views.thumbnailView', 
-          x: 2, 
-          y: 1, 
-          xlen: 1, 
-          ylen: 1
-        });
-      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
-      break;
-        
-    case 'views.treeView':
-      /*mainPage.layOutComponent({
-          name: 'views.treeView', 
-          x: 0, 
-          y: 1, 
-          xlen: 1, 
-          ylen: 1
-        });*/
-      mainPage.layOutComponent({
-        name: 'views.treeAndContentView', 
-        x: 0, 
-        y: 1, 
-        xlen: 2, 
-        ylen: 1
+        name: componentName,
+        x: gridPosition.x,
+        y: gridPosition.y,
+        xlen: gridPosition.xlen,
+        ylen: gridPosition.ylen
       });
-      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
-      break;
-
-    case 'views.navigationView':
-      mainPage.layOutComponent({
-          name: 'views.navigationView',
-          x: 1, 
-          y: 2, 
-          xlen: 2, 
-          ylen: 1
-        });
-      this.set('currentListOfWidget', this.get('currentListOfWidget') - 1);
-      break;
-    default:
-      Multivio.logger.info(component + 'is an unknown component ');
-      break;
     }
+    this.set('nbOfComponentToAdd', this.get('nbOfComponentToAdd') - 1);
   },
   
   /**

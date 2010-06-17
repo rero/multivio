@@ -141,7 +141,34 @@ Multivio.masterController = SC.ObjectController.create(
   currentTypeDidChange: function () {
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
-          //Multivio.layoutController.getListOfController(ct);
+    var listOfControllers = Multivio.layoutController.getListOfController(ct);
+    
+    //if we have images we need to get logical and physical structure
+    //from the referer
+    if (ct.indexOf('image') !== -1) {
+      var ref = Multivio.CDM.getReferer();
+      this.currentFile = ref;
+      cf = ref;
+    }
+    
+    //initialize all controllers
+    for(var i = 0; i < listOfControllers.length; i++) {
+      var oneController = listOfControllers[i];
+      if (ct.indexOf('image') === -1) {
+        Multivio[oneController].initialize(cf);
+      } 
+      //if we have images don't initialize the treeDispatcher
+      else {
+        if (oneController !== 'treeDispatcher') {
+          Multivio[oneController].initialize(cf);
+        }
+        else {
+          Multivio.layoutController.addComponent('treeDispatcher');
+        }
+      }
+    }
+     
+   /*Multivio.layoutController.getListOfController(ct);
     switch (ct) {
     
     case 'application/pdf':
@@ -172,7 +199,7 @@ Multivio.masterController = SC.ObjectController.create(
     default:
       Multivio.logger.info(ct + 'is an undefined type for the masterController');
       break;
-    }
+    }*/
   }.observes('currentType'),
   
   /**

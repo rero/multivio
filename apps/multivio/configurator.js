@@ -101,7 +101,7 @@ Multivio.configurator = SC.Object.create(
     @property {Object}
   */
   componentLayouts: {
-    'pageBased': {
+    /*'pageBased': {
       baseLayout: 'default',
       components: [
         {name: 'views.headerView',      x: 0, y: 0, xlen: 3, ylen: 1},
@@ -119,19 +119,19 @@ Multivio.configurator = SC.Object.create(
         {name: 'views.thumbnailView',      x: 2, y: 1, xlen: 1, ylen: 1},
         {name: 'views.navigationView',     x: 0, y: 2, xlen: 3, ylen: 1}
       ]
-    },
+    },*/
     'init': {
       baseLayout: 'default',
       components: [
         {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1}
       ]
     },
-    'contentFullScreen': {
+   /* 'contentFullScreen': {
       baseLayout: 'default',
       components: [
         {name: 'views.mainContentView', x: 0, y: 0, xlen: 3, ylen: 3}
       ]
-    },
+    },*/
     'usage': {
       baseLayout: 'default',
       components: [
@@ -158,20 +158,29 @@ Multivio.configurator = SC.Object.create(
     }
   },
   
-  //list of controllers for each type of document
-  widgetsByType: {
-    'text/xml' : ['treeDispatcher'],
-    'text/xml;charset=utf-8' : ['treeDispatcher'],
-    'application/pdf' : ['treeDispatcher',
-        'imageController', 'navigationController', 'thumbnailController'],
-    /*'image/jpeg': ['treeDispatcher', 
-        'imageController', 'navigationController', 'thumbnailController'],
-    'image/jpg': ['treeDispatcher', 
-        'imageController', 'navigationController', 'thumbnailController']*/
-    'image/jpeg': ['imageController',
-        'navigationController', 'thumbnailController'],
-    'image/jpg': ['imageController', 
-        'navigationController', 'thumbnailController']   
+  /**
+  Configuration of the layout depending on the type of the document
+  */
+  layoutConfig: {
+    xml: {
+      components: [
+        {name: 'treeView', position: 'left'}
+      ]
+    },
+    pdf: {
+      components: [
+        {name: 'treeAndContentView', position: 'leftAndCenter'},
+        {name: 'navigationView', position: 'bottom'},
+        {name: 'thumbnailView', position: 'right'}        
+      ]
+    },
+    image : {
+      components: [
+        {name: 'treeAndContentView', position: 'leftAndCenter'},
+        {name: 'navigationView', position: 'bottom'},
+        {name: 'thumbnailView', position: 'right'}        
+      ]
+    }
   },
 
   /**
@@ -249,6 +258,7 @@ Multivio.configurator = SC.Object.create(
       Multivio.logger.debug('version received from the server: %@'.
           fmt(response.get("body")));
       var jsonRes = response.get("body");
+      //TO DO test between server and client
       if (jsonRes.api_version === '0.1') {
         Multivio.logger.debug('Client and server are compatible');
         Multivio.masterController.initialize();

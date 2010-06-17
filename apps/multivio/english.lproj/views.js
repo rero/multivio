@@ -41,6 +41,9 @@ Multivio.views = SC.Page.design(
     topLeftMaxThickness: 2000,
     dividerThickness: 20,
     canCollapseViews: NO,
+    
+    //add controller(s) need for this view
+    controllers: ['treeDispatcher', 'imageController'],
 
     topLeftView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -145,6 +148,8 @@ Multivio.views = SC.Page.design(
   */
   thumbnailView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
+    //add controller(s) need for this view
+    controllers: ['thumbnailController'],
     
     childViews: 'innerThumbnail'.w(),
     innerThumbnail: Multivio.ThumbnailView.design({
@@ -179,7 +184,9 @@ Multivio.views = SC.Page.design(
   */
   treeView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
-
+    //add controller(s) need for this view
+    controllers: ['treeDispatcher'],
+    
     childViews: 'innerTree'.w(),
     innerTree:  Multivio.TreeView.design({
       layout: { top: 10, bottom: 10, left: 10, right: 10 },
@@ -214,7 +221,9 @@ Multivio.views = SC.Page.design(
   */
   navigationView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
-
+    //add controller(s) need for this view
+    controllers: ['navigationController'],
+    
     childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView zoomPageView logos'.w(),
     
     firstPageView: SC.ButtonView.design({

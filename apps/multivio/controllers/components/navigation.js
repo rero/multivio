@@ -76,7 +76,8 @@ Multivio.navigationController = SC.ObjectController.create(
     if (nb !== 0) {
       this.set('_numberOfPages', nb);
     }
-    Multivio.layoutController.addComponent('views.navigationView');
+    //Multivio.layoutController.addComponent('views.navigationView');
+    Multivio.layoutController.addComponent('navigationController');
     Multivio.logger.info('navigationController initialized');
   },
   

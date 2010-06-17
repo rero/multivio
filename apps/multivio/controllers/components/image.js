@@ -39,6 +39,8 @@ Multivio.imageController = SC.ArrayController.create(
     this.bind('position', 'Multivio.masterController.currentPosition');
     var structure = Multivio.CDM.getPhysicalstructure(url);
     if (structure !== -1) {
+      //the number of pages is contained either in the metadata or
+      //it's the number of urls of the physical structure
       var meta = Multivio.CDM.getMetadata(url);
       if (meta !== -1) {
         if (SC.none(meta.nPages)) {
@@ -125,8 +127,11 @@ Multivio.imageController = SC.ArrayController.create(
       cont.push(imageHash);
     }
     this.set('content', cont);
-    Multivio.layoutController.addComponent('views.mainContentView');
-    Multivio.logger.info('imageController#createPDFImages created and layout setted' + this.get('content').length);
+    Multivio.layoutController.addComponent('imageController');
+    //Multivio.layoutController.addComponent('views.mainContentView');
+    Multivio.logger.info(
+        'imageController#createPDFImages created and layout setted' + 
+        this.get('content').length);
   },
   
   /**
@@ -157,9 +162,12 @@ Multivio.imageController = SC.ArrayController.create(
     }
     this.set('content', cont);
     if (Multivio.layoutController.get('isBasicLayoutUp')) {
-      Multivio.layoutController.addComponent('views.mainContentView');
+      Multivio.layoutController.addComponent('imageController');
+      //Multivio.layoutController.addComponent('views.mainContentView');
     }
-    Multivio.logger.info('imageController#createImages created and layout setted' + this.get('content').length);
+    Multivio.logger.info(
+        'imageController#createImages created and layout setted' + 
+        this.get('content').length);
   },
   
   /**

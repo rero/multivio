@@ -75,13 +75,14 @@ Multivio.treeController = SC.TreeController.create(
       this.set('treeExist', YES);
       var isGlobalStValid = NO;
       var subT = [];
-      //remove rootNode and referNode
+      //j = 2 =>remove rootNode and referNode
       for (var j = 2; j < structure.length; j++) {
         if (structure[j].level !== 0) {
           isGlobalStValid = YES;
         }
         subT.push(structure[j]);
       }
+      //global structure is not valid if we have only label with level = 0
       if (!isGlobalStValid) {
         var t = this.createNewStructure(subT, []);
         structure = structure.concat(t);        
@@ -92,14 +93,15 @@ Multivio.treeController = SC.TreeController.create(
       //create treeContent and set content
       var treeContent = Multivio.TreeContent.create(structure[0]);
       this.set('content', treeContent);
-      //this.set('globalStructure', treeContent);
       //add view
       if (Multivio.layoutController.get('isBasicLayoutUp')) {
-        Multivio.layoutController.addComponent('views.treeView');
+        //Multivio.layoutController.addComponent('views.treeAndContentView');
+        Multivio.layoutController.addComponent('treeDispatcher');
       }
       
       Multivio.logger.info('treeController#_createTree');
-      
+      //if no label have position = 1 get the referer node as the leaf
+      //to select when currentPosition = 1
       if (SC.none(this._treeLabelByPosition[1])) {
         var arr = this.get('arrangedObjects');
         this._treeLabelByPosition[1] = [arr.objectAt(0)];
@@ -119,7 +121,6 @@ Multivio.treeController = SC.TreeController.create(
       var labels = this._getListOfLabelsForIndex(newPosition);
       if (!SC.none(labels)) {
         //verify if we really need to set selection
-        //var currentSelection = ;
         var currentSelection = !SC.none(this.get('selection')) ?
             this.get('selection').firstObject() : undefined;
         if (labels.length === 1) {
@@ -209,6 +210,12 @@ Multivio.treeController = SC.TreeController.create(
     return keys;
   },
   
+  /**
+  Create the new global structure with childs of the treeContent
+  
+  @param {Array} st array of label
+  @parm {Array} ret array to return
+  */
   createNewStructure: function (st, ret) {
     for (var i = 0; i < st.length; i++) {
       if (!SC.none(st[i].childs)) {
@@ -268,8 +275,11 @@ Multivio.treeController = SC.TreeController.create(
     var treeContent = Multivio.TreeContent.create(newStruct[0]);
     this.set('content', treeContent);
     
-    Multivio.layoutController.set('currentListOfWidget', 
-        Multivio.layoutController.get('currentListOfWidget') - 1);
+   /* Multivio.layoutController.set('currentListOfWidget', 
+        Multivio.layoutController.get('currentListOfWidget') - 1);*/
+     /* Multivio.layoutController.set('nbOfComponentToAdd',
+        Multivio.layoutController.get('nbOfComponentToAdd') - 1);*/
+    Multivio.layoutController.addComponent('treeDispatcher');
 
     if (SC.none(this._treeLabelByPosition[1]) && 
         this._treeLabelByPosition.length !== 0) {
