@@ -114,8 +114,9 @@ Multivio.masterController = SC.ObjectController.create(
     var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
     if (!SC.none(logSt)) {
       var validUrl = logSt[0].file_position.url;
+      //if a file_position has no url we need to get the next file_position 
       if (SC.none(validUrl)) {
-        var childs = logSt[0].childs
+        var childs = logSt[0].childs;
         for (var i = 0; i < childs.length; i++) {
           var temp = childs[i];  
           if (!SC.none(temp.file_position.url)) {
@@ -152,7 +153,7 @@ Multivio.masterController = SC.ObjectController.create(
     }
     
     //initialize all controllers
-    for(var i = 0; i < listOfControllers.length; i++) {
+    for (var i = 0; i < listOfControllers.length; i++) {
       var oneController = listOfControllers[i];
       if (ct.indexOf('image') === -1) {
         Multivio[oneController].initialize(cf);
@@ -167,39 +168,6 @@ Multivio.masterController = SC.ObjectController.create(
         }
       }
     }
-     
-   /*Multivio.layoutController.getListOfController(ct);
-    switch (ct) {
-    
-    case 'application/pdf':
-      Multivio.layoutController.getListOfController(ct);
-      Multivio.treeDispatcher.initialize(cf);
-      Multivio.thumbnailController.initialize(cf);
-      Multivio.navigationController.initialize(cf);
-      Multivio.imageController.initialize(cf);
-      break;
-      
-    case 'text/xml':
-    case 'application/xml':
-    case 'text/xml;charset=utf-8':
-      Multivio.layoutController.getListOfController(ct);
-      Multivio.treeDispatcher.initialize(cf);
-      break;
-      
-    case 'image/jpeg':
-    case 'image/jpg':
-      var ref = Multivio.CDM.getReferer();
-      this.currentFile = ref;
-      Multivio.layoutController.getListOfController(ct);
-      Multivio.thumbnailController.initialize(ref);
-      Multivio.imageController.initialize(ref); 
-      Multivio.navigationController.initialize(ref);  
-      break;
-      
-    default:
-      Multivio.logger.info(ct + 'is an undefined type for the masterController');
-      break;
-    }*/
   }.observes('currentType'),
   
   /**
@@ -210,7 +178,6 @@ Multivio.masterController = SC.ObjectController.create(
   currentFileDidChange: function () {
     if (!SC.none('currentFile')) {
       this.currentType = null;
-      //this.currentPosition = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
       this.getMetadataForFile(cf);

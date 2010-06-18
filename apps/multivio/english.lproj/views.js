@@ -41,7 +41,7 @@ Multivio.views = SC.Page.design(
     topLeftMaxThickness: 2000,
     dividerThickness: 20,
     canCollapseViews: NO,
-    
+
     //add controller(s) need for this view
     controllers: ['treeDispatcher', 'imageController'],
 

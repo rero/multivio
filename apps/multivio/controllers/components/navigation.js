@@ -53,12 +53,13 @@ Multivio.navigationController = SC.ObjectController.create(
     this.bind('position', 'Multivio.masterController.currentPosition');
     var meta = Multivio.CDM.getMetadata(url);
     var nb = 0;
-    //meta = -1 response not on client => create binding
+    //meta = -1 response not on client => create a binding and wait
     if (meta === -1) {
       this.bind('meta', 'Multivio.CDM.metadata');
     }
     else {
-      //don't have the nb of pages get the physicalStructure to known it
+      //we have metadata. If metadata.nPages === null we need to get
+      //the physicalStructure to known it
       if (SC.none(meta.nPages)) {
         var ph = Multivio.CDM.getPhysicalstructure(url);
         //ph = -1 response not on client => create binding
@@ -76,7 +77,6 @@ Multivio.navigationController = SC.ObjectController.create(
     if (nb !== 0) {
       this.set('_numberOfPages', nb);
     }
-    //Multivio.layoutController.addComponent('views.navigationView');
     Multivio.layoutController.addComponent('navigationController');
     Multivio.logger.info('navigationController initialized');
   },
@@ -94,7 +94,7 @@ Multivio.navigationController = SC.ObjectController.create(
       if (!SC.none(cf)) {
         var currentMeta = this.get('meta')[cf];
         var nb = 0;
-        //we have metadata
+        //we have metadata else wait again
         if (currentMeta !== -1) {
           if (SC.none(currentMeta.nPages)) {
             var ph = Multivio.CDM.getPhysicalstructure(cf);
@@ -172,14 +172,14 @@ Multivio.navigationController = SC.ObjectController.create(
             fmt(this.get('_numberOfPages')));
       }
       else {*/
-        if (!SC.none(newCurrentPage)) {
-          var currentPosition = this.get('position');
-          if (currentPosition !== newCurrentPage) {
-            this.set('position', newCurrentPage);
-            Multivio.logger.info('navigationController#_currentPageDidChange: %@'.
-                fmt(this.get('position')));
-          }
+      if (!SC.none(newCurrentPage)) {
+        var currentPosition = this.get('position');
+        if (currentPosition !== newCurrentPage) {
+          this.set('position', newCurrentPage);
+          Multivio.logger.info('navigationController#_currentPageDidChange: %@'.
+              fmt(this.get('position')));
         }
+      }
       //}
     }
     catch (err) {

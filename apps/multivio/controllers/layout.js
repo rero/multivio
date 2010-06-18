@@ -20,14 +20,29 @@
 Multivio.layoutController = SC.Object.create(
 /** @scope Multivio.layoutController.prototype */ {
   
+  /**
+  Boolean that say if the worspace has been initialized.
+  */
   isBasicLayoutUp: NO,
   
+  /**
+  The type of the document to show
+  */
   localType: undefined,
   
+  /**
+  The number of views that need to be added to the main page
+  */
   nbOfComponentToAdd: 0,
   
+  /**
+  The list of controllers with their view
+  */
   viewByController: {},
   
+  /**
+  Position on the GridLayout
+  */
   layoutPositionByName: {
     top:           {x: 0, y: 0, xlen: 3, ylen: 1},
     left:          {x: 0, y: 1, xlen: 1, ylen: 1},
@@ -37,15 +52,22 @@ Multivio.layoutController = SC.Object.create(
     bottom:        {x: 0, y: 2, xlen: 3, ylen: 1}
   },
   
+  /**
+  Translate mimetype received from the server to a local type
+  used by the config layout file
+  */
   typeForMimeType: {
     'text/xml': 'xml',
     'text/xml;charset=utf-8': 'xml',
     'application/xml': 'xml',
     'application/pdf': 'pdf',
     'image/jpg': 'image',
-    'image/jpeg': 'image',
+    'image/jpeg': 'image'
   },
 
+  /**
+  Initilize this controller by showing the waiting page
+  */
   initialize: function () {
     // Attach the main page to the browser window in order to initiate the
     // interface of the application
@@ -105,7 +127,7 @@ Multivio.layoutController = SC.Object.create(
         break;
 
       default:
-        Multivio.logger.info(currentType + 'is an undefined type ');
+        Multivio.logger.info(this.get('localType') + ' is an undefined type ');
         break;
       }
     }
@@ -181,7 +203,7 @@ Multivio.layoutController = SC.Object.create(
     //Get component for this controller
     var component = this.viewByController[controller];
     
-    var componentName = 'views.'+component.name;
+    var componentName = 'views.' + component.name;
     var componentPosition = component.position;
     
     //get the grid position for the component

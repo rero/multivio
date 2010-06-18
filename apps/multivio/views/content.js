@@ -25,13 +25,6 @@ Multivio.ContentView = SC.ScrollView.extend(
    */
   zoomValueBinding:
       SC.Binding.oneWay('Multivio.zoomController.current_zoom_factor'), 
-  
-  /**
-    Binds to the masterController' masterSelection
-
-    @binding {Multivio.CoreDocumentNode}
-  */
- // masterSelectionBinding: 'Multivio.masterController.masterSelection',
  
   /**
     Binds to the imageController's selection
@@ -40,13 +33,6 @@ Multivio.ContentView = SC.ScrollView.extend(
   */ 
   selection: null,
   selectionBinding: 'Multivio.imageController.selection', 
-  
-  /**
-    Binds to the isFirstFile property of the masterController
-
-    @binding {Boolean}
-  */   
- // isFirstFileBinding: 'Multivio.masterController.isFirstFile',
   
   isFirstFile: YES,
   

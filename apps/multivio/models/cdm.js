@@ -22,6 +22,9 @@
 Multivio.CDM = SC.Object.create(
 /** @scope Multivio.CDM.prototype */ {
 
+  /**
+  CDM parts
+  */
   referer: undefined,
   metadata: undefined,
   logicalStructure: undefined,
@@ -53,13 +56,13 @@ Multivio.CDM = SC.Object.create(
       else {
         //add the entry
         var t2 = {};
-        if(!SC.none(this.get('metadata'))) {
+        if (!SC.none(this.get('metadata'))) {
           var oldMeta = this.get('metadata');
           t2 = this.clone(oldMeta);
         }
         t2[url] = jsonRes;
-      this.set('metadata', t2);
-      Multivio.logger.debug('New metadata added for ' + url);
+        this.set('metadata', t2);
+        Multivio.logger.debug('New metadata added for ' + url);
       }
     }
   },
@@ -70,16 +73,16 @@ Multivio.CDM = SC.Object.create(
   @param {Object} instance the instance to clone
   @return {Object} the cloned instance
   */
-  clone: function(instance) {
+  clone: function (instance) {
     
-    if(typeof(instance) != 'object' || instance == null) {
+    if (typeof(instance) !== 'object' || instance === null) {
       return instance;
     }
     
     //create new instance
     var newInstance = instance.constructor();
     //clone the instance
-    for(var i in instance) {
+    for (var i in instance) {
       newInstance[i] = this.clone(instance[i]);
     }
     return newInstance;
@@ -107,7 +110,7 @@ Multivio.CDM = SC.Object.create(
           sendGetRequest(serverAdress, this, 'setMetadata', url);
       //put -1 for this url
       var t2 = {};
-      if(!SC.none(this.get('metadata'))) {
+      if (!SC.none(this.get('metadata'))) {
         var oldMeta = this.get('metadata');
         t2 = this.clone(oldMeta);
       }
@@ -169,7 +172,7 @@ Multivio.CDM = SC.Object.create(
       //save response
       else {
         var t2 = {};
-        if(!SC.none(this.get('logicalStructure'))) {
+        if (!SC.none(this.get('logicalStructure'))) {
           var oldLogic = this.get('logicalStructure');
           t2 = this.clone(oldLogic);
         }
@@ -200,7 +203,7 @@ Multivio.CDM = SC.Object.create(
 
       //put -1 as logicalStructure for this url
       var t2 = {};
-      if(!SC.none(this.get('logicalStructure'))) {
+      if (!SC.none(this.get('logicalStructure'))) {
         var oldLogic = this.get('logicalStructure');
         t2 = this.clone(oldLogic);
       }
@@ -241,7 +244,7 @@ Multivio.CDM = SC.Object.create(
       }
       else {
         var t2 = {};
-        if(!SC.none(this.get('physicalStructure'))) {
+        if (!SC.none(this.get('physicalStructure'))) {
           var oldPhysic = this.get('physicalStructure');
           t2 = this.clone(oldPhysic);
         }
@@ -268,7 +271,7 @@ Multivio.CDM = SC.Object.create(
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setPhysicalStructure', url);
       var t2 = {};
-      if(!SC.none(this.get('physicalStructure'))) {
+      if (!SC.none(this.get('physicalStructure'))) {
         var oldPhysic = this.get('physicalStructure');
         t2 = this.clone(oldPhysic);
       }

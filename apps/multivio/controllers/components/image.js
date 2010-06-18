@@ -128,7 +128,6 @@ Multivio.imageController = SC.ArrayController.create(
     }
     this.set('content', cont);
     Multivio.layoutController.addComponent('imageController');
-    //Multivio.layoutController.addComponent('views.mainContentView');
     Multivio.logger.info(
         'imageController#createPDFImages created and layout setted' + 
         this.get('content').length);
@@ -140,7 +139,7 @@ Multivio.imageController = SC.ArrayController.create(
     @private
   */  
   _createImages: function (structure) {
-    //each images has its own url => create each new url
+    //each images has its own url => create for each a new url
     var cont = [];
     for (var i = 0; i < structure.length; i++) {
       var files = structure[i];
@@ -163,7 +162,6 @@ Multivio.imageController = SC.ArrayController.create(
     this.set('content', cont);
     if (Multivio.layoutController.get('isBasicLayoutUp')) {
       Multivio.layoutController.addComponent('imageController');
-      //Multivio.layoutController.addComponent('views.mainContentView');
     }
     Multivio.logger.info(
         'imageController#createImages created and layout setted' + 

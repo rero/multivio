@@ -25,7 +25,15 @@ Multivio.treeController = SC.TreeController.create(
   */
   position: null,
   
+  /**
+  Boolean that say if the tree has been already created or not
+  */
   treeExist: NO,
+  
+  /**
+  Structure used to create the tree. The globalStructure is the basic 
+  structure of the tree. The new branches are added to this structure.
+  */
   globalStructure: null,
   
   /**
@@ -35,13 +43,10 @@ Multivio.treeController = SC.TreeController.create(
   */
   _treeLabelByPosition: undefined,
   
-  
   /**
-    Initialize this controller and verify if the sub-model can be created. 
-    The sub-model need to have the logical structure of the document. 
-    The logical structure is create by the treeDispatcher
-
-    @param {String} url the current file url
+    Initialize this controller and create or update the tree. 
+    To create this tree we need the treeStructure created by the 
+    treeDispatcher. 
   */
   initialize: function () {
     var structure = Multivio.treeDispatcher.treeStructure;
@@ -49,6 +54,7 @@ Multivio.treeController = SC.TreeController.create(
       this._updateTree(structure);
     }
     else {
+      //create a binding for position
       this.bind('position', 'Multivio.masterController.currentPosition');
       this._createTree(structure);
     }
@@ -65,13 +71,13 @@ Multivio.treeController = SC.TreeController.create(
   },
 
   /**
-    Create the sub-model of this controller and set the content.
+    Create the tree of this controller and set its content.
     
     @param {Object} logicalStructure
     @private
   */  
   _createTree: function (structure) {
-    if (! this.get('treeExist')) {
+    if (!this.get('treeExist')) {
       this.set('treeExist', YES);
       var isGlobalStValid = NO;
       var subT = [];
@@ -83,6 +89,7 @@ Multivio.treeController = SC.TreeController.create(
         subT.push(structure[j]);
       }
       //global structure is not valid if we have only label with level = 0
+      //we need label with level = 1 to add or remove branches 
       if (!isGlobalStValid) {
         var t = this.createNewStructure(subT, []);
         structure = structure.concat(t);        
@@ -95,7 +102,6 @@ Multivio.treeController = SC.TreeController.create(
       this.set('content', treeContent);
       //add view
       if (Multivio.layoutController.get('isBasicLayoutUp')) {
-        //Multivio.layoutController.addComponent('views.treeAndContentView');
         Multivio.layoutController.addComponent('treeDispatcher');
       }
       
@@ -274,11 +280,7 @@ Multivio.treeController = SC.TreeController.create(
     this._treeLabelByPosition = [];
     var treeContent = Multivio.TreeContent.create(newStruct[0]);
     this.set('content', treeContent);
-    
-   /* Multivio.layoutController.set('currentListOfWidget', 
-        Multivio.layoutController.get('currentListOfWidget') - 1);*/
-     /* Multivio.layoutController.set('nbOfComponentToAdd',
-        Multivio.layoutController.get('nbOfComponentToAdd') - 1);*/
+    //add view   
     Multivio.layoutController.addComponent('treeDispatcher');
 
     if (SC.none(this._treeLabelByPosition[1]) && 

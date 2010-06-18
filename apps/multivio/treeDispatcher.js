@@ -28,6 +28,10 @@ Multivio.treeDispatcher = SC.Object.create(
   lS: null,
   pS: null,
   
+  /**
+  Structure created using logical or physical structure. 
+  This structure is then used by the treeController to create the tree.
+  */ 
   treeStructure: null,
   
   
@@ -174,7 +178,7 @@ Multivio.treeDispatcher = SC.Object.create(
   },
   
   /**
-    Create the first visible node of the treeView.
+    Create the first visible node of the treeView (the label of the referer).
 
     @param {String} refererLabel the title of the referer
     @param {String} refererUrl the url of the referer
@@ -197,7 +201,8 @@ Multivio.treeDispatcher = SC.Object.create(
   },
   
   /**
-    Add new logical structure to the tree
+    Add new logical structure to the treeStructure
+    and set level.
 
     @private
   */
@@ -227,7 +232,7 @@ Multivio.treeDispatcher = SC.Object.create(
   
   
   /**
-  Reset bindings and variables
+  Reset bindings
   */
   reset: function () {
     var listOfBindings = this.get('bindings');

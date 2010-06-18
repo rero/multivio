@@ -76,7 +76,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
     this.set('bindings', []);
     this._positionToThumbnail = {};
     this.position = null;
-    //this.set('physicalStructure', null);
     this.set('content', null);
     this.set('selection', null);
   },
@@ -157,7 +156,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
     this.set('content', cont);
     this.set('_cdmNodeToThumbnail', newTable);
     if (Multivio.layoutController.get('isBasicLayoutUp')) {
-      //Multivio.layoutController.addComponent('views.thumbnailView');
       Multivio.layoutController.addComponent('thumbnailController');
     }
     Multivio.logger.info('thumbnailController#_createThumbnails');

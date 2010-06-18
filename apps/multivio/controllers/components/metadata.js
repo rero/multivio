@@ -27,6 +27,8 @@ Multivio.metadataController = SC.ObjectController.create(
   */
   initialize: function (url) {
     var meta = Multivio.CDM.getMetadata(url);
+    //normally meta is not egal to -1 because this controller is initialized
+    //after the masterController received the metadata of the referer url
     if (!SC.none(meta) && meta !== -1) {
       this.set('content', meta);
     }
