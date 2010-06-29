@@ -59,13 +59,16 @@ Multivio.configurator = SC.Object.create(
     logicalStructure: "/structure/get_logical?url=",
     physicalStructure: "/structure/get_physical?url=",
     
-    thumbnail: "/document/get?width=100&url=",
+    //thumbnail: "/document/get?width=100&url=",
+    thumbnail: "/document/render?max_height=100",
     
-    image: {
+    /*image: {
       small:  "/document/get?width=1000&url=",
       normal: "/document/get?width=1500&url=",
       big:    "/document/get?width=2000&url="
-    },
+    },*/
+    
+    image: "/document/render?width=1500",
     
     fixtures: {
       VAA: "/static/multivio/en/current/images/VAA"
@@ -337,9 +340,15 @@ Multivio.configurator = SC.Object.create(
     switch (scenario) {
     
     case 'get':
-      modifiedUrl = this.getPath('baseUrlParameters.image.normal');
+      /*modifiedUrl = this.getPath('baseUrlParameters.image.normal');
       modifiedUrl += url;
-      modifiedUrl += "&pagenr=" + pageNumber;      
+      modifiedUrl += "&pagenr=" + pageNumber;*/
+      modifiedUrl = this.getPath('baseUrlParameters.image');
+      if (pageNumber !== 0) {
+        modifiedUrl += "&page_nr=" + pageNumber;
+      } 
+      modifiedUrl += "&url=" + url;
+           
       break;
     
     case 'fixtures':
@@ -370,8 +379,12 @@ Multivio.configurator = SC.Object.create(
     
     case 'get':
       modifiedUrl = this.get('baseUrlParameters').thumbnail;
-      modifiedUrl += url;
-      modifiedUrl += "&pagenr=" + pageNumber;
+      if (pageNumber !== 0) {
+        modifiedUrl += "&page_nr=" + pageNumber;
+      } 
+      modifiedUrl += "&url=" + url;
+      //modifiedUrl += url;
+      //modifiedUrl += "&pagenr=" + pageNumber;
       break;
     
     case 'fixtures':

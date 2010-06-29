@@ -271,13 +271,14 @@ Multivio.views = SC.Page.design(
     }),    
     
     zoomPageView: SC.View.design({
-      layout: { centerX: 150, centerY: 0, width: 105, height: 25 },
+      layout: { centerX: 220, centerY: 0, width: 250, height: 25 },
       layerId: "zoomPageId",
       
-      childViews: 'zoomInPageView zoomOriginalPageView zoomOutPageView'.w(),
+      //childViews: 'zoomInPageView zoomOriginalPageView zoomOutPageView'.w(),
+      childViews: 'zoomInPageView zoomOutPageView zoomPreferenceView'.w(),
       
       zoomInPageView: SC.ButtonView.design({
-        layout: { centerX: -35, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: -110, centerY: 0, width: 30, height: 25 },
         layerId: "zoomInPageId",
         titleMinWidth : 0,
         needsEllipsis: NO,
@@ -286,7 +287,7 @@ Multivio.views = SC.Page.design(
         action: "doZoomOut"
       }),
       
-      zoomOriginalPageView: SC.ButtonView.design({
+      /*zoomOriginalPageView: SC.ButtonView.design({
         layout: { centerX: 0, centerY: 0, width: 30, height: 25 },
         layerId: "originalSizePageId",
         titleMinWidth : 0,
@@ -294,16 +295,24 @@ Multivio.views = SC.Page.design(
         icon: static_url('images/icons/loupe.png'),
         target: "Multivio.zoomController", 
         action: "doZoomOriginal"
-      }),      
+      }),*/      
       
       zoomOutPageView: SC.ButtonView.design({
-        layout: { centerX: 35, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
         layerId: "zoomOutPageId",
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-plus.png'),
         target: "Multivio.zoomController", 
         action: "doZoomIn"
+      }),
+      
+      zoomPreferenceView: SC.SegmentedView.design({
+        layout: { centerX: 30, centerY: 0, width: 160, height: 25},
+        items: "Full Width Native".w(),
+        value: "Full",
+        target: "Multivio.zoomController",
+        action: "setPreference"
       })
       
     }),

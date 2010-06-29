@@ -34,75 +34,68 @@ Multivio.ContentView = SC.ScrollView.extend(
   selection: null,
   selectionBinding: 'Multivio.imageController.selection', 
   
-  isFirstFile: YES,
+  /**
+    Binds to the preference value in the zoomController
   
-  /** 
-    Original width.
+    @binding {string}
+  */
+  preferenceBinding: 
+      SC.Binding.oneWay('Multivio.zoomController.currentPreference'), 
 
-    @property {Number}
-    @private
-    @default null
-  */  
-  _originalWidth: null,
+  /**
+  Content properties
   
-  /** 
-    Original height.
-    
-    @property {Number}
-    @private
-    @default {null}
-  */    
-  _originalHeight: null,  
+  _initialWidth {Number} the first image width
+  _initialHeight {Number} the first image height
+  isAnImage {Boolean}
+  maxImageWidth {Number} native image width (only for image)
+  maxImageHeight {Number} native image height (only for image)
+  */
+  
+  _initialWidth: 0,
+  _initialHeight: 0,
+  
+  isAnImage: NO, 
+  
+  maxImageWidth: 2000,
+  maxImageHeight: 2000, 
   
   /**
-    Zoom in the picture.
+    ZoomFactor has changed.
 
     @observes zoomValue
   */  
   doZoom: function () {
     var zoomVal = this.get('zoomValue');
-    if (!SC.none(zoomVal)) {
-      var div = this.get('contentView');
-      //TO DO: find another solution
-      //Recalculate the center. Not the best solution.
-      div.adjust('left', undefined);
-      if (zoomVal === 1) {
-        div.adjust('width', this.get('_originalWidth'));
-        div.adjust('height', this.get('_originalHeight'));  
-      }
-      else {
-        var newWidth = this._originalWidth * zoomVal;
-        var max = Math.max(newWidth, Multivio.zoomController.ZOOM_MAX_SIZE);
-        if (newWidth > max) {
-          Multivio.logger.info("%@ > maxWidth [%@]".fmt(newWidth, max));
-          // Keep the good rate for the picture
-          if (this.get('_originalWidth') > max) {
-            div.adjust('width', this.get('_originalWidth'));
-            div.adjust('height', this.get('_originalHeight'));
-          }
-          return;
-        }
-        var min = Math.min(newWidth, Multivio.zoomController.ZOOM_MIN_SIZE);
-        if (newWidth < min) {
-          Multivio.logger.info("%@ < minWidth [%@]".fmt(newWidth, min));
-          // Keep the good rate for the picture
-          if (this.get('_originalWidth') < min) {
-            div.adjust('width', this.get('_originalWidth'));
-            div.adjust('height', this.get('_originalHeight'));
-          }          
-          return;
-        }             
-        var newHeight = this._originalHeight * zoomVal;
-        div.adjust('width', newWidth);
-        div.adjust('height', newHeight);
-      }
+    if (!SC.none(zoomVal)) { 
+      this._loadNewImage();
     }
   }.observes('zoomValue'),
+  
+  /**
+    User's preference has changed. Reset initial values.
+    
+    @observes preference
+  */
+  preferenceDidChange: function () {
+    var pref = this.get('preference');
+    if (!SC.none(pref)) {
+      this.set('_initialWidth', 0);
+      this.set('_initialHeight', 0);
+      this.set('zoomValue', 1);
+      //if its an image and the user chooses native size, disabled zoom+
+      if (pref === Multivio.zoomController.HUNDREDPERCENT && this.isAnImage) {
+        Multivio.zoomController.disabledZoomOut();
+      }
+      this._loadNewImage();
+    }
+  }.observes('preference'),
 
   /**
     Callback applied after image has been loaded.
     
-    It puts the image in the container and applies the current zoom factor.
+    It puts the image in the container and adjust the size 
+    (add & remove scroll), then check if zoom buttons.
 
     @private
     @callback SC.imageCache.load
@@ -113,16 +106,118 @@ Multivio.ContentView = SC.ScrollView.extend(
     SC.RunLoop.begin();
     var content =  this.get('contentView');
     content.set('value', url);
-    this.set('_originalWidth', image.width);
-    this.set('_originalHeight', image.height);
-    if (this.get('isFirstFile')) {
-      this.adjustZoomValue();
-      this.set('isFirstFile', NO);
+    if (this.get('_initialWidth') === 0) {
+      this.set('_initialWidth', image.width);
+      this.set('_initialHeight', image.height);
     }
-    this.doZoom();
-    SC.RunLoop.end();
       
+    content.adjust('left', undefined);
+    content.adjust('width', image.width);
+    content.adjust('height', image.height);
+      
+    this._checkZoomButton();
+    SC.RunLoop.end();
     Multivio.logger.debug('ContentView#_adjustSize');
+  },
+  
+  /**
+  Verify if zoom buttons should be disabled
+  
+  */
+  _checkZoomButton: function () {
+    //get maximum and minimum between width & height
+    var max = this.get('_initialHeight');
+    var min = this.get('_initialWidth');
+    if (min > max) {
+      max = this.get('_initialWidth');
+      min = this.get('_initialHeight');
+    }
+    
+    //verify zoom+ 
+    var zoomStep = Multivio.zoomController.get('_current_zoom_step');
+    zoomStep++;
+    var zoomFactor = Multivio.zoomController._zoomFactorForStep(zoomStep);
+    var newSize = max * zoomFactor;
+    if (this.isAnImage) {
+      var maxImage = this.maxImageHeight;
+      if (maxImage < this.maxImageWidth) {
+        maxImage = this.maxImageWidth;
+      }
+      if (newSize > maxImage) {
+        Multivio.zoomController.disabledZoomOut();
+      }
+      else {
+        var pref = this.get('preference');
+        if (pref !== Multivio.zoomController.HUNDREDPERCENT && 
+            newSize > Multivio.zoomController.ZOOM_MAX_SIZE) {
+          Multivio.zoomController.disabledZoomOut();
+        }
+      }
+    }
+    else {
+      //its a pdf
+      if (newSize > Multivio.zoomController.ZOOM_MAX_SIZE) {
+        Multivio.zoomController.disabledZoomOut();
+      }
+    }
+    
+    //verify zoom-
+    zoomStep = zoomStep - 2;
+    zoomFactor = Multivio.zoomController._zoomFactorForStep(zoomStep);
+    newSize = min * zoomFactor;
+    if (newSize < Multivio.zoomController.ZOOM_MIN_SIZE) {
+      Multivio.zoomController.disabledZoomIn();
+    } 
+  },
+  
+  /**
+  Load the image with adapated width and height 
+  
+  */
+  _loadNewImage: function () {
+    var currentSelection = this.get('selection');
+    if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
+      var defaultUrl = currentSelection.firstObject().url;
+      var zoomVal = this.get('zoomValue');
+    
+      //if its the first image get width and height of the view
+      var tempWidth = this.get('_initialWidth');
+      var tempHeight = this.get('_initialHeight');
+      if (tempWidth === 0) {
+        tempWidth = this.get('frame').width;
+        tempHeight = this.get('frame').height;
+      }
+    
+      //calculate the image.width to ask to the server 
+      var newWidth = zoomVal * tempWidth;
+      var newUrl = '';
+      var pref = this.get('preference');
+      
+      switch (pref) {
+      case Multivio.zoomController.FULLPAGE:
+        var newHeight = zoomVal * tempHeight;
+        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+            parseInt(newWidth, 10) + '&max_height=' + parseInt(newHeight, 10));
+        break;
+        
+      case Multivio.zoomController.PAGEWIDTH:
+        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+            parseInt(newWidth, 10));
+        break;
+        
+      case Multivio.zoomController.HUNDREDPERCENT:
+        if (this.isAnImage) {
+          newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+              this.maxImageWidth + '&max_height=' + this.maxImageHeight);
+        }
+        else {
+          //TO DO size for pdf or new call 
+        }
+        break;
+      }
+      Multivio.logger.debug('load new image %@'.fmt(newUrl));
+      SC.imageCache.loadImage(newUrl, this, this._adjustSize);
+    }
   },
  
   /**
@@ -136,24 +231,18 @@ Multivio.ContentView = SC.ScrollView.extend(
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
       var defaultUrl = currentSelection.firstObject().url;
-      Multivio.logger.info('ContentView#_selectionDidChange: %@'.
-          fmt(defaultUrl));
-      SC.imageCache.loadImage(defaultUrl, this, this._adjustSize);
+      var index = defaultUrl.indexOf('&url=');
+      var metadataUrl = defaultUrl.substring(index + 5, defaultUrl.length);
+      //TO DO get metadata to know if it's a pdf or an image
+      //if image get maxW & maxH
+      if (defaultUrl.indexOf('pdf') === -1) {
+        //TO DO retreive native size of the image in the metadata
+        console.info('une image ' + metadataUrl);
+        this.isAnImage = YES;
+      }
+      this._loadNewImage();
     }
-  }.observes('selection'),
-  
-  /**
-    Set zoomFactor and zoomStep according to the size of the first image 
-    and to the size of this view. The goal is to resize the image so that it is
-    totally visible
-  */   
-  adjustZoomValue: function () {
-    // retreive view width and height, zoomFactor and zoomStep
-    var contentWidth = this.get('layer').clientWidth;
-    var contentHeight = this.get('layer').clientHeight;  
     
-    Multivio.zoomController.setBestZoom(contentWidth, contentHeight, 
-        this.get('_originalWidth'), this.get('_originalHeight'));
-  }
+  }.observes('selection')
 
 });
