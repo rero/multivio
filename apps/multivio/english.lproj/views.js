@@ -224,7 +224,7 @@ Multivio.views = SC.Page.design(
     //add controller(s) need for this view
     controllers: ['navigationController'],
     
-    childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView zoomPageView logos'.w(),
+    childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView zoomPageView rotatePageView logos'.w(),
     
     firstPageView: SC.ButtonView.design({
       layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
@@ -315,6 +315,34 @@ Multivio.views = SC.Page.design(
         action: "setPreference"
       })
       
+    }),
+    
+    rotatePageView: SC.View.design({
+      layout: { centerX: -130, centerY: 0, width: 70, height: 25 },
+      layerId: "rotatePageId",
+      
+      childViews: 'rotateLeftView rotateRightView'.w(),
+      
+      rotateLeftView: SC.ButtonView.design({
+        layout: { centerX: -20, centerY: 0, width: 30, height: 25 },
+        layerId: "rotateLeftPageId",
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        icon: static_url('images/icons/rotate_left.png'),
+        target: "Multivio.rotateController", 
+        action: "rotateLeft"
+      }),
+      
+      rotateRightView: SC.ButtonView.design({
+        layout: { centerX: 15, centerY: 0, width: 30, height: 25 },
+        layerId: "rotateRightPageId",
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        icon: static_url('images/icons/rotate_right.png'),
+        target: "Multivio.rotateController", 
+        action: "rotateRight"
+      })
+    
     }),
     
     logos: SC.View.design({

@@ -25,6 +25,9 @@ Multivio.ContentView = SC.ScrollView.extend(
    */
   zoomValueBinding:
       SC.Binding.oneWay('Multivio.zoomController.current_zoom_factor'), 
+      
+  rotateValueBinding:
+      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
  
   /**
     Binds to the imageController's selection
@@ -90,6 +93,19 @@ Multivio.ContentView = SC.ScrollView.extend(
       this._loadNewImage();
     }
   }.observes('preference'),
+  
+  /**
+  Rotate value has changed. Load new image.
+  
+  @observes rotateValue
+  */
+  rotateValueDidChange: function () {
+    var rot = this.get('rotateValue');
+    if (!SC.none(rot)) {
+      this._loadNewImage();
+    }
+  }.observes('rotateValue'), 
+  
 
   /**
     Callback applied after image has been loaded.
@@ -192,23 +208,26 @@ Multivio.ContentView = SC.ScrollView.extend(
       var newWidth = zoomVal * tempWidth;
       var newUrl = '';
       var pref = this.get('preference');
+      var rot = this.get('rotateValue');
       
       switch (pref) {
       case Multivio.zoomController.FULLPAGE:
         var newHeight = zoomVal * tempHeight;
         newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-            parseInt(newWidth, 10) + '&max_height=' + parseInt(newHeight, 10));
+            parseInt(newWidth, 10) + '&max_height=' + parseInt(newHeight, 10) +
+            '&angle=' + rot);
         break;
         
       case Multivio.zoomController.PAGEWIDTH:
         newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-            parseInt(newWidth, 10));
+            parseInt(newWidth, 10) + '&angle=' + rot);
         break;
         
       case Multivio.zoomController.HUNDREDPERCENT:
         if (this.isAnImage) {
           newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-              this.maxImageWidth + '&max_height=' + this.maxImageHeight);
+              this.maxImageWidth + '&max_height=' + this.maxImageHeight + 
+              '&angle=' + rot);
         }
         else {
           //TO DO size for pdf or new call 
@@ -240,6 +259,9 @@ Multivio.ContentView = SC.ScrollView.extend(
         console.info('une image ' + metadataUrl);
         this.isAnImage = YES;
       }
+      //new selection rotate value = 0
+      this.rotateValue = 0;
+      Multivio.rotateController.resetRotateValue();
       this._loadNewImage();
     }
     
