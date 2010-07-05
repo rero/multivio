@@ -60,7 +60,7 @@ Multivio.configurator = SC.Object.create(
     physicalStructure: "/structure/get_physical?url=",
     
     //thumbnail: "/document/get?width=100&url=",
-    thumbnail: "/document/render?max_height=100",
+    thumbnail: "/document/render?max_height=100&max_width=100",
     
     /*image: {
       small:  "/document/get?width=1000&url=",

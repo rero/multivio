@@ -46,7 +46,7 @@ Multivio.zoomController = SC.ObjectController.create(
     @property {Integer}
     @final
   */
-  ZOOM_MAX_SIZE: 2000,
+  ZOOM_MAX_SIZE: 2500,
   
   /** 
     Zoom parameter 
@@ -86,7 +86,7 @@ Multivio.zoomController = SC.ObjectController.create(
     if (!zoomPage.get('zoomInPageView').get('isEnabled')) {
       zoomPage.get('zoomInPageView').set('isEnabled', YES);
     }
-    
+    this.disabledPreferenceView();    
     var nextStep = this._current_zoom_step + 1;
     this._setCurrentValue(nextStep);
   },
@@ -101,6 +101,7 @@ Multivio.zoomController = SC.ObjectController.create(
       zoomPage.get('zoomOutPageView').set('isEnabled', YES);
     }
 
+    this.disabledPreferenceView();
     var prevStep = this._current_zoom_step - 1;
     this._setCurrentValue(prevStep);
   },
@@ -112,6 +113,14 @@ Multivio.zoomController = SC.ObjectController.create(
     var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
     zoomPage.get('zoomInPageView').set('isEnabled', NO);
   },
+  
+  /**
+  Enabled zoomInPageView button
+  */
+  enabledZoomIn: function () {
+    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
+    zoomPage.get('zoomInPageView').set('isEnabled', YES);
+  },
 
   /**
   Disabled zoomOutPageView button
@@ -119,6 +128,41 @@ Multivio.zoomController = SC.ObjectController.create(
   disabledZoomOut: function () {
     var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
     zoomPage.get('zoomOutPageView').set('isEnabled', NO);
+  },
+  
+  /**
+  Enabled zoomOutPageView button
+  */
+  enabledZoomOut: function () {
+    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
+    zoomPage.get('zoomOutPageView').set('isEnabled', YES);
+  },
+  
+  /**
+  Disabled zoomPreferenceView
+  */
+  disabledPreferenceView: function () {
+    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
+    zoomPage.get('zoomPreferenceView').set('value', null);
+    this.set('currentPreference', null);
+  },
+  
+  /**
+  Disabled native preference
+  */
+  disabledNativePreference: function () {
+    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
+    zoomPage.get('zoomPreferenceView').items[2].enabled = NO;
+    zoomPage.get('zoomPreferenceView').itemContentDidChange();
+  },
+  
+  /**
+  Enabled native preference
+  */
+  enabledNativePreference: function () {
+    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
+    zoomPage.get('zoomPreferenceView').items[2].enabled = YES;
+    zoomPage.get('zoomPreferenceView').itemContentDidChange();
   },
   
   /**
@@ -151,9 +195,18 @@ Multivio.zoomController = SC.ObjectController.create(
     this.set('current_zoom_factor', Math.pow(this.ZOOM_FACTOR, this._current_zoom_step));
   },
   
+  /**
+    Set the new currentPreference.
+    Enabled zoomOut and zoomIn and reset current_zoomFactor and
+    _current_zoom_step.
+    
+    @param {Object} button selected 
+  */
   setPreference: function (button) {
     var newPref = button.get('value');
     this.set('currentPreference', newPref);
+    this.enabledZoomOut();
+    this.enabledZoomIn();
 
     this._current_zoom_step = 0;
     this.current_zoom_factor = this.ZOOM_ORIGINAL_FACTOR;

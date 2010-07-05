@@ -309,7 +309,14 @@ Multivio.views = SC.Page.design(
       
       zoomPreferenceView: SC.SegmentedView.design({
         layout: { centerX: 30, centerY: 0, width: 160, height: 25},
-        items: "Full Width Native".w(),
+        items: [
+        {title: "Full", value:"Full", enabled: YES},
+        {title: "Width", value: "Width", enabled: YES},
+        {title: "Native", value: "Native", enabled: YES}
+        ],
+        itemTitleKey: 'title',
+        itemValueKey: 'value',
+        itemIsEnabledKey: 'enabled',
         value: "Full",
         target: "Multivio.zoomController",
         action: "setPreference"
