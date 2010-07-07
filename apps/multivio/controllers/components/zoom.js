@@ -19,14 +19,30 @@ Multivio.zoomController = SC.ObjectController.create(
 /** @scope Multivio.zoomController.prototype */ {
   
   /**
-  Preference values
+  Pre-defined zoom values
   */
   FULLPAGE: 'Full',
   PAGEWIDTH: 'Width',
   HUNDREDPERCENT: 'Native',
   
-  currentPreference: 'Full',
-
+  /**
+  @property
+  currentZoomState = one pre-defined zoom value
+  maxVirtualSize = max value in the configurator
+  minVirtualSize = min value in the configurator
+  nativeImageHeight & nativeImageWidth = the native size of an image
+  windowHeight & windowWidth = size of the contentView
+  */
+  currentZoomState: undefined,
+  
+  maxVirtualSize: undefined,
+  minVirtualSize: undefined,
+  
+  nativeImageHeight: undefined,
+  nativeImageWidth: undefined,
+  windowHeight: undefined,
+  windowWidth: undefined,
+  
   /** 
     Zoom parameter 
     @property {Integer}
@@ -40,20 +56,6 @@ Multivio.zoomController = SC.ObjectController.create(
     @final
   */
   ZOOM_ORIGINAL_FACTOR: 1,
- 
-  /** 
-    Zoom parameter 
-    @property {Integer}
-    @final
-  */
-  ZOOM_MAX_SIZE: 2500,
-  
-  /** 
-    Zoom parameter 
-    @property {Integer}
-    @final
-  */
-  ZOOM_MIN_SIZE: 100,
 
   /** 
     Current zoom factor: multiplicative value applied to the original image
@@ -75,18 +77,66 @@ Multivio.zoomController = SC.ObjectController.create(
     @default 0
   */
   _current_zoom_step: 0,
+  
+  /**
+  Boolean to enabled and disabled zoom Button
+  */
+  isZoomInAllow: YES,
+  isZoomOutAllow: YES,
+  
+  /**
+  Initialize this controller.
+  */ 
+  initialize: function () {
+    Multivio.layoutController.addComponent('zoomController');
+    this.maxVirtualSize = Multivio.configurator.get('zoomParameters').max;
+    this.minVirtualSize = Multivio.configurator.get('zoomParameters').min;
+    this.currentZoomState = Multivio.configurator.get('zoomParameters').initState;
+    this.disabledNativePreference();
+  },
+  
+  /**
+  Initialize windowWidth & windowHeight
+  
+  @param {Number} windowWidth the width of the contentView
+  @param {Number} windowHeight the height of the contentView
+  */
+  setWindowSize: function (windowWidth, windowHeight) {
+    this.windowWidth = windowWidth;
+    this.windowHeight = windowHeight;
+  },
+  
+  /**
+  Initialize nativeImageWidth & nativeImageHeight
+  
+  @param {Number} imageWidth the native width of the selected image
+  @param {Number} imageHeight the native height of the selected image 
+  */
+  setNativeImageSize: function (imageWidth, imageHeight) {
+    this.nativeImageWidth = imageWidth;
+    this.nativeImageHeight = imageHeight;
+    if (!SC.none(imageWidth) && !SC.none(imageHeight)) {
+      this.enabledNativePreference();
+    }
+  },
+  
+  /**
+  The currentZoomState
+  */
+  zoomState: function () {
+    return this.get('currentZoomState');
+  }.property('currentZoomState').cacheable(),
 
   /**
     Zoom in.
     _current_zoom_step + 1
   */  
   doZoomIn: function () {
-    //verify if zoomInPageView is enabled
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    if (!zoomPage.get('zoomInPageView').get('isEnabled')) {
-      zoomPage.get('zoomInPageView').set('isEnabled', YES);
+    //allow zoom out
+    if (!this.isZoomOutAllow) {
+      this.set('isZoomOutAllow', YES);
     }
-    this.disabledPreferenceView();    
+    this.set('currentZoomState', null);    
     var nextStep = this._current_zoom_step + 1;
     this._setCurrentValue(nextStep);
   },
@@ -95,74 +145,77 @@ Multivio.zoomController = SC.ObjectController.create(
     Zoom out. _current_zoom_step - 1
   */   
   doZoomOut: function () {
-    //verify if zoomOutPageView is enabled
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    if (!zoomPage.get('zoomOutPageView').get('isEnabled')) {
-      zoomPage.get('zoomOutPageView').set('isEnabled', YES);
+    //allow zoom in
+    if (!this.isZoomInAllow) {
+      this.set('isZoomInAllow', YES);
     }
 
-    this.disabledPreferenceView();
+    this.set('currentZoomState', null);
     var prevStep = this._current_zoom_step - 1;
     this._setCurrentValue(prevStep);
   },
   
   /**
-  Disabled zoomInPageView button
+  Verify if zoom buttons should be disabled 
   */
-  disabledZoomIn: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomInPageView').set('isEnabled', NO);
-  },
-  
-  /**
-  Enabled zoomInPageView button
-  */
-  enabledZoomIn: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomInPageView').set('isEnabled', YES);
-  },
+  checkButton: function () {
 
-  /**
-  Disabled zoomOutPageView button
-  */  
-  disabledZoomOut: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomOutPageView').set('isEnabled', NO);
-  },
-  
-  /**
-  Enabled zoomOutPageView button
-  */
-  enabledZoomOut: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomOutPageView').set('isEnabled', YES);
-  },
-  
-  /**
-  Disabled zoomPreferenceView
-  */
-  disabledPreferenceView: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomPreferenceView').set('value', null);
-    this.set('currentPreference', null);
+    var width = this.get('windowWidth');
+    var isAnImage = SC.none(this.get('nativeImageWidth')) ? NO: YES;
+    
+    //verify zoom+ 
+    var zoomStep = this.get('_current_zoom_step');
+    zoomStep++;
+    var zoomFactor = this._zoomFactorForStep(zoomStep);
+    var newSize = width * zoomFactor;
+    if (this.isAnImage) {
+      var maxImageW = this.get('nativeImageWidth');
+      var maxImageH = this.get('nativeImageHeight');
+      if (newSize > maxImageW || this.get('windowHeight') * zoomFactor >
+          maxImageH) {
+        this.set('isZoomInAllow', NO);
+      }
+      
+      else {
+        var pref = this.get('currentZoomState');
+        if (pref !== Multivio.zoomController.HUNDREDPERCENT && 
+            newSize > this.get('maxVirtualSize')) {
+          this.set('isZoomInAllow', NO);
+        }
+      }
+    }
+    else {
+      //its a pdf
+      if (newSize > this.get('maxVirtualSize')) {
+        this.set('isZoomInAllow', NO);
+      }
+    }
+    
+    //verify zoom-
+    zoomStep = zoomStep - 2;
+    zoomFactor = this._zoomFactorForStep(zoomStep);
+    newSize = width * zoomFactor;
+    if (newSize < this.get('minVirtualSize')) {
+      this.set('isZoomOutAllow', NO);
+    }
   },
   
   /**
   Disabled native preference
   */
   disabledNativePreference: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomPreferenceView').items[2].enabled = NO;
-    zoomPage.get('zoomPreferenceView').itemContentDidChange();
+    var zoomPage = Multivio.views.get('toolbar').get('zoomView');
+    zoomPage.get('zoomPredefinedView').items[2].enabled = NO;
+    zoomPage.get('zoomPredefinedView').itemContentDidChange();
   },
   
   /**
   Enabled native preference
   */
   enabledNativePreference: function () {
-    var zoomPage = Multivio.views.get('navigationView').get('zoomPageView');
-    zoomPage.get('zoomPreferenceView').items[2].enabled = YES;
-    zoomPage.get('zoomPreferenceView').itemContentDidChange();
+    var zoomPage = Multivio.views.get('toolbar').get('zoomView');
+    zoomPage.get('zoomPredefinedView').items[2].enabled = YES;
+    zoomPage.get('zoomPredefinedView').itemContentDidChange();
   },
   
   /**
@@ -196,20 +249,28 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    Set the new currentPreference.
+    Set the new pre-defined zoom.
     Enabled zoomOut and zoomIn and reset current_zoomFactor and
     _current_zoom_step.
     
     @param {Object} button selected 
   */
-  setPreference: function (button) {
-    var newPref = button.get('value');
-    this.set('currentPreference', newPref);
-    this.enabledZoomOut();
-    this.enabledZoomIn();
-
+  setPredefinedZoom: function (button) {
+    this.set('isZoomOutAllow', YES);
+    this.set('isZoomInAllow', YES);
     this._current_zoom_step = 0;
     this.current_zoom_factor = this.ZOOM_ORIGINAL_FACTOR;
+    var newPref = button.get('value');
+    SC.RunLoop.begin();
+    this.set('currentZoomState', newPref);
+    if (newPref === Multivio.zoomController.HUNDREDPERCENT && 
+        !SC.none(this.get('nativeImageHeight'))) {
+          this.set('isZoomInAllow', NO);
+    }
+    SC.RunLoop.end();
+
+    /*this._current_zoom_step = 0;
+    this.current_zoom_factor = this.ZOOM_ORIGINAL_FACTOR;*/
   }
   
 });

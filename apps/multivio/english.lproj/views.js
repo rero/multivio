@@ -217,97 +217,93 @@ Multivio.views = SC.Page.design(
 
 
   /**
-    Navigation view
+    toolbar view
   */
-  navigationView: SC.View.design({
+  toolbar: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     //add controller(s) need for this view
-    controllers: ['navigationController'],
+    controllers: ['navigationController', 'zoomController'],
     
-    childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView zoomPageView rotatePageView logos'.w(),
+    childViews: 'navigationView zoomView rotateView logos'.w(),
     
-    firstPageView: SC.ButtonView.design({
-      layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
-      titleMinWidth : 0,
-      needsEllipsis: NO,
-      icon: static_url('images/icons/beginning.png'),
-      target: "Multivio.navigationController", 
-      action: "goToFirstPage"
-    }),
+    //navigation
+    navigationView: SC.View.design({
+      layout: { centerX: -5, centerY: 0, width: 180, height: 25 },
+
+      childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView'.w(),
+
+      firstPageView: SC.ButtonView.design({
+        layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        icon: static_url('images/icons/beginning.png'),
+        target: "Multivio.navigationController", 
+        action: "goToFirstPage"
+      }),
     
-    previousPageView: SC.ButtonView.design({
-      layout: { centerX: -40, centerY: 0,  width: 30, height: 25 },
-      titleMinWidth : 0,
-      needsEllipsis: NO,
-      icon: static_url('images/icons/previous.png'),
-      target: "Multivio.navigationController", 
-      action: "goToPreviousPage"
+      previousPageView: SC.ButtonView.design({
+        layout: { centerX: -40, centerY: 0,  width: 30, height: 25 },
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        icon: static_url('images/icons/previous.png'),
+        target: "Multivio.navigationController", 
+        action: "goToPreviousPage"
+      }),    
+    
+      textPageView: SC.TextFieldView.design({ 
+        layout: { centerX: 0, centerY: -1, width: 40, height: 20 },
+        textAlign: SC.ALIGN_CENTER,
+        hint: 'Page',
+        valueBinding: 'Multivio.navigationController.currentPage',
+        validator: 'Number'
+      }),
+
+      nextPageView: SC.ButtonView.design({
+        layout: { centerX: 40, centerY: 0, width: 30, height: 25 },
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        icon: static_url('images/icons/next.png'),
+        target: "Multivio.navigationController", 
+        action: "goToNextPage"
+      }),
+
+      lastPageView: SC.ButtonView.design({
+        layout: { centerX: 75, centerY: 0, width: 30, height: 25 },
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        icon: static_url('images/icons/end.png'),
+        target: "Multivio.navigationController", 
+        action: "goToLastPage"
+      }),
     }),    
     
-    textPageView: SC.TextFieldView.design({ 
-      layout: { centerX: 0, centerY: -1, width: 40, height: 20 },
-      textAlign: SC.ALIGN_CENTER,
-      hint: 'Page',
-      valueBinding: 'Multivio.navigationController.currentPage',
-      validator: 'Number'
-    }),
-
-    nextPageView: SC.ButtonView.design({
-      layout: { centerX: 40, centerY: 0, width: 30, height: 25 },
-      titleMinWidth : 0,
-      needsEllipsis: NO,
-      icon: static_url('images/icons/next.png'),
-      target: "Multivio.navigationController", 
-      action: "goToNextPage"
-    }),
-
-    lastPageView: SC.ButtonView.design({
-      layout: { centerX: 75, centerY: 0, width: 30, height: 25 },
-      titleMinWidth : 0,
-      needsEllipsis: NO,
-      icon: static_url('images/icons/end.png'),
-      target: "Multivio.navigationController", 
-      action: "goToLastPage"
-    }),    
-    
-    zoomPageView: SC.View.design({
+    //zoom
+    zoomView: SC.View.design({
       layout: { centerX: 220, centerY: 0, width: 250, height: 25 },
-      layerId: "zoomPageId",
       
-      //childViews: 'zoomInPageView zoomOriginalPageView zoomOutPageView'.w(),
-      childViews: 'zoomInPageView zoomOutPageView zoomPreferenceView'.w(),
+      childViews: 'zoomOutPageView zoomInPageView zoomPredefinedView'.w(),
       
-      zoomInPageView: SC.ButtonView.design({
+      zoomOutPageView: SC.ButtonView.design({
         layout: { centerX: -110, centerY: 0, width: 30, height: 25 },
-        layerId: "zoomInPageId",
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-minus.png'),
+        isEnabledBinding: "Multivio.zoomController.isZoomOutAllow",
         target: "Multivio.zoomController", 
         action: "doZoomOut"
       }),
       
-      /*zoomOriginalPageView: SC.ButtonView.design({
-        layout: { centerX: 0, centerY: 0, width: 30, height: 25 },
-        layerId: "originalSizePageId",
-        titleMinWidth : 0,
-        needsEllipsis: NO,
-        icon: static_url('images/icons/loupe.png'),
-        target: "Multivio.zoomController", 
-        action: "doZoomOriginal"
-      }),*/      
-      
-      zoomOutPageView: SC.ButtonView.design({
+      zoomInPageView: SC.ButtonView.design({
         layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
-        layerId: "zoomOutPageId",
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-plus.png'),
+        isEnabledBinding: "Multivio.zoomController.isZoomInAllow",
         target: "Multivio.zoomController", 
         action: "doZoomIn"
       }),
       
-      zoomPreferenceView: SC.SegmentedView.design({
+      zoomPredefinedView: SC.SegmentedView.design({
         layout: { centerX: 30, centerY: 0, width: 160, height: 25},
         items: [
         {title: "Full", value:"Full", enabled: YES},
@@ -317,14 +313,15 @@ Multivio.views = SC.Page.design(
         itemTitleKey: 'title',
         itemValueKey: 'value',
         itemIsEnabledKey: 'enabled',
-        value: "Full",
+        valueBinding: "Multivio.zoomController.zoomState",
         target: "Multivio.zoomController",
-        action: "setPreference"
+        action: "setPredefinedZoom"
       })
       
     }),
     
-    rotatePageView: SC.View.design({
+    //rotate
+    rotateView: SC.View.design({
       layout: { centerX: -130, centerY: 0, width: 70, height: 25 },
       layerId: "rotatePageId",
       

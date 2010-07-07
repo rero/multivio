@@ -43,13 +43,17 @@ Multivio.ContentView = SC.ScrollView.extend(
   selectionBinding: 'Multivio.imageController.selection', 
   
   /**
-    Binds to the preference value in the zoomController
+    Binds to the currentZoomState value in the zoomController
   
     @binding {string}
   */
-  preferenceBinding: 
-      SC.Binding.oneWay('Multivio.zoomController.currentPreference'),
-  localPreference: 'Full', 
+  currentZoomStateBinding: 
+      SC.Binding.oneWay('Multivio.zoomController.currentZoomState'),
+ 
+  /**
+  old or new currentZoomState
+  */
+  localZoomState: undefined, 
 
   /**
   Content properties
@@ -61,13 +65,14 @@ Multivio.ContentView = SC.ScrollView.extend(
   maxImageHeight {Number} native image height (only for image)
   */
   
-  frameWidth: 0,
-  frameHeight: 0,
+  frameWidth: undefined,
+  frameHeight: undefined,
   
   isAnImage: NO, 
   
-  maxImageWidth: 2000,
-  maxImageHeight: 2000, 
+  //Tempory => TO DO 
+  maxImageWidth: 2500,
+  maxImageHeight: 3000, 
   
   /**
     ZoomFactor has changed.
@@ -82,25 +87,19 @@ Multivio.ContentView = SC.ScrollView.extend(
   }.observes('zoomValue'),
   
   /**
-    User's preference has changed. Reset initial values.
+    Pre-defined zoom has changed. Reset initial values.
     
-    @observes preference
+    @observes currentZoomState
   */
-  preferenceDidChange: function () {
-    var pref = this.get('preference');
-    //if pref === null set localPreference
-    if (!SC.none(pref)) {
+  currentZoomStateDidChange: function () {
+    var state = this.get('currentZoomState');
+    //if state !== null set localZoomState
+    if (!SC.none(state)) {
       this.set('zoomValue', 1);
-      this.localPreference = pref;
-      //if its an image and the user chooses native size, 
-      //disabled zoom+ and zoom-
-      if (pref === Multivio.zoomController.HUNDREDPERCENT && this.isAnImage) {
-        Multivio.zoomController.disabledZoomOut();
-        Multivio.zoomController.disabledZoomIn();
-      }
+      this.localZoomState = state;
       this._loadNewImage();
     }
-  }.observes('preference'),
+  }.observes('currentZoomState'),
   
   /**
   Rotate value has changed. Load new image.
@@ -119,7 +118,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     Callback applied after image has been loaded.
     
     It puts the image in the container and adjust the size 
-    (add & remove scroll), then check if zoom buttons.
+    (add & remove scroll), then check zoom buttons.
 
     @private
     @callback SC.imageCache.load
@@ -130,63 +129,16 @@ Multivio.ContentView = SC.ScrollView.extend(
     SC.RunLoop.begin();
     var content =  this.get('contentView');
     content.set('value', url);
-      
-    content.adjust('left', undefined);
+
     content.adjust('width', image.width);
     content.adjust('height', image.height);
-      
-    this._checkZoomButton();
+    
+    Multivio.zoomController.checkButton();
     SC.RunLoop.end();
+    if (!this.get('isHorizontalScrollerVisible') ) {
+          content.adjust('left', undefined);
+    }
     Multivio.logger.debug('ContentView#_adjustSize');
-  },
-  
-  /**
-  Verify if zoom buttons should be disabled 
-  */
-  _checkZoomButton: function () {
-    //get maximum and minimum between width & height
-    var max = this.get('frameHeight');
-    var min = this.get('frameWidth');
-    if (min > max) {
-      max = this.get('frameWidth');
-      min = this.get('frameHeight');
-    }
-    
-    //verify zoom+ 
-    var zoomStep = Multivio.zoomController.get('_current_zoom_step');
-    zoomStep++;
-    var zoomFactor = Multivio.zoomController._zoomFactorForStep(zoomStep);
-    var newSize = max * zoomFactor;
-    if (this.isAnImage) {
-      var maxImage = this.maxImageHeight;
-      if (maxImage < this.maxImageWidth) {
-        maxImage = this.maxImageWidth;
-      }
-      if (newSize > maxImage) {
-        Multivio.zoomController.disabledZoomOut();
-      }
-      else {
-        var pref = this.localPreference;
-        if (pref !== Multivio.zoomController.HUNDREDPERCENT && 
-            newSize > Multivio.zoomController.ZOOM_MAX_SIZE) {
-          Multivio.zoomController.disabledZoomOut();
-        }
-      }
-    }
-    else {
-      //its a pdf
-      if (newSize > Multivio.zoomController.ZOOM_MAX_SIZE) {
-        Multivio.zoomController.disabledZoomOut();
-      }
-    }
-    
-    //verify zoom-
-    zoomStep = zoomStep - 2;
-    zoomFactor = Multivio.zoomController._zoomFactorForStep(zoomStep);
-    newSize = min * zoomFactor;
-    if (newSize < Multivio.zoomController.ZOOM_MIN_SIZE) {
-      Multivio.zoomController.disabledZoomIn();
-    } 
   },
   
   /**
@@ -202,11 +154,12 @@ Multivio.ContentView = SC.ScrollView.extend(
       //if its the first image get width and height of the view
       var tempWidth = this.get('frameWidth');
       var tempHeight = this.get('frameHeight');
-      if (tempWidth === 0) {
+      if (SC.none(tempWidth)) {
         tempWidth = this.get('frame').width;
         tempHeight = this.get('frame').height;
         this.set('frameWidth', tempWidth);
         this.set('frameHeight', tempHeight);
+        Multivio.zoomController.setWindowSize(tempWidth, tempHeight);
       }
     
       //calculate the image.width to ask to the server 
@@ -214,8 +167,9 @@ Multivio.ContentView = SC.ScrollView.extend(
       var newUrl = '';
       var rot = this.get('rotateValue');
       
-      switch (this.localPreference) {
+      switch (this.localZoomState) {
       case Multivio.zoomController.FULLPAGE:
+      // full page => call with max_height & max_width
         var newHeight = zoomVal * tempHeight;
         newUrl = defaultUrl.replace('width=1500', 'max_width=' +
             parseInt(newWidth, 10) + '&max_height=' + parseInt(newHeight, 10) +
@@ -223,15 +177,25 @@ Multivio.ContentView = SC.ScrollView.extend(
         break;
         
       case Multivio.zoomController.PAGEWIDTH:
+      //page width => call with max_width
         newUrl = defaultUrl.replace('width=1500', 'max_width=' +
             parseInt(newWidth, 10) + '&angle=' + rot);
         break;
         
       case Multivio.zoomController.HUNDREDPERCENT:
         if (this.isAnImage) {
+          //call with native size if zoomVal === 1
+          if (zoomVal === 1) {
           newUrl = defaultUrl.replace('width=1500', 'max_width=' +
               this.maxImageWidth + '&max_height=' + this.maxImageHeight + 
               '&angle=' + rot);
+          }
+          else {
+            var newSize = zoomVal * Multivio.configurator.get('zoomParameters').max;
+            newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+                parseInt(newSize, 10) + '&max_height=' + 
+                parseInt(newSize, 10) + '&angle=' + rot);
+          }
         }
         else {
           //TO DO size for pdf or new call 
@@ -261,10 +225,16 @@ Multivio.ContentView = SC.ScrollView.extend(
       //if image get maxW & maxH
       if (defaultUrl.indexOf('pdf') === -1) {
         //TO DO retreive native size of the image in the metadata
+        /*
+        this.maxImageWidth = metadata.width;
+        this.maxImageHeight = metadata.height;
+        */
         this.isAnImage = YES;
+        Multivio.zoomController.setNativeImageSize(this.maxImageWidth, this.maxImageHeight);
       }
       else {
-        Multivio.zoomController.disabledNativePreference();
+        //if it's not an image reset native size
+        Multivio.zoomController.setNativeImageSize(null, null);
       }
       //new selection rotate value = 0
       this.rotateValue = 0;

@@ -48,6 +48,12 @@ Multivio.configurator = SC.Object.create(
     logFile: "/log/post"
   },
   
+  zoomParameters: {
+    max: 2000,
+    min: 100,
+    initState: 'Full',
+  },
+  
   /**
     This object contains all urls used by the application
     
@@ -148,14 +154,14 @@ Multivio.configurator = SC.Object.create(
     pdf: {
       components: [
         {name: 'treeAndContentView', position: 'leftAndCenter'},
-        {name: 'navigationView', position: 'bottom'},
+        {name: 'toolbar', position: 'bottom'},
         {name: 'thumbnailView', position: 'right'}        
       ]
     },
     image : {
       components: [
         {name: 'treeAndContentView', position: 'leftAndCenter'},
-        {name: 'navigationView', position: 'bottom'},
+        {name: 'toolbar', position: 'bottom'},
         {name: 'thumbnailView', position: 'right'}        
       ]
     }
