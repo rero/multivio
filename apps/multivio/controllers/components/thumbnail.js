@@ -145,7 +145,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
       var imageUrl = structure[j].url;
       var thumbnailImageUrl = undefined;
       //If we have fixtures we don't need a server
-      if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
+      if (Multivio.initializer.get('inputParameters').scenario === 'fixtures') {
         thumbnailImageUrl = Multivio.configurator.getThumbnailUrl(imageUrl, 0);
       }
       else {

@@ -27,10 +27,10 @@ Multivio.imageController = SC.ArrayController.create(
   position: null,
   
   /**
-  Initialize the controller. This controller need to know 
-  the physical structure of the document.
+    Initialize the controller. This controller need to know 
+    the physical structure of the document.
   
-  @param {String} url
+    @param {String} url
   */   
   initialize: function (url) {
     if (this.get('bindings').length !== 0) {
@@ -47,7 +47,7 @@ Multivio.imageController = SC.ArrayController.create(
       else {
         var phSt = Multivio.CDM.getPhysicalstructure(url);
         if (phSt !== -1) {
-          if(!SC.none(phSt)) {
+          if (!SC.none(phSt)) {
             this._createImages(phSt);
           }
           else {
@@ -61,8 +61,8 @@ Multivio.imageController = SC.ArrayController.create(
     }
     else {
       if (Multivio.masterController.isGrouped) {
-        //TO DO
-        //this.createdConcatenedImages
+        // TO DO
+        // this.createdConcatenedImages
       }
       else {
         this._createPDFImages(url, meta.nPages);
@@ -92,7 +92,7 @@ Multivio.imageController = SC.ArrayController.create(
   },
   
   /**
-  Reset variables and disconnect bindings
+    Reset variables and disconnect bindings
   */
   reset: function () {
     //first disconnect bindings
@@ -156,9 +156,7 @@ Multivio.imageController = SC.ArrayController.create(
     @private
   */ 
   _createPDFImages: function (pdfUrl, nb) {
-    //physicalstructure of a PDF contains only one url
-    //var files = structure[0];
-    //var pdfUrl = files.url; 
+    // physicalstructure of a PDF contains only one url
     var cont = [];
     for (var i = 1; i < nb + 1; i++) {
       var imageUrl = Multivio.configurator.get('serverName') + 
@@ -182,14 +180,14 @@ Multivio.imageController = SC.ArrayController.create(
     @private
   */  
   _createImages: function (structure) {
-    //each images has its own url => create for each a new url
+    // each images has its own url => create for each a new url
     var cont = [];
     for (var i = 0; i < structure.length; i++) {
       var files = structure[i];
       var defaultUrl = files.url;
       var imageUrl = undefined;
       //if we have fixtures we don't need to have a server
-      if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
+      if (Multivio.initializer.get('inputParameters').scenario === 'fixtures') {
         imageUrl = Multivio.configurator.getImageUrl(defaultUrl, 0);
       }
       else {
@@ -219,7 +217,7 @@ Multivio.imageController = SC.ArrayController.create(
   positionDidChange: function () {
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {
-      //need to sub 1 because array start at 0 and page start at 1
+      // need to sub 1 because array start at 0 and page start at 1
       newPosition--;  
       var cont = this.get('content');
       var image = cont[newPosition];

@@ -44,7 +44,6 @@ Multivio.views = SC.Page.design(
 
     //add controller(s) need for this view
     controllers: ['treeDispatcher', 'imageController'],
-    //controllers: ['treeDispatcher', 'contentController'],
 
     topLeftView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },

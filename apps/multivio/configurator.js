@@ -17,14 +17,6 @@
 */
 Multivio.configurator = SC.Object.create(
 /** @scope Multivio.configurator.prototype */ {
-
-  /**
-    This object contains all parameters of the Url
-    
-    @property {Object}
-    @default undefined
-  */
-  inputParameters: {},
   
   /**
     The name of the multivio server
@@ -48,10 +40,15 @@ Multivio.configurator = SC.Object.create(
     logFile: "/log/post"
   },
   
+  /**
+    This object contains parameters for zoom
+    
+    @property {Object}
+  */
   zoomParameters: {
     max: 2000,
     min: 100,
-    initState: 'Full',
+    initState: 'Full'
   },
   
   /**
@@ -65,14 +62,7 @@ Multivio.configurator = SC.Object.create(
     logicalStructure: "/structure/get_logical?url=",
     physicalStructure: "/structure/get_physical?url=",
     
-    //thumbnail: "/document/get?width=100&url=",
     thumbnail: "/document/render?max_height=100&max_width=100",
-    
-    /*image: {
-      small:  "/document/get?width=1000&url=",
-      normal: "/document/get?width=1500&url=",
-      big:    "/document/get?width=2000&url="
-    },*/
     
     image: "/document/render?width=1500",
     
@@ -143,7 +133,7 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
-  Configuration of the layout depending on the type of the document
+    Configuration of the layout depending on the type of the document
   */
   layoutConfig: {
     xml: {
@@ -164,138 +154,6 @@ Multivio.configurator = SC.Object.create(
         {name: 'toolbar', position: 'bottom'},
         {name: 'thumbnailView', position: 'right'}        
       ]
-    }
-  },
-
-  /**
-    Read and store parameters of the Url
-    
-    @param {String} params 
-  */
-  readInputParameters: function (params) {
-    var prop = {};
-    for (var key in params) {
-      if (params.hasOwnProperty(key)) {
-        switch (key) {
-        case "":
-          prop.scenario = params[key];
-          break;
-        case 'url':
-          // use location.hash to prevent splitting the url
-          var url = !SC.none(location.hash) ? location.hash : undefined;
-          if (url !== undefined) {
-            url = url.replace('#get&url=', '');
-            url = url.substring(0, url.lastIndexOf('&'));
-            prop.url = url;
-            Multivio.CDM.setReferer(url);
-          }
-          break;
-        case 'server':
-        //server is an optional parameter
-          this.set('serverName', params[key]);
-          break;
-        default:
-          var value = params[key];
-          prop[key] = value;
-          break;
-        }
-      }
-    }
-    this.set('inputParameters', prop);
-    //need to have serverName before this
-    Multivio.logger.initialize();
-    Multivio.logger.debug('end of configurator.readInputParameters()');
-  },
-  
-  /**
-    Observe inputParameters and  after it has changed verify if 
-    the application can start or not. 
-    
-    @observes inputParameters
-  */
-  inputParametersDidChange: function () {
-    var parameters = this.get('inputParameters');
-      //check if Multivio call is valid => get & url parameters
-    if (SC.none(parameters.scenario) || SC.none(parameters.url)) {
-      //if no url see if it is fixtures
-      if (parameters.scenario === 'fixtures') {
-        this.setFixtures();
-      }
-      else {
-        Multivio.layoutController._showUsagePage();
-      }
-    }
-    else {
-      //verify if the server and the client are compatible
-      var versionReq = this.getPath('baseUrlParameters.version');
-      Multivio.requestHandler.sendGetRequest(versionReq, this, 'verifyVersion');
-    }
-  }.observes('inputParameters'),
-  
-  /**
-    Response received about the server version.
-    If client and server are compatible start the application, 
-    if no show the error page.
-  */
-  verifyVersion: function (response) {
-    if (SC.ok(response)) {
-      Multivio.logger.debug('version received from the server: %@'.
-          fmt(response.get("body")));
-      var jsonRes = response.get("body");
-      //TO DO test between server and client
-      if (jsonRes.api_version === '0.1') {
-        Multivio.logger.debug('Client and server are compatible');
-        Multivio.masterController.initialize();
-      }
-      else {
-        Multivio.errorController.
-            initialize({'message': 'incompatibility between server and client'});
-        Multivio.logger.
-            logException('Client and server are incompatible: ' + Multivio.VERSION);    
-        Multivio.layoutController._showErrorPage();
-      }
-    } 
-  },
-  
-  /**
-  Set CDM from fixture data.
-  */
-  setFixtures: function () {
-    var name = this.get('inputParameters').name;
-    if (SC.none(name)) {
-      Multivio.layoutController._showUsagePage();
-    }
-    else {
-      //set CDM value
-      switch (name) {
-      
-      case 'VAA':
-        Multivio.CDM.setReferer('VAA');
-        //get and set metadata
-        var metadata = {};
-        metadata[name] = Multivio.CDM.FIXTURES.metadata[name];
-        var firstUrl = Multivio.CDM.FIXTURES.logical[name];
-        metadata[firstUrl[0].file_position.url] = 
-            Multivio.CDM.FIXTURES.metadata[firstUrl[0].file_position.url];
-        Multivio.CDM.metadata = metadata;
-        //get and set logicalStructure
-        var logical = {};
-        logical[name] = Multivio.CDM.FIXTURES.logical[name];
-        Multivio.CDM.logicalStructure = logical;
-        //get and set physicalStructure
-        var physical = {};
-        physical[name] = Multivio.CDM.FIXTURES.physical[name];
-        Multivio.CDM.physicalStructure = physical;
-        Multivio.logger.debug('Fixtures VAA setted');
-        break;
-      
-      default: 
-        Multivio.logger.error('configurator: the value "%@" '.fmt(name) +
-            'for the "name" parameter is configured in the application ' +
-            'but seems invalid at this point');
-        break;
-      }
-      Multivio.masterController.initialize();   
     }
   },
   
@@ -341,20 +199,16 @@ Multivio.configurator = SC.Object.create(
     @return {String} the new encoded url
   */
   getImageUrl: function (url, pageNumber) {
-    var scenario = this.getPath('inputParameters.scenario');
+    var scenario = Multivio.initializer.get('inputParameters').scenario;
     var modifiedUrl = '';
     switch (scenario) {
     
     case 'get':
-      /*modifiedUrl = this.getPath('baseUrlParameters.image.normal');
-      modifiedUrl += url;
-      modifiedUrl += "&pagenr=" + pageNumber;*/
       modifiedUrl = this.getPath('baseUrlParameters.image');
       if (pageNumber !== 0) {
         modifiedUrl += "&page_nr=" + pageNumber;
       } 
       modifiedUrl += "&url=" + url;
-           
       break;
     
     case 'fixtures':
@@ -378,7 +232,7 @@ Multivio.configurator = SC.Object.create(
     @return {String} the new encoded url
   */
   getThumbnailUrl: function (url, pageNumber) {
-    var scenario = this.get('inputParameters').scenario;
+    var scenario = Multivio.initializer.get('inputParameters').scenario;
     var modifiedUrl;
     
     switch (scenario) {
@@ -389,12 +243,10 @@ Multivio.configurator = SC.Object.create(
         modifiedUrl += "&page_nr=" + pageNumber;
       } 
       modifiedUrl += "&url=" + url;
-      //modifiedUrl += url;
-      //modifiedUrl += "&pagenr=" + pageNumber;
       break;
     
     case 'fixtures':
-      var name = this.get('inputParameters').name;
+      var name = Multivio.initializer.get('inputParameters').name;
       modifiedUrl = this.getPath('baseUrlParameters.fixtures.%@'.fmt(name));
       modifiedUrl += url.substring(url.lastIndexOf("/"));
       break;

@@ -16,10 +16,10 @@
 
 Multivio.main = function main() {
 
-  // Multivio.configurator#readInputParameters() is declared as the callback
+  // Multivio.initializer#readInputParameters() is declared as the callback
   // function that parses the parameters given in the applications's URL; this
   // is done using the SC.routes mechanism.
-  SC.routes.add(':', Multivio.configurator, 'readInputParameters');
+  SC.routes.add(':', Multivio.initializer, 'readInputParameters');
   
   // Launch the initalization process using Multivio.initializer
   //Multivio.initializer.initialize();

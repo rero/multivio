@@ -40,8 +40,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     @binding {url}
   */ 
   selection: null,
-  selectionBinding: 'Multivio.imageController.selection',
-  //selectionBinding: SC.Binding.single('Multivio.contentController.selection'), 
+  selectionBinding: 'Multivio.imageController.selection', 
   
   /**
     Binds to the currentZoomState value in the zoomController
