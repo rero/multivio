@@ -37,23 +37,57 @@ Multivio.imageController = SC.ArrayController.create(
       this.reset();
     }
     this.bind('position', 'Multivio.masterController.currentPosition');
-    var structure = Multivio.CDM.getPhysicalstructure(url);
-    if (structure !== -1) {
-      //the number of pages is contained either in the metadata or
-      //it's the number of urls of the physical structure
-      var meta = Multivio.CDM.getMetadata(url);
-      if (meta !== -1) {
-        if (SC.none(meta.nPages)) {
-          this._createImages(structure);
+    
+    var meta = Multivio.CDM.getMetadata(url);
+    if (SC.none(meta.nPages)) {
+      if (Multivio.masterController.isGrouped) {
+        var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+        this._createImages(refStruct);
+      }
+      else {
+        var phSt = Multivio.CDM.getPhysicalstructure(url);
+        if (phSt !== -1) {
+          if(!SC.none(phSt)) {
+            this._createImages(phSt);
+          }
+          else {
+            Multivio.logger.warning('ImageController has no physical structure');
+          }
         }
         else {
-          this._createPDFImages(structure, meta.nPages);
+          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+        }
+      }
+    }
+    else {
+      if (Multivio.masterController.isGrouped) {
+        //TO DO
+        //this.createdConcatenedImages
+      }
+      else {
+        this._createPDFImages(url, meta.nPages);
+      }
+    }
+    /*var structure = Multivio.CDM.getPhysicalstructure(url);
+    if (structure !== -1) {
+      //No physical structure don't create content
+      if (!SC.none(structure)) {
+        //the number of pages is contained either in the metadata or
+        //it's the number of urls of the physical structure
+        var meta = Multivio.CDM.getMetadata(url);
+        if (meta !== -1) {
+          if (SC.none(meta.nPages)) {
+            this._createImages(structure);
+          }
+          else {
+            this._createPDFImages(structure, meta.nPages);
+          }
         }
       }
     }
     else {
       this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
-    }   
+    }*/
     Multivio.logger.info('imageController initialized');
   },
   
@@ -80,18 +114,15 @@ Multivio.imageController = SC.ArrayController.create(
     @observes physicalStructure
   */ 
   physicalStructureDidChange: function () {
-    if (!SC.none(this.get('physicalStructure'))) {    
+    /*if (!SC.none(this.get('physicalStructure'))) {    
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {
         var phSt = this.get('physicalStructure')[cf];
         //if phSt = -1 response is not on the client now, wait
         if (phSt !== -1) {
           //we don't have a physicalStrcuture for this file, we can't create
-          //images' url
-          if (SC.none(phSt)) {
-            Multivio.layoutController.removeComponent('views.thumbnailView');
-          }
-          else {
+          //content
+          if (!SC.none(phSt)) {
             var meta = Multivio.CDM.getMetadata(cf);
             if (SC.none(meta.nPages)) {
               this._createImages(phSt);
@@ -102,7 +133,19 @@ Multivio.imageController = SC.ArrayController.create(
           }
         }
       }
-    }
+    }*/
+      var phStr = this.get('physicalStructure');
+      if (!SC.none(phStr)) {
+        var cf = Multivio.masterController.get('currentFile');
+        if (!SC.none(cf)) {
+          var ph = this.get('physicalStructure')[cf];
+          if (ph !== -1) {
+            if (!SC.none(ph)) {
+              this._createImages(ph);
+            }
+          }
+        }
+      }
   }.observes('physicalStructure'),
  
   /**
@@ -112,10 +155,10 @@ Multivio.imageController = SC.ArrayController.create(
     @param {Number} nb the number of pages of this PDF
     @private
   */ 
-  _createPDFImages: function (structure, nb) {
+  _createPDFImages: function (pdfUrl, nb) {
     //physicalstructure of a PDF contains only one url
-    var files = structure[0];
-    var pdfUrl = files.url; 
+    //var files = structure[0];
+    //var pdfUrl = files.url; 
     var cont = [];
     for (var i = 1; i < nb + 1; i++) {
       var imageUrl = Multivio.configurator.get('serverName') + 
@@ -129,7 +172,7 @@ Multivio.imageController = SC.ArrayController.create(
     this.set('content', cont);
     Multivio.layoutController.addComponent('imageController');
     Multivio.logger.info(
-        'imageController#createPDFImages created and layout setted' + 
+        'imageController#createPDFImages pdf images created and layout setted' + 
         this.get('content').length);
   },
   
@@ -143,15 +186,15 @@ Multivio.imageController = SC.ArrayController.create(
     var cont = [];
     for (var i = 0; i < structure.length; i++) {
       var files = structure[i];
-      var pdfUrl = files.url;
+      var defaultUrl = files.url;
       var imageUrl = undefined;
       //if we have fixtures we don't need to have a server
       if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
-        imageUrl = Multivio.configurator.getImageUrl(pdfUrl, 0);
+        imageUrl = Multivio.configurator.getImageUrl(defaultUrl, 0);
       }
       else {
         imageUrl = Multivio.configurator.get('serverName') + 
-          Multivio.configurator.getImageUrl(pdfUrl, 0);
+          Multivio.configurator.getImageUrl(defaultUrl, 0);
       }
       var imageHash = {
           url:  imageUrl,
@@ -164,7 +207,7 @@ Multivio.imageController = SC.ArrayController.create(
       Multivio.layoutController.addComponent('imageController');
     }
     Multivio.logger.info(
-        'imageController#createImages created and layout setted' + 
+        'imageController#createImages images created and layout setted' + 
         this.get('content').length);
   },
   

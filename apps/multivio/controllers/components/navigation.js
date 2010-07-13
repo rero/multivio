@@ -37,7 +37,7 @@ Multivio.navigationController = SC.ObjectController.create(
     local variables used to create bindings
   */
   position: null,
-  meta: null,
+  //meta: null,
   physicalStructure: null,
 
   /**
@@ -51,33 +51,48 @@ Multivio.navigationController = SC.ObjectController.create(
   initialize: function (url) {
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
+    
     var meta = Multivio.CDM.getMetadata(url);
-    var nb = 0;
     //meta = -1 response not on client => create a binding and wait
-    if (meta === -1) {
+    /*if (meta === -1) {
       this.bind('meta', 'Multivio.CDM.metadata');
     }
-    else {
-      //we have metadata. If metadata.nPages === null we need to get
-      //the physicalStructure to known it
+    else {*/
+      // we have metadata. If metadata.nPages === null we need to get
+      // the physicalStructure to known it
       if (SC.none(meta.nPages)) {
-        var ph = Multivio.CDM.getPhysicalstructure(url);
-        //ph = -1 response not on client => create binding
-        if (ph === -1) {
-          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+        // if meta.nPages doesn't exist => it is not a PDF
+        // if masterController.isGrouped => 
+        // _numberOfPages = physicalstructure length of the referer 
+        if (Multivio.masterController.isGrouped) {
+          var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+          this.set('_numberOfPages', refStruct.length);
+          Multivio.layoutController.addComponent('navigationController');
         }
         else {
-          nb = ph.length;
+          var ph = Multivio.CDM.getPhysicalstructure(url);
+          //ph = -1 response not on client => create binding
+          if (ph === -1) {
+            this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+          }
+          else {
+            if (!SC.none(ph)) {
+              this.set('_numberOfPages', ph.length);
+              Multivio.layoutController.addComponent('navigationController');
+            }
+          }
         }
       }
       else {
-        nb = meta.nPages;
+        if (Multivio.masterController.isGrouped) {
+          //TO DO call all metadata and adding the nPages
+        }
+        else {
+          this.set('_numberOfPages', meta.nPages);
+          Multivio.layoutController.addComponent('navigationController');
+        }
       }
-    }
-    if (nb !== 0) {
-      this.set('_numberOfPages', nb);
-    }
-    Multivio.layoutController.addComponent('navigationController');
+    //}  
     Multivio.logger.info('navigationController initialized');
   },
   
@@ -87,13 +102,12 @@ Multivio.navigationController = SC.ObjectController.create(
   
   @observes meta
   */
-  metadataDidChange: function () {
+  /*metadataDidChange: function () {
     var metadata = this.get('meta');
     if (!SC.none(metadata)) {
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {
         var currentMeta = this.get('meta')[cf];
-        var nb = 0;
         //we have metadata else wait again
         if (currentMeta !== -1) {
           if (SC.none(currentMeta.nPages)) {
@@ -102,19 +116,20 @@ Multivio.navigationController = SC.ObjectController.create(
               this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
             }
             else {
-              nb = ph.length;
+              if (!SC.none(ph)) {
+                this.set('_numberOfPages', ph.length);
+                Multivio.layoutController.addComponent('navigationController');
+              }
             }
           }
           else {
-            nb = currentMeta.nPages;
+            this.set('_numberOfPages', currentMeta.nPages);
+            Multivio.layoutController.addComponent('navigationController');
           }
-        }
-        if (nb !== 0) {
-          this.set('_numberOfPages', nb);
         }
       }
     }
-  }.observes('meta'),
+  }.observes('meta'),*/
   
   /**
   Multivio.CDM.physicalstructure has changed, verify if we have now 
@@ -129,8 +144,9 @@ Multivio.navigationController = SC.ObjectController.create(
       if (!SC.none(cf)) {
         var currentPh = this.get('physicalStructure')[cf];
         //we have physicalstructure
-        if (currentPh !== -1) {
+        if (currentPh !== -1 && !SC.none(currentPh)) {
           this.set('_numberOfPages', currentPh.length);
+          Multivio.layoutController.addComponent('navigationController');
         }
       }
     }

@@ -78,7 +78,7 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {String} label
   */    
   renderLabel: function (context, label) {
-    if (this.content.get('level') === 0 || this.content.get('level') === 1) {
+    if (SC.none(this.content.get('file_position').index)) {
       context.push('<label class="document-label-view">', label || '', '</label>');
     }
     else {

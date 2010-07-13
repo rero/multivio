@@ -85,6 +85,11 @@ Multivio.layoutController = SC.Object.create(
   getListOfController: function (type) {
     //set localType using the matching table
     this.localType = this.get('typeForMimeType')[type];
+    
+    //TO REMOVE
+    if (this.localType === 'image') {
+      Multivio.masterController.isGrouped = YES;
+    } 
 
     //retreive the configuration for layout
     var config = Multivio.configurator.get('layoutConfig')[this.localType];

@@ -21,7 +21,6 @@ Multivio.thumbnailController = SC.ArrayController.create(
 /** @scope Multivio.thumbnailController.prototype */ {
 
   allowsMultipleSelection: NO,
-  
 
   /**
     Local variables for bindings
@@ -40,6 +39,19 @@ Multivio.thumbnailController = SC.ArrayController.create(
   /**
     Initialize this controller and verify if the sub-model can be created. 
     The sub-model need to have the physical structure of the document.
+    
+    Algo:
+      getMetdatada(url) : meta !== -1 because already asked by the masterController 
+        if (meta.nPages === null) 
+          if (masterController.isGrouped) : createThumbnail for the referer
+          else : it's not a pdf ask physicalStructure
+            if (phS === -1) : create binding
+            else 
+              if (ph !== null) : createThumbnail
+            
+        else :
+          if (masterController.isGrouped) : createdConcatenedThumbnails
+          else : create PDFThumbnails
 
     @param {String} url the current file url
   */
@@ -48,17 +60,36 @@ Multivio.thumbnailController = SC.ArrayController.create(
       this.reset();
     }
     this.bind('position', 'Multivio.masterController.currentPosition');
-    var phSt = Multivio.CDM.getPhysicalstructure(url);
-    if (phSt !== -1) {
-      if (!SC.none(phSt)) {
-        this._createThumbnails(phSt);
+    
+    var meta = Multivio.CDM.getMetadata(url);
+    if (SC.none(meta.nPages)) {
+      if (Multivio.masterController.isGrouped) {
+        var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+        this._createThumbnails(refStruct);
       }
       else {
-        Multivio.logger.error('thumbnailController has no physical structure');
+        var phSt = Multivio.CDM.getPhysicalstructure(url);
+        if (phSt !== -1) {
+          if(!SC.none(phSt)) {
+            this._createThumbnails(phSt);
+          }
+          else {
+            Multivio.logger.warning('ThumbnailController has no physical structure');
+          }
+        }
+        else {
+          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+        }
       }
     }
     else {
-      this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+      if (Multivio.masterController.isGrouped) {
+        //TO DO
+        //this.createdConcatenedThumbnails
+      }
+      else {
+        this._createPDFThumbnails(url, meta.nPages);
+      }
     }
     Multivio.logger.info('thumbnailController initialized ');
   },
@@ -92,10 +123,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
       if (!SC.none(cf)) {
         var ph = this.get('physicalStructure')[cf];
         if (ph !== -1) {
-          if (SC.none(ph)) {
-            Multivio.layoutController.removeComponent('views.thumbnailView');
-          }
-          else {
+          if (!SC.none(ph)) {
             this._createThumbnails(ph);
           }
         }
@@ -110,48 +138,26 @@ Multivio.thumbnailController = SC.ArrayController.create(
     @private
   */  
   _createThumbnails: function (structure) {
-    var ct = Multivio.masterController.get('currentType');
     var cont = [];
     var newTable = {};
     var firstChild = undefined;
-    //TO DO strategy depending of the type
-    if (ct === 'application/pdf') {
-      firstChild = structure[0];
-      var pdfUrl = firstChild.url;
-      var cf = Multivio.masterController.get('currentFile');
-      var nbOfPage = Multivio.CDM.getMetadata(cf).nPages;
-      //PDF =>create a thumbnail object for each page
-      for (var i = 1; i < nbOfPage + 1; i++) {
-        var thumbnailUrl = Multivio.configurator.get('serverName') + 
-            Multivio.configurator.getThumbnailUrl(pdfUrl, i);
-        var thumbnailHash = {
-            url:  thumbnailUrl,
-            pageNumber: i
-          };
-        newTable[i] = thumbnailHash;
-        cont.push(thumbnailHash);
+    for (var j = 0; j < structure.length; j++) {
+      var imageUrl = structure[j].url;
+      var thumbnailImageUrl = undefined;
+      //If we have fixtures we don't need a server
+      if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
+        thumbnailImageUrl = Multivio.configurator.getThumbnailUrl(imageUrl, 0);
       }
-    }
-    else {
-      for (var j = 0; j < structure.length; j++) {
-        firstChild = structure[j];
-        var imageUrl = firstChild.url;
-        var thumbnailImageUrl = undefined;
-        //If we have fixtures we don't need a server
-        if (Multivio.configurator.get('inputParameters').scenario === 'fixtures') {
-          thumbnailImageUrl = Multivio.configurator.getThumbnailUrl(imageUrl, 0);
-        }
-        else {
-          thumbnailImageUrl = Multivio.configurator.get('serverName') + 
-            Multivio.configurator.getThumbnailUrl(imageUrl, 0);
-        }
-        var thumbnailImageHash = {
-            url:  thumbnailImageUrl,
-            pageNumber: j + 1
-          };
-        newTable[j + 1] = thumbnailImageHash;
-        cont.push(thumbnailImageHash);     
+      else {
+        thumbnailImageUrl = Multivio.configurator.get('serverName') + 
+          Multivio.configurator.getThumbnailUrl(imageUrl, 0);
       }
+      var thumbnailImageHash = {
+        url:  thumbnailImageUrl,
+        pageNumber: j + 1
+      };
+      newTable[j + 1] = thumbnailImageHash;
+      cont.push(thumbnailImageHash);     
     }
     this.set('content', cont);
     this.set('_cdmNodeToThumbnail', newTable);
@@ -159,6 +165,35 @@ Multivio.thumbnailController = SC.ArrayController.create(
       Multivio.layoutController.addComponent('thumbnailController');
     }
     Multivio.logger.info('thumbnailController#_createThumbnails');
+  },
+  
+  /**
+    Create the pdf sub-model of this controller and set the content.
+    
+    @param {String} pdfUrl the url of the pdf
+    @param {Number} nbp the number of pages of the PDF
+    @private
+  */
+  _createPDFThumbnails: function (pdfUrl, nbP) {
+    var cont = [];
+    var newTable = {};
+    //PDF =>create a thumbnail object for each page
+    for (var i = 1; i < nbP + 1; i++) {
+      var thumbnailUrl = Multivio.configurator.get('serverName') + 
+          Multivio.configurator.getThumbnailUrl(pdfUrl, i);
+      var thumbnailHash = {
+        url:  thumbnailUrl,
+        pageNumber: i
+      };
+      newTable[i] = thumbnailHash;
+      cont.push(thumbnailHash);
+    }
+    this.set('content', cont);
+    this.set('_cdmNodeToThumbnail', newTable);
+    if (Multivio.layoutController.get('isBasicLayoutUp')) {
+      Multivio.layoutController.addComponent('thumbnailController');
+    }
+    Multivio.logger.info('thumbnailController#_createPDFThumbnails');
   },
   
   /**

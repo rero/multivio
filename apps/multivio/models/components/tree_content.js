@@ -35,6 +35,8 @@ Multivio.TreeContent =  SC.Object.extend({
   @property {Number}  
   */
   labelWidth: undefined,
+  
+  position: undefined,
 
   /**
     Return the list of the children of this Multivio.Tree as TreeContent
@@ -44,16 +46,18 @@ Multivio.TreeContent =  SC.Object.extend({
     var children = this.childs;
     var label = this.label;
     var fp = this.file_position;
-    var pos = !SC.none(fp.index) ? fp.index : 0;
+    this.position = fp.index;
+    /*var pos = !SC.none(fp.index) ? fp.index : 0;
     var level = !SC.none(this.level) ? this.level : this.level = 2;
-    if (this.level === 2) {
-      var isPositionEmpty = Multivio.treeController._treeLabelByPosition[pos];
+    if (this.level === 2) {*/
+    if (!SC.none(this.position)) {
+      var isPositionEmpty = Multivio.treeController._treeLabelByPosition[this.position];
       //add or concat treeContent to the _treeLabelByPosition
       if (SC.none(isPositionEmpty)) {
-        Multivio.treeController._treeLabelByPosition[pos] = [this];
+        Multivio.treeController._treeLabelByPosition[this.position] = [this];
       }
       else {
-        Multivio.treeController._treeLabelByPosition[pos] = 
+        Multivio.treeController._treeLabelByPosition[this.position] = 
           isPositionEmpty.concat(this);
       }
     }

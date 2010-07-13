@@ -82,7 +82,7 @@ Multivio.treeController = SC.TreeController.create(
       var isGlobalStValid = NO;
       var subT = [];
       //j = 2 =>remove rootNode and referNode
-      for (var j = 2; j < structure.length; j++) {
+      /*for (var j = 2; j < structure.length; j++) {
         if (structure[j].level !== 0) {
           isGlobalStValid = YES;
         }
@@ -93,7 +93,7 @@ Multivio.treeController = SC.TreeController.create(
       if (!isGlobalStValid) {
         var t = this.createNewStructure(subT, []);
         structure = structure.concat(t);        
-      }
+      }*/
 
       this.set('globalStructure', structure);
       this._treeLabelByPosition = [];
@@ -261,19 +261,21 @@ Multivio.treeController = SC.TreeController.create(
     var newStruct = [];
     for (var i = 0; i < globs.length; i++) {
       var temp = globs[i];
-      if (temp.level !== 0) {
+      //if (temp.level !== 0) {
         //remove old children
-        if (!SC.none(temp.childs)) {
+        if (!SC.none(temp.file_position.url) && 
+            temp.file_position.url !== Multivio.CDM.getReferer() &&
+            !SC.none(temp.childs)) {
           temp.childs = undefined;
         }
         //add new children
         if (temp.file_position.url === selected) {
           temp.childs = lgs;
         }
-        if (temp.level !== 1) {
+        /*if (temp.level !== 1) {
           temp.level = 1;
-        }
-      }
+        }*/
+      //}
       newStruct.push(temp);
     }
     
@@ -299,10 +301,26 @@ Multivio.treeController = SC.TreeController.create(
   _selectionDidChange: function () {
     var newSelection = this.get('selection'); 
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
-      var selectionLevel = newSelection.firstObject().level;
-      
+      //var selectionLevel = newSelection.firstObject().level;
+      var selectionIndex = newSelection.firstObject().file_position.index;
       //if level != 2 => change file
-      if (selectionLevel !== 2) {
+      //if index === null => change file
+      /*if (selectionLevel !== 2) {
+        var url = newSelection.firstObject().file_position.url;
+        if (!SC.none(url)) {
+          Multivio.masterController.set('currentFile', url);
+        }
+        else {
+          var listOfTree = this.get('arrangedObjects');
+          var ind = listOfTree.indexOf(newSelection.firstObject());
+          //get next element (normaly the first child)
+          // TO DO Verify if url is not null else find next valid url
+          ind++;
+          Multivio.masterController.set('currentFile', 
+              listOfTree.objectAt(ind).file_position.url);
+        }
+      }*/
+      if (SC.none(selectionIndex)) {
         var url = newSelection.firstObject().file_position.url;
         if (!SC.none(url)) {
           Multivio.masterController.set('currentFile', url);
@@ -317,6 +335,7 @@ Multivio.treeController = SC.TreeController.create(
               listOfTree.objectAt(ind).file_position.url);
         }
       }
+      
       //set new position
       else {
         var currentPosition = this.get('position');

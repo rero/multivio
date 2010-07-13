@@ -63,6 +63,12 @@ Multivio.treeDispatcher = SC.Object.create(
     if (this.get('bindings').length !== 0) {
       this.reset();
     }
+    
+    if (Multivio.masterController.isGrouped) {
+      this.treeStructure = null;
+      url = Multivio.CDM.getReferer();
+      Multivio.treeController.treeExist = NO;
+    }
 
     //Create the first time the rootNode and referer
     if (SC.none(this.treeStructure)) {
@@ -89,24 +95,44 @@ Multivio.treeDispatcher = SC.Object.create(
         }
         else {
           if (SC.none(phySt)) {
-            Multivio.logger.error('This document has no logical and no physical structure');
+            if (Multivio.masterController.isGrouped) {
+              Multivio.layoutController.addComponent('treeDispatcher');
+            }
+            //Multivio.logger.error('This document has no logical and no physical structure');
           }
           //create logical structure with physical structure
           else {
             var structure = [];
-            for (var i = 0; i < phySt.length; i++) {
-              var oneElem = phySt[i];
-              var newElem = {
-                file_position: {
-                  index: i + 1,
-                  url: oneElem.url
-                },
-                label: oneElem.label
-              };
-              structure.push(newElem);
+            if (Multivio.masterController.isGrouped) {
+              for (var i = 0; i < phySt.length; i++) {
+                var oneElem = phySt[i];
+                var newElem = {
+                  file_position: {
+                    index: i+1,
+                    url: oneElem.url
+                  },
+                  label: oneElem.label
+                };
+                structure.push(newElem);
+              }
+              this._addSubtree(structure);
+              Multivio.treeController.initialize();
             }
-            this._addSubtree(structure);
-            Multivio.treeController.initialize();
+            else { 
+              for (var i = 0; i < phySt.length; i++) {
+                var oneElem = phySt[i];
+                var newElem = {
+                  file_position: {
+                    index: null,
+                    url: oneElem.url
+                  },
+                  label: oneElem.label
+                };
+                structure.push(newElem);
+              }
+              this._addSubtree(structure);
+              Multivio.treeController.initialize();
+            }
           }
         }
       }
@@ -121,7 +147,8 @@ Multivio.treeDispatcher = SC.Object.create(
           var phyStr = Multivio.CDM.getPhysicalstructure(url);
           if (phyStr !== -1) {
             if (SC.none(phyStr)) {
-              Multivio.logger.error('This document has no physical structure to create index');
+              Multivio.layoutController.addComponent('treeDispatcher');
+              //Multivio.logger.error('This document has no physical structure to create index');
             }
             //create index
             else {
@@ -167,11 +194,11 @@ Multivio.treeDispatcher = SC.Object.create(
     this.treeStructure = [];
     var rootNode = {
       file_position: {
-        index: 0,
+        index: null,
         url: null
       },
       label: "Root Node",
-      level: 0,
+      //level: 0,
       childs: null
     };
     this.treeStructure.push(rootNode);
@@ -186,11 +213,11 @@ Multivio.treeDispatcher = SC.Object.create(
   _createRefererNode: function (refererLabel, refererUrl) {
     var refererNode = [{
       file_position: {
-        index: 0,
+        index: null,
         url: refererUrl
       },
       label: refererLabel,
-      level: 0,
+      //level: 0,
       childs: null
     }];
     //add refererNode as a child of the rootNode
@@ -217,14 +244,14 @@ Multivio.treeDispatcher = SC.Object.create(
       newStructure.push(refererNode[0]);
     }
     for (var i = 0; i < list.length; i++) {  
-      if (SC.none(list[i].level)) {
+      /*if (SC.none(list[i].level)) {
         if (list[i].childs && SC.none(list[i].file_position.url)) {
           list[i].level = 0;
         }
         else {
           list[i].level = 2;
         }
-      }
+      }*/
       newStructure.push(list[i]);
     }
     this.treeStructure = newStructure;
@@ -290,7 +317,8 @@ Multivio.treeDispatcher = SC.Object.create(
             //physical structure
             if (phSt !== -1) {
               if (SC.none(phSt)) {
-                Multivio.logger.error('This document has no logical and no physical structure ');
+                Multivio.layoutController.addComponent('treeDispatcher');
+                //Multivio.logger.error('This document has no logical and no physical structure ');
               }
               else {
                 var structure = [];
@@ -298,7 +326,7 @@ Multivio.treeDispatcher = SC.Object.create(
                   var oneElem = phSt[i];
                   var newElem = {
                     file_position: {
-                      index: i + 1,
+                      index: null,
                       url: oneElem.url
                     },
                     label: oneElem.label
@@ -324,7 +352,8 @@ Multivio.treeDispatcher = SC.Object.create(
               var phyStr = Multivio.CDM.getPhysicalstructure(cf);
               if (phyStr !== -1) {
                 if (SC.none(phyStr)) {
-                  Multivio.logger.error('This document has no physical structure to create index');
+                  Multivio.layoutController.addComponent('treeDispatcher');
+                  //Multivio.logger.error('This document has no physical structure to create index');
                 }
                 else {
                   var fakeNode = {
@@ -378,14 +407,15 @@ Multivio.treeDispatcher = SC.Object.create(
             var logSt = Multivio.CDM.getLogicalStructure(cf);
             if (logSt !== -1) {
               if (SC.none(logSt)) {
-                Multivio.logger.error('This document has no physical and no logical structure');
+                Multivio.layoutController.addComponent('treeDispatcher');
+                //Multivio.logger.error('This document has no physical and no logical structure');
               }
               else {
                 //now test if file_position.index = null
                 //if index is null create index using physicalStructure
                 var firstLogicalEl = logSt[0];
                 if (firstLogicalEl.file_position.index === null) {
-                  Multivio.logger.error('This document has no physical structure to create index');
+                  //Multivio.logger.error('This document has no physical structure to create index');
                 }
                 else {
                   this._addSubtree(logSt);
@@ -404,7 +434,7 @@ Multivio.treeDispatcher = SC.Object.create(
                   var oneElem = phStr[i];
                   var newElem = {
                     file_position: {
-                      index: i + 1,
+                      index: null,
                       url: oneElem.url
                     },
                     label: oneElem.label

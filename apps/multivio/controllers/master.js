@@ -30,6 +30,9 @@ Multivio.masterController = SC.ObjectController.create(
   */
   currentFile: null,
   
+  
+  isGrouped: NO,
+  
   /**
   The index of the file_position
   
@@ -125,6 +128,7 @@ Multivio.masterController = SC.ObjectController.create(
           }
         }
       }
+      
       this.set('currentFile', validUrl);
     }
     else {
@@ -144,9 +148,15 @@ Multivio.masterController = SC.ObjectController.create(
     var cf = this.get('currentFile');
     var listOfControllers = Multivio.layoutController.getListOfController(ct);
     
+    for (var i = 0; i < listOfControllers.length; i++) {
+      var oneController = listOfControllers[i];
+      console.info('master initialize controller '+ oneController);
+      Multivio[oneController].initialize(cf);
+    }
+    
     //if we have images we need to get logical and physical structure
     //from the referer
-    if (ct.indexOf('image') !== -1) {
+   /* if (ct.indexOf('image') !== -1) {
       var ref = Multivio.CDM.getReferer();
       this.currentFile = ref;
       cf = ref;
@@ -167,7 +177,7 @@ Multivio.masterController = SC.ObjectController.create(
           Multivio.layoutController.addComponent('treeDispatcher');
         }
       }
-    }
+    }*/
   }.observes('currentType'),
   
   /**
@@ -180,6 +190,7 @@ Multivio.masterController = SC.ObjectController.create(
       this.currentType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
+      console.info('currentfile change... '+cf);
       this.getMetadataForFile(cf);
     }
   }.observes('currentFile'),

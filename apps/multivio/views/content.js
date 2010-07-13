@@ -40,7 +40,8 @@ Multivio.ContentView = SC.ScrollView.extend(
     @binding {url}
   */ 
   selection: null,
-  selectionBinding: 'Multivio.imageController.selection', 
+  selectionBinding: 'Multivio.imageController.selection',
+  //selectionBinding: SC.Binding.single('Multivio.contentController.selection'), 
   
   /**
     Binds to the currentZoomState value in the zoomController
@@ -149,6 +150,8 @@ Multivio.ContentView = SC.ScrollView.extend(
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
       var defaultUrl = currentSelection.firstObject().url;
+    //if (!SC.none(currentSelection)) {
+      //var defaultUrl = currentSelection.url;
       var zoomVal = this.get('zoomValue');
     
       //if its the first image get width and height of the view
@@ -217,6 +220,10 @@ Multivio.ContentView = SC.ScrollView.extend(
   */ 
   _selectionDidChange: function () {
     var currentSelection = this.get('selection');
+    console.info('selection');
+    /*if (!SC.none(currentSelection)) {
+      this._loadNewImage();
+    }*/
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
       var defaultUrl = currentSelection.firstObject().url;
       var index = defaultUrl.indexOf('&url=');
