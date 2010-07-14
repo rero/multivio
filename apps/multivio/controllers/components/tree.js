@@ -24,17 +24,21 @@ Multivio.treeController = SC.TreeController.create(
     Local variable for binding
   */
   position: null,
+  logicalStructure: null,
+  physicalStructure: null,
   
   /**
-  Boolean that say if the tree has been already created or not
+    Boolean that say if the tree has been already created or not
   */
   treeExist: NO,
   
   /**
-  Structure used to create the tree. The globalStructure is the basic 
-  structure of the tree. The new branches are added to this structure.
+    Structure used to create the tree. The globalStructure is the basic 
+    structure of the tree. The treeStructure is the current structure 
+    that can be added to the globalStructure.
   */
   globalStructure: null,
+  treeStructure: null,
   
   /**
     An Array that contains all nodes of the tree for a position.
@@ -44,23 +48,419 @@ Multivio.treeController = SC.TreeController.create(
   _treeLabelByPosition: undefined,
   
   /**
-    Initialize this controller and create or update the tree. 
-    To create this tree we need the treeStructure created by the 
-    treeDispatcher. 
+    Initialize this controller and verify if the sub-model can be created. 
+    The sub-model need to have the logical structure of the document.
+
+    algo:
+
+    get logical structure (lg)
+      if (lg = -1): create binding
+      else:
+
+        if (lg = null): get physical structure (ph)
+          if (ph = -1): create binding
+          if (ph = null): error (no structure)
+          if (ph = ok): 
+            if (isGrouped) : create logical structure using ph with index
+            else : create logical structure with ph but without index
+
+        if (lg = ok) test file_position.index
+          if (index = null): get physical structure to create index
+            if (ph = -1): create binding
+            if (ph = null): error (no index)
+            if (ph = ok): 
+              if (isGrouped) :create index using ph
+              else: use lg
+          else: create logical structure using lg
+
+    @param {String} url the current file url
   */
-  initialize: function () {
-    var structure = Multivio.treeDispatcher.treeStructure;
+  initialize: function (url) {
+    if (this.get('bindings').length !== 0) {
+      this.reset();
+    }
+    // if isGrouped get the structure of the referer 
+    if (Multivio.masterController.isGrouped) {
+      this.treeStructure = null;
+      url = Multivio.CDM.getReferer();
+      this.treeExist = NO;
+    }
+
+    // Create the first time the rootNode and referer
+    if (SC.none(this.treeStructure)) {
+      var metadata = Multivio.CDM.getMetadata(url);
+      if (metadata !== -1) {
+        var ref = Multivio.CDM.getReferer();
+        this._createRootAndRefererNodes(metadata.title, ref);
+      }
+    }
+    // it not the first time we call initialize reset treeStructure
+    else {
+      this.treeStructure = null;
+    }
+
+    // get logical structure first 
+    var logStr = Multivio.CDM.getLogicalStructure(url);
+    if (logStr !== -1) {
+      // if  logicalStructure = null get physical structure
+      if (SC.none(logStr)) {
+        var phySt = Multivio.CDM.getPhysicalstructure(url);
+        if (phySt === -1) {
+          this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');
+        }
+        else {
+          if (SC.none(phySt)) {
+            Multivio.logger.info('This document has no logical and no physical structure');
+          }
+          // create logical structure with physical structure
+          else {
+            var structure = [];
+            for (var i = 0; i < phySt.length; i++) {
+              var oneElem = phySt[i];
+              var newElem = {
+                file_position: {
+                  index: Multivio.masterController.isGrouped ? i + 1 :null,
+                  url: oneElem.url
+                },
+                label: oneElem.label
+              };
+              structure.push(newElem);
+            }
+            this._addSubtree(structure);
+            this.initializeTree();
+          }
+        }
+      }
+
+      // logical structure != null
+      else {
+        // now test if file_position.index = null
+        // if index is null create index using physicalStructure
+        var firstLogicalEl = logStr[0];
+        var newLogStr = [];
+        if (firstLogicalEl.file_position.index === null) {
+          var phyStr = Multivio.CDM.getPhysicalstructure(url);
+          if (phyStr !== -1) {
+            if (SC.none(phyStr)) {
+              Multivio.logger.error('This document has no physical structure to create index');
+            }
+            // create index
+            else {
+              if (Multivio.masterController.isGrouped) {
+                var fakeNode = {
+                  file_position: {
+                    index: 0,
+                    url: ''
+                  },
+                  label: 'fake node',
+                  childs: logStr          
+                };
+                var newLogSt = this.setLogicalIndex(fakeNode, phyStr);
+                // remove the fake node
+                this._addSubtree(newLogSt.childs);
+                this.initializeTree();
+              } 
+              else {
+                this._addSubtree(logStr);
+                this.initializeTree();
+              }
+            }
+          }
+          // phyStr = -1 : create a binding
+          else {
+            this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+          }
+        }
+        // index for logical structure already exist use it
+        else {
+          this._addSubtree(logStr);
+          this.initializeTree();
+        }
+      }
+    }
+    // logicalStructure not in the client create the binding
+    else {
+      this.bind('logicalStructure', 'Multivio.CDM.logicalStructure');
+    }
+    Multivio.logger.info('treeController initialized');
+  },
+  
+  /**
+    Create the root node of the treeView. This node is never show
+    Create the first visible node of the treeView (the label of the referer).
+
+    @param {String} refererLabel the title of the referer
+    @param {String} refererUrl the url of the referer
+    @private
+  */
+  _createRootAndRefererNodes: function (refererLabel, refererUrl) {
+    this.treeStructure = [];
+    var refererNode = [{
+      file_position: {
+        index: null,
+        url: refererUrl
+      },
+      label: refererLabel,
+      childs: null
+    }];
+    // create rootNode and add refererNode as it child
+    var rootNode = {
+      file_position: {
+        index: null,
+        url: null
+      },
+      label: "Root Node",
+      childs: refererNode
+    };
+    this.treeStructure.push(rootNode);
+    this.treeStructure.push(refererNode);
+  },
+  
+  /**
+    Add new logical structure to the current treeStructure
+
+    @private
+  */
+  _addSubtree: function (list) {
+    var newStructure = [];
+    // if treeStructure is not null
+    // append child to the refererNode
+    if (!SC.none(this.treeStructure)) {
+      var refererNode = this.treeStructure[1];
+      refererNode[0].childs = list;
+      newStructure.push(this.treeStructure[0]);
+      newStructure.push(refererNode[0]);
+    }
+    for (var i = 0; i < list.length; i++) {
+      newStructure.push(list[i]);
+    }
+    this.treeStructure = newStructure;
+  },
+  
+  /**
+    Reset bindings
+  */
+  reset: function () {
+    var listOfBindings = this.get('bindings');
+    for (var i = 0; i < listOfBindings.length; i++) {
+      var oneBinding = listOfBindings[i];
+      oneBinding.disconnect();
+    }   
+    this.set('bindings', []);
+  },
+  
+  /**
+    Create the index for a logical structure. To do it we compare urls
+    of the logical and the physical structures
+
+    @param {Object} oneNode a node of the logicalStructure. At the first call,
+        this node has as childs the logical structure file
+    @param {Objet} list the physical structure of the file
+  */
+  setLogicalIndex: function (oneNode, list) {  
+    var url = oneNode.file_position.url;
+
+    for (var j = 0; j < list.length; j++) {
+      var physicalUrl = list[j].url;
+      if (physicalUrl === url) {
+        oneNode.file_position.index = j + 1;
+        break;
+      }
+    }
+    var hasChildren = oneNode.childs;
+    if (!SC.none(hasChildren)) {
+      for (var i = 0; i < hasChildren.length; i++) {
+        var onechild = oneNode.childs[i];
+        this.setLogicalIndex(onechild, list);
+      }
+    }
+    return oneNode;
+  },
+
+  /**
+    CDM.logicalStructure has changed. Verify if we can create the sub-model.
+
+    @observes logicalStructure
+  */  
+  logicalStructureDidChange: function () {
+    if (!SC.none(this.get('logicalStructure'))) {
+      var cf = Multivio.masterController.get('currentFile');
+      if (Multivio.masterController.isGrouped) {
+        cf = Multivio.CDM.getReferer();
+      }
+      if (!SC.none(cf)) {
+        var logStr = this.get('logicalStructure')[cf];
+        if (logStr !== -1) {
+          // logical structure = null get physical structure
+          if (SC.none(logStr)) {
+            var phSt = Multivio.CDM.getPhysicalstructure(cf);
+            // physical structure
+            if (phSt !== -1) {
+              if (SC.none(phSt)) {
+                Multivio.logger.error('This document has no logical and no physical structure ');
+              }
+              else {
+                var structure = [];
+                for (var i = 0; i < phSt.length; i++) {
+                  var oneElem = phSt[i];
+                  var newElem = {
+                    file_position: {
+                      index: Multivio.masterController.isGrouped ? i + 1 :null,
+                      url: oneElem.url
+                    },
+                    label: oneElem.label
+                  };
+                  structure.push(newElem);
+                }
+                this._addSubtree(structure);
+                this.initializeTree();
+              }
+            }
+            // physical structure  = -1 create the binding 
+            else {
+              this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');              
+            }
+          }
+          // logical structure exist
+          else {
+            // now test if file_position.index = null
+            // if index is null create index using physical structure
+            var firstLogicalEl = logStr[0];
+            var newLogStr = [];
+            if (firstLogicalEl.file_position.index === null) {
+              var phyStr = Multivio.CDM.getPhysicalstructure(cf);
+              if (phyStr !== -1) {
+                if (SC.none(phyStr)) {
+                  Multivio.logger.error('This document has no physical structure to create index');
+                }
+                else {
+                  if (Multivio.masterController.isGrouped) {
+                    var fakeNode = {
+                      file_position: {
+                        index: 0,
+                        url: ''
+                      },
+                      label: 'fake node',
+                      childs: logStr          
+                    };
+                    var newLogSt = this.setLogicalIndex(fakeNode, phyStr);
+                    // remove the fake node
+                    this._addSubtree(newLogSt.childs);
+                    this.initializeTree();
+                  }
+                  else {
+                    this._addSubtree(logStr);
+                    this.initializeTree();
+                  }
+                }
+              }
+              // physical structure = -1 create the binding
+              else {
+                this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');
+              }
+            }
+            // logical strcuture index exist use it
+            else {
+              this._addSubtree(logStr);
+              this.initializeTree();
+            }            
+          }
+        }
+      }
+    }
+  }.observes('logicalStructure'),
+
+  /**
+    CDM.physicalStructure has changed. Verify if we can create the sub-model.
+
+    @observes physicalStructure
+  */  
+  physicalStructureDidChange: function () {
+    if (!SC.none(this.get('physicalStructure'))) {
+      var cf = Multivio.masterController.get('currentFile');
+      if (Multivio.masterController.isGrouped) {
+        cf = Multivio.CDM.getReferer();
+      }
+      if (!SC.none(cf)) {    
+        var phStr = this.get('physicalStructure')[cf];
+        var phSFCDM = Multivio.CDM.getPhysicalstructure(cf);
+        if (phStr !== -1 && phStr === phSFCDM) {
+
+          // physical structure is null get logical structure
+          if (SC.none(phStr)) {
+            Multivio.logger.error('This document has no physicalStructure');
+          }
+          // physical structure is not null
+          else {
+            var logStr = Multivio.CDM.getLogicalStructure(cf);
+            if (logStr !== -1) {
+              if (SC.none(logStr)) {
+                var structure = [];
+                for (var i = 0; i < phStr.length; i++) {
+                  var oneElem = phStr[i];
+                  var newElem = {
+                    file_position: {
+                      index: Multivio.masterController.isGrouped ? i + 1 : null,
+                      url: oneElem.url
+                    },
+                    label: oneElem.label
+                  };
+                  structure.push(newElem);
+                }
+                this._addSubtree(structure);
+                this.initializeTree();
+              }
+              else {
+                // now test if file_position.index = null
+                // if index is null create index using physicalStructure
+                var firstLogicalEle = logStr[0];
+                var newLogStr = [];
+                if (firstLogicalEle.file_position.index === null) {
+                  if (Multivio.masterController.isGrouped) {
+                    var fakeNode = {
+                      file_position: {
+                        index: 0,
+                        url: ''
+                      },
+                      label: 'fake node',
+                      childs: logStr          
+                    };
+                    var newLogSt = this.setLogicalIndex(fakeNode, phStr);
+                    // remove the fake node
+                    this._addSubtree(newLogSt.childs);
+                    this.initializeTree();
+                  } 
+                  else {
+                    this._addSubtree(logStr);
+                    this.initializeTree();
+                  }
+                }
+                else {
+                  this._addSubtree(logStr);
+                  this.initializeTree();
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }.observes('physicalStructure'),
+  
+  /**
+    Choose if a new tree must be create or if we have to update the tree. 
+  */
+  initializeTree: function () {
+    this.reset();
+    this.bind('position', 'Multivio.masterController.currentPosition');
+    var structure = this.treeStructure;
     if (this.get('treeExist')) {
       this._updateTree(structure);
     }
     else {
-      //create a binding for position
-      this.bind('position', 'Multivio.masterController.currentPosition');
       this._createTree(structure);
     }
-
-    Multivio.logger.info('treeController initialized');
-    //order keys to use correctly this._getListOfLabelsForIndex
+    // order keys to use correctly this._getListOfLabelsForIndex
     var keys = this.ascendingKeys(this._treeLabelByPosition);
     var temp = [];
     for (var i = 0; i < keys.length; i++) {
@@ -77,42 +477,53 @@ Multivio.treeController = SC.TreeController.create(
     @private
   */  
   _createTree: function (structure) {
-    if (!this.get('treeExist')) {
-      this.set('treeExist', YES);
-      var isGlobalStValid = NO;
-      var subT = [];
-      //j = 2 =>remove rootNode and referNode
-      /*for (var j = 2; j < structure.length; j++) {
-        if (structure[j].level !== 0) {
-          isGlobalStValid = YES;
-        }
-        subT.push(structure[j]);
+    this.set('treeExist', YES);
+    // create the globalStructure
+    var tempStruct = [];
+    tempStruct.push(structure[0]);
+    tempStruct.push(structure[1]);
+    for (var i = 2; i < structure.length; i++) {
+      var oneEl = structure[i];
+      if (oneEl.childs) {
+        var res = this.getListOfChilds(oneEl);
+        tempStruct = tempStruct.concat(res);
       }
-      //global structure is not valid if we have only label with level = 0
-      //we need label with level = 1 to add or remove branches 
-      if (!isGlobalStValid) {
-        var t = this.createNewStructure(subT, []);
-        structure = structure.concat(t);        
-      }*/
-
-      this.set('globalStructure', structure);
-      this._treeLabelByPosition = [];
-      //create treeContent and set content
-      var treeContent = Multivio.TreeContent.create(structure[0]);
-      this.set('content', treeContent);
-      //add view
-      if (Multivio.layoutController.get('isBasicLayoutUp')) {
-        Multivio.layoutController.addComponent('treeDispatcher');
+      else {
+        tempStruct.push(oneEl);
+      } 
+    }
+    console.info('subT ' + tempStruct.length);
+    this.set('globalStructure', tempStruct);
+    this._treeLabelByPosition = [];
+    // create treeContent and set content
+    var treeContent = Multivio.TreeContent.create(structure[0]);
+    this.set('content', treeContent);
+    // add view
+    if (Multivio.layoutController.get('isBasicLayoutUp')) {
+      Multivio.layoutController.addComponent('treeController');
+    }  
+    Multivio.logger.info('treeController#_createTree');
+  },
+  
+  /**
+    Return the list of all branches of the tree
+    
+    @param {Object} a logical Node with children
+    @return {Array}
+  */
+  getListOfChilds: function (oneNode) {
+    var res = [];
+    var children = oneNode.childs;
+    for (var i = 0; i < children.length; i++) {
+      if (children[i].childs) {
+        this.getListOfChilds(children[i]);
       }
-      
-      Multivio.logger.info('treeController#_createTree');
-      //if no label have position = 1 get the referer node as the leaf
-      //to select when currentPosition = 1
-      if (SC.none(this._treeLabelByPosition[1])) {
-        var arr = this.get('arrangedObjects');
-        this._treeLabelByPosition[1] = [arr.objectAt(0)];
+      else {
+        res.push(children[i]);
       }
     }
+    res.push(oneNode);
+    return res;
   },
 
   /**
@@ -123,10 +534,10 @@ Multivio.treeController = SC.TreeController.create(
   positionDidChange: function () {
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {  
-      //retreive the list of labels for this position
+      // retreive the list of labels for this position
       var labels = this._getListOfLabelsForIndex(newPosition);
       if (!SC.none(labels)) {
-        //verify if we really need to set selection
+        // verify if we really need to set selection
         var currentSelection = !SC.none(this.get('selection')) ?
             this.get('selection').firstObject() : undefined;
         if (labels.length === 1) {
@@ -139,7 +550,7 @@ Multivio.treeController = SC.TreeController.create(
           }
         }
         else {
-          //verify if label is already selected
+          // verify if label is already selected
           var isAlreadySelected = NO;
           for (var i = 0; i < labels.length; i++) {
             var tempLabel = labels[i];
@@ -167,26 +578,32 @@ Multivio.treeController = SC.TreeController.create(
   */
   _getListOfLabelsForIndex: function (index) {
     var listToReturn = undefined;
-    //case simple the position is an index
+    // simple the position is an index
     if (!SC.none(this._treeLabelByPosition) && !SC.none(index)) {
       var label = this._treeLabelByPosition[index];
       if (!SC.none(label)) {
         listToReturn = label;
       }
       else {
-        //found the right label
+        // found the right label
         var lastIndex = 0;
         var newIndex = 0;
         for (var key in this._treeLabelByPosition) {
-          //TO DO How to have only key = number
+          // TO DO How to have only key = number
           if (this._treeLabelByPosition.hasOwnProperty(key)) {
             newIndex = key;
             if (newIndex < index) {
               lastIndex = newIndex;
             }
             else {
-              //get the lastIndex
-              listToReturn = this._treeLabelByPosition[lastIndex];
+              // get the lastIndex
+              var res = this._treeLabelByPosition[lastIndex];
+              if (SC.none(res)) {
+                listToReturn = this._treeLabelByPosition[newIndex];
+              }
+              else {
+                listToReturn = res;
+              } 
               break;
             }
           }
@@ -201,15 +618,15 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
-  Order keys increasingly
+    Order keys increasingly
   
-  @param {Array} oneArray the array to order the keys
+    @param {Array} oneArray the array to order the keys
   */
   ascendingKeys: function (oneArray) { 
     var keys = [];
     for (var k in oneArray) {
       if (oneArray.hasOwnProperty(k)) {
-        keys.push(parseInt(k));
+        keys.push(parseInt(k, 10));
       }
     }
     keys.sort(function (a, b) {return (a > b) - (a < b); });
@@ -217,10 +634,10 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
-  Create the new global structure with childs of the treeContent
+    Create the new global structure with childs of the treeContent
   
-  @param {Array} st array of label
-  @parm {Array} ret array to return
+    @param {Array} st array of label
+    @parm {Array} ret array to return
   */
   createNewStructure: function (st, ret) {
     for (var i = 0; i < st.length; i++) {
@@ -237,13 +654,13 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
-  Add new labels to the tree
+    Add new labels to the tree
   
-  @param {Object} lgs the logicalstructure of the file to added
-  @private
+    @param {Object} lgs the logicalstructure of the file to added
+    @private
   */
   _updateTree: function (lgs) {
-    //first remove old bindings and create news
+    // first remove old bindings and create news
     var listOfBindings = this.get('bindings');
     for (var j = 0; j < listOfBindings.length; j++) {
       var oneBinding = listOfBindings[j];
@@ -255,41 +672,33 @@ Multivio.treeController = SC.TreeController.create(
     this.set('selection', null);
     this.set('content', null);
     
-    //retreive the old structure and append at the right position the new one
+    // retreive the old structure and append at the right position the new one
     var globs = this.get('globalStructure');
     var selected = Multivio.masterController.get('currentFile');
     var newStruct = [];
+    if (lgs.length === 1) {
+      lgs[0].file_position.index = 1;
+    }
     for (var i = 0; i < globs.length; i++) {
       var temp = globs[i];
-      //if (temp.level !== 0) {
-        //remove old children
-        if (!SC.none(temp.file_position.url) && 
-            temp.file_position.url !== Multivio.CDM.getReferer() &&
-            !SC.none(temp.childs)) {
-          temp.childs = undefined;
-        }
-        //add new children
-        if (temp.file_position.url === selected) {
-          temp.childs = lgs;
-        }
-        /*if (temp.level !== 1) {
-          temp.level = 1;
-        }*/
-      //}
+      // remove old children
+      if (!SC.none(temp.file_position.url) && 
+          temp.file_position.url !== Multivio.CDM.getReferer() &&
+          !SC.none(temp.childs)) {
+        temp.childs = undefined;
+      }
+      // add new children
+      if (temp.file_position.url === selected) {
+        temp.childs = lgs;
+      }
       newStruct.push(temp);
     }
     
     this._treeLabelByPosition = [];
     var treeContent = Multivio.TreeContent.create(newStruct[0]);
     this.set('content', treeContent);
-    //add view   
-    Multivio.layoutController.addComponent('treeDispatcher');
-
-    if (SC.none(this._treeLabelByPosition[1]) && 
-        this._treeLabelByPosition.length !== 0) {
-      var arr = this.get('arrangedObjects');
-      this._treeLabelByPosition[1] = [arr.objectAt(1)];
-    }
+    // add view   
+    Multivio.layoutController.addComponent('treeController');
     Multivio.logger.info('treeController#_updateTree');
   },
   
@@ -301,25 +710,8 @@ Multivio.treeController = SC.TreeController.create(
   _selectionDidChange: function () {
     var newSelection = this.get('selection'); 
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
-      //var selectionLevel = newSelection.firstObject().level;
       var selectionIndex = newSelection.firstObject().file_position.index;
-      //if level != 2 => change file
-      //if index === null => change file
-      /*if (selectionLevel !== 2) {
-        var url = newSelection.firstObject().file_position.url;
-        if (!SC.none(url)) {
-          Multivio.masterController.set('currentFile', url);
-        }
-        else {
-          var listOfTree = this.get('arrangedObjects');
-          var ind = listOfTree.indexOf(newSelection.firstObject());
-          //get next element (normaly the first child)
-          // TO DO Verify if url is not null else find next valid url
-          ind++;
-          Multivio.masterController.set('currentFile', 
-              listOfTree.objectAt(ind).file_position.url);
-        }
-      }*/
+      // if index === null => change file
       if (SC.none(selectionIndex)) {
         var url = newSelection.firstObject().file_position.url;
         if (!SC.none(url)) {
@@ -328,7 +720,7 @@ Multivio.treeController = SC.TreeController.create(
         else {
           var listOfTree = this.get('arrangedObjects');
           var ind = listOfTree.indexOf(newSelection.firstObject());
-          //get next element (normaly the first child)
+          // get next element (normaly the first child)
           // TO DO Verify if url is not null else find next valid url
           ind++;
           Multivio.masterController.set('currentFile', 
@@ -340,7 +732,7 @@ Multivio.treeController = SC.TreeController.create(
       else {
         var currentPosition = this.get('position');
         var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
-        var selectionIndex = newSelection.firstObject().file_position.index;
+        //var selectionIndex = newSelection.firstObject().file_position.index;
         if (!SC.none(labelFCPosition)) {
           labelFCPosition = labelFCPosition[0];
         }

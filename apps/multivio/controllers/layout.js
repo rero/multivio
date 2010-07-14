@@ -21,27 +21,27 @@ Multivio.layoutController = SC.Object.create(
 /** @scope Multivio.layoutController.prototype */ {
   
   /**
-  Boolean that say if the worspace has been initialized.
+    Boolean that say if the worspace has been initialized.
   */
   isBasicLayoutUp: NO,
   
   /**
-  The type of the document to show
+    The type of the document to show
   */
   localType: undefined,
   
   /**
-  The number of views that need to be added to the main page
+    The number of views that need to be added to the main page
   */
   nbOfComponentToAdd: 0,
   
   /**
-  The list of controllers with their view
+    The list of controllers with their view
   */
   viewByController: {},
   
   /**
-  Position on the GridLayout
+    Position on the GridLayout
   */
   layoutPositionByName: {
     top:           {x: 0, y: 0, xlen: 3, ylen: 1},
@@ -53,8 +53,8 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  Translate mimetype received from the server to a local type
-  used by the config layout file
+    Translate mimetype received from the server to a local type
+    used by the config layout file
   */
   typeForMimeType: {
     'text/xml': 'xml',
@@ -66,7 +66,7 @@ Multivio.layoutController = SC.Object.create(
   },
 
   /**
-  Initilize this controller by showing the waiting page
+    Initialize this controller by showing the waiting page
   */
   initialize: function () {
     // Attach the main page to the browser window in order to initiate the
@@ -76,28 +76,29 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  For a mimetype retreives the local type, the list of controller needed
-  and the number of views
+    For a mimetype retreives the local type, the list of controller needed
+    and the number of views
   
-  @param {String} type
-  @return {Array} list of controllers
+    @param {String} type
+    @return {Array} list of controllers
   */
   getListOfController: function (type) {
-    //set localType using the matching table
+    // set localType using the matching table
     this.localType = this.get('typeForMimeType')[type];
     
-    //TO REMOVE
+    // TO REMOVE
     if (this.localType === 'image') {
+      console.info('LCT image');
       Multivio.masterController.isGrouped = YES;
     } 
 
-    //retreive the configuration for layout
+    // retreive the configuration for layout
     var config = Multivio.configurator.get('layoutConfig')[this.localType];
     var components = config.components;
 
     var listOfController = [];
-    //for each view get the controller(s) and create a hash that contains
-    //for each controller the view associated
+    // for each view get the controller(s) and create a hash that contains
+    // for each controller the view associated
     for (var i = 0; i < components.length; i++) {
       var oneView = components[i].name;
       var contr = Multivio.views.get(oneView).controllers;
@@ -112,14 +113,14 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  currentListOfWidget has changed, verify if all controller have create the
-  view and if YES select the first element to show it.
+    currentListOfWidget has changed, verify if all controller have create the
+    view and if YES select the first element to show it.
   
-  @observes nbOfComponentToAdd
+    @observes nbOfComponentToAdd
   */
   nbOfComponentDidChange: function () {
     if (this.get('nbOfComponentToAdd') === 0) {
-      //var currentType = Multivio.masterController.get('currentType');
+      // var currentType = Multivio.masterController.get('currentType');
       switch (this.get('localType')) {
 
       case 'pdf':
@@ -181,7 +182,7 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  Set the basic Layout. Remove the waiting panel and add the header view
+    Set the basic Layout. Remove the waiting panel and add the header view
   */
   setBasicLayout: function () {
     this._hideWaitingPage();
@@ -190,9 +191,9 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  Removed a view 
+    Removed a view 
   
-  @param {String} component the name of the component
+    @param {String} component the name of the component
   */
   removeComponent: function (component) {
     var mainPage = Multivio.getPath('mainPage.mainPane');
@@ -200,22 +201,22 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-  Add a new component to the main page
+    Add a new component to the main page
   
-  @param {String} controller the name of the controller 
+    @param {String} controller the name of the controller 
   */
   addComponent: function (controller) {
-    //Get component for this controller
+    // Get component for this controller
     var component = this.viewByController[controller];
     
     var componentName = 'views.' + component.name;
     var componentPosition = component.position;
     
-    //get the grid position for the component
+    // get the grid position for the component
     var gridPosition = this.layoutPositionByName[componentPosition];
     
     var mainPage = Multivio.getPath('mainPage.mainPane');
-    //Verify if the view already exist if not add the component
+    // Verify if the view already exist if not add the component
     if (SC.none(mainPage._componentsOnGrid[componentName])) {
       mainPage.layOutComponent({
         name: componentName,
@@ -247,7 +248,7 @@ Multivio.layoutController = SC.Object.create(
     }
   },
   
- /**
+  /**
     Show error page
 
     @private  

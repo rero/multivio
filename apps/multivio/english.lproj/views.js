@@ -43,7 +43,7 @@ Multivio.views = SC.Page.design(
     canCollapseViews: NO,
 
     //add controller(s) need for this view
-    controllers: ['treeDispatcher', 'imageController'],
+    controllers: ['treeController', 'imageController'],
 
     topLeftView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -148,7 +148,7 @@ Multivio.views = SC.Page.design(
   */
   thumbnailView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
-    //add controller(s) need for this view
+    // add controller(s) need for this view
     controllers: ['thumbnailController'],
     
     childViews: 'innerThumbnail'.w(),
@@ -184,8 +184,8 @@ Multivio.views = SC.Page.design(
   */
   treeView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
-    //add controller(s) need for this view
-    controllers: ['treeDispatcher'],
+    // add controller(s) need for this view
+    controllers: ['treeController'],
     
     childViews: 'innerTree'.w(),
     innerTree:  Multivio.TreeView.design({
@@ -274,7 +274,7 @@ Multivio.views = SC.Page.design(
         icon: static_url('images/icons/end.png'),
         target: "Multivio.navigationController", 
         action: "goToLastPage"
-      }),
+      })
     }),    
     
     //zoom
@@ -306,9 +306,9 @@ Multivio.views = SC.Page.design(
       zoomPredefinedView: SC.SegmentedView.design({
         layout: { centerX: 30, centerY: 0, width: 160, height: 25},
         items: [
-        {title: "Full", value:"Full", enabled: YES},
-        {title: "Width", value: "Width", enabled: YES},
-        {title: "Native", value: "Native", enabled: YES}
+          {title: "Full", value: "Full", enabled: YES},
+          {title: "Width", value: "Width", enabled: YES},
+          {title: "Native", value: "Native", enabled: YES}
         ],
         itemTitleKey: 'title',
         itemValueKey: 'value',
