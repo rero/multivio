@@ -24,48 +24,47 @@ Multivio.masterController = SC.ObjectController.create(
 /** @scope Multivio.masterController.prototype */ {
 
   /**
-  The url of the file_position object
+    The url of the file_position object
   
-  @property {file}
+    @property {file}
   */
   currentFile: null,
   
-  
+  /**
+    Boolean that say if files must be grouped or not
+  */
   isGrouped: NO,
   
   /**
-  The index of the file_position
+    The index of the file_position
   
-  Now it's a number but it can be something else
+    Now it's a number but it can be something else
   
-  @property {position}
+    @property {position}
   */
   currentPosition: null,
     
   /**
-  The type of the currentDocument
+    The type of the currentDocument
   
-  @property {currentType}
+    @property {currentType}
   */
   currentType: null,
   
   /**
-    Binds to the cdm metadata
+    Binds to the cdm fileMetadata
 
     @binding {String}
    */
   metadata: null,
-  metadataBinding: SC.Binding.oneWay("Multivio.CDM.metadata"),
+  metadataBinding: SC.Binding.oneWay("Multivio.CDM.fileMetadata"),
    
-  isFirstTime: YES,
-  
-  
   /**
     Initialize masterController. Get the referer (the url given to multivio) 
     of the document and set it as the currentFile
   */
   initialize: function () {
-    //start layoutController => show waiting page
+    // start layoutController => show waiting page
     Multivio.layoutController.initialize();
     var reference = Multivio.CDM.getReferer();
     this.set('currentFile', reference);
@@ -73,7 +72,7 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   /**
-  Reset variables
+    Reset variables
   */
   reset: function () {
     this.set('currentFile', null);
@@ -82,9 +81,9 @@ Multivio.masterController = SC.ObjectController.create(
   },
 
   /**
-  Multivio.CDM.metadata has changed.Set new type.
+    Multivio.CDM.metadata has changed.Set new type.
   
-  @observe metadata
+    @observe metadata
   */
   metadataDidChange: function () {
     var meta = this.get('metadata');
@@ -102,7 +101,7 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('metadata'),
   
   /**
-  Set current position to 1
+    Set current position to 1
   */
   selectFirstPosition: function () {
     this.set('currentPosition', 1);
@@ -110,14 +109,14 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   /**
-  Select the first file of the Document and set currentfile with this value
+    Select the first file of the Document and set currentfile with this value
   */ 
   selectFirstFile: function () {
-    //get logical structure of the document
+    // get logical structure of the document
     var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
     if (!SC.none(logSt)) {
       var validUrl = logSt[0].file_position.url;
-      //if a file_position has no url we need to get the next file_position 
+      // if a file_position has no url we need to get the next file_position 
       if (SC.none(validUrl)) {
         var childs = logSt[0].childs;
         for (var i = 0; i < childs.length; i++) {
@@ -132,16 +131,16 @@ Multivio.masterController = SC.ObjectController.create(
       this.set('currentFile', validUrl);
     }
     else {
-      //get physical structure
+      // get physical structure
       var phSt = Multivio.CDM.getPhysicalstructure(this.get('currentFile'));
       this.set('currentFile', phSt[0].url);
     }
   },
   
   /**
-  Initialize new controllers depending of the currentType
+    Initialize new controllers depending of the currentType
   
-  @observes currentType
+    @observes currentType
   */
   currentTypeDidChange: function () {
     var ct = this.get('currentType');
@@ -150,72 +149,34 @@ Multivio.masterController = SC.ObjectController.create(
     
     for (var i = 0; i < listOfControllers.length; i++) {
       var oneController = listOfControllers[i];
-      console.info('master initialize controller '+ oneController);
+      console.info('master initialize controller ' + oneController + ' type ' + ct);
       Multivio[oneController].initialize(cf);
     }
-    
-    //if we have images we need to get logical and physical structure
-    //from the referer
-   /* if (ct.indexOf('image') !== -1) {
-      var ref = Multivio.CDM.getReferer();
-      this.currentFile = ref;
-      cf = ref;
-    }
-    
-    //initialize all controllers
-    for (var i = 0; i < listOfControllers.length; i++) {
-      var oneController = listOfControllers[i];
-      if (ct.indexOf('image') === -1) {
-        Multivio[oneController].initialize(cf);
-      } 
-      //if we have images don't initialize the treeDispatcher
-      else {
-        if (oneController !== 'treeDispatcher') {
-          Multivio[oneController].initialize(cf);
-        }
-        else {
-          Multivio.layoutController.addComponent('treeDispatcher');
-        }
-      }
-    }*/
   }.observes('currentType'),
   
   /**
-  A new file has been selected, retreives metadata for it
+    A new file has been selected, retreives metadata for it
   
-  @observes currentFile
+    @observes currentFile
   */ 
   currentFileDidChange: function () {
     if (!SC.none('currentFile')) {
       this.currentType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
-      console.info('currentfile change... '+cf);
-      this.getMetadataForFile(cf);
+      console.info('currentfile change ' + cf);
+      var meta = Multivio.CDM.getFileMetadata(cf);
+      if (meta !== -1) {
+        this.set('currentType', meta.mime);
+      }
     }
   }.observes('currentFile'),
   
   /**
-  Retreive metadata for this url
+    CurrentPosition has changed. This method is only used to verify 
+    that synchronisation works fine.
   
-  @param {String} fileUrl
-  */
-  getMetadataForFile: function (fileUrl) {
-    var meta = Multivio.CDM.getMetadata(fileUrl);
-    if (meta !== -1) {
-      if (!Multivio.layoutController.get('isBasicLayoutUp')) {
-        Multivio.layoutController.setBasicLayout();
-        Multivio.metadataController.initialize(fileUrl);
-      }
-      this.set('currentType', meta.mime);
-    }
-  },
-  
-  /**
-  CurrentPosition has changed. This method is only used to verify 
-  that synchronisation works fine.
-  
-  @observe currentPosition
+    @observe currentPosition
   */
   currentPositionDidChange: function () {
     console.info('currentPosition did Change....');

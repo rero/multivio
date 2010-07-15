@@ -126,8 +126,7 @@ Multivio.initializer = SC.Object.create(
       else {
         Multivio.errorController.
             initialize({'message': 'incompatibility between server and client'});
-        Multivio.logger.
-            logException('Client and server are incompatible: ' +
+        Multivio.logger.logException('Client and server are incompatible: ' +
             Multivio.configurator.clientVersion);
       }
     } 
@@ -150,7 +149,7 @@ Multivio.initializer = SC.Object.create(
       var firstUrl = Multivio.CDM.FIXTURES.logical[name];
       metadata[firstUrl[0].file_position.url] = 
           Multivio.CDM.FIXTURES.metadata[firstUrl[0].file_position.url];
-      Multivio.CDM.metadata = metadata;
+      Multivio.CDM.fileMetadata = metadata;
       // get and set logicalStructure
       var logical = {};
       logical[name] = Multivio.CDM.FIXTURES.logical[name];

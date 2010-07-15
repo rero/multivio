@@ -88,7 +88,7 @@ Multivio.treeController = SC.TreeController.create(
 
     // Create the first time the rootNode and referer
     if (SC.none(this.treeStructure)) {
-      var metadata = Multivio.CDM.getMetadata(url);
+      var metadata = Multivio.CDM.getFileMetadata(url);
       if (metadata !== -1) {
         var ref = Multivio.CDM.getReferer();
         this._createRootAndRefererNodes(metadata.title, ref);
@@ -492,7 +492,6 @@ Multivio.treeController = SC.TreeController.create(
         tempStruct.push(oneEl);
       } 
     }
-    console.info('subT ' + tempStruct.length);
     this.set('globalStructure', tempStruct);
     this._treeLabelByPosition = [];
     // create treeContent and set content

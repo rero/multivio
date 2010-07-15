@@ -18,7 +18,7 @@ module("Test treeController", {
     //get and set metadata
     var metadata = {};
     metadata['VAA'] = Multivio.CDM.FIXTURES.metadata['VAA'];
-    Multivio.CDM.metadata = metadata;
+    Multivio.CDM.fileMetadata = metadata;
     //get and set logicalStructure
     var logical = {};
     logical['VAA'] = Multivio.CDM.FIXTURES.logical['VAA'];
@@ -44,7 +44,7 @@ module("Test treeController", {
   
   teardown: function () {
     Multivio.CDM.referer =  undefined;
-    Multivio.CDM.metadata = undefined;
+    Multivio.CDM.fileMetadata = undefined;
     Multivio.CDM.logicalStructure =  undefined;
     Multivio.CDM.physicalStructure = undefined;
     delete myMasterController;

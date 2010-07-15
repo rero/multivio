@@ -10,6 +10,21 @@
   @class
 
   This controller manages the behavior of the main content view for images.
+  
+  Algo for the sub-model:
+  
+  getFileMetadata(): fileMetadata is already on the client 
+    because asked by the masterController
+    
+    if (meta.nPages === undefined) : it's not a pdf, ask physical structure
+      if (masterController.isGrouped) : create images 
+            with the physical structure of the referer
+      else : getPhysicalStructure
+        if (ph === -1): create binding
+        if (ph === null): error
+        else : create images with the ph
+        
+    else : create images with nPages
 
   @author che
   @extends SC.ArrayController
@@ -38,7 +53,7 @@ Multivio.imageController = SC.ArrayController.create(
     }
     this.bind('position', 'Multivio.masterController.currentPosition');
     
-    var meta = Multivio.CDM.getMetadata(url);
+    var meta = Multivio.CDM.getFileMetadata(url);
     if (SC.none(meta.nPages)) {
       if (Multivio.masterController.isGrouped) {
         var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
@@ -68,26 +83,6 @@ Multivio.imageController = SC.ArrayController.create(
         this._createPDFImages(url, meta.nPages);
       }
     }
-    /*var structure = Multivio.CDM.getPhysicalstructure(url);
-    if (structure !== -1) {
-      //No physical structure don't create content
-      if (!SC.none(structure)) {
-        //the number of pages is contained either in the metadata or
-        //it's the number of urls of the physical structure
-        var meta = Multivio.CDM.getMetadata(url);
-        if (meta !== -1) {
-          if (SC.none(meta.nPages)) {
-            this._createImages(structure);
-          }
-          else {
-            this._createPDFImages(structure, meta.nPages);
-          }
-        }
-      }
-    }
-    else {
-      this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
-    }*/
     Multivio.logger.info('imageController initialized');
   },
   
@@ -95,7 +90,7 @@ Multivio.imageController = SC.ArrayController.create(
     Reset variables and disconnect bindings
   */
   reset: function () {
-    //first disconnect bindings
+    // first disconnect bindings
     var listOfBindings = this.get('bindings');
     for (var i = 0; i < listOfBindings.length; i++) {
       var oneBinding = listOfBindings[i];
@@ -114,38 +109,18 @@ Multivio.imageController = SC.ArrayController.create(
     @observes physicalStructure
   */ 
   physicalStructureDidChange: function () {
-    /*if (!SC.none(this.get('physicalStructure'))) {    
+    var phStr = this.get('physicalStructure');
+    if (!SC.none(phStr)) {
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {
-        var phSt = this.get('physicalStructure')[cf];
-        //if phSt = -1 response is not on the client now, wait
-        if (phSt !== -1) {
-          //we don't have a physicalStrcuture for this file, we can't create
-          //content
-          if (!SC.none(phSt)) {
-            var meta = Multivio.CDM.getMetadata(cf);
-            if (SC.none(meta.nPages)) {
-              this._createImages(phSt);
-            }
-            else {
-              this._createPDFImages(phSt, meta.nPages);
-            }
+        var ph = this.get('physicalStructure')[cf];
+        if (ph !== -1) {
+          if (!SC.none(ph)) {
+            this._createImages(ph);
           }
         }
       }
-    }*/
-      var phStr = this.get('physicalStructure');
-      if (!SC.none(phStr)) {
-        var cf = Multivio.masterController.get('currentFile');
-        if (!SC.none(cf)) {
-          var ph = this.get('physicalStructure')[cf];
-          if (ph !== -1) {
-            if (!SC.none(ph)) {
-              this._createImages(ph);
-            }
-          }
-        }
-      }
+    }
   }.observes('physicalStructure'),
  
   /**
@@ -158,6 +133,7 @@ Multivio.imageController = SC.ArrayController.create(
   _createPDFImages: function (pdfUrl, nb) {
     // physicalstructure of a PDF contains only one url
     var cont = [];
+    // create as many images that there are page number
     for (var i = 1; i < nb + 1; i++) {
       var imageUrl = Multivio.configurator.get('serverName') + 
           Multivio.configurator.getImageUrl(pdfUrl, i);
@@ -186,7 +162,7 @@ Multivio.imageController = SC.ArrayController.create(
       var files = structure[i];
       var defaultUrl = files.url;
       var imageUrl = undefined;
-      //if we have fixtures we don't need to have a server
+      // if we have fixtures we don't need to have a server
       if (Multivio.initializer.get('inputParameters').scenario === 'fixtures') {
         imageUrl = Multivio.configurator.getImageUrl(defaultUrl, 0);
       }

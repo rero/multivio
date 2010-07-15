@@ -26,7 +26,7 @@ Multivio.metadataController = SC.ObjectController.create(
     @param {String} url the current file url
   */
   initialize: function (url) {
-    var meta = Multivio.CDM.getMetadata(url);
+    var meta = Multivio.CDM.getFileMetadata(url);
     //normally meta is not egal to -1 because this controller is initialized
     //after the masterController received the metadata of the referer url
     if (!SC.none(meta) && meta !== -1) {

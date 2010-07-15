@@ -61,7 +61,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
     this.bind('position', 'Multivio.masterController.currentPosition');
     
-    var meta = Multivio.CDM.getMetadata(url);
+    var meta = Multivio.CDM.getFileMetadata(url);
     if (SC.none(meta.nPages)) {
       if (Multivio.masterController.isGrouped) {
         var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
@@ -70,7 +70,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
       else {
         var phSt = Multivio.CDM.getPhysicalstructure(url);
         if (phSt !== -1) {
-          if(!SC.none(phSt)) {
+          if (!SC.none(phSt)) {
             this._createThumbnails(phSt);
           }
           else {
@@ -84,7 +84,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
     else {
       if (Multivio.masterController.isGrouped) {
-        //TO DO
+        // TO DO
         //this.createdConcatenedThumbnails
       }
       else {
@@ -95,10 +95,10 @@ Multivio.thumbnailController = SC.ArrayController.create(
   },
   
   /**
-  Reset variables and disconnect bindings
+    Reset variables and disconnect bindings
   */
   reset: function () {
-    //first disconnect bindings
+    // first disconnect bindings
     var listOfBindings = this.get('bindings');
     for (var i = 0; i < listOfBindings.length; i++) {
       var oneBinding = listOfBindings[i];
@@ -141,10 +141,11 @@ Multivio.thumbnailController = SC.ArrayController.create(
     var cont = [];
     var newTable = {};
     var firstChild = undefined;
+    // create for each node of the physical structure a thumbnail
     for (var j = 0; j < structure.length; j++) {
       var imageUrl = structure[j].url;
       var thumbnailImageUrl = undefined;
-      //If we have fixtures we don't need a server
+      // If we have fixtures we don't need a server
       if (Multivio.initializer.get('inputParameters').scenario === 'fixtures') {
         thumbnailImageUrl = Multivio.configurator.getThumbnailUrl(imageUrl, 0);
       }
@@ -177,7 +178,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
   _createPDFThumbnails: function (pdfUrl, nbP) {
     var cont = [];
     var newTable = {};
-    //PDF =>create a thumbnail object for each page
+    // PDF =>create a thumbnail object for each page
     for (var i = 1; i < nbP + 1; i++) {
       var thumbnailUrl = Multivio.configurator.get('serverName') + 
           Multivio.configurator.getThumbnailUrl(pdfUrl, i);
@@ -208,7 +209,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
           this.get('selection').firstObject() : undefined;
       var currentPageNumber = !SC.none(currentSelection) ?
           currentSelection.pageNumber : 0;
-      //verify if we need to set selection (avoid loopbacks)
+      // verify if we need to set selection (avoid loopbacks)
       if (currentPageNumber !== newPosition) {
         var thumbnailToSelect = this.get('_cdmNodeToThumbnail')[newPosition];
         this.set('selection', 
@@ -229,7 +230,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) { 
       var pageNumber = newSelection.firstObject().pageNumber;
       var currentPosition = this.get('position');
-      //verify if we need to set position (avoid loopbacks)
+      // verify if we need to set position (avoid loopbacks)
       if (currentPosition !== pageNumber) {
         this.set('position', pageNumber);
         Multivio.logger.info('thumbnailController#selectionDidChange: %@'.

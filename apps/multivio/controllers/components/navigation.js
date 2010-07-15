@@ -37,12 +37,12 @@ Multivio.navigationController = SC.ObjectController.create(
     local variables used to create bindings
   */
   position: null,
-  //meta: null,
   physicalStructure: null,
 
   /**
-    Initialize this controller, try to retrieve the number of pages.
-    The number of pages can be find in the metadata if we have a PDF or
+    Initialize this controller using the number of pages of the file.
+    
+    The number of pages can be find in the fileMetadata if we have a PDF or
     we can find it by calculating the number of elements contains 
     in the physical structure
     
@@ -52,90 +52,47 @@ Multivio.navigationController = SC.ObjectController.create(
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
     
-    var meta = Multivio.CDM.getMetadata(url);
-    //meta = -1 response not on client => create a binding and wait
-    /*if (meta === -1) {
-      this.bind('meta', 'Multivio.CDM.metadata');
-    }
-    else {*/
-      // we have metadata. If metadata.nPages === null we need to get
-      // the physicalStructure to known it
-      if (SC.none(meta.nPages)) {
-        // if meta.nPages doesn't exist => it is not a PDF
-        // if masterController.isGrouped => 
-        // _numberOfPages = physicalstructure length of the referer 
-        if (Multivio.masterController.isGrouped) {
-          var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
-          this.set('_numberOfPages', refStruct.length);
-          Multivio.layoutController.addComponent('navigationController');
-        }
-        else {
-          var ph = Multivio.CDM.getPhysicalstructure(url);
-          //ph = -1 response not on client => create binding
-          if (ph === -1) {
-            this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
-          }
-          else {
-            if (!SC.none(ph)) {
-              this.set('_numberOfPages', ph.length);
-              Multivio.layoutController.addComponent('navigationController');
-            }
-          }
-        }
+    var meta = Multivio.CDM.getFileMetadata(url);
+    if (SC.none(meta.nPages)) {
+      // if meta.nPages doesn't exist => it is not a PDF
+      // if masterController.isGrouped => 
+      // _numberOfPages = physicalstructure length of the referer 
+      if (Multivio.masterController.isGrouped) {
+        var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+        this.set('_numberOfPages', refStruct.length);
+        Multivio.layoutController.addComponent('navigationController');
       }
       else {
-        if (Multivio.masterController.isGrouped) {
-          //TO DO call all metadata and adding the nPages
+        var ph = Multivio.CDM.getPhysicalstructure(url);
+        // ph = -1 response not on client => create binding
+        if (ph === -1) {
+          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
         }
         else {
-          this.set('_numberOfPages', meta.nPages);
-          Multivio.layoutController.addComponent('navigationController');
-        }
-      }
-    //}  
-    Multivio.logger.info('navigationController initialized');
-  },
-  
-  /**
-  Multivio.CDM.metadata has changed, verify if we have now the metadata
-  for the current file. If YES set the number of pages.
-  
-  @observes meta
-  */
-  /*metadataDidChange: function () {
-    var metadata = this.get('meta');
-    if (!SC.none(metadata)) {
-      var cf = Multivio.masterController.get('currentFile');
-      if (!SC.none(cf)) {
-        var currentMeta = this.get('meta')[cf];
-        //we have metadata else wait again
-        if (currentMeta !== -1) {
-          if (SC.none(currentMeta.nPages)) {
-            var ph = Multivio.CDM.getPhysicalstructure(cf);
-            if (ph !== -1) {
-              this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
-            }
-            else {
-              if (!SC.none(ph)) {
-                this.set('_numberOfPages', ph.length);
-                Multivio.layoutController.addComponent('navigationController');
-              }
-            }
-          }
-          else {
-            this.set('_numberOfPages', currentMeta.nPages);
+          if (!SC.none(ph)) {
+            this.set('_numberOfPages', ph.length);
             Multivio.layoutController.addComponent('navigationController');
           }
         }
       }
     }
-  }.observes('meta'),*/
+    else {
+      if (Multivio.masterController.isGrouped) {
+        // TO DO call all metadata and adding the nPages
+      }
+      else {
+        this.set('_numberOfPages', meta.nPages);
+        Multivio.layoutController.addComponent('navigationController');
+      }
+    }  
+    Multivio.logger.info('navigationController initialized');
+  },
   
   /**
-  Multivio.CDM.physicalstructure has changed, verify if we have now 
-  the physicalStructure for the current file. If YES set the number of pages.
+    Multivio.CDM.physicalstructure has changed, verify if we have now 
+    the physicalStructure for the current file. If YES set the number of pages.
   
-  @observes physicalStructure
+    @observes physicalStructure
   */
   physicalStructureDidChange: function () {
     var ph = this.get('physicalStructure');
@@ -143,7 +100,7 @@ Multivio.navigationController = SC.ObjectController.create(
       var cf = Multivio.masterController.get('currentFile');
       if (!SC.none(cf)) {
         var currentPh = this.get('physicalStructure')[cf];
-        //we have physicalstructure
+        // we have physicalstructure
         if (currentPh !== -1 && !SC.none(currentPh)) {
           this.set('_numberOfPages', currentPh.length);
           Multivio.layoutController.addComponent('navigationController');
@@ -161,7 +118,7 @@ Multivio.navigationController = SC.ObjectController.create(
   positionDidChange: function () {
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {
-      //verify if we need to set selection (avoid loopbacks)
+      // verify if we need to set selection (avoid loopbacks)
       var currentPageNumber = this.get('currentPage');
       if (currentPageNumber !== newPosition) {
         this.set('currentPage', newPosition);
