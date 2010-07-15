@@ -27,6 +27,18 @@ Multivio.configurator = SC.Object.create(
   serverName: '/server',
   
   /**
+    The current version of the client
+  */
+  clientVersion: '0.1',
+  
+  /**
+    The table of compatibility between the server (key) and the client (value)
+  */
+  serverCompatibility: {
+    '0.1': ['0.1']
+  },
+  
+  /**
     This object contains all parameters for logs
     
     @property {Object}
@@ -165,7 +177,7 @@ Multivio.configurator = SC.Object.create(
     
     @method
     @param {String} configPath
-    @returns {String}
+    @return {String}
   */
   getPath: function (configPath) {
     if (SC.typeOf(configPath) !== SC.T_STRING) {
