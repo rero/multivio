@@ -5,7 +5,7 @@
   License:    See file license.js
 ==============================================================================
 */
-
+/*globals Multivio*/
 // This is the function that will start your app running.  The default
 // implementation will load any fixtures you have created then instantiate
 // your controllers and awake the elements on your page.
@@ -15,7 +15,10 @@
 //
 
 Multivio.main = function main() {
+  
+  Multivio.getPath('mainPage.mainPane').append();
 
+  //Multivio.makeFirstResponder(Multivio.ERROR);
   // Multivio.initializer#readInputParameters() is declared as the callback
   // function that parses the parameters given in the applications's URL; this
   // is done using the SC.routes mechanism.

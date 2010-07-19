@@ -35,7 +35,7 @@ Multivio.errorController = SC.ObjectController.create(
     @property {String} ths message
   */
   serverMessage: function () {
-    return this.get('content').get('message');
+    return this.get('content');
   }.property('content')
   
 });

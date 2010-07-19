@@ -21,11 +21,6 @@ Multivio.layoutController = SC.Object.create(
 /** @scope Multivio.layoutController.prototype */ {
   
   /**
-    Boolean that say if the worspace has been initialized.
-  */
-  isBasicLayoutUp: NO,
-  
-  /**
     The type of the document to show
   */
   localType: undefined,
@@ -64,16 +59,6 @@ Multivio.layoutController = SC.Object.create(
     'image/jpg': 'image',
     'image/jpeg': 'image'
   },
-
-  /**
-    Initialize this controller by showing the waiting page
-  */
-  initialize: function () {
-    // Attach the main page to the browser window in order to initiate the
-    // interface of the application
-    Multivio.getPath('mainPage.mainPane').append();
-    this._showWaitingPage();
-  },
   
   /**
     For a mimetype retreives the local type, the list of controller needed
@@ -88,7 +73,6 @@ Multivio.layoutController = SC.Object.create(
     
     // TO REMOVE
     if (this.localType === 'image') {
-      console.info('LCT image');
       Multivio.masterController.isGrouped = YES;
     } 
 
@@ -179,15 +163,6 @@ Multivio.layoutController = SC.Object.create(
 
     SC.RunLoop.end();
     Multivio.logger.info('layoutController workspace initialized');
-  },
-  
-  /**
-    Set the basic Layout. Remove the waiting panel and add the header view
-  */
-  setBasicLayout: function () {
-    this._hideWaitingPage();
-    this.configureWorkspace('init');
-    this.set('isBasicLayoutUp', YES);   
   },
   
   /**

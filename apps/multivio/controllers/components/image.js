@@ -144,7 +144,7 @@ Multivio.imageController = SC.ArrayController.create(
       cont.push(imageHash);
     }
     this.set('content', cont);
-    Multivio.layoutController.addComponent('imageController');
+    Multivio.sendAction('addComponent','imageController');
     Multivio.logger.info(
         'imageController#createPDFImages pdf images created and layout setted' + 
         this.get('content').length);
@@ -177,9 +177,7 @@ Multivio.imageController = SC.ArrayController.create(
       cont.push(imageHash);
     }
     this.set('content', cont);
-    if (Multivio.layoutController.get('isBasicLayoutUp')) {
-      Multivio.layoutController.addComponent('imageController');
-    }
+    Multivio.sendAction('addComponent','imageController');  
     Multivio.logger.info(
         'imageController#createImages images created and layout setted' + 
         this.get('content').length);

@@ -64,8 +64,8 @@ Multivio.masterController = SC.ObjectController.create(
     of the document and set it as the currentFile
   */
   initialize: function () {
-    // start layoutController => show waiting page
-    Multivio.layoutController.initialize();
+    // change state => show waiting page
+    Multivio.makeFirstResponder(Multivio.WAITING);
     var reference = Multivio.CDM.getReferer();
     this.set('currentFile', reference);
     Multivio.logger.info('masterController initialized');
@@ -91,10 +91,7 @@ Multivio.masterController = SC.ObjectController.create(
       var cf = this.get('currentFile');
       var currentMeta = this.get('metadata')[cf];
       if (currentMeta !== -1) {
-        if (!Multivio.layoutController.get('isBasicLayoutUp')) {
-          Multivio.layoutController.setBasicLayout();
-          Multivio.metadataController.initialize(cf);
-        }
+        Multivio.sendAction('fileMetadataDidChange', cf);
         this.set('currentType', currentMeta.mime);
       }
     }
@@ -164,7 +161,6 @@ Multivio.masterController = SC.ObjectController.create(
       this.currentType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
-      console.info('currentfile change ' + cf);
       var meta = Multivio.CDM.getFileMetadata(cf);
       if (meta !== -1) {
         this.set('currentType', meta.mime);

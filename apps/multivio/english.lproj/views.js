@@ -18,6 +18,8 @@
 */  
 Multivio.views = SC.Page.design(
 /** @scope Multivio.views.prototype */ {
+  
+  defaultResponder: Multivio,
 
   /**
     Title view
@@ -453,6 +455,12 @@ Multivio.views = SC.Page.design(
 
     childViews: [  
       SC.LabelView.design({
+        layout: { centerX: 0, centerY: -50, width: 700, height: 50 },
+        classNames: 'mvo_info_full',
+        value: 'An Error occured',
+        escapeHTML: NO
+      }),
+      SC.LabelView.design({
         layout: { centerX: 0, centerY: 0, width: 700, height: 50 },
         classNames: 'mvo_info_full',
         contentBinding: 'Multivio.errorController.serverMessage',
@@ -463,7 +471,7 @@ Multivio.views = SC.Page.design(
         layout: { centerX: 0, centerY: 50, width: 700, height: 50 },
         classNames: 'mvo_info_full',
         contentBinding: 'Multivio.errorController.serverMessage',
-        contentValueKey: 'errorMessage',
+        contentValueKey: 'message',
         escapeHTML: NO
       })
     ]

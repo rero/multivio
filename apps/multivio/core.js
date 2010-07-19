@@ -13,7 +13,7 @@
   
   @extends SC.Object
 */
-Multivio = SC.Object.create(
+Multivio = SC.Application.create(
   /** @scope Multivio.prototype */ {
 
   NAMESPACE: 'Multivio',

@@ -98,7 +98,7 @@ Multivio.treeController = SC.TreeController.create(
     else {
       this.treeStructure = null;
     }
-
+    
     // get logical structure first 
     var logStr = Multivio.CDM.getLogicalStructure(url);
     if (logStr !== -1) {
@@ -497,10 +497,7 @@ Multivio.treeController = SC.TreeController.create(
     // create treeContent and set content
     var treeContent = Multivio.TreeContent.create(structure[0]);
     this.set('content', treeContent);
-    // add view
-    if (Multivio.layoutController.get('isBasicLayoutUp')) {
-      Multivio.layoutController.addComponent('treeController');
-    }  
+    Multivio.sendAction('addComponent','treeController');
     Multivio.logger.info('treeController#_createTree');
   },
   
@@ -696,8 +693,8 @@ Multivio.treeController = SC.TreeController.create(
     this._treeLabelByPosition = [];
     var treeContent = Multivio.TreeContent.create(newStruct[0]);
     this.set('content', treeContent);
-    // add view   
-    Multivio.layoutController.addComponent('treeController');
+    // add view 
+    Multivio.sendAction('addComponent','treeController');
     Multivio.logger.info('treeController#_updateTree');
   },
   

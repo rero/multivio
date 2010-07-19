@@ -83,7 +83,8 @@ Multivio.initializer = SC.Object.create(
         this.setFixtures();
       }
       else {
-        Multivio.layoutController._showUsagePage();
+        //Multivio.layoutController._showUsagePage();
+        Multivio.makeFirstResponder(Multivio.ERROR);
       }
     }
     else {
@@ -126,6 +127,7 @@ Multivio.initializer = SC.Object.create(
       else {
         Multivio.errorController.
             initialize({'message': 'incompatibility between server and client'});
+        Multivio.makeFirstResponder(Multivio.ERROR);
         Multivio.logger.logException('Client and server are incompatible: ' +
             Multivio.configurator.clientVersion);
       }
@@ -141,6 +143,8 @@ Multivio.initializer = SC.Object.create(
       Multivio.layoutController._showUsagePage();
     }
     else {
+      Multivio.makeFirstResponder(Multivio.WAITING);
+      
       // set CDM value
       Multivio.CDM.setReferer(name);
       // get and set metadata
@@ -150,17 +154,20 @@ Multivio.initializer = SC.Object.create(
       metadata[firstUrl[0].file_position.url] = 
           Multivio.CDM.FIXTURES.metadata[firstUrl[0].file_position.url];
       Multivio.CDM.fileMetadata = metadata;
+      Multivio.sendAction('fileMetadataDidChange', name);
+      
       // get and set logicalStructure
       var logical = {};
       logical[name] = Multivio.CDM.FIXTURES.logical[name];
       Multivio.CDM.logicalStructure = logical;
+      
       // get and set physicalStructure
       var physical = {};
       physical[name] = Multivio.CDM.FIXTURES.physical[name];
       Multivio.CDM.physicalStructure = physical;
+      
+      Multivio.masterController.set('currentFile', name);
       Multivio.logger.debug('Fixtures "%@" setted'.fmt(name));
-    
-      Multivio.masterController.initialize();   
     }
   }
   

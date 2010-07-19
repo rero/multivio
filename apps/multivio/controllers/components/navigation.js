@@ -60,7 +60,7 @@ Multivio.navigationController = SC.ObjectController.create(
       if (Multivio.masterController.isGrouped) {
         var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
         this.set('_numberOfPages', refStruct.length);
-        Multivio.layoutController.addComponent('navigationController');
+        Multivio.sendAction('addComponent','navigationController');
       }
       else {
         var ph = Multivio.CDM.getPhysicalstructure(url);
@@ -71,7 +71,7 @@ Multivio.navigationController = SC.ObjectController.create(
         else {
           if (!SC.none(ph)) {
             this.set('_numberOfPages', ph.length);
-            Multivio.layoutController.addComponent('navigationController');
+            Multivio.sendAction('addComponent','navigationController');
           }
         }
       }
@@ -82,7 +82,7 @@ Multivio.navigationController = SC.ObjectController.create(
       }
       else {
         this.set('_numberOfPages', meta.nPages);
-        Multivio.layoutController.addComponent('navigationController');
+        Multivio.sendAction('addComponent','navigationController');
       }
     }  
     Multivio.logger.info('navigationController initialized');
@@ -103,7 +103,7 @@ Multivio.navigationController = SC.ObjectController.create(
         // we have physicalstructure
         if (currentPh !== -1 && !SC.none(currentPh)) {
           this.set('_numberOfPages', currentPh.length);
-          Multivio.layoutController.addComponent('navigationController');
+          Multivio.sendAction('addComponent','navigationController');
         }
       }
     }

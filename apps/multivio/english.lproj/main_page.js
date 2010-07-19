@@ -21,6 +21,9 @@ Multivio.mainPage = SC.Page.design({
   // load.
   mainPane: SC.MainPane.design({
     
+    // setting default responder to the application
+    defaultResponder: 'Multivio',
+    
   // child view are defined in views.js
   }).classNames('workspace_black')
 

@@ -88,7 +88,7 @@ Multivio.zoomController = SC.ObjectController.create(
   Initialize this controller.
   */ 
   initialize: function () {
-    Multivio.layoutController.addComponent('zoomController');
+    Multivio.sendAction('addComponent','zoomController');
     this.maxVirtualSize = Multivio.configurator.get('zoomParameters').max;
     this.minVirtualSize = Multivio.configurator.get('zoomParameters').min;
     this.currentZoomState = Multivio.configurator.get('zoomParameters').initState;

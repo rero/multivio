@@ -224,7 +224,7 @@ Multivio.configurator = SC.Object.create(
       break;
     
     case 'fixtures':
-      var name = this.getPath('inputParameters.name');
+      var name = Multivio.initializer.get('inputParameters').name;
       modifiedUrl = this.getPath('baseUrlParameters.fixtures.%@'.fmt(name));
       modifiedUrl += url.substring(url.lastIndexOf("/"));
       break;
