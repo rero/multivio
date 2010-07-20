@@ -22,12 +22,21 @@ Multivio.INIT = SC.Responder.create(
     First responder did change.
   */
   didBecomeFirstResponder: function() {
-    Multivio.layoutController._hideWaitingPage();
-    Multivio.layoutController.configureWorkspace('init');
+    Multivio.logger.debug('Multivio state is INIT');
   },
   
   /**
-    Can add a component to the page only if the current state is INIT
+    Do nothing
+    */
+  reset: function(){
+  },
+  
+  /**
+    Add a component to the page. 
+    
+    This action is allow only if the current state is INIT
+    
+    @param {String} controllerName the name of the controller
   */
   addComponent: function(controllerName) {
     Multivio.layoutController.addComponent(controllerName);

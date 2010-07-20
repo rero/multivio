@@ -104,16 +104,17 @@ Multivio.layoutController = SC.Object.create(
   */
   nbOfComponentDidChange: function () {
     if (this.get('nbOfComponentToAdd') === 0) {
-      // var currentType = Multivio.masterController.get('currentType');
+      Multivio.makeFirstResponder(Multivio.READY);
       switch (this.get('localType')) {
 
       case 'pdf':
       case 'image':
-        Multivio.masterController.selectFirstPosition();
+        Multivio.invokeLater(Multivio.sendAction, 1, 'firstPosition');
         break;
 
       case 'xml':
-        Multivio.masterController.selectFirstFile();
+        Multivio.invokeLater(Multivio.sendAction, 1, 'firstFile');
+      //Multivio.sendAction('firstFile');
         break;
 
       default:

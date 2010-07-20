@@ -711,6 +711,7 @@ Multivio.treeController = SC.TreeController.create(
       if (SC.none(selectionIndex)) {
         var url = newSelection.firstObject().file_position.url;
         if (!SC.none(url)) {
+          Multivio.makeFirstResponder(Multivio.INIT);
           Multivio.masterController.set('currentFile', url);
         }
         else {

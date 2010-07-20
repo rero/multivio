@@ -19,17 +19,19 @@ Multivio.WAITING = SC.Responder.create(
 /** @scope Multivio.WAITING.prototype */ {
   
   /**
-    First responder did change.
+    Show waiting page
   */
   didBecomeFirstResponder: function() {
+    Multivio.logger.debug('Multivio state is WAITING');
     Multivio.layoutController._showWaitingPage();
   },
   
   /**
-    Call this method the first time file metadata is received. 
-    Change to state 'init'
+    Initialize metadataController and change state to INIT.
   */
   fileMetadataDidChange: function(referer) {
+    Multivio.layoutController._hideWaitingPage();
+    Multivio.layoutController.configureWorkspace('init');
     Multivio.metadataController.initialize(referer);
     Multivio.makeFirstResponder(Multivio.INIT);
   }
