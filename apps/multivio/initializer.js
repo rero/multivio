@@ -26,6 +26,7 @@ Multivio.initializer = SC.Object.create(
   */
   inputParameters: {},
 
+
   /**
     Read and store parameters of the Url
     
@@ -56,6 +57,7 @@ Multivio.initializer = SC.Object.create(
           Multivio.configurator.set('serverName', params[key]);
           break;
         default:
+          // dump the other input parameters as-is in the table
           var value = params[key];
           prop[key] = value;
           break;
@@ -67,9 +69,10 @@ Multivio.initializer = SC.Object.create(
     Multivio.logger.initialize();
     Multivio.logger.debug('end of configurator.readInputParameters()');
   },
-  
+
+
   /**
-    Observe inputParameters and  after it has changed verify if 
+    Observe inputParameters and after it has changed verify if
     the application can start or not. 
     
     @observes inputParameters
@@ -83,7 +86,7 @@ Multivio.initializer = SC.Object.create(
         this.setFixtures();
       }
       else {
-        //Multivio.layoutController._showUsagePage();
+        // change application state
         Multivio.makeFirstResponder(Multivio.ERROR);
       }
     }
@@ -93,11 +96,12 @@ Multivio.initializer = SC.Object.create(
       Multivio.requestHandler.sendGetRequest(versionReq, this, 'verifyVersion');
     }
   }.observes('inputParameters'),
-  
+
+
   /**
     Response received about the server version.
     If client and server are compatible start the application, 
-    if no show the error page.
+    otherwise show the error page.
     
     @param {String} response received from the server
   */
@@ -123,6 +127,7 @@ Multivio.initializer = SC.Object.create(
       
       if (areCompatible) {
         Multivio.logger.debug('Client and server are compatible');
+        // TODO-CR: would prefer to change state here, instead of initializing the master
         Multivio.masterController.initialize();
       }
       else {

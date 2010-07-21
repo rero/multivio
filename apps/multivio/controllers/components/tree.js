@@ -529,7 +529,7 @@ Multivio.treeController = SC.TreeController.create(
   positionDidChange: function () {
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {  
-      // retreive the list of labels for this position
+      // retrieve the list of labels for this position
       var labels = this._getListOfLabelsForIndex(newPosition);
       if (!SC.none(labels)) {
         // verify if we really need to set selection
@@ -672,7 +672,7 @@ Multivio.treeController = SC.TreeController.create(
     this.set('selection', null);
     this.set('content', null);
     
-    // retreive the old structure and append at the right position the new one
+    // retrieve the old structure and append at the right position the new one
     var globs = this.get('globalStructure');
     var selected = Multivio.masterController.get('currentFile');
     var newStruct = [];

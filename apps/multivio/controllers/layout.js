@@ -61,7 +61,7 @@ Multivio.layoutController = SC.Object.create(
   },
   
   /**
-    For a mimetype retreives the local type, the list of controller needed
+    For a mimetype retrieves the local type, the list of controller needed
     and the number of views
   
     @param {String} type
@@ -76,7 +76,7 @@ Multivio.layoutController = SC.Object.create(
       Multivio.masterController.isGrouped = YES;
     } 
 
-    // retreive the configuration for layout
+    // retrieve the configuration for layout
     var config = Multivio.configurator.get('layoutConfig')[this.localType];
     var components = config.components;
 

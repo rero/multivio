@@ -22,9 +22,7 @@ Multivio.main = function main() {
   // function that parses the parameters given in the applications's URL; this
   // is done using the SC.routes mechanism.
   SC.routes.add(':', Multivio.initializer, 'readInputParameters');
-  
-  // Launch the initalization process using Multivio.initializer
-  //Multivio.initializer.initialize();
+
 };
 
 function main() {

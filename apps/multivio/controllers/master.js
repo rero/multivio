@@ -64,7 +64,7 @@ Multivio.masterController = SC.ObjectController.create(
     of the document and set it as the currentFile
   */
   initialize: function () {
-    // change state => show waiting page
+    // change application state
     Multivio.makeFirstResponder(Multivio.WAITING);
     var reference = Multivio.CDM.getReferer();
     this.set('currentFile', reference);
@@ -152,19 +152,22 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentType'),
   
   /**
-    A new file has been selected, retreives metadata for it
+    A new file has been selected, retrieves metadata for it
   
     @observes currentFile
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
+      // TODO-CR: why not this.set('currentType', null) ?
       this.currentType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
       var meta = Multivio.CDM.getFileMetadata(cf);
+      // TODO-CR document this: what does -1 mean? is it part of the server API?
       if (meta !== -1) {
         this.set('currentType', meta.mime);
       }
+      // TODO-CR what happens (or should happen) if meta === -1?
     }
   }.observes('currentFile'),
   

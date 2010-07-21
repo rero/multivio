@@ -9,7 +9,7 @@
 /**
   @namespace
 
-  The state after the first file metadata has been retreived.
+  The state after the first file metadata has been retrieved.
 
   @author che
   @extends SC.Responder

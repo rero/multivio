@@ -34,7 +34,7 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
   _thumbnailSelectionDidChange: function () {
     var selection = this.get('thumbnailSelection').firstObject();
     if (!SC.none(selection)) {
-      // retreive the list of the thumbnails visible in the view
+      // retrieve the list of the thumbnails visible in the view
       var listView = this.get('contentView').get('childViews');
       var needToScroll = YES;
       // don't verify the first and the last child to force to scroll
