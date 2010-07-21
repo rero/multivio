@@ -21,21 +21,21 @@ Multivio.READY = SC.Responder.create(
   /**
     First responder did change.
   */
-  didBecomeFirstResponder: function() {
+  didBecomeFirstResponder: function () {
     Multivio.logger.debug('Multivio state is READY');
   },
   
   /**
     Select the first position of the current file
   */
-  firstPosition: function() {
+  firstPosition: function () {
     Multivio.masterController.selectFirstPosition();
   },
   
   /**
     Select the first file of the current document 
   */
-  firstFile: function() {
+  firstFile: function () {
     Multivio.masterController.selectFirstFile();
   }
   

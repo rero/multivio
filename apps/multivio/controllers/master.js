@@ -12,7 +12,7 @@
   This is the application's master controller. It serves as communication
   hub between the controllers of the different widgets.
 
-  In this case it holds a reference to the currently selected object (image),
+  In this case it holds a reference to the currently selected object,
   in order to keep the thumbnail and tree views synchronized.
 
   @author mmo, che

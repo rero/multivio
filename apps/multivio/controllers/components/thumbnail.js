@@ -9,8 +9,20 @@
 /** 
   @class
 
-  This controller manages the behavior of the thumbnail view. It depends on
-  the master controller.
+  This controller manages the behavior of the thumbnail view.
+  
+  Algo for the sub-model:
+    getMetdatada(url) : meta !== -1 because already asked by the masterController 
+      if (meta.nPages === null) 
+        if (masterController.isGrouped) : createThumbnail for the referer
+        else : it's not a pdf ask physicalStructure
+          if (phS === -1) : create binding
+          else 
+            if (ph !== null) : createThumbnail
+          
+      else :
+        if (masterController.isGrouped) : createdConcatenedThumbnails
+        else : create PDFThumbnails
 
   @author fma, che, mmo
   @extends SC.ArrayController
@@ -33,25 +45,14 @@ Multivio.thumbnailController = SC.ArrayController.create(
     determine the thumbnail associated with a certain position
     
     @private
-   */
+  */
   _positionToThumbnail: {},
   
   /**
     Initialize this controller and verify if the sub-model can be created. 
-    The sub-model need to have the physical structure of the document.
-    
-    Algo:
-      getMetdatada(url) : meta !== -1 because already asked by the masterController 
-        if (meta.nPages === null) 
-          if (masterController.isGrouped) : createThumbnail for the referer
-          else : it's not a pdf ask physicalStructure
-            if (phS === -1) : create binding
-            else 
-              if (ph !== null) : createThumbnail
-            
-        else :
-          if (masterController.isGrouped) : createdConcatenedThumbnails
-          else : create PDFThumbnails
+    To create the sub-model we need to know the number of thumbnails. 
+    This information may be find in the fileMetadata or deducted
+    from the physical structure of the document.
 
     @param {String} url the current file url
   */
@@ -132,9 +133,9 @@ Multivio.thumbnailController = SC.ArrayController.create(
   }.observes('physicalStructure'),
   
   /**
-    Create the sub-model of this controller and set the content.
+    Create the list of thumbnails using the physical structure of the file.
     
-    @param {Object} physicalStructure
+    @param {Object} structure the physicalStructure
     @private
   */  
   _createThumbnails: function (structure) {
@@ -162,12 +163,12 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
     this.set('content', cont);
     this.set('_cdmNodeToThumbnail', newTable);
-    Multivio.sendAction('addComponent','thumbnailController');
+    Multivio.sendAction('addComponent', 'thumbnailController');
     Multivio.logger.info('thumbnailController#_createThumbnails');
   },
   
   /**
-    Create the pdf sub-model of this controller and set the content.
+    Create the list of thumbnails using the number of pages of the PDF.
     
     @param {String} pdfUrl the url of the pdf
     @param {Number} nbp the number of pages of the PDF
@@ -189,7 +190,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
     }
     this.set('content', cont);
     this.set('_cdmNodeToThumbnail', newTable);
-    Multivio.sendAction('addComponent','thumbnailController');
+    Multivio.sendAction('addComponent', 'thumbnailController');
     Multivio.logger.info('thumbnailController#_createPDFThumbnails');
   },
   

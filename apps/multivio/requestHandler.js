@@ -22,9 +22,11 @@ Multivio.requestHandler = SC.Object.create(
     Send a request to the server and when the response is received
     call the callback method
     
-    @param {String} uri
-    @param {String} callbackTarget
-    @param {String} callbackMethod
+    @param {String} uri the url of the server
+    @param {String} callbackTarget the class to call after the response 
+      has been received
+    @param {String} callbackMethod the method to call after the response 
+      has been received
     @param {String} param1 the key (url) to store the response 
   */
   sendGetRequest: function (uri, callbackTarget, callbackMethod, param1) {

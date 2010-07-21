@@ -21,15 +21,18 @@ Multivio.WAITING = SC.Responder.create(
   /**
     Show waiting page
   */
-  didBecomeFirstResponder: function() {
+  didBecomeFirstResponder: function () {
     Multivio.logger.debug('Multivio state is WAITING');
     Multivio.layoutController._showWaitingPage();
   },
   
   /**
-    Initialize metadataController and change state to INIT.
+    First fileMetadata has been received. Remove waiting page, initialize 
+    metadataController and change state to INIT.
+    
+    @param {String} referer the referer url
   */
-  fileMetadataDidChange: function(referer) {
+  fileMetadataDidChange: function (referer) {
     Multivio.layoutController._hideWaitingPage();
     Multivio.layoutController.configureWorkspace('init');
     Multivio.metadataController.initialize(referer);

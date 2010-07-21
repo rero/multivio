@@ -52,7 +52,7 @@ Multivio.ThumbnailContentView = SC.View.extend(SC.ContentDisplay,
   createChildViews: function () {
     var childViews = [];
     var view;
-    //Add ImageView
+    // Add ImageView
     view = this.createChildView(
       SC.View.design({
         layout:  { top: 4, height: 100, centerX: 0, width: 100 },
@@ -69,7 +69,7 @@ Multivio.ThumbnailContentView = SC.View.extend(SC.ContentDisplay,
       { rootElementPath: [0] }
     );
     childViews.push(view);
-    //Add LabelView
+    // Add LabelView
     view = this.createChildView(
       Multivio.LabelView.design({
         layout:  { bottom: 4, height: 18, centerX: 0, width: 46 },

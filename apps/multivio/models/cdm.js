@@ -9,7 +9,8 @@
 /** 
   @class
 
-  A cdm is the global model of the application.
+  CDM (Core Document Model) is the global model of the application. 
+  The CDM consists of 4 objects.
   
   CDM can return as response:
     -1: the response is not on the client-side but 
@@ -25,10 +26,10 @@ Multivio.CDM = SC.Object.create(
   /**
     CDM parts
   
-    referer: the initial url
-    fileMetadata: descriptive and technical metadata of the file
-    logicalStructure: the logical structure of the file (can be null)
-    physicalStructure: the physical structure of the file 
+    referer {String}: the initial url
+    fileMetadata {Object}: descriptive and technical metadata of the file
+    logicalStructure {Object}: the logical structure of the file (can be null)
+    physicalStructure {Object}: the physical structure of the file 
   */
   referer: undefined,
   fileMetadata: undefined,
@@ -36,9 +37,10 @@ Multivio.CDM = SC.Object.create(
   physicalStructure: undefined,
 
   /**
-    Store the filemetadata for this url
+    Store the fileMetadata for a specific url
   
     @param {String} response the response received from the server
+    @param {String} url the corresponding url
   */
   setFileMetadata: function (response, url) {
     if (SC.ok(response)) {
@@ -46,6 +48,7 @@ Multivio.CDM = SC.Object.create(
           fmt(response.get("body")));    
       var jsonRes = response.get("body");
       var isError = NO;
+      // Check if there is an error
       for (var key in jsonRes) {
         if (jsonRes.hasOwnProperty(key)) {
           if (key === '-1') {
@@ -53,11 +56,12 @@ Multivio.CDM = SC.Object.create(
           }
         } 
       }
+      // if error change to state ERROR
       if (isError) {
-        Multivio.errorController.initialize(
-            {'message': jsonRes['-1']});
-        Multivio.layoutController._showErrorPage();
+        Multivio.errorController.initialize({'message': jsonRes['-1']});
+        Multivio.makeFirstResponder(Multivio.ERROR);
       }
+      // else add the response to the fileMetadata object
       else {
         var t2 = {};
         if (!SC.none(this.get('fileMetadata'))) {
@@ -80,26 +84,28 @@ Multivio.CDM = SC.Object.create(
     @return {Object} the cloned instance
   */
   clone: function (instance) {
+    if (typeof(instance) !== 'object' || instance === null) {
+      return instance;
+    }
 
-     if (typeof(instance) !== 'object' || instance === null) {
-       return instance;
-     }
-
-     //create new instance
-     var newInstance = instance.constructor();
-     //clone the instance
-     for (var i in instance) {
-       newInstance[i] = this.clone(instance[i]);
-     }
-     return newInstance;
-   },
+    //create new instance
+    var newInstance = instance.constructor();
+    //clone the instance
+    for (var i in instance) {
+      if (instance.hasOwnProperty(i)) {
+        newInstance[i] = this.clone(instance[i]);
+      }
+    }
+    return newInstance;
+  },
   
   /**
     Return the fileMetadata for a url. If the information is not on the client
-    ask the server. 
+    ask the server and return -1. 
   
     @param {String} url
-    @return {Object} metadata can be -1 (doesn't exist), metadata 
+    @return {Object} metadata returns actual fileMetadata or 
+        -1 if it doesn't exist 
   */
   getFileMetadata: function (url) {
     if (SC.none(url)) {
@@ -150,13 +156,13 @@ Multivio.CDM = SC.Object.create(
   },
   
   /**
-    Store server logical structure for a specific url 
+    Store the logical structure for a specific url 
   
     @param {String} response the response received from the server
-    @param {String} url the url
+    @param {String} url the corresponding url
   */
   setLogicalStructure: function (response, url) {
-    // verify if response is OK and if there is no Error response
+    // verify if response is OK and if there is no error code in the response
     if (SC.ok(response)) {
       Multivio.logger.debug('logicalStructure received from the server: %@'.
           fmt(response.get("body")));    
@@ -170,9 +176,8 @@ Multivio.CDM = SC.Object.create(
         } 
       }
       if (isError) {
-        Multivio.errorController.initialize(
-            {'message': jsonRes['-1']});
-        Multivio.layoutController._showErrorPage();
+        Multivio.errorController.initialize({'message': jsonRes['-1']});
+        Multivio.makeFirstResponder(Multivio.ERROR);
       }
       // save response
       else {
@@ -206,10 +211,10 @@ Multivio.CDM = SC.Object.create(
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setLogicalStructure', url);
 
-      //put -1 as logicalStructure for this url
+      // put -1 as logicalStructure for this url
       var logical = {};
       if (!SC.none(this.get('logicalStructure'))) {
-          logical = this.get('logicalStructure');
+        logical = this.get('logicalStructure');
       }
       logical[url] =  -1;
       this.set('logicalStructure', logical);
@@ -223,10 +228,10 @@ Multivio.CDM = SC.Object.create(
   },
   
   /**
-    Store the physicalStructure received from server side
+    Store the physical structure for a specific
   
     @param {String} response the response received from the server
-    @param {url} url the physicalStructure for this url
+    @param {url} url the corresponding url
   */
   setPhysicalStructure: function (response, url) {
     if (SC.ok(response)) {
@@ -242,9 +247,8 @@ Multivio.CDM = SC.Object.create(
         } 
       }
       if (isError) {
-        Multivio.errorController.initialize(
-            {'message': jsonRes['-1']});
-        Multivio.layoutController._showErrorPage();
+        Multivio.errorController.initialize({'message': jsonRes['-1']});
+        Multivio.makeFirstResponder(Multivio.ERROR);
       }
       else {
         var t2 = {};
@@ -260,10 +264,11 @@ Multivio.CDM = SC.Object.create(
   },
 
   /**
-    Return the physical strucure for this url or send the request to the 
+    Return the physical strucure for a url or send the request to the 
     server and return -1
   
-    @return {Hash}
+    @param {String} url
+    @return {Object}
   */
   getPhysicalstructure: function (url) {
     if (SC.none(this.get('physicalStructure')) || 

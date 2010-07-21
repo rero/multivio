@@ -21,14 +21,14 @@ Multivio.INIT = SC.Responder.create(
   /**
     First responder did change.
   */
-  didBecomeFirstResponder: function() {
+  didBecomeFirstResponder: function () {
     Multivio.logger.debug('Multivio state is INIT');
   },
   
   /**
     Do nothing
     */
-  reset: function(){
+  reset: function () {
   },
   
   /**
@@ -38,7 +38,7 @@ Multivio.INIT = SC.Responder.create(
     
     @param {String} controllerName the name of the controller
   */
-  addComponent: function(controllerName) {
+  addComponent: function (controllerName) {
     Multivio.layoutController.addComponent(controllerName);
   }
   

@@ -36,7 +36,7 @@ Multivio.TreeView = SC.ScrollView.extend(
     if (!SC.none(selection)) {
       var needToScroll = YES;
       var childViews = this.get('contentView').get('childViews');
-      //Don't verify the first and the last child to force to scroll
+      // Don't verify the first and the last child to force to scroll
       for (var j = 1; j < childViews.get('length') - 1 ; j++) {
         var treeBranch = childViews[j].content;
         if (treeBranch === selection) {
@@ -55,7 +55,7 @@ Multivio.TreeView = SC.ScrollView.extend(
 });
 
 Multivio.TreeLabelView = SC.ListItemView.extend(
-  /** @scope Multivio.TreeLabelView.prototype */ {
+/** @scope Multivio.TreeLabelView.prototype */ {
   hasContentIcon: YES,
     
   /**

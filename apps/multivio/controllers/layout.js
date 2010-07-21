@@ -114,7 +114,6 @@ Multivio.layoutController = SC.Object.create(
 
       case 'xml':
         Multivio.invokeLater(Multivio.sendAction, 1, 'firstFile');
-      //Multivio.sendAction('firstFile');
         break;
 
       default:
@@ -182,7 +181,7 @@ Multivio.layoutController = SC.Object.create(
     @param {String} controller the name of the controller 
   */
   addComponent: function (controller) {
-    // Get component for this controller
+    // get component for this controller
     var component = this.viewByController[controller];
     
     var componentName = 'views.' + component.name;
@@ -192,7 +191,7 @@ Multivio.layoutController = SC.Object.create(
     var gridPosition = this.layoutPositionByName[componentPosition];
     
     var mainPage = Multivio.getPath('mainPage.mainPane');
-    // Verify if the view already exist if not add the component
+    // verify if the view already exist if not add the component
     if (SC.none(mainPage._componentsOnGrid[componentName])) {
       mainPage.layOutComponent({
         name: componentName,

@@ -19,24 +19,24 @@ Multivio.rotateController = SC.ObjectController.create(
 /** @scope Multivio.rotateController.prototype */ {
 
   /**
-  The current rotation angle
+    The current rotation angle
   
-  @property {Number}
-  @default 0
+    @property {Number}
+    @default 0
   */
   currentValue: 0,
   
   /**
-  Set currentValue to 0
+    Set currentValue to 0
   */
-  resetRotateValue: function() {
+  resetRotateValue: function () {
     this.currentValue = 0;
   },
   
   /**
-  Rotate to the left
+    Rotate to the left
   */
-  rotateLeft: function() {
+  rotateLeft: function () {
     var current = this.get('currentValue');
     var rotateL = 0;
     if (current !== 270) {
@@ -46,9 +46,9 @@ Multivio.rotateController = SC.ObjectController.create(
   },
   
   /**
-  Rotate to the right
+    Rotate to the right
   */
-  rotateRight: function() {
+  rotateRight: function () {
     var current = this.get('currentValue');
     var rotateR = 0;
     if (current !== -270) {

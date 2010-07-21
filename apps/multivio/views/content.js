@@ -70,7 +70,7 @@ Multivio.ContentView = SC.ScrollView.extend(
   
   isAnImage: NO, 
   
-  //Tempory => TO DO 
+  // Tempory => TO DO 
   maxImageWidth: 2500,
   maxImageHeight: 3000, 
   
@@ -135,8 +135,8 @@ Multivio.ContentView = SC.ScrollView.extend(
     
     Multivio.zoomController.checkButton();
     SC.RunLoop.end();
-    if (!this.get('isHorizontalScrollerVisible') ) {
-          content.adjust('left', undefined);
+    if (!this.get('isHorizontalScrollerVisible')) {
+      content.adjust('left', undefined);
     }
     Multivio.logger.debug('ContentView#_adjustSize');
   },
@@ -177,7 +177,7 @@ Multivio.ContentView = SC.ScrollView.extend(
         break;
         
       case Multivio.zoomController.PAGEWIDTH:
-      //page width => call with max_width
+      // page width => call with max_width
         newUrl = defaultUrl.replace('width=1500', 'max_width=' +
             parseInt(newWidth, 10) + '&angle=' + rot);
         break;
@@ -186,9 +186,9 @@ Multivio.ContentView = SC.ScrollView.extend(
         if (this.isAnImage) {
           // call with native size if zoomVal === 1
           if (zoomVal === 1) {
-          newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-              this.maxImageWidth + '&max_height=' + this.maxImageHeight + 
-              '&angle=' + rot);
+            newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+                this.maxImageWidth + '&max_height=' + this.maxImageHeight + 
+                '&angle=' + rot);
           }
           else {
             var newSize = zoomVal * Multivio.configurator.get('zoomParameters').max;

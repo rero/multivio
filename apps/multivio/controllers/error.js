@@ -22,7 +22,7 @@ Multivio.errorController = SC.ObjectController.create(
   /**
     Initialize the content of the controller
 
-    @param {hash} message to show
+    @param {Object} message to show
   */
   initialize: function (message) {
     this.set('content', message);

@@ -17,14 +17,14 @@
     because asked by the masterController
     
     if (meta.nPages === undefined) : it's not a pdf, ask physical structure
-      if (masterController.isGrouped) : create images 
+      if (masterController.isGrouped) : create the list of images 
             with the physical structure of the referer
       else : getPhysicalStructure
         if (ph === -1): create binding
         if (ph === null): error
-        else : create images with the ph
+        else : create the list of images with the physical structure
         
-    else : create images with nPages
+    else : create the list of images using nPages (the number of pages)
 
   @author che
   @extends SC.ArrayController
@@ -42,8 +42,9 @@ Multivio.imageController = SC.ArrayController.create(
   position: null,
   
   /**
-    Initialize the controller. This controller need to know 
-    the physical structure of the document.
+    Initialize the controller. This controller needs to know the number 
+    of images. This information may be find in the fileMetadata or deducted
+    from the physical structure of the document.
   
     @param {String} url
   */   
@@ -124,16 +125,15 @@ Multivio.imageController = SC.ArrayController.create(
   }.observes('physicalStructure'),
  
   /**
-    Create images urls and set this content for a PDF document
+    Create images urls for a PDF document. 
 
-    @param {Object} structure the physicalstructure for the file
-    @param {Number} nb the number of pages of this PDF
+    @param {String} pdfUrl the url of the PDF
+    @param {Number} nb the number of pages of the PDF
     @private
   */ 
   _createPDFImages: function (pdfUrl, nb) {
-    // physicalstructure of a PDF contains only one url
     var cont = [];
-    // create as many images that there are page number
+    // create as many images that there are pages
     for (var i = 1; i < nb + 1; i++) {
       var imageUrl = Multivio.configurator.get('serverName') + 
           Multivio.configurator.getImageUrl(pdfUrl, i);
@@ -144,15 +144,16 @@ Multivio.imageController = SC.ArrayController.create(
       cont.push(imageHash);
     }
     this.set('content', cont);
-    Multivio.sendAction('addComponent','imageController');
+    Multivio.sendAction('addComponent', 'imageController');
     Multivio.logger.info(
         'imageController#createPDFImages pdf images created and layout setted' + 
         this.get('content').length);
   },
   
   /**
-    Create image urls and set this content for images
+    Create image urls for images
 
+    @param {Object} structure the physical structure of a document
     @private
   */  
   _createImages: function (structure) {
@@ -177,7 +178,7 @@ Multivio.imageController = SC.ArrayController.create(
       cont.push(imageHash);
     }
     this.set('content', cont);
-    Multivio.sendAction('addComponent','imageController');  
+    Multivio.sendAction('addComponent', 'imageController');  
     Multivio.logger.info(
         'imageController#createImages images created and layout setted' + 
         this.get('content').length);

@@ -53,7 +53,7 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
-    This object contains parameters for zoom
+    This object contains parameters for the zoom
     
     @property {Object}
   */
@@ -270,6 +270,9 @@ Multivio.configurator = SC.Object.create(
     return modifiedUrl;
   },
 
+  /**
+    The text that explain how to call correctly the application
+  */
   usageText: '' +
     '<img src="%@" class="sc-icon-info-48">'.fmt(SC.BLANK_IMAGE_URL) +
     '<div class="mvo_info_full_message">' +

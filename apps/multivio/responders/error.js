@@ -21,12 +21,12 @@ Multivio.ERROR = SC.Responder.create(
   /**
     First responder did change.
   */
-  didBecomeFirstResponder: function() {
+  didBecomeFirstResponder: function () {
     // Verify if the errorController has content
     if (Multivio.errorController.get('hasContent')) {
       Multivio.layoutController._showErrorPage();
     }
-    else{
+    else {
       Multivio.layoutController._showUsagePage();
     }
   }

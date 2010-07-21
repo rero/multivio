@@ -18,7 +18,6 @@ Multivio.main = function main() {
   
   Multivio.getPath('mainPage.mainPane').append();
 
-  //Multivio.makeFirstResponder(Multivio.ERROR);
   // Multivio.initializer#readInputParameters() is declared as the callback
   // function that parses the parameters given in the applications's URL; this
   // is done using the SC.routes mechanism.

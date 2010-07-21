@@ -9,8 +9,29 @@
 /** 
   @class
 
-  This controller manages the behavior of the tree view. It depends on
-  the master controller.
+  This controller manages the behavior of the tree view.
+  
+  algo for the treeStructure:
+
+  get logical structure (lg)
+    if (lg = -1): create binding
+    else:
+
+      if (lg = null): get physical structure (ph)
+        if (ph = -1): create binding
+        if (ph = null): error (no structure)
+        if (ph = ok): 
+          if (isGrouped) : create logical structure using ph with index
+          else : create logical structure with ph but without index
+
+      if (lg = ok) test file_position.index
+        if (index = null): get physical structure to create index
+          if (ph = -1): create binding
+          if (ph = null): error (no index)
+          if (ph = ok): 
+            if (isGrouped) :create index using ph
+            else: use lg
+        else: create logical structure using lg
 
   @author che
   @extends SC.TreeController
@@ -49,29 +70,7 @@ Multivio.treeController = SC.TreeController.create(
   
   /**
     Initialize this controller and verify if the sub-model can be created. 
-    The sub-model need to have the logical structure of the document.
-
-    algo:
-
-    get logical structure (lg)
-      if (lg = -1): create binding
-      else:
-
-        if (lg = null): get physical structure (ph)
-          if (ph = -1): create binding
-          if (ph = null): error (no structure)
-          if (ph = ok): 
-            if (isGrouped) : create logical structure using ph with index
-            else : create logical structure with ph but without index
-
-        if (lg = ok) test file_position.index
-          if (index = null): get physical structure to create index
-            if (ph = -1): create binding
-            if (ph = null): error (no index)
-            if (ph = ok): 
-              if (isGrouped) :create index using ph
-              else: use lg
-          else: create logical structure using lg
+    The sub-model need to have the logical or the physical structure of the document .
 
     @param {String} url the current file url
   */
@@ -250,8 +249,8 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
-    Create the index for a logical structure. To do it we compare urls
-    of the logical and the physical structures
+    Create the index for a logical structure. 
+    To do it we compare urls of the logical and the physical structures
 
     @param {Object} oneNode a node of the logicalStructure. At the first call,
         this node has as childs the logical structure file
@@ -497,7 +496,7 @@ Multivio.treeController = SC.TreeController.create(
     // create treeContent and set content
     var treeContent = Multivio.TreeContent.create(structure[0]);
     this.set('content', treeContent);
-    Multivio.sendAction('addComponent','treeController');
+    Multivio.sendAction('addComponent', 'treeController');
     Multivio.logger.info('treeController#_createTree');
   },
   
@@ -694,7 +693,7 @@ Multivio.treeController = SC.TreeController.create(
     var treeContent = Multivio.TreeContent.create(newStruct[0]);
     this.set('content', treeContent);
     // add view 
-    Multivio.sendAction('addComponent','treeController');
+    Multivio.sendAction('addComponent', 'treeController');
     Multivio.logger.info('treeController#_updateTree');
   },
   
