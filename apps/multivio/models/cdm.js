@@ -121,12 +121,12 @@ Multivio.CDM = SC.Object.create(
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setFileMetadata', url);
       // put -1 for this url
-      var t2 = {};
+     /* var t2 = {};
       if (!SC.none(this.get('fileMetadata'))) {
         t2 = this.get('fileMetadata');
       }
       t2[url] = -1;
-      this.set('fileMetadata', t2);
+      this.set('fileMetadata', t2);*/
       return -1;  
     }
     else {
@@ -212,12 +212,12 @@ Multivio.CDM = SC.Object.create(
           sendGetRequest(serverAdress, this, 'setLogicalStructure', url);
 
       // put -1 as logicalStructure for this url
-      var logical = {};
+     /* var logical = {};
       if (!SC.none(this.get('logicalStructure'))) {
         logical = this.get('logicalStructure');
       }
       logical[url] =  -1;
-      this.set('logicalStructure', logical);
+      this.set('logicalStructure', logical);*/
       return -1;
     }
     else {
@@ -280,12 +280,12 @@ Multivio.CDM = SC.Object.create(
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setPhysicalStructure', url);
 
-      var physical = {};
+     /* var physical = {};
       if (!SC.none(this.get('physicalStructure'))) {
         physical = this.get('physicalStructure');
       }
       physical[url] =  -1;
-      this.set('physicalStructure', physical);
+      this.set('physicalStructure', physical);*/
       return -1;
     }
     else {
