@@ -126,27 +126,19 @@ Multivio.configurator = SC.Object.create(
   componentLayouts: {
     'init': {
       baseLayout: 'default',
-      components: [
-        {name: 'views.headerView',         x: 0, y: 0, xlen: 3, ylen: 1}
-      ]
+      components: [{name: 'views.headerView',  coord: 'A1:C1'}]
     },
     'usage': {
       baseLayout: 'default',
-      components: [
-        {name: 'views.usageView', x: 0, y: 0, xlen: 3, ylen: 3}
-      ]
+      components: [{name: 'views.usageView',   coord: 'A1:C3'}]
     },
     'waiting': {
       baseLayout: 'default',
-      components: [
-        {name: 'views.waitingView', x: 0, y: 0, xlen: 3, ylen: 3}
-      ]
+      components: [{name: 'views.waitingView', coord: 'A1:C3'}]
     },
     'error': {
       baseLayout: 'default',
-      components: [
-        {name: 'views.errorView', x: 0, y: 0, xlen: 3, ylen: 3}
-      ]
+      components: [{name: 'views.errorView',   coord: 'A1:C3'}]
     }
   },
 
@@ -162,21 +154,21 @@ Multivio.configurator = SC.Object.create(
   layoutConfig: {
     xml: {
       components: [
-        {name: 'treeView', position: 'left'}
+        {name: 'views.treeView', coord: 'A2:A2'}
       ]
     },
     pdf: {
       components: [
-        {name: 'treeAndContentView', position: 'leftAndCenter'},
-        {name: 'toolbar', position: 'bottom'},
-        {name: 'thumbnailView', position: 'right'}        
+        {name: 'views.treeAndContentView', coord: 'A2:B2'},
+        {name: 'views.toolbar',            coord: 'A3:C3'},
+        {name: 'views.thumbnailView',      coord: 'C2:C2'}
       ]
     },
     image : {
       components: [
-        {name: 'treeAndContentView', position: 'leftAndCenter'},
-        {name: 'toolbar', position: 'bottom'},
-        {name: 'thumbnailView', position: 'right'}        
+        {name: 'views.treeAndContentView', coord: 'A2:B2'},
+        {name: 'views.toolbar',            coord: 'A3:C3'},
+        {name: 'views.thumbnailView',      coord: 'C2:C2'}
       ]
     }
   },

@@ -32,6 +32,8 @@ Multivio.INIT = SC.Responder.create(
     Multivio.treeController.allowSelection(NO);
   },
   
+  // TODO-CR: there's an inconsistency here: trying to add a component and
+  // providing a controller instead
   /**
     Add a component to the page. 
     

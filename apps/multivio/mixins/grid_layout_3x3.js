@@ -141,44 +141,103 @@ Multivio.GridLayout3x3 = {
 
   /**
     Lay out a component on this view's grid
+    
+    There are two possible ways of calling this function:
+      1) using numeric coordinates
+      2) using spreadsheet-style coordinates
 
-    @param {Object} params layout parameters hash with the following content:
-        {String}  name   component name
+    @param {Object} params layout parameters with the following values:
+        {String} name   component name
         {Number} x      x coordinate on grid
         {Number} y      y coordinate on grid
         {Number} xlen   x length on grid
         {Number} ylen   y length on grid
+      or 
+        {String} name   component name
+        {String} coord  coordinates with format [A-C][1-3]:[A-C][1-3], example:
+          A1:B2, A1:A1, A3:C3...
+          they represent the top-left:bottom-right corners of the component on
+          the grid
   */
   layOutComponent: function (params) {
+    
+    var usingNumericCoordinates = !SC.none(params.x) ? YES : NO;
+
     // validate input parameters
-    var errMess = Multivio.checkParams(params, {
-        'name': SC.T_STRING,
+    var errMess = Multivio.checkParams(params, {'name': SC.T_STRING});
+    if (errMess.length > 0) {
+      var m = 'Invalid parameters while laying out a component ' +
+          ' on a GridLayout3x3:' + errMess;
+      throw {message: m};
+    }
+
+    if (usingNumericCoordinates) {
+      errMess = Multivio.checkParams(params, {
         'x':    SC.T_NUMBER,
         'y':    SC.T_NUMBER,
         'xlen': SC.T_NUMBER,
         'ylen': SC.T_NUMBER
       });
-
-    if (errMess.length > 0) {
-      var m =
-          'Invalid parameters while laying out a component ' +
-          ' on a GridLayout3x3:' + errMess;
-      throw {message: m};
+      if (errMess.length > 0) {
+        m = 'Invalid parameters while laying out a component ' +
+            ' on a GridLayout3x3:' + errMess;
+        throw {message: m};
+      }
+    }
+    else
+    {
+      errMess = Multivio.checkParams(params, {'coord': SC.T_STRING});
+      if (errMess.length > 0) {
+        m = 'Invalid parameters while laying out a component ' +
+            ' on a GridLayout3x3:' + errMess;
+        throw {message: m};
+      }
+      if (params.coord && params.coord.length !== 5) {
+        m = 'Coordinates are invalid:' + params.coord;
+        throw {message: m};
+      }
     }
 
     var componentName   = params.name;
     var componentObject = Multivio.getPath(componentName);
-    var x =    params.x;
-    var y =    params.y;
-    var xlen = params.xlen;
-    var ylen = params.ylen;
+    var x, y, xlen, ylen;
+
+    if (SC.none(componentObject)) {
+      m = 'Component object with name %@ not found for laying out on a ' +
+          'GridLayout3x3'.fmt(componentName);
+      throw {message: m};
+    }
+
+    if (usingNumericCoordinates) {
+      x =    params.x;
+      y =    params.y;
+      xlen = params.xlen;
+      ylen = params.ylen;
+    }
+    else {
+      // convert spreadsheet-style coordinates into numeric coordinates
+      var pos = params.coord.charAt(0);
+      x = (pos === 'A') ? 0 : (pos === 'B') ? 1 : (pos === 'C') ? 2 : -1;
+      pos = parseInt(params.coord.charAt(1), 10);
+      y = pos - 1;
+      pos = params.coord.charAt(3);
+      xlen = (pos === 'A') ? 0 : (pos === 'B') ? 1 : (pos === 'C') ? 2 : -1;
+      xlen = xlen - x + 1;
+      pos = parseInt(params.coord.charAt(4), 10);
+      ylen = pos - y;
+    }
 
     errMess = '';
     // parameter checking
     if (x < 0 || x > 2 || xlen <= 0 || x + xlen > 3 ||
         y < 0 || y > 2 || ylen <= 0 || y + ylen > 3) {
-      errMess = 'Coordinates are invalid: (%@, %@, %@, %@)'.fmt(
-          x, y, xlen, ylen);
+      if (usingNumericCoordinates) {
+        errMess = 'Coordinates are invalid: (%@, %@, %@, %@)'.fmt(
+            x, y, xlen, ylen);
+      }
+      else {
+        errMess = 'Coordinates are invalid: %@'.fmt(params.coord);
+      }
       throw {message: errMess}; 
     }
 

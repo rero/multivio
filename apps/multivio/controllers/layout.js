@@ -35,43 +35,34 @@ Multivio.layoutController = SC.Object.create(
   */
   viewByController: {},
   
-  /**
-    Position on the GridLayout
-  */
-  layoutPositionByName: {
-    top:           {x: 0, y: 0, xlen: 3, ylen: 1},
-    left:          {x: 0, y: 1, xlen: 1, ylen: 1},
-    center:        {x: 1, y: 1, xlen: 1, ylen: 1},
-    right:         {x: 2, y: 1, xlen: 1, ylen: 1},
-    leftAndCenter: {x: 0, y: 1, xlen: 2, ylen: 1},
-    bottom:        {x: 0, y: 2, xlen: 3, ylen: 1}
-  },
-  
+  // TODO-CR: move this object to the configurator
   /**
     Translate mimetype received from the server to a local type
     used by the config layout file
   */
   typeForMimeType: {
-    'text/xml': 'xml',
+    'text/xml':               'xml',
     'text/xml;charset=utf-8': 'xml',
-    'application/xml': 'xml',
-    'application/pdf': 'pdf',
-    'image/jpg': 'image',
-    'image/jpeg': 'image'
+    'application/xml':        'xml',
+    'application/pdf':        'pdf',
+    'image/jpg':              'image',
+    'image/jpeg':             'image'
   },
-  
+
+  // TODO-CR: move this function to the initializer, the layout controller has
+  // nothing to do with controller setup
   /**
-    For a mimetype retrieves the local type, the list of controller needed
+    For a mimetype retrieves the local type, the list of controllers needed
     and the number of views
   
     @param {String} type
     @return {Array} list of controllers
   */
-  getListOfController: function (type) {
+  getListOfControllers: function (type) {
     // set localType using the matching table
     this.localType = this.get('typeForMimeType')[type];
     
-    // TO REMOVE
+    // TODO: remove
     if (this.localType === 'image') {
       Multivio.masterController.isGrouped = YES;
     } 
@@ -80,22 +71,25 @@ Multivio.layoutController = SC.Object.create(
     var config = Multivio.configurator.get('layoutConfig')[this.localType];
     var components = config.components;
 
-    var listOfController = [];
+    var listOfControllers = [];
     // for each view get the controller(s) and create a hash that contains
     // for each controller the view associated
     for (var i = 0; i < components.length; i++) {
       var oneView = components[i].name;
-      var contr = Multivio.views.get(oneView).controllers;
+      var v = Multivio.getPath(oneView);
+      var contr = v.controllers;
       for (var j = 0; j < contr.length; j++) {
         var oneController = contr[j];
         this.viewByController[oneController] = components[i];
-        listOfController.push(oneController);
+        listOfControllers.push(oneController);
       }
     }
-    this.set('nbOfComponentToAdd', listOfController.length);
-    return listOfController;
+    this.set('nbOfComponentToAdd', listOfControllers.length);
+    return listOfControllers;
   },
   
+  // TODO-CR: when getListOfControllers() moves to the initializer this
+  // function should probably go along as well
   /**
     currentListOfWidget has changed, verify if all controller have create the
     view and if YES select the first element to show it.
@@ -183,24 +177,9 @@ Multivio.layoutController = SC.Object.create(
   addComponent: function (controller) {
     // get component for this controller
     var component = this.viewByController[controller];
-    
-    var componentName = 'views.' + component.name;
-    var componentPosition = component.position;
-    
-    // get the grid position for the component
-    var gridPosition = this.layoutPositionByName[componentPosition];
-    
     var mainPage = Multivio.getPath('mainPage.mainPane');
-    // verify if the view already exist if not add the component
-    if (SC.none(mainPage._componentsOnGrid[componentName])) {
-      mainPage.layOutComponent({
-        name: componentName,
-        x: gridPosition.x,
-        y: gridPosition.y,
-        xlen: gridPosition.xlen,
-        ylen: gridPosition.ylen
-      });
-    }
+    mainPage.layOutComponent(component);
+
     this.set('nbOfComponentToAdd', this.get('nbOfComponentToAdd') - 1);
   },
   

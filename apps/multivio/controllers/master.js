@@ -142,10 +142,10 @@ Multivio.masterController = SC.ObjectController.create(
   currentTypeDidChange: function () {
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
-    var listOfControllers = Multivio.layoutController.getListOfController(ct);
+    var listOfControllerss = Multivio.layoutController.getListOfControllers(ct);
     
-    for (var i = 0; i < listOfControllers.length; i++) {
-      var oneController = listOfControllers[i];
+    for (var i = 0; i < listOfControllerss.length; i++) {
+      var oneController = listOfControllerss[i];
       console.info('master initialize controller ' + oneController + ' type ' + ct);
       Multivio[oneController].initialize(cf);
     }

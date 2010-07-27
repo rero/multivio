@@ -109,7 +109,11 @@ test("test component layout on the grid", function () {
   // test different component layouts;
   // - no component is ever removed explicitly between consecutive view sets,
   // but rather replaced by components in the following view set
-  
+
+
+  // test using numeric coordinates
+  ///////////////////////////////////////////////////////////////////////////
+
   // test 1st view set
   // 1 1 1
   // 2 3 4
@@ -214,6 +218,120 @@ test("test component layout on the grid", function () {
   equals(testVisibility(), '11110111', '7th view set, add v4');
   pane.layOutComponent({name: 'testViews.v5', x: 1, y: 2, xlen: 2, ylen: 1});
   equals(testVisibility(), '11111111', '7th view set, add v5');
+
+
+
+  // repeat the same tests using spreadsheet-style coordinates
+  ///////////////////////////////////////////////////////////////////////////
+
+  pane._resetLayout();
+
+  // test 1st view set
+  // 1 1 1
+  // 2 3 4
+  // 5 5 5
+  pane.layOutComponent({name: 'testViews.v1', coord: 'A1:C1'});
+  equals(testVisibility(), '10000000', '1st view set, add v1');
+  pane.layOutComponent({name: 'testViews.v2', coord: 'A2:A2'});
+  equals(testVisibility(), '11000000', '1st view set, add v2');
+  pane.layOutComponent({name: 'testViews.v3', coord: 'B2:B2'});
+  equals(testVisibility(), '11100000', '1st view set, add v3');
+  pane.layOutComponent({name: 'testViews.v4', coord: 'C2:C2'});
+  equals(testVisibility(), '11110000', '1st view set, add v4');
+  pane.layOutComponent({name: 'testViews.v5', coord: 'A3:C3'});
+  equals(testVisibility(), '11111000', '1st view set, add v5');
+
+
+  // test 2nd view set
+  // 6 6 7
+  // 6 6 7
+  // 8 8 1
+  pane.layOutComponent({name: 'testViews.v6', coord: 'A1:B2'});
+  equals(testVisibility(), '00011100', '2nd view set, add v6');
+  pane.layOutComponent({name: 'testViews.v7', coord: 'C1:C2'});
+  equals(testVisibility(), '00001110', '2nd view set, add v7');
+  pane.layOutComponent({name: 'testViews.v8', coord: 'A3:B3'});
+  equals(testVisibility(), '00000111', '2nd view set, add v8');
+  pane.layOutComponent({name: 'testViews.v1', coord: 'C3:C3'});
+  equals(testVisibility(), '10000111', '2nd view set, add v1');
+
+  // test 3rd view set
+  // 2 2 2
+  // 2 2 2
+  // 2 2 2
+  pane.layOutComponent({name: 'testViews.v2', coord: 'A1:C3'});
+  equals(testVisibility(), '01000000', '3rd view set, add v2');
+
+  // test 4th view set
+  // - 6 -
+  // 7 7 7
+  // - 8 -
+  pane.layOutComponent({name: 'testViews.v6', coord: 'B1:B1'});
+  equals(testVisibility(), '00000100', '4th view set, add v6');
+  pane.layOutComponent({name: 'testViews.v7', coord: 'A2:C2'});
+  equals(testVisibility(), '00000110', '4th view set, add v7');
+  pane.layOutComponent({name: 'testViews.v8', coord: 'B3:B3'});
+  equals(testVisibility(), '00000111', '4th view set, add v8');
+
+  // test 5th view set
+  // 3 4 4
+  // 3 7 5
+  // 6 6 5
+  pane.layOutComponent({name: 'testViews.v3', coord: 'A1:A2'});
+  equals(testVisibility(), '00100101', '5th view set, add v3');
+  pane.layOutComponent({name: 'testViews.v4', coord: 'B1:C1'});
+  equals(testVisibility(), '00110001', '5th view set, add v4');
+  pane.layOutComponent({name: 'testViews.v5', coord: 'C2:C3'});
+  equals(testVisibility(), '00111001', '5th view set, add v5');
+  pane.layOutComponent({name: 'testViews.v6', coord: 'A3:B3'});
+  equals(testVisibility(), '00111100', '5th view set, add v6');
+  pane.layOutComponent({name: 'testViews.v7', coord: 'B2:B2'});
+  equals(testVisibility(), '00111110', '5th view set, add v7');
+
+  // test 6th view set
+  // 8 1 2
+  // 8 1 2
+  // 8 1 2
+  pane.layOutComponent({name: 'testViews.v8', coord: 'A1:A3'});
+  equals(testVisibility(), '00011011', '6th view set, add v8');
+  pane.layOutComponent({name: 'testViews.v1', coord: 'B1:B3'});
+  equals(testVisibility(), '10001001', '6th view set, add v1');
+  pane.layOutComponent({name: 'testViews.v2', coord: 'C1:C3'});
+  equals(testVisibility(), '11000001', '6th view set, add v2');
+
+  // test 7th view set
+  // 3 3 3
+  // 4 4 4
+  // 5 5 5
+  pane.layOutComponent({name: 'testViews.v3', coord: 'A1:C1'});
+  equals(testVisibility(), '00100000', '7th view set, add v3');
+  pane.layOutComponent({name: 'testViews.v4', coord: 'A2:C2'});
+  equals(testVisibility(), '00110000', '7th view set, add v4');
+  pane.layOutComponent({name: 'testViews.v5', coord: 'A3:C3'});
+  equals(testVisibility(), '00111000', '7th view set, add v5');
+
+  // test 8th view set
+  // 6 7 8
+  // 1 2 3
+  // 4 5 5
+  pane.layOutComponent({name: 'testViews.v6', coord: 'A1:A1'});
+  equals(testVisibility(), '00011100', '7th view set, add v6');
+  pane.layOutComponent({name: 'testViews.v7', coord: 'B1:B1'});
+  equals(testVisibility(), '00011110', '7th view set, add v7');
+  pane.layOutComponent({name: 'testViews.v8', coord: 'C1:C1'});
+  equals(testVisibility(), '00011111', '7th view set, add v8');
+  pane.layOutComponent({name: 'testViews.v1', coord: 'A2:A2'});
+  equals(testVisibility(), '10001111', '7th view set, add v1');
+  pane.layOutComponent({name: 'testViews.v2', coord: 'B2:B2'});
+  equals(testVisibility(), '11001111', '7th view set, add v2');
+  pane.layOutComponent({name: 'testViews.v3', coord: 'C2:C2'});
+  equals(testVisibility(), '11101111', '7th view set, add v3');
+  pane.layOutComponent({name: 'testViews.v4', coord: 'A3:A3'});
+  equals(testVisibility(), '11110111', '7th view set, add v4');
+  pane.layOutComponent({name: 'testViews.v5', coord: 'B3:B3'});
+  equals(testVisibility(), '11111111', '7th view set, add v5');
+
+
 
 
   /*
