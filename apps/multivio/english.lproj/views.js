@@ -239,6 +239,7 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/beginning.png'),
+        isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
         target: "Multivio.navigationController", 
         action: "goToFirstPage"
       }),
@@ -248,6 +249,7 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/previous.png'),
+        isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
         target: "Multivio.navigationController", 
         action: "goToPreviousPage"
       }),    
@@ -255,9 +257,10 @@ Multivio.views = SC.Page.design(
       textPageView: SC.TextFieldView.design({ 
         layout: { centerX: 0, centerY: -1, width: 40, height: 20 },
         textAlign: SC.ALIGN_CENTER,
-        hint: 'Page',
+        //hint: 'Page',
         valueBinding: 'Multivio.navigationController.currentPage',
-        validator: 'Number'
+        //validator: 'number'
+        //validator: SC.Validator.Number
       }),
 
       nextPageView: SC.ButtonView.design({
@@ -265,6 +268,7 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/next.png'),
+        isEnabledBinding: "Multivio.navigationController.isNextEnabled",
         target: "Multivio.navigationController", 
         action: "goToNextPage"
       }),
@@ -274,6 +278,7 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/end.png'),
+        isEnabledBinding: "Multivio.navigationController.isNextEnabled",
         target: "Multivio.navigationController", 
         action: "goToLastPage"
       })

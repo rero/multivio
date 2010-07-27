@@ -49,6 +49,12 @@ Multivio.navigationController = SC.ObjectController.create(
   _numberOfPages: null,
   
   /**
+    Boolean to enabled and disabled Buttons
+  */
+  isNextEnabled: YES,
+  isPreviousEnabled: YES,
+  
+  /**
     local variables used to create bindings
   */
   position: null,
@@ -132,10 +138,19 @@ Multivio.navigationController = SC.ObjectController.create(
   positionDidChange: function () {
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {
+      this.set('isNextEnabled', YES);
+      this.set('isPreviousEnabled', YES);
       // verify if we need to set selection (avoid loopbacks)
       var currentPageNumber = this.get('currentPage');
       if (currentPageNumber !== newPosition) {
         this.set('currentPage', newPosition);
+        // it's first page => disabled previous buttons
+        if (newPosition === 1) {
+          this.set('isPreviousEnabled', NO);
+        }
+        if (newPosition === this.get('_numberOfPages')) {
+          this.set('isNextEnabled', NO);
+        }
         Multivio.logger.info('navigationController#positionDidChange: %@'.
             fmt(this.get('currentPage')));
       }
@@ -151,23 +166,27 @@ Multivio.navigationController = SC.ObjectController.create(
   */  
   _currentPageDidChange: function () {
     try {
-      //TO DO Problem with negative number
-      var newCurrentPage = this.get('currentPage');    
-     /* if (newCurrentPage <= 0 || newCurrentPage > this.get('_numberOfPages')) {
-        Multivio.usco.showAlertPaneInfo('Invalid number', 
-            newCurrentPage + ' must be between 0 and %@'. 
-            fmt(this.get('_numberOfPages')));
+      var newCurrentPage = this.get('currentPage'); 
+      if (SC.typeOf(newCurrentPage) === SC.T_STRING &&
+          !isNaN(newCurrentPage)) {
+        newCurrentPage = parseFloat(newCurrentPage);
+        // there is nothing
+        if (isNaN(newCurrentPage)) {
+          newCurrentPage = this.get('position');
+        }
       }
-      else {*/
-      if (!SC.none(newCurrentPage)) {
+      if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
+          isNaN(newCurrentPage)) {
+        Multivio.usco.showAlertPaneInfo(
+            'Please enter a number between 1 and ' +
+            this.get('_numberOfPages'));
+      }
+      else {
         var currentPosition = this.get('position');
         if (currentPosition !== newCurrentPage) {
           this.set('position', newCurrentPage);
-          Multivio.logger.info('navigationController#_currentPageDidChange: %@'.
-              fmt(this.get('position')));
         }
       }
-      //}
     }
     catch (err) {
       Multivio.usco.showAlertPaneInfo('Problem: ' + err);
@@ -178,9 +197,13 @@ Multivio.navigationController = SC.ObjectController.create(
     Go to the next page.    
   */ 
   goToNextPage: function () {
+    this.set('isPreviousEnabled', YES);
     var np = this.get('currentPage') + 1;
     if (np <= this.get('_numberOfPages')) {
       this.set('currentPage', np);
+      if (np === this.get('_numberOfPages')) {
+        this.set('isNextEnabled', NO);
+      }
     }
   },
   
@@ -188,9 +211,13 @@ Multivio.navigationController = SC.ObjectController.create(
     Go to the previous page.
   */    
   goToPreviousPage: function () {
+    this.set('isNextEnabled', YES);
     var pp = this.get('currentPage') - 1;
     if (pp > 0) {
       this.set('currentPage', pp);
+      if (pp === 1) {
+        this.set('isPreviousEnabled', NO);
+      }
     }
   },
   
@@ -199,6 +226,8 @@ Multivio.navigationController = SC.ObjectController.create(
   */    
   goToFirstPage: function () {
     this.set('currentPage', 1);
+    this.set('isNextEnabled', YES);
+    this.set('isPreviousEnabled', NO);
   },
   
   /**
@@ -207,6 +236,8 @@ Multivio.navigationController = SC.ObjectController.create(
   goToLastPage: function () {
     var nbp = this.get('_numberOfPages');
     this.set('currentPage', nbp);
+    this.set('isPreviousEnabled', YES);
+    this.set('isNextEnabled', NO);
   }
 
 });
