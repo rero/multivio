@@ -36,6 +36,9 @@ Multivio.READY = SC.Responder.create(
     Select the first file of the current document 
   */
   firstFile: function () {
+    Multivio.makeFirstResponder(Multivio.INIT);
+    // send this message to be sure of being in the INIT state 
+    Multivio.sendAction('reset');
     Multivio.masterController.selectFirstFile();
   }
   

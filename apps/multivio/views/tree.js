@@ -41,6 +41,7 @@ Multivio.TreeView = SC.ScrollView.extend(
         var treeBranch = childViews[j].content;
         if (treeBranch === selection) {
           needToScroll = NO;
+          break;
         }
       }
       if (needToScroll) {
@@ -65,7 +66,7 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {String} icon a URL or class name
   */
   renderIcon: function (context, icon) {
-    if (this.content.get('level') === 0 || this.content.get('level') === 1) {
+    if (SC.none(this.content.get('file_position').index)) {
       context.begin('img').addClass('icon').addClass('')
           .attr('src', static_url('images/icons/mute')).end();
     }

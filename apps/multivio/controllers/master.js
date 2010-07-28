@@ -140,8 +140,6 @@ Multivio.masterController = SC.ObjectController.create(
     @observes currentType
   */
   currentTypeDidChange: function () {
-    Multivio.makeFirstResponder(Multivio.INIT);
-    Multivio.sendAction('reset');
     var ct = this.get('currentType');
     var cf = this.get('currentFile');
     var listOfControllers = Multivio.layoutController.getListOfController(ct);

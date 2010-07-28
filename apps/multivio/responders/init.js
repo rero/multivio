@@ -23,6 +23,7 @@ Multivio.INIT = SC.Responder.create(
   */
   didBecomeFirstResponder: function () {
     Multivio.logger.debug('Multivio state is INIT');
+    Multivio.layoutController._showWaitingView();
   },
   
   /**

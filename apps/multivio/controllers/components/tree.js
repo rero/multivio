@@ -203,7 +203,7 @@ Multivio.treeController = SC.TreeController.create(
       childs: null
     }];
     // create rootNode and add refererNode as it child
-    var rootNode = {
+   /* var rootNode = {
       file_position: {
         index: null,
         url: null
@@ -211,7 +211,7 @@ Multivio.treeController = SC.TreeController.create(
       label: "Root Node",
       childs: refererNode
     };
-    this.treeStructure.push(rootNode);
+    this.treeStructure.push(rootNode);*/
     this.treeStructure.push(refererNode);
   },
   
@@ -225,10 +225,13 @@ Multivio.treeController = SC.TreeController.create(
     // if treeStructure is not null
     // append child to the refererNode
     if (!SC.none(this.treeStructure)) {
-      var refererNode = this.treeStructure[1];
+      var refererNode = this.treeStructure[0];
+      refererNode[0].childs = list;
+      newStructure.push(refererNode[0]);
+      /*var refererNode = this.treeStructure[1];
       refererNode[0].childs = list;
       newStructure.push(this.treeStructure[0]);
-      newStructure.push(refererNode[0]);
+      newStructure.push(refererNode[0]);*/
     }
     for (var i = 0; i < list.length; i++) {
       newStructure.push(list[i]);
@@ -592,13 +595,7 @@ Multivio.treeController = SC.TreeController.create(
             }
             else {
               // get the lastIndex
-              var res = this._treeLabelByPosition[lastIndex];
-              if (SC.none(res)) {
-                listToReturn = this._treeLabelByPosition[newIndex];
-              }
-              else {
-                listToReturn = res;
-              } 
+              listToReturn = this._treeLabelByPosition[lastIndex];
               break;
             }
           }
