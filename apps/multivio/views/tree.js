@@ -68,7 +68,7 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
   renderIcon: function (context, icon) {
     if (SC.none(this.content.get('file_position').index)) {
       context.begin('img').addClass('icon').addClass('')
-          .attr('src', static_url('images/icons/mute')).end();
+          .attr('src', static_url('images/icons/file')).end();
     }
   }, 
 
