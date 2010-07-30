@@ -126,15 +126,14 @@ Multivio.initializer = SC.Object.create(
       }
       else {
         Multivio.errorController.
-            initialize({'message': 'incompatibility between server and client'});
+            initialize({'err_name': 'Incompatibilitys'});
         Multivio.makeFirstResponder(Multivio.ERROR);
         Multivio.logger.logException('Client and server are incompatible: ' +
             Multivio.configurator.clientVersion);
       }
     }
     else {
-      Multivio.errorController.initialize({'message': 'server not founded' +
-          ', please contact multivio administrator!'});
+      Multivio.errorController.initialize({'err_name': 'ServerNotFound'});
       Multivio.makeFirstResponder(Multivio.ERROR);
     } 
   },

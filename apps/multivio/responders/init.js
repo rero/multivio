@@ -26,9 +26,11 @@ Multivio.INIT = SC.Responder.create(
   },
   
   /**
-    Do nothing.
+    Disabled allowSelection property of the treecontroller
   */
-  reset: function () {},
+  notAllowSelection: function () {
+    Multivio.treeController.allowSelection(NO);
+  },
   
   /**
     Add a component to the page. 

@@ -703,6 +703,15 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
+    Enabled or disabled the selection of the treeController
+    
+    @param {Boolean} 
+  */
+  allowSelection: function (allowValue) {
+    this.set('allowsSelection', allowValue);
+  },
+  
+  /**
     Updates position by observing changes of the selection property.
     
     @observes selection
@@ -718,9 +727,8 @@ Multivio.treeController = SC.TreeController.create(
           if (url !== Multivio.masterController.currentFile &&
               url !== Multivio.CDM.getReferer()) { 
             Multivio.makeFirstResponder(Multivio.INIT);
+            Multivio.sendAction('notAllowSelection');
             Multivio.masterController.set('currentFile', url);
-            // collapse the first label
-            this.get('arrangedObjects').get('children')[0].set('treeItemIsExpanded', NO);
           }
           else {
             // currentfile selected set position = 1

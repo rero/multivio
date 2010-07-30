@@ -34,8 +34,16 @@ Multivio.errorController = SC.ObjectController.create(
     
     @property {String} ths message
   */
-  serverMessage: function () {
-    return this.get('content');
+  message: function () {
+    var errorContent = this.get('content');
+    var errorName = errorContent.err_name;
+    var errorMessage = Multivio.configurator.get('errorMessage')[errorName];
+    // if it's an unknown error get the default message
+    if (SC.none(errorMessage)) {
+      var support = Multivio.configurator.get('support');
+      errorMessage = Multivio.configurator.get('errorMessage').Default + support;
+    }
+    return errorMessage;
   }.property('content')
   
 });

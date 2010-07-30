@@ -47,31 +47,18 @@ Multivio.CDM = SC.Object.create(
       Multivio.logger.debug('metadata received from the server: %@'.
           fmt(response.get("body")));    
       var jsonRes = response.get("body");
-      var isError = NO;
-      // Check if there is an error
-      for (var key in jsonRes) {
-        if (jsonRes.hasOwnProperty(key)) {
-          if (key === '-1') {
-            isError = YES;
-          }
-        } 
+      var t2 = {};
+      if (!SC.none(this.get('fileMetadata'))) {
+        var oldMeta = this.get('fileMetadata');
+        t2 = this.clone(oldMeta);
       }
-      // if error change to state ERROR
-      if (isError) {
-        Multivio.errorController.initialize({'message': jsonRes['-1']});
-        Multivio.makeFirstResponder(Multivio.ERROR);
-      }
-      // else add the response to the fileMetadata object
-      else {
-        var t2 = {};
-        if (!SC.none(this.get('fileMetadata'))) {
-          var oldMeta = this.get('fileMetadata');
-          t2 = this.clone(oldMeta);
-        }
-        t2[url] = jsonRes;
-        this.set('fileMetadata', t2);
-        Multivio.logger.info('New metadata added for ' + url);
-      }
+      t2[url] = jsonRes;
+      this.set('fileMetadata', t2);
+      Multivio.logger.info('New metadata added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
     }
   },
   
@@ -120,13 +107,6 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setFileMetadata', url);
-      // put -1 for this url
-     /* var t2 = {};
-      if (!SC.none(this.get('fileMetadata'))) {
-        t2 = this.get('fileMetadata');
-      }
-      t2[url] = -1;
-      this.set('fileMetadata', t2);*/
       return -1;  
     }
     else {
@@ -167,29 +147,18 @@ Multivio.CDM = SC.Object.create(
       Multivio.logger.debug('logicalStructure received from the server: %@'.
           fmt(response.get("body")));    
       var jsonRes = response.get("body");
-      var isError = NO;
-      for (var key in jsonRes) {
-        if (jsonRes.hasOwnProperty(key)) {
-          if (key === '-1') {
-            isError = YES;
-          }
-        } 
+      var t2 = {};
+      if (!SC.none(this.get('logicalStructure'))) {
+        var oldLogic = this.get('logicalStructure');
+        t2 = this.clone(oldLogic);
       }
-      if (isError) {
-        Multivio.errorController.initialize({'message': jsonRes['-1']});
-        Multivio.makeFirstResponder(Multivio.ERROR);
-      }
-      // save response
-      else {
-        var t2 = {};
-        if (!SC.none(this.get('logicalStructure'))) {
-          var oldLogic = this.get('logicalStructure');
-          t2 = this.clone(oldLogic);
-        }
-        t2[url] = jsonRes;
-        this.set('logicalStructure', t2);
-        Multivio.logger.info('New logicalStructure added for ' + url);
-      }
+      t2[url] = jsonRes;
+      this.set('logicalStructure', t2);
+      Multivio.logger.info('New logicalStructure added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
     }
   },
 
@@ -210,14 +179,6 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setLogicalStructure', url);
-
-      // put -1 as logicalStructure for this url
-     /* var logical = {};
-      if (!SC.none(this.get('logicalStructure'))) {
-        logical = this.get('logicalStructure');
-      }
-      logical[url] =  -1;
-      this.set('logicalStructure', logical);*/
       return -1;
     }
     else {
@@ -238,28 +199,18 @@ Multivio.CDM = SC.Object.create(
       Multivio.logger.debug('physicalStructure received from the server: %@'.
           fmt(response.get("body")));    
       var jsonRes = response.get("body");
-      var isError = NO;
-      for (var key in jsonRes) {
-        if (jsonRes.hasOwnProperty(key)) {
-          if (key === '-1') {
-            isError = YES;
-          }
-        } 
+      var t2 = {};
+      if (!SC.none(this.get('physicalStructure'))) {
+        var oldPhysic = this.get('physicalStructure');
+        t2 = this.clone(oldPhysic);
       }
-      if (isError) {
-        Multivio.errorController.initialize({'message': jsonRes['-1']});
-        Multivio.makeFirstResponder(Multivio.ERROR);
-      }
-      else {
-        var t2 = {};
-        if (!SC.none(this.get('physicalStructure'))) {
-          var oldPhysic = this.get('physicalStructure');
-          t2 = this.clone(oldPhysic);
-        }
-        t2[url] = jsonRes;
-        this.set('physicalStructure', t2);
-        Multivio.logger.debug('New physicalStructure added for ' + url);
-      }
+      t2[url] = jsonRes;
+      this.set('physicalStructure', t2);
+      Multivio.logger.debug('New physicalStructure added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
     }
   },
 
@@ -279,13 +230,6 @@ Multivio.CDM = SC.Object.create(
       serverAdress += url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setPhysicalStructure', url);
-
-     /* var physical = {};
-      if (!SC.none(this.get('physicalStructure'))) {
-        physical = this.get('physicalStructure');
-      }
-      physical[url] =  -1;
-      this.set('physicalStructure', physical);*/
       return -1;
     }
     else {

@@ -23,6 +23,7 @@ Multivio.READY = SC.Responder.create(
   */
   didBecomeFirstResponder: function () {
     Multivio.logger.debug('Multivio state is READY');
+    Multivio.treeController.allowSelection(YES);
   },
   
   /**
@@ -37,8 +38,7 @@ Multivio.READY = SC.Responder.create(
   */
   firstFile: function () {
     Multivio.makeFirstResponder(Multivio.INIT);
-    // send this message to be sure of being in the INIT state 
-    Multivio.sendAction('reset');
+    Multivio.sendAction('notAllowSelection');
     Multivio.masterController.selectFirstFile();
   }
   

@@ -464,14 +464,7 @@ Multivio.views = SC.Page.design(
       SC.LabelView.design({
         layout: { centerX: 0, centerY: 0, width: 700, height: 50 },
         classNames: 'mvo_info_full',
-        contentBinding: 'Multivio.errorController.serverMessage',
-        contentValueKey: 'errorCode',
-        escapeHTML: NO
-      }),
-      SC.LabelView.design({
-        layout: { centerX: 0, centerY: 50, width: 700, height: 50 },
-        classNames: 'mvo_info_full',
-        contentBinding: 'Multivio.errorController.serverMessage',
+        contentBinding: 'Multivio.errorController',
         contentValueKey: 'message',
         escapeHTML: NO
       })

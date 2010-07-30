@@ -19,6 +19,11 @@ Multivio.configurator = SC.Object.create(
 /** @scope Multivio.configurator.prototype */ {
   
   /**
+    The support address
+  */
+  support: 'info@multivio.org',  
+  
+  /**
     The name of the multivio server
     
     @property {String}
@@ -268,6 +273,20 @@ Multivio.configurator = SC.Object.create(
       break;
     }
     return modifiedUrl;
+  },
+  
+  /**
+    Error messages
+  */
+  errorMessage: {
+    PermissionDenied: 'You are not allow to see this document.',
+    UnableToRetreiveRemoteDocument: 'The requested document does not exist or is not accessible.',
+    UnsupportedFormat: 'The format of the requested document is currently not supported.',
+    InvalidArgument: 'Incorrect arguments.',
+    HttpMethodNotAllowed: 'The HTTP method is not supported by this server.',
+    Incompatibility: 'The server and the client are not compatible.',
+    ServerNotFound: 'The Multivio server is not accessible.',
+    Default: 'An error occured. Please contact support at '
   },
 
   /**

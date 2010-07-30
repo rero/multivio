@@ -22,6 +22,10 @@ Multivio.ERROR = SC.Responder.create(
     First responder did change.
   */
   didBecomeFirstResponder: function () {
+    // if we have waiting pane remove it
+    if (Multivio.waitingPane.get('isPaneAttached')) {
+      Multivio.layoutController._hideWaitingPage();
+    }
     // Verify if the errorController has content
     if (Multivio.errorController.get('hasContent')) {
       Multivio.layoutController._showErrorPage();
