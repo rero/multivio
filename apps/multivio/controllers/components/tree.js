@@ -716,9 +716,11 @@ Multivio.treeController = SC.TreeController.create(
         var url = newSelection.firstObject().file_position.url;
         if (!SC.none(url)) {
           if (url !== Multivio.masterController.currentFile &&
-              url !== Multivio.CDM.getReferer()) {
+              url !== Multivio.CDM.getReferer()) { 
             Multivio.makeFirstResponder(Multivio.INIT);
             Multivio.masterController.set('currentFile', url);
+            // collapse the first label
+            this.get('arrangedObjects').get('children')[0].set('treeItemIsExpanded', NO);
           }
           else {
             // currentfile selected set position = 1

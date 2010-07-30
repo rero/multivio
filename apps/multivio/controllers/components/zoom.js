@@ -94,7 +94,10 @@ Multivio.zoomController = SC.ObjectController.create(
     this.maxVirtualSize = Multivio.configurator.get('zoomParameters').max;
     this.minVirtualSize = Multivio.configurator.get('zoomParameters').min;
     this.currentZoomState = Multivio.configurator.get('zoomParameters').initState;
-    this.disabledNativePreference();
+    if (Multivio.masterController.currentType === 'image/jpeg' || 
+        Multivio.masterController.currentType === 'image/jpg') {
+      this.addNativePreference();      
+    }
   },
   
   /**
@@ -117,9 +120,6 @@ Multivio.zoomController = SC.ObjectController.create(
   setNativeImageSize: function (imageWidth, imageHeight) {
     this.nativeImageWidth = imageWidth;
     this.nativeImageHeight = imageHeight;
-    if (!SC.none(imageWidth) && !SC.none(imageHeight)) {
-      this.enabledNativePreference();
-    }
   },
   
   /**
@@ -202,20 +202,16 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    Disabled native preference
+  Add the native button 
   */
-  disabledNativePreference: function () {
+  addNativePreference: function () {
     var zoomPage = Multivio.views.get('toolbar').get('zoomView');
-    zoomPage.get('zoomPredefinedView').items[2].enabled = NO;
-    zoomPage.get('zoomPredefinedView').itemContentDidChange();
-  },
-  
-  /**
-    Enabled native preference
-  */
-  enabledNativePreference: function () {
-    var zoomPage = Multivio.views.get('toolbar').get('zoomView');
-    zoomPage.get('zoomPredefinedView').items[2].enabled = YES;
+    var itemsWithNative = [
+      {title: "Full", value: "Full", enabled: YES},
+      {title: "Width", value: "Width", enabled: YES},
+      {title: "Native", value: "Native", enabled: YES}
+    ];
+    zoomPage.get('zoomPredefinedView').set('items', itemsWithNative);
     zoomPage.get('zoomPredefinedView').itemContentDidChange();
   },
   

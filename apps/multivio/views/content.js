@@ -42,6 +42,8 @@ Multivio.ContentView = SC.ScrollView.extend(
   selection: null,
   selectionBinding: 'Multivio.imageController.selection', 
   
+  metadata: null,
+  
   /**
     Binds to the currentZoomState value in the zoomController
   
@@ -111,7 +113,42 @@ Multivio.ContentView = SC.ScrollView.extend(
     if (!SC.none(rot)) {
       this._loadNewImage();
     }
-  }.observes('rotateValue'), 
+  }.observes('rotateValue'),
+  
+  /**
+    FileMetadata has changed. See if we can load the image
+  */
+  metadataDidChange: function () {
+    var met = this.get('metadata');
+    if (!SC.none(met)) {
+      var currentSelection = this.get('selection');
+      if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
+        var defaultUrl = currentSelection.firstObject().url;
+        var index = defaultUrl.indexOf('&url=');
+        var metadataUrl = defaultUrl.substring(index + 5, defaultUrl.length);
+        var fileMeta = this.get('metadata')[metadataUrl];
+        // fileMetadata is avalaible
+        if (fileMeta !== -1 && !SC.none(fileMeta)) {
+          var mime = fileMeta.mime;
+          // if image get maxW & maxH
+          if (Multivio.layoutController.get('typeForMimeType')[mime] === 'image') {
+            this.maxImageWidth = fileMeta.width;
+            this.maxImageHeight = fileMeta.height;
+            this.isAnImage = YES;
+            Multivio.zoomController.setNativeImageSize(this.maxImageWidth, this.maxImageHeight);
+          }
+          else {
+            // if it's not an image reset native size
+            Multivio.zoomController.setNativeImageSize(null, null);
+          }
+          // new selection rotate value = 0
+          this.rotateValue = 0;
+          Multivio.rotateController.resetRotateValue();
+          this._loadNewImage();
+        }
+      }
+    }
+  }.observes('metadata'),
   
 
   /**
@@ -219,29 +256,37 @@ Multivio.ContentView = SC.ScrollView.extend(
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
       var defaultUrl = currentSelection.firstObject().url;
+      
       var index = defaultUrl.indexOf('&url=');
       var metadataUrl = defaultUrl.substring(index + 5, defaultUrl.length);
-      // TO DO get metadata to know if it's a pdf or an image
-      // if image get maxW & maxH
-      if (defaultUrl.indexOf('pdf') === -1) {
-        // TO DO retreive native size of the image in the metadata
-        /*
-        this.maxImageWidth = metadata.width;
-        this.maxImageHeight = metadata.height;
-        */
-        this.isAnImage = YES;
-        Multivio.zoomController.setNativeImageSize(this.maxImageWidth, this.maxImageHeight);
+      var fileMeta = Multivio.CDM.getFileMetadata(metadataUrl);
+      // fileMetadata is avalaible
+      if (fileMeta !== -1) {
+        var mime = fileMeta.mime;
+        // if image get maxW & maxH
+        if (Multivio.layoutController.get('typeForMimeType')[mime] === 'image') {  
+          this.maxImageWidth = fileMeta.width;
+          this.maxImageHeight = fileMeta.height;
+          this.isAnImage = YES;
+          Multivio.zoomController.setNativeImageSize(this.maxImageWidth, this.maxImageHeight);
+        }
+        else {
+          // if it's not an image reset native size
+          Multivio.zoomController.setNativeImageSize(null, null);
+        }
+        // new selection rotate value = 0
+        this.rotateValue = 0;
+        Multivio.rotateController.resetRotateValue();
+        this._loadNewImage();
+        
       }
       else {
-        // if it's not an image reset native size
-        Multivio.zoomController.setNativeImageSize(null, null);
+        var listOfBindings = this.get('bindings');
+        if (listOfBindings.length === 4) {
+          this.bind('metadata', 'Multivio.CDM.fileMetadata');
+        }
       }
-      // new selection rotate value = 0
-      this.rotateValue = 0;
-      Multivio.rotateController.resetRotateValue();
-      this._loadNewImage();
     }
-    
   }.observes('selection')
 
 });

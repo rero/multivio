@@ -257,10 +257,7 @@ Multivio.views = SC.Page.design(
       textPageView: SC.TextFieldView.design({ 
         layout: { centerX: 0, centerY: -1, width: 40, height: 20 },
         textAlign: SC.ALIGN_CENTER,
-        //hint: 'Page',
-        valueBinding: 'Multivio.navigationController.currentPage',
-        //validator: 'number'
-        //validator: SC.Validator.Number
+        valueBinding: 'Multivio.navigationController.currentPage'
       }),
 
       nextPageView: SC.ButtonView.design({
@@ -314,8 +311,7 @@ Multivio.views = SC.Page.design(
         layout: { centerX: 30, centerY: 0, width: 160, height: 25},
         items: [
           {title: "Full", value: "Full", enabled: YES},
-          {title: "Width", value: "Width", enabled: YES},
-          {title: "Native", value: "Native", enabled: YES}
+          {title: "Width", value: "Width", enabled: YES}
         ],
         itemTitleKey: 'title',
         itemValueKey: 'value',

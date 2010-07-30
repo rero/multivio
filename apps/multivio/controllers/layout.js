@@ -242,17 +242,6 @@ Multivio.layoutController = SC.Object.create(
     }
   },
   
-  _showWaitingView: function () {
-    var mainPage = Multivio.getPath('mainPage.mainPane');
-    mainPage.layOutComponent({
-        name: 'views.waitingView',
-        x: 1,
-        y: 1,
-        xlen: 1,
-        ylen: 1
-      });
-  },
-  
   /**
     Show waiting page
 
