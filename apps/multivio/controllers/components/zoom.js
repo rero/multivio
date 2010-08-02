@@ -85,6 +85,7 @@ Multivio.zoomController = SC.ObjectController.create(
   */
   isZoomInAllow: YES,
   isZoomOutAllow: YES,
+  isStateEnabled: YES,
   
   /**
     Initialize this controller. Retreive zoom values from the configurator.

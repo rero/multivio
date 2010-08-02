@@ -53,6 +53,7 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   isNextEnabled: YES,
   isPreviousEnabled: YES,
+  isCurrentPageEnabled: YES,
   
   /**
     local variables used to create bindings
@@ -104,7 +105,8 @@ Multivio.navigationController = SC.ObjectController.create(
         this.set('_numberOfPages', meta.nPages);
         Multivio.sendAction('addComponent', 'navigationController');
       }
-    }  
+    }
+    this.checkButton();  
     Multivio.logger.info('navigationController initialized');
   },
   
@@ -192,6 +194,19 @@ Multivio.navigationController = SC.ObjectController.create(
       Multivio.usco.showAlertPaneInfo('Problem: ' + err);
     }
   }.observes('currentPage'),
+  
+  /**
+    Verify if navigation buttons should be disabled 
+  */
+  checkButton: function () {
+    var current = this.get('currentPage');
+    if (current === 1) {
+      this.set('isPreviousEnabled', NO);
+    }
+    if (current === this.get('_numberOfPages')) {
+      this.set('isNextEnabled', NO);
+    }
+  },
   
   /**
     Go to the next page.    

@@ -27,6 +27,12 @@ Multivio.rotateController = SC.ObjectController.create(
   currentValue: 0,
   
   /**
+    Boolean to enabled and disabled rotate Button
+  */
+  isRigthAllow: YES,
+  isLeftAllow: YES,
+  
+  /**
     Set currentValue to 0
   */
   resetRotateValue: function () {

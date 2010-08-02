@@ -257,7 +257,8 @@ Multivio.views = SC.Page.design(
       textPageView: SC.TextFieldView.design({ 
         layout: { centerX: 0, centerY: -1, width: 40, height: 20 },
         textAlign: SC.ALIGN_CENTER,
-        valueBinding: 'Multivio.navigationController.currentPage'
+        valueBinding: 'Multivio.navigationController.currentPage',
+        isEnabledBinding: 'Multivio.navigtionController.isCurrentPageEnabled'
       }),
 
       nextPageView: SC.ButtonView.design({
@@ -317,6 +318,7 @@ Multivio.views = SC.Page.design(
         itemValueKey: 'value',
         itemIsEnabledKey: 'enabled',
         valueBinding: "Multivio.zoomController.zoomState",
+        isEnabledBinding: 'Multivio.zoomController.isStateEnabled',
         target: "Multivio.zoomController",
         action: "setPredefinedZoom"
       })
@@ -336,7 +338,8 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/rotate_left.png'),
-        target: "Multivio.rotateController", 
+        target: "Multivio.rotateController",
+        isEnabledBinding: 'Multivio.rotateController.isLeftAllow', 
         action: "rotateLeft"
       }),
       
@@ -346,7 +349,8 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/rotate_right.png'),
-        target: "Multivio.rotateController", 
+        target: "Multivio.rotateController",
+        isEnabledBinding: 'Multivio.rotateController.isRigthAllow',
         action: "rotateRight"
       })
     

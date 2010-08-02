@@ -164,6 +164,8 @@ Multivio.ContentView = SC.ScrollView.extend(
   */
   _adjustSize: function (url, image) {
     SC.RunLoop.begin();
+    // enabled all buttons
+    this.enabledButtons();
     var content =  this.get('contentView');
     content.set('value', url);
 
@@ -171,6 +173,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     content.adjust('height', image.height);
     
     Multivio.zoomController.checkButton();
+    Multivio.navigationController.checkButton();
     SC.RunLoop.end();
     if (!this.get('isHorizontalScrollerVisible')) {
       content.adjust('left', undefined);
@@ -185,6 +188,8 @@ Multivio.ContentView = SC.ScrollView.extend(
   _loadNewImage: function () {
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
+      // disabled all button
+      this.disabledButtons();
       var defaultUrl = currentSelection.firstObject().url;
       var zoomVal = this.get('zoomValue');
     
@@ -243,6 +248,38 @@ Multivio.ContentView = SC.ScrollView.extend(
       Multivio.logger.debug('load new image %@'.fmt(newUrl));
       SC.imageCache.loadImage(newUrl, this, this._adjustSize);
     }
+  },
+  
+  /**
+    Disabled all buttons that can interact with this view 
+  */  
+  disabledButtons: function () {
+    SC.RunLoop.begin();
+    Multivio.navigationController.set('isNextEnabled', NO);
+    Multivio.navigationController.set('isPreviousEnabled', NO);
+    Multivio.navigationController.set('isCurrentPageEnabled', NO);
+    Multivio.rotateController.set('isRigthAllow', NO);
+    Multivio.rotateController.set('isLeftAllow', NO);
+    Multivio.zoomController.set('isZoomInAllow', NO);
+    Multivio.zoomController.set('isZoomOutAllow', NO);
+    Multivio.zoomController.set('isStateEnabled', NO);
+    SC.RunLoop.end();
+  },
+  
+  /**
+    Enabled all buttons that can intercat with this view
+  */
+  enabledButtons: function () {
+    SC.RunLoop.begin();
+    Multivio.navigationController.set('isNextEnabled', YES);
+    Multivio.navigationController.set('isPreviousEnabled', YES);
+    Multivio.navigationController.set('isCurrentPageEnabled', YES);
+    Multivio.rotateController.set('isRigthAllow', YES);
+    Multivio.rotateController.set('isLeftAllow', YES);
+    Multivio.zoomController.set('isZoomInAllow', YES);
+    Multivio.zoomController.set('isZoomOutAllow', YES);
+    Multivio.zoomController.set('isStateEnabled', YES);
+    SC.RunLoop.end(); 
   },
  
   /**
