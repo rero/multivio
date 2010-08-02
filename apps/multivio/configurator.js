@@ -32,6 +32,13 @@ Multivio.configurator = SC.Object.create(
   serverName: '/server',
   
   /**
+    The version of the server
+    
+    @property {String}
+  */  
+  serverVersion: null,
+  
+  /**
     The current version of the client
   */
   clientVersion: '0.1',
@@ -280,7 +287,7 @@ Multivio.configurator = SC.Object.create(
   */
   errorMessage: {
     PermissionDenied: 'You are not allow to see this document.',
-    UnableToRetreiveRemoteDocument: 'The requested document does not exist or is not accessible.',
+    UnableToRetrieveRemoteDocument: 'The requested document does not exist or is not accessible.',
     UnsupportedFormat: 'The format of the requested document is currently not supported.',
     InvalidArgument: 'Incorrect arguments.',
     HttpMethodNotAllowed: 'The HTTP method is not supported by this server.',

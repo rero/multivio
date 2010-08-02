@@ -430,11 +430,18 @@ Multivio.views = SC.Page.design(
         SC.ImageView.design({
           layout: { top: 10, height: 44, right: 6, width: 140 },
           value: static_url('images/multivio_logo_bw_beta_140x44'),
-          toolTip: 'Go to Multivio website. Client release: ' + Multivio.VERSION
+          toolTip: 'Go to Multivio website. Client release: ' + 
+              Multivio.VERSION
         })
       ],
       render: function (context, firstTime) {
         context.push("<a href='https://www.multivio.org/'>");
+        // add the version of the server in the tooltip
+        var childView = this.get('childViews')[0];
+        var toolTip = childView.get('toolTip');
+        var sererVersion = Multivio.configurator.get('serverVersion');
+        toolTip += ' & Server release: ' + sererVersion;
+        childView.set('toolTip', toolTip);
         this.renderChildViews(context, firstTime);
         context.push("</a>");
       }

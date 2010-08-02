@@ -108,6 +108,7 @@ Multivio.initializer = SC.Object.create(
       var jsonRes = response.get("body");
       
       var serverVersion = jsonRes.api_version;
+      Multivio.configurator.set('serverVersion', jsonRes.version);
       var clientVersions = 
           Multivio.configurator.serverCompatibility[serverVersion];
       var currentVersion = Multivio.configurator.clientVersion;
