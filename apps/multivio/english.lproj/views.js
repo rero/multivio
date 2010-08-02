@@ -452,33 +452,37 @@ Multivio.views = SC.Page.design(
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
     childViews: [
-      SC.LabelView.design({
-        layout: { centerX: 0, centerY: 0, width: 700, height: 400 },
-        classNames: 'mvo_info_full',
-        contentBinding: 'Multivio.configurator',
-        contentValueKey: 'usageText',
-        escapeHTML: NO
-      })
+      SC.View.design({
+        layout: { centerX: 0, centerY: 0, width: 700, height: 450 },
+        childViews: [
+          SC.LabelView.design({
+            layout: { top: 50, bottom: 50, right: 50, left: 50 },
+            classNames: 'mvo_info_full',
+            contentBinding: 'Multivio.errorController',
+            contentValueKey: 'usageText',
+            escapeHTML: NO
+          })
+        ]
+      }).classNames('mvo_info_full_background'.w())
     ]
   }).classNames('mvo_info_full shadow'.w()),
   
   errorView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
-    childViews: [  
-      SC.LabelView.design({
-        layout: { centerX: 0, centerY: -50, width: 700, height: 50 },
-        classNames: 'mvo_info_full',
-        value: 'An Error occured',
-        escapeHTML: NO
-      }),
-      SC.LabelView.design({
-        layout: { centerX: 0, centerY: 0, width: 700, height: 50 },
-        classNames: 'mvo_info_full',
-        contentBinding: 'Multivio.errorController',
-        contentValueKey: 'message',
-        escapeHTML: NO
-      })
+    childViews: [
+      SC.View.design({
+        layout: { centerX: 0, centerY: 0, width: 700, height: 400 },
+        childViews: [
+          SC.LabelView.design({
+            layout: { top: 50, bottom: 50, right: 50, left: 50 },
+            classNames: 'mvo_info_full',
+            contentBinding: 'Multivio.errorController',
+            contentValueKey: 'message',
+            escapeHTML: NO
+          })
+        ]
+      }).classNames('mvo_info_full_background'.w())
     ]
   }).classNames('mvo_info_full shadow'.w()),
 

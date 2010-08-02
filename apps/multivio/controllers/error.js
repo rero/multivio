@@ -37,13 +37,54 @@ Multivio.errorController = SC.ObjectController.create(
   message: function () {
     var errorContent = this.get('content');
     var errorName = errorContent.err_name;
-    var errorMessage = Multivio.configurator.get('errorMessage')[errorName];
+    var errorMessage = ('_' + errorName).loc();
     // if it's an unknown error get the default message
-    if (SC.none(errorMessage)) {
+    if (errorMessage[0] === '_') {
       var support = Multivio.configurator.get('support');
-      errorMessage = Multivio.configurator.get('errorMessage').Default + support;
+      if (SC.none(support)) {
+        // support variable not configured, fall back to a hard-coded default
+        support = 'info@multivio.org';
+      }
+      errorMessage = '_Default'.loc(support);
     }
-    return errorMessage;
-  }.property('content')
-  
+    var errorDescription = errorContent.err_description;
+    if (!SC.none(errorDescription)) {
+      errorMessage = errorMessage + '<br><br>' + errorDescription.loc();
+    }
+    return this.get('errorText').fmt(errorMessage);
+  }.property('content'),
+
+  /**
+    The error wrapper message
+  */
+  errorText: '' +
+    '<img src="%@" class="sc-icon-error-48">'.fmt(SC.BLANK_IMAGE_URL) +
+    '<div class="mvo_info_full_title">' +
+    '<h3>' + '_An error occurred'.loc() + '</h3>' +
+    '</div>' +
+    '<div class="mvo_info_full_message">%@</div>',
+
+  /**
+    The text that explains how to call the application
+  */
+  usageText: '' +
+    '<img src="%@" class="sc-icon-info-48">'.fmt(SC.BLANK_IMAGE_URL) +
+    '<div class="mvo_info_full_title">' +
+    '<h3>' + '_How to launch Multivio'.loc() + '</h3>' +
+    '</div>' +
+    '<div class="mvo_info_full_message">' +
+    '_The calling syntax is'.loc() + ':' +
+    '<ul><li>http://demo.multivio.org/client/#get&url={TARGET}</li></ul>' +
+    '_The {TARGET} URL can link to'.loc() + ':' +
+    '<ul>' +
+    '  <li>%@</li>'.fmt('_A Dublin Core record'.loc()) +
+    '  <li>%@</li>'.fmt('_A METS record (supported profiles only)'.loc()) +
+    '</ul>' +
+    '_Examples'.loc() + ':' +
+    '<ul>' +
+    '  <li>http://demo.multivio.org/client/#get&url=http://doc.rero.ch/record/9495/export/xd</li>' +
+    '  <li>http://demo.multivio.org/client/#get&url=http://era.ethz.ch/oai?verb=GetRecord&metadataPrefix=mets&identifier=oai:era.ethz.ch:34314</li>' +
+    '</ul>' +
+    '</div>'
+
 });

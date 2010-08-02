@@ -221,6 +221,10 @@ label.document-label-view {
   color: #000;
 }
 
+.mvo_info_full_background {
+  background-color: #fff;
+}
+
 .mvo_info_full_outer {
   height: 100%;
   overflow: hidden;
@@ -264,10 +268,16 @@ label.document-label-view {
   margin-top: 60px;
 }
 
-.mvo_info_full_message {
+.mvo_info_full_title {
   position: absolute;
   top: 10px;
   left: 70px;
+}
+
+.mvo_info_full_message {
+  position: absolute;
+  top: 80px;
+  left: 77px;
 }
 
 

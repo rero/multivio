@@ -272,43 +272,6 @@ Multivio.configurator = SC.Object.create(
       break;
     }
     return modifiedUrl;
-  },
-  
-  /**
-    Error messages
-  */
-  errorMessage: {
-    PermissionDenied: 'You are not allow to see this document.',
-    UnableToRetrieveRemoteDocument: 'The requested document does not exist or is not accessible.',
-    UnsupportedFormat: 'The format of the requested document is currently not supported.',
-    InvalidArgument: 'Incorrect arguments.',
-    HttpMethodNotAllowed: 'The HTTP method is not supported by this server.',
-    Incompatibility: 'The server and the client are not compatible.',
-    ServerNotFound: 'The Multivio server is not accessible.',
-    Default: 'An error occured. Please contact support at '
-  },
+  }
 
-  /**
-    The text that explain how to call correctly the application
-  */
-  usageText: '' +
-    '<img src="%@" class="sc-icon-info-48">'.fmt(SC.BLANK_IMAGE_URL) +
-    '<div class="mvo_info_full_message">' +
-    '<h3>' + '_How to launch Multivio'.loc() + '</h3>' +
-    '<p>' +
-    '_The calling syntax is'.loc() + ':' +
-    '<ul><li>http://demo.multivio.org/client/#get&url={TARGET}</li></ul>' +
-    '_The {TARGET} URL can link to'.loc() + ':' +
-    '<ul>' +
-    '  <li>' + '_A Dublin Core record'.loc() + '</li>' +
-    '  <li>' + '_A METS record (supported profiles only)'.loc() + '</li>' +
-    '</ul>' +
-    '_Examples'.loc() + ':' +
-    '<ul>' +
-    '  <li>http://demo.multivio.org/client/#get&url=http://doc.rero.ch/record/9495/export/xd</li>' +
-    '  <li>http://demo.multivio.org/client/#get&url=http://era.ethz.ch/oai?verb=GetRecord&metadataPrefix=mets&identifier=oai:era.ethz.ch:34314</li>' +
-    '</ul>' +
-    '</p>' +
-    '</div>'
-  
 });

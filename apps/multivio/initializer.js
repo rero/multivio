@@ -131,8 +131,14 @@ Multivio.initializer = SC.Object.create(
         Multivio.masterController.initialize();
       }
       else {
-        Multivio.errorController.
-            initialize({'err_name': 'Incompatibilitys'});
+        Multivio.errorController.initialize({
+            'err_name':         'VersionIncompatibility',
+            'err_description':  'Versions:' + 
+              '<ul>' +
+              '  <li>server = %@</li>'.fmt(serverVersion) +
+              '  <li>client = %@</li>'.fmt(currentVersion) +
+              '</ul>'
+          });
         Multivio.makeFirstResponder(Multivio.ERROR);
         Multivio.logger.logException('Client and server are incompatible: ' +
             Multivio.configurator.clientVersion);
