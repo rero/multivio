@@ -230,12 +230,12 @@ Multivio.views = SC.Page.design(
     
     //navigation
     navigationView: SC.View.design({
-      layout: { centerX: -5, centerY: 0, width: 180, height: 25 },
+      layout: { centerX: -0, centerY: 0, width: 220, height: 24 },
 
       childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView'.w(),
 
       firstPageView: SC.ButtonView.design({
-        layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: -90, centerY: 0, width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/beginning.png'),
@@ -245,7 +245,7 @@ Multivio.views = SC.Page.design(
       }),
     
       previousPageView: SC.ButtonView.design({
-        layout: { centerX: -40, centerY: 0,  width: 30, height: 25 },
+        layout: { centerX: -45, centerY: 0,  width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/previous.png'),
@@ -255,14 +255,14 @@ Multivio.views = SC.Page.design(
       }),    
     
       textPageView: SC.TextFieldView.design({ 
-        layout: { centerX: 0, centerY: -1, width: 40, height: 20 },
+        layout: { centerX: 0, centerY: -1, width: 40, height: 24 },
         textAlign: SC.ALIGN_CENTER,
         valueBinding: 'Multivio.navigationController.currentPage',
         isEnabledBinding: 'Multivio.navigtionController.isCurrentPageEnabled'
       }),
 
       nextPageView: SC.ButtonView.design({
-        layout: { centerX: 40, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: 45, centerY: 0, width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/next.png'),
@@ -272,7 +272,7 @@ Multivio.views = SC.Page.design(
       }),
 
       lastPageView: SC.ButtonView.design({
-        layout: { centerX: 75, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: 90, centerY: 0, width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/end.png'),
@@ -284,12 +284,12 @@ Multivio.views = SC.Page.design(
     
     //zoom
     zoomView: SC.View.design({
-      layout: { centerX: 220, centerY: 0, width: 250, height: 25 },
+      layout: { centerX: 350, centerY: 0, width: 400, height: 24 },
       
       childViews: 'zoomOutPageView zoomInPageView zoomPredefinedView'.w(),
       
       zoomOutPageView: SC.ButtonView.design({
-        layout: { centerX: -110, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: -180, centerY: 0, width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-minus.png'),
@@ -299,7 +299,7 @@ Multivio.views = SC.Page.design(
       }),
       
       zoomInPageView: SC.ButtonView.design({
-        layout: { centerX: -75, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: -135, centerY: 0, width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-plus.png'),
@@ -309,7 +309,7 @@ Multivio.views = SC.Page.design(
       }),
       
       zoomPredefinedView: SC.SegmentedView.design({
-        layout: { centerX: 30, centerY: 0, width: 160, height: 25},
+        layout: { left: 90, centerY: 0, width: 180, height: 24 },
         items: [
           {title: "Full", value: "Full", enabled: YES},
           {title: "Width", value: "Width", enabled: YES}
@@ -327,13 +327,13 @@ Multivio.views = SC.Page.design(
     
     //rotate
     rotateView: SC.View.design({
-      layout: { centerX: -130, centerY: 0, width: 70, height: 25 },
+      layout: { centerX: -190, centerY: 0, width: 90, height: 24 },
       layerId: "rotatePageId",
       
       childViews: 'rotateLeftView rotateRightView'.w(),
       
       rotateLeftView: SC.ButtonView.design({
-        layout: { centerX: -20, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: -25, centerY: 0, width: 40, height: 24 },
         layerId: "rotateLeftPageId",
         titleMinWidth : 0,
         needsEllipsis: NO,
@@ -344,7 +344,7 @@ Multivio.views = SC.Page.design(
       }),
       
       rotateRightView: SC.ButtonView.design({
-        layout: { centerX: 15, centerY: 0, width: 30, height: 25 },
+        layout: { centerX: 20, centerY: 0, width: 40, height: 24 },
         layerId: "rotateRightPageId",
         titleMinWidth : 0,
         needsEllipsis: NO,
@@ -453,7 +453,7 @@ Multivio.views = SC.Page.design(
 
     childViews: [
       SC.View.design({
-        layout: { centerX: 0, centerY: 0, width: 700, height: 450 },
+        layout: { centerX: 0, centerY: 0, width: 700, height: 500 },
         childViews: [
           SC.LabelView.design({
             layout: { top: 50, bottom: 50, right: 50, left: 50 },

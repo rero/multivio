@@ -42,6 +42,25 @@ Multivio.metadataController = SC.ObjectController.create(
   */
   descriptiveMetadataDictionary: function () { 
     var cc = this.get('content');
+    // check if metadata entries are composed of multiple values
+    for (var k in cc) {
+      if (cc.hasOwnProperty(k)) {
+        if (SC.typeOf(cc[k]) === SC.T_ARRAY) {
+          var arr = cc[k];
+          // compose a string of values separated by semi-colons
+          var newValue = '';
+          for (var v in arr) {
+            if (arr.hasOwnProperty(v)) {
+              if (newValue.length > 0) {
+                newValue = newValue + '; ';
+              }
+              newValue = newValue + arr[v];
+            }
+          }
+          cc[k] = newValue;
+        }
+      }
+    }
     return cc;
   }.property('content')
   

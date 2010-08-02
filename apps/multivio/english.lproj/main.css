@@ -69,21 +69,33 @@ body.sc-theme {
 /* for button icon positioning */
 
 .sc-theme .sc-button-view.icon img.icon {
-  /*
   position: relative;
   vertical-align: middle;
-  top: -2px;
-  margin-right: 2px;
-  height: 16px;
-  width: 16px;
-  */
-  position: relative;
-  vertical-align: middle;
+  /*margin-right: 2px;*/
   margin: 0px auto;
+  /*top: -2px;*/
   top: auto;
+  /*height: 16px;*/
   height: auto;
+  /*width: 16px;*/
   width: auto;
 }
+
+.sc-button-view img {
+  vertical-align: middle ;
+  margin-right: 0px;
+  position: relative ;
+  top: 0px;
+  left: 0px;
+}
+
+.sc-theme .sc-button-view.sc-regular-size.square .sc-button-label {
+  /*height: 24px;*/
+  height: 22px;
+  /*line-height: 24px;*/
+  line-height: 22px;
+}
+
 
 /* for LabelView */
 
@@ -129,6 +141,22 @@ label.document-label-view {
   background-color: #eaeaea ;
   */
   background-color: #fff;
+}
+
+.sc-alert .info p.description {
+  padding: 0;
+  margin: 6px 0px;
+  font-size: 12px;
+  margin-right: 20px;
+  color: #000;
+}
+
+.sc-alert .info p.caption {
+  padding: 0;
+  margin: 6px 0px;
+  font-size: 11px;
+  margin-right: 20px;
+  color: #000;
 }
 
 
@@ -276,7 +304,7 @@ label.document-label-view {
 
 .mvo_info_full_message {
   position: absolute;
-  top: 80px;
+  top: 70px;
   left: 77px;
 }
 

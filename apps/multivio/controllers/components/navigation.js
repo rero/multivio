@@ -180,6 +180,7 @@ Multivio.navigationController = SC.ObjectController.create(
       if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
           isNaN(newCurrentPage)) {
         Multivio.usco.showAlertPaneInfo(
+            'Incorrect page number',
             'Please enter a number between 1 and ' +
             this.get('_numberOfPages'));
       }
@@ -191,7 +192,7 @@ Multivio.navigationController = SC.ObjectController.create(
       }
     }
     catch (err) {
-      Multivio.usco.showAlertPaneInfo('Problem: ' + err);
+      Multivio.usco.showAlertPaneInfo('Problem', err);
     }
   }.observes('currentPage'),
   

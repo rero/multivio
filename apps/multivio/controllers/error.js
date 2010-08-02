@@ -78,6 +78,8 @@ Multivio.errorController = SC.ObjectController.create(
     '_The {TARGET} URL can link to'.loc() + ':' +
     '<ul>' +
     '  <li>%@</li>'.fmt('_A Dublin Core record'.loc()) +
+    '  <li>%@</li>'.fmt('_A MARC21 record'.loc()) +
+    '  <li>%@</li>'.fmt('_A MODS record'.loc()) +
     '  <li>%@</li>'.fmt('_A METS record (supported profiles only)'.loc()) +
     '</ul>' +
     '_Examples'.loc() + ':' +
