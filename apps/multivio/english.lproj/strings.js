@@ -26,6 +26,7 @@ SC.stringsFor('English', {
 
   // Error messages
   '_An error occurred':               'An error occurred',
+
   '_PermissionDenied':                'You are not allowed to see this document.',
   '_UnableToRetrieveRemoteDocument':  'The requested document does not exist or is not accessible.',
   '_UnsupportedFormat':               'The format of the requested document is currently not supported.',
@@ -36,13 +37,17 @@ SC.stringsFor('English', {
   '_Default':                         'An error occured. Please contact support at %@',
   
   // Warning messages
-  '_Loading this image may take a long time': 'Loading this image may take a long time',
-  '_Do you want to proceed': 'Do you want to proceed?',
+  '_Loading the requested resolution may take a long time':
+      'Loading the requested resolution may take a long time',
+  '_Would you like to proceed?':
+      'Would you like to proceed?',
+  '_Proceed': 'Proceed',
+  '_Use lower resolution': 'Use lower resolution',
   '_Incorrect page number': 'Incorrect page number',
-  '_Please enter a number between 1 and ': 'Please enter a number between 1 and ', 
-  '_Yes': 'YES',
-  '_Ok': 'OK',
-  '_No': 'NO'
+  '_Please enter a number between 1 and %@': 'Please enter a number between 1 and %@',
+  '_Yes': 'Yes',
+  '_Ok': 'Ok',
+  '_No': 'No'
 
 
 });

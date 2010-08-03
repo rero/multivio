@@ -159,9 +159,11 @@ Multivio.ContentView = SC.ScrollView.extend(
         var maximum = Multivio.configurator.get('zoomParameters').max;
         if (this.maxImageWidth > maximum || this.maxImageHeight > maximum) {
           Multivio.usco.showAlertPaneWarn(
-              '_Loading this image may take a long time'.loc(), 
-              '_Do you want to proceed'.loc(),
-              '_Yes'.loc(), '_No'.loc(), this);
+              '_Loading the requested resolution may take a long time'.loc(),
+              '_Would you like to proceed?'.loc(),
+              '_Proceed'.loc(),
+              '_Use lower resolution'.loc(),
+              this);
         }
         else {
           var newUrl = defaultUrl.replace('width=1500', 'max_width=' +

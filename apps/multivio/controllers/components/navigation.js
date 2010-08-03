@@ -181,7 +181,7 @@ Multivio.navigationController = SC.ObjectController.create(
           isNaN(newCurrentPage)) {
         Multivio.usco.showAlertPaneWarn(
             '_Incorrect page number'.loc(),
-            '_Please enter a number between 1 and '.loc() +
+            '_Please enter a number between 1 and %@'.loc() +
             this.get('_numberOfPages'), '_Ok'.loc(), '', this);
       }
       else {
@@ -203,10 +203,8 @@ Multivio.navigationController = SC.ObjectController.create(
     @param {} status 
   */  
   alertPaneDidDismiss: function (pane, status) {
-    console.info('A');
     switch (status) {
     case SC.BUTTON1_STATUS:
-    console.info('B');  
       this.set('currentPage', this.get('position'));
       break;
     }
