@@ -38,6 +38,8 @@ SC.stringsFor('English', {
   // Warning messages
   '_Loading this image may take a long time': 'Loading this image may take a long time',
   '_Do you want to proceed': 'Do you want to proceed?',
+  '_Incorrect page number': 'Incorrect page number',
+  '_Please enter a number between 1 and': 'Please enter a number between 1 and ', 
   '_Yes': 'YES',
   '_No': 'NO'
 
