@@ -33,7 +33,13 @@ SC.stringsFor('English', {
   '_HttpMethodNotAllowed':            'The HTTP method is not supported by this server.',
   '_VersionIncompatibility':          'The server and the client are not compatible.',
   '_ServerNotFound':                  'The Multivio server is not accessible.',
-  '_Default':                         'An error occured. Please contact support at %@'
+  '_Default':                         'An error occured. Please contact support at %@',
+  
+  // Warning messages
+  '_Loading this image may take a long time': 'Loading this image may take a long time',
+  '_Do you want to proceed': 'Do you want to proceed?',
+  '_Yes': 'YES',
+  '_No': 'NO'
 
 
 });

@@ -132,13 +132,6 @@ Multivio.zoomController = SC.ObjectController.create(
     }
     localStep++;
     this.minStep = localStep;
-    // test if disabled width
-    var widthFirstStep = this.getBestStep();
-    if (widthFirstStep > this.maxStep) {
-      var zoomPage = Multivio.views.get('toolbar').get('zoomView');
-      zoomPage.get('zoomPredefinedView').items[1].enabled = NO;
-      zoomPage.get('zoomPredefinedView').itemContentDidChange();
-    }
     Multivio.logger.debug('minStep & maxStep setted');
   },
   
@@ -175,12 +168,17 @@ Multivio.zoomController = SC.ObjectController.create(
     }
     else {  
       if (this._current_zoom_step > this.minStep) {
-        if (!this.isZoomInAllow) {
-          this.set('isZoomInAllow', YES);
-        }
         this.set('currentZoomState', null);
-        var prevStep = this._current_zoom_step - 1;
-        this._setCurrentValue(prevStep);
+        if (this._current_zoom_step > this.maxStep) {
+          this._setCurrentValue(this.maxStep);
+        }
+        else {
+          if (!this.isZoomInAllow) {
+            this.set('isZoomInAllow', YES);
+          }
+          var prevStep = this._current_zoom_step - 1;
+          this._setCurrentValue(prevStep);
+        }
       }
     }
   },
@@ -190,7 +188,7 @@ Multivio.zoomController = SC.ObjectController.create(
   */
   checkButton: function () {
     var zoomStep = this.get('_current_zoom_step');
-    if (zoomStep === this.maxStep) {
+    if (zoomStep === this.maxStep || zoomStep > this.maxStep) {
       this.set('isZoomInAllow', NO);
     }
     if (zoomStep === this.minStep) {
@@ -252,12 +250,12 @@ Multivio.zoomController = SC.ObjectController.create(
     var localStep = 0;
     var localZoom = this._zoomFactorForStep(localStep);
     var newHeight =  temp * localZoom;
-    
     while (newHeight < width) {
       localStep++;
       localZoom = this._zoomFactorForStep(localStep);
       newHeight = temp * localZoom;
     }
+    localStep--;
     return localStep;
   },
   
