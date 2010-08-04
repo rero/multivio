@@ -153,21 +153,58 @@ Multivio.ContentView = SC.ScrollView.extend(
       var defaultUrl = currentSelection.firstObject().url;
       var zoomVal = this.get('zoomValue');
       var rot = this.get('rotateValue');
-      var newUrl = '';
+      //var newUrl = '';
       // zoomVal is null ask for native image
       if (SC.none(zoomVal)) {
-        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+        var maximum = Multivio.configurator.get('zoomParameters').max;
+        if (this.maxImageWidth > maximum || this.maxImageHeight > maximum) {
+          Multivio.usco.showAlertPaneWarn('loading this image may take a long time.',
+            'do you want to proceed', 'YES', 'NO', this);
+        }
+        else {
+          var newUrl = defaultUrl.replace('width=1500', 'max_width=' +
             this.maxImageWidth + '&max_height=' + this.maxImageHeight + 
             '&angle=' + rot);
+          SC.imageCache.loadImage(newUrl, this, this._adjustSize);
+        }
       }
       else {
         // calculate the size to ask to the server 
         var frame = zoomVal * this.get('frameMin');
-        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+        var loadUrl = defaultUrl.replace('width=1500', 'max_width=' +
             parseInt(frame, 10) + '&max_height=' + parseInt(frame, 10) +
             '&angle=' + rot);
+        SC.imageCache.loadImage(loadUrl, this, this._adjustSize);
       }
+    }
+  },
+  
+  /**
+    Delegate method of the Multivio.usco.showAlertPaneWarn
+    
+    @param {String} pane the pane instance
+    @param {} status 
+  */  
+  alertPaneDidDismiss: function (pane, status) {
+    switch (status) {
+    
+    case SC.BUTTON1_STATUS:
+      var currentSelection = this.get('selection');
+      var defaultUrl = currentSelection.firstObject().url;
+      var zoomVal = this.get('zoomValue');
+      var rot = this.get('rotateValue');
+      var newUrl = defaultUrl.replace('width=1500', 'max_width=' +
+          this.maxImageWidth + '&max_height=' + this.maxImageHeight + 
+          '&angle=' + rot);
       SC.imageCache.loadImage(newUrl, this, this._adjustSize);
+      break;
+        
+    case SC.BUTTON2_STATUS:
+      // load old image
+      var oldStep = Multivio.zoomController._current_zoom_step;
+      Multivio.zoomController.set('currentZoomState', null);
+      Multivio.zoomController._setCurrentValue(oldStep);
+      break;
     }
   },
   

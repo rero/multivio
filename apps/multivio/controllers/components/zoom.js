@@ -243,7 +243,6 @@ Multivio.zoomController = SC.ObjectController.create(
   _setCurrentValue: function (step) {
     this.set('_current_zoom_step', step);
     this.set('current_zoom_factor', Math.pow(this.ZOOM_FACTOR, this._current_zoom_step));
-
   },
   
   getBestStep: function () {
@@ -286,7 +285,6 @@ Multivio.zoomController = SC.ObjectController.create(
       break;
       
     case Multivio.zoomController.HUNDREDPERCENT:
-      this.set('_current_zoom_step', null);
       this.set('current_zoom_factor', null);
       this.set('isZoomInAllow', NO);
       break;
