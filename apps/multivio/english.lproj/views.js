@@ -357,7 +357,7 @@ Multivio.views = SC.Page.design(
     }),
     
     logos: SC.View.design({
-      layout: { top: 0, height: 36, right: 6, width: 200 },
+      layout: { top: 0, height: 36, left: 6, width: 200 },
 
       childViews: [
         SC.View.design({
