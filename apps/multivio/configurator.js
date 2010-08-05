@@ -41,13 +41,14 @@ Multivio.configurator = SC.Object.create(
   /**
     The current version of the client
   */
-  clientVersion: '0.1',
+  clientVersion: '0.2',
   
   /**
     The table of compatibility between the server (key) and the client (value)
   */
   serverCompatibility: {
-    '0.1': ['0.1']
+    '0.1': ['0.1'],
+    '0.2': ['0.2']
   },
   
   /**
