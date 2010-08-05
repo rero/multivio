@@ -179,13 +179,10 @@ Multivio.navigationController = SC.ObjectController.create(
       }
       if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
           isNaN(newCurrentPage)) {
-        Multivio.usco.showAlertPaneInfo(
+        Multivio.usco.showAlertPaneWarn(
             '_Incorrect page number'.loc(),
             '_Please enter a number between 1 and '.loc() +
-            this.get('_numberOfPages'));
-          SC.RunLoop.begin();
-          this.set('currentPage', this.get('position'));
-          SC.RunLoop.end();
+            this.get('_numberOfPages'), '_Ok'.loc(), '', this);
       }
       else {
         var currentPosition = this.get('position');
@@ -198,6 +195,22 @@ Multivio.navigationController = SC.ObjectController.create(
       Multivio.usco.showAlertPaneInfo('Problem', err);
     }
   }.observes('currentPage'),
+  
+  /**
+    Delegate method of the Multivio.usco.showAlertPaneWarn
+    
+    @param {String} pane the pane instance
+    @param {} status 
+  */  
+  alertPaneDidDismiss: function (pane, status) {
+    console.info('A');
+    switch (status) {
+    case SC.BUTTON1_STATUS:
+    console.info('B');  
+      this.set('currentPage', this.get('position'));
+      break;
+    }
+  },
   
   /**
     Verify if navigation buttons should be disabled 
