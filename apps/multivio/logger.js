@@ -82,6 +82,7 @@ Multivio.logger = SC.Object.create(
         // TODO check if the ajax appender is removed in case a server is not available
         case 'ajax':
           appenderObject = new Log4js.AjaxAppender(
+              Multivio.configurator.get('serverName') +
               Multivio.configurator.getPath('logParameters.logFile'));
           appenderObject.setLayout(new Log4js.BasicLayout());
           //appenderObject.setLayout(new Log4js.JSONLayout());
