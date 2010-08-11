@@ -77,6 +77,12 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
+    Zoom scale for PDF and for images
+  */
+  zoomStep1: [ 0.25, 0.5, 1.0, 1.5, 2.0, 4.0],
+  zoomStep2: [ 0.1, 0.25, 0.5, 0.75, 1.0 ],
+  
+  /**
     This object contains all urls used by the application
     
     @property {Object}
@@ -90,6 +96,7 @@ Multivio.configurator = SC.Object.create(
     thumbnail: "/document/render?max_height=100&max_width=100",
     
     image: "/document/render?width=1500",
+    imageSize: "/document/get_size?",
     
     fixtures: {
       VAA: "/static/multivio/en/current/images/VAA"

@@ -19,7 +19,7 @@ Multivio.zoomController = SC.ObjectController.create(
 /** @scope Multivio.zoomController.prototype */ {
   
   /**
-    Pre-defined zoom values
+    Pre-defined zoom mode
   */
   FULLPAGE: 'Full',
   PAGEWIDTH: 'Width',
@@ -28,57 +28,38 @@ Multivio.zoomController = SC.ObjectController.create(
   /**
     @property
   
-    currentZoomState = one pre-defined zoom value
-    maxVirtualSize = max value in the configurator
-    minVirtualSize = min value in the configurator
-    windowHeight & windowWidth = size of the contentView
+    currentZoomState = null if we are in the 'zoom' mode or one of 
+        the pre-defined mode
+    zoomStep = if zoomStep = -1 one of the pre-defined mode has been selected
+        else (zoomStep >= 0) we are in the 'zoom' mode
+    zoomValue = the value (percentage) of the image size
+    zoomScale = one of the scale defined in the configurator 
   */
   currentZoomState: undefined,
-  
-  maxVirtualSize: undefined,
-  minVirtualSize: undefined,
-
-  windowMin: undefined,
-  windowWidth: undefined,
-  
-  /** 
-    Zoom parameter 
-    
-    @property {Integer}
-    @final
-  */
-  ZOOM_FACTOR: 1.3,
-  
-  /** 
-    Zoom parameter 
-    @property {Integer}
-    
-    @final
-  */
-  ZOOM_ORIGINAL_FACTOR: 1,
-
-  /** 
-    Current zoom factor: multiplicative value applied to the original image
-    size; it is exponentially proportional to the current zoom step:
-
-    current_zoom_factor = ZOOM_FACTOR ^ _current_zoom_step 
-
-    @property {Number}
-    @default 1
-  */
-  current_zoom_factor: 1,
-
+  zoomStep: -1,
+  zoomValue: 0.0,
+  zoomScale: undefined,
+ 
   /**
-    Current zoom step
+    @property 
     
-    @property {Number}
-    @private
-    @default 0
+    maxStep = the number of steps of the scale
+    maxVal = the scale value of the last step
+    minVal = the scale value of the first step
   */
-  _current_zoom_step: 0,
-  
   maxStep: 0,
-  minStep: 0,
+  maxVal: 0.0,
+  minVal: 0.0,
+  
+  /**
+    Binds to the imageController isLoading property.
+    
+    This binding is used to enabled and disabled navigation buttons
+
+    @binding {Boolean}
+  */
+  isLoading: null,
+  isLoadingBinding: 'Multivio.imageController.isLoading',
   
   /**
     Boolean to enabled and disabled zoom Button
@@ -91,48 +72,19 @@ Multivio.zoomController = SC.ObjectController.create(
     Initialize this controller. Retrieve zoom values from the configurator.
   */
   initialize: function () {
-    Multivio.sendAction('addComponent', 'zoomController');
-    this.maxVirtualSize = Multivio.configurator.get('zoomParameters').max;
-    this.minVirtualSize = Multivio.configurator.get('zoomParameters').min;
     this.currentZoomState = Multivio.configurator.get('zoomParameters').initState;
+    // TO DO Change choosing the scale
     if (Multivio.masterController.currentType === 'image/jpeg' || 
-        Multivio.masterController.currentType === 'image/jpg') {
-      this.addNativePreference();      
+        Multivio.masterController.currentType === 'image/jpg') { 
+      this.zoomScale = Multivio.configurator.get('zoomStep2');    
     }
-  },
-  
-  /**
-    Initialize windowWidth & windowMin
-  
-    @param {Number} size the min size of the contentView
-    @param {Number} windowWidth the width of the contentView
-  */
-  setWindow: function (size, windowWidth) {
-    this.windowMin = size;
-    this.windowWidth = windowWidth;
-    
-    var localStep = 0;
-    var localZoom = this._zoomFactorForStep(localStep);
-    var newSize = size * localZoom;
-    while (newSize < this.maxVirtualSize) {
-      localStep++;
-      localZoom = this._zoomFactorForStep(localStep);
-      newSize = size * localZoom;
+    else {
+      this.zoomScale = Multivio.configurator.get('zoomStep1');
     }
-    localStep--;
-    this.maxStep = localStep;
-    
-    localStep = 0;
-    localZoom = this._zoomFactorForStep(localStep);
-    newSize = size * localZoom;
-    while (newSize > this.minVirtualSize) {
-      localStep--;
-      localZoom = this._zoomFactorForStep(localStep);
-      newSize = size * localZoom;
-    }
-    localStep++;
-    this.minStep = localStep;
-    Multivio.logger.debug('minStep & maxStep setted');
+    this.maxStep = this.zoomScale.length - 1;
+    this.minVal = this.zoomScale[0];
+    this.maxVal = this.zoomScale[this.maxStep];
+    Multivio.sendAction('addComponent', 'zoomController');
   },
   
   /**
@@ -146,14 +98,30 @@ Multivio.zoomController = SC.ObjectController.create(
     Zoom in. _current_zoom_step + 1
   */  
   doZoomIn: function () {
-    // allow zoom out
-    if (this._current_zoom_step < this.maxStep) {
-      if (!this.isZoomOutAllow) {
-        this.set('isZoomOutAllow', YES);
+    SC.RunLoop.begin();
+    this.set('isLoading', YES);
+    SC.RunLoop.end();
+    
+    var zoomSt = this.get('zoomStep');
+    if (zoomSt !== -1) {
+      zoomSt++;
+      this.set('zoomStep', zoomSt);
+      var newZoomVal = this.zoomScale[zoomSt];
+      this.set('zoomValue', newZoomVal);
+    }
+    else {
+      // first set zoomState undefined to change mode to zoom 
+      this.set('currentZoomState', null);
+      var zoomVal = this.get('zoomValue');
+      if (zoomVal < this.minVal) {
+        this.set('zoomStep', 0);
+        this.set('zoomValue', this.minVal);  
       }
-      this.set('currentZoomState', null);    
-      var nextStep = this._current_zoom_step + 1;
-      this._setCurrentValue(nextStep);
+      else {
+        var nexStep = this.getNextStep(zoomVal);
+        this.set('zoomStep', nexStep);
+        this.set('zoomValue', this.zoomScale[nexStep]);
+      }
     }
   },
 
@@ -161,103 +129,109 @@ Multivio.zoomController = SC.ObjectController.create(
     Zoom out. _current_zoom_step - 1
   */   
   doZoomOut: function () {
-    //allow zoom in
-    if (this.get('currentZoomState') === Multivio.zoomController.HUNDREDPERCENT) {
-      this.set('currentZoomState', null);
-      this._setCurrentValue(this.maxStep);
+    SC.RunLoop.begin();
+    this.set('isLoading', YES);
+    SC.RunLoop.end();
+    var zoomSt = this.get('zoomStep');
+    if (zoomSt !== -1) {
+      zoomSt--;
+      this.set('zoomStep', zoomSt);
+      var newZoomVal = this.zoomScale[zoomSt];
+      this.set('zoomValue', newZoomVal);
     }
-    else {  
-      if (this._current_zoom_step > this.minStep) {
-        this.set('currentZoomState', null);
-        if (this._current_zoom_step > this.maxStep) {
-          this._setCurrentValue(this.maxStep);
-        }
-        else {
-          if (!this.isZoomInAllow) {
-            this.set('isZoomInAllow', YES);
-          }
-          var prevStep = this._current_zoom_step - 1;
-          this._setCurrentValue(prevStep);
-        }
+    else {
+      // first set zoomState undefined to change mode to zoom
+      this.set('currentZoomState', null);
+      var zoomVal = this.get('zoomValue');
+      if (zoomVal > this.maxVal) {
+        this.set('zoomStep', this.maxStep);
+        this.set('zoomValue', this.maxVal);  
+      }
+      else {
+        var preStep = this.getPreviousStep(zoomVal);
+        this.set('zoomStep', preStep);
+        this.set('zoomValue', this.zoomScale[preStep]);
       }
     }
   },
   
   /**
-    Verify if zoom buttons should be disabled 
+    Get the next zoom step for this value
+   
+    @param {Number} the current value
+    @return {Number} the next step
   */
-  checkButton: function () {
-    var zoomStep = this.get('_current_zoom_step');
-    if (zoomStep === this.maxStep || zoomStep > this.maxStep) {
-      this.set('isZoomInAllow', NO);
+  getNextStep: function (val) {
+    var step = 0;
+    while (step < this.zoomScale.length) {
+      var zoomVal = this.zoomScale[step];
+      if (zoomVal <= val) {
+        step++;
+      }
+      else {
+        break;
+      }
     }
-    if (zoomStep === this.minStep) {
+    return step;
+  },
+  
+  /**
+    Get the previous zoom step for this value
+   
+    @param {Number} the current value
+    @return {Number} the previous step
+  */
+  getPreviousStep: function (val) {
+    var step = 0;
+    while (step < this.zoomScale.length) {
+      var zoomVal = this.zoomScale[step];
+      if (zoomVal >= val) {
+        step--;
+        break;
+      }
+      else {
+        step++;
+      }
+    }
+    return step;
+  },
+  
+  /**
+    Change buttons status observing isloading property.
+    
+    @observes isLoading
+  */
+  isLoadingDidChange: function () {
+    var isLoading = this.get('isLoading');
+    if (isLoading) {
+      // disabled
+      this.set('isZoomInAllow', NO);
       this.set('isZoomOutAllow', NO);
+      this.set('isStateEnabled', NO);
     }
-    if (this.get('currentZoomState') === Multivio.zoomController.HUNDREDPERCENT) {
-      this.set('isZoomInAllow', NO);
-    }
-  },
-  
-  /**
-  Add the native button 
-  */
-  addNativePreference: function () {
-    var zoomPage = Multivio.views.get('toolbar').get('zoomView');
-    var itemsWithNative = [
-      {title: "Full", value: "Full", enabled: YES},
-      {title: "Width", value: "Width", enabled: YES},
-      {title: "Native", value: "Native", enabled: YES}
-    ];
-    zoomPage.get('zoomPredefinedView').set('items', itemsWithNative);
-    zoomPage.get('zoomPredefinedView').itemContentDidChange();
-  },
-  
-  /**
-    Zoom original. _current_zoom_step = 0 & current_zoom_factor = 1.3 
-  */  
-  doZoomOriginal: function () {
-    this.set('_current_zoom_step', 0);
-    this.set('current_zoom_factor', this.ZOOM_ORIGINAL_FACTOR);
-  },
-  
-  /**
-    Return the zoomFactor for a specific step
-    
-    @param {Number} step
-    @private
-    @returns {Integer}
-  */
-  _zoomFactorForStep: function (step) {
-    return Math.pow(this.ZOOM_FACTOR, step);
-  },
-  
-  /**
-    Set _current_zoom_step and current_zoomFactor
-    
-    @param {Number} step
-    @private
-  */
-  _setCurrentValue: function (step) {
-    this.set('_current_zoom_step', step);
-    this.set('current_zoom_factor', Math.pow(this.ZOOM_FACTOR, this._current_zoom_step));
-  },
-  
-  getBestStep: function () {
-    var width = this.get('windowWidth');
-    var temp = this.get('windowMin');
-    
-    var localStep = 0;
-    var localZoom = this._zoomFactorForStep(localStep);
-    var newHeight =  temp * localZoom;
-    while (newHeight < width) {
-      localStep++;
-      localZoom = this._zoomFactorForStep(localStep);
-      newHeight = temp * localZoom;
-    }
-    localStep--;
-    return localStep;
-  },
+    else {
+      // enabled
+      this.set('isStateEnabled', YES);
+      var newZoomStep = this.get('zoomStep');
+      if (newZoomStep === -1) {
+        var receivedZoomVal = this.get('zoomValue');
+        if (receivedZoomVal > this.minVal) {
+          this.set('isZoomOutAllow', YES);
+        }
+        if (receivedZoomVal < this.maxVal) {
+          this.set('isZoomInAllow', YES);
+        }
+      }
+      else {
+        if (newZoomStep > 0) {
+          this.set('isZoomOutAllow', YES);
+        }
+        if (newZoomStep < this.maxStep) {
+          this.set('isZoomInAllow', YES);
+        }
+      }
+    }  
+  }.observes('isLoading'),
   
   /**
     Set the new pre-defined zoom.
@@ -267,25 +241,13 @@ Multivio.zoomController = SC.ObjectController.create(
     @param {Object} button selected 
   */
   setPredefinedZoom: function (button) {
-    this.set('isZoomOutAllow', YES);
-    this.set('isZoomInAllow', YES);
-    var newPref = button.get('value');
-    this.set('currentZoomState', newPref);
-    
-    switch (newPref) {
-    case Multivio.zoomController.FULLPAGE:
-      this.doZoomOriginal();
-      break;
-  
-    case Multivio.zoomController.PAGEWIDTH:
-      var newStep = this.getBestStep();
-      this._setCurrentValue(newStep);
-      break;
-      
-    case Multivio.zoomController.HUNDREDPERCENT:
-      this.set('current_zoom_factor', null);
-      this.set('isZoomInAllow', NO);
-      break;
+    var newMode = button.get('value');
+    if (this.get('currentZoomState') !== newMode) {
+      this.zoomStep = -1;
+      SC.RunLoop.begin();
+      this.set('isLoading', YES);
+      SC.RunLoop.end();
+      this.set('currentZoomState', newMode);
     }
   }
   

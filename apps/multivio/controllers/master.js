@@ -55,7 +55,7 @@ Multivio.masterController = SC.ObjectController.create(
     Binds to the cdm fileMetadata
 
     @binding {String}
-   */
+  */
   metadata: null,
   metadataBinding: SC.Binding.oneWay("Multivio.CDM.fileMetadata"),
    

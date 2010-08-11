@@ -49,6 +49,16 @@ Multivio.navigationController = SC.ObjectController.create(
   _numberOfPages: null,
   
   /**
+    Binds to the imageController isLoading property.
+    
+    This binding is used to enabled and disabled navigation buttons
+
+    @binding {Boolean}
+  */
+  isLoading: null,
+  isLoadingBinding: 'Multivio.imageController.isLoading',
+  
+  /**
     Boolean to enabled and disabled Buttons
   */
   isNextEnabled: YES,
@@ -106,7 +116,7 @@ Multivio.navigationController = SC.ObjectController.create(
         Multivio.sendAction('addComponent', 'navigationController');
       }
     }
-    this.checkButton();  
+    //this.checkButton();  
     Multivio.logger.info('navigationController initialized');
   },
   
@@ -140,19 +150,11 @@ Multivio.navigationController = SC.ObjectController.create(
   positionDidChange: function () {
     var newPosition = this.get('position');
     if (!SC.none(newPosition)) {
-      this.set('isNextEnabled', YES);
-      this.set('isPreviousEnabled', YES);
       // verify if we need to set selection (avoid loopbacks)
       var currentPageNumber = this.get('currentPage');
       if (currentPageNumber !== newPosition) {
+        this.set('isLoading', YES);
         this.set('currentPage', newPosition);
-        // it's first page => disabled previous buttons
-        if (newPosition === 1) {
-          this.set('isPreviousEnabled', NO);
-        }
-        if (newPosition === this.get('_numberOfPages')) {
-          this.set('isNextEnabled', NO);
-        }
         Multivio.logger.info('navigationController#positionDidChange: %@'.
             fmt(this.get('currentPage')));
       }
@@ -211,17 +213,28 @@ Multivio.navigationController = SC.ObjectController.create(
   },
   
   /**
-    Verify if navigation buttons should be disabled 
+    Change buttons status observing isloading property.
+    
+    @observes isLoading
   */
-  checkButton: function () {
-    var current = this.get('currentPage');
-    if (current === 1) {
+  isLoadingDidChange: function () {
+    var isLoading = this.get('isLoading');
+    if (isLoading) {
+      // disabled buttons
       this.set('isPreviousEnabled', NO);
-    }
-    if (current === this.get('_numberOfPages')) {
       this.set('isNextEnabled', NO);
     }
-  },
+    else {
+      // enabled buttons after checking conditions
+      var current = this.get('currentPage');
+      if (current !== 1) {
+        this.set('isPreviousEnabled', YES);
+      }
+      if (current !== this.get('_numberOfPages')) {
+        this.set('isNextEnabled', YES);
+      }
+    }  
+  }.observes('isLoading'),
   
   /**
     Go to the next page.    

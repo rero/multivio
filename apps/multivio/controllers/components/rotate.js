@@ -27,6 +27,16 @@ Multivio.rotateController = SC.ObjectController.create(
   currentValue: 0,
   
   /**
+    Binds to the imageController isLoading property.
+    
+    This binding is used to enabled and disabled rotate buttons
+
+    @binding {Boolean}
+  */
+  isLoading: null,
+  isLoadingBinding: 'Multivio.imageController.isLoading',
+  
+  /**
     Boolean to enabled and disabled rotate Button
   */
   isRigthAllow: YES,
@@ -40,6 +50,25 @@ Multivio.rotateController = SC.ObjectController.create(
   },
   
   /**
+    Change buttons status observing isloading property.
+    
+    @observes isLoading
+  */
+  isLoadingDidChange: function () {
+    var isLoading = this.get('isLoading');
+    if (isLoading) {
+      // disabled
+      this.set('isRigthAllow', NO);
+      this.set('isLeftAllow', NO);
+    }
+    else {
+      // enabled
+      this.set('isRigthAllow', YES);
+      this.set('isLeftAllow', YES);
+    }  
+  }.observes('isLoading'),
+  
+  /**
     Rotate to the left
   */
   rotateLeft: function () {
@@ -48,6 +77,9 @@ Multivio.rotateController = SC.ObjectController.create(
     if (current !== 270) {
       rotateL = current + 90;
     }
+    SC.RunLoop.begin();
+    this.set('isLoading', YES);
+    SC.RunLoop.end();
     this.set('currentValue', rotateL);
   },
   
@@ -60,6 +92,9 @@ Multivio.rotateController = SC.ObjectController.create(
     if (current !== -270) {
       rotateR = current - 90;
     }
+    SC.RunLoop.begin();
+    this.set('isLoading', YES);
+    SC.RunLoop.end();
     this.set('currentValue', rotateR);
   }
   

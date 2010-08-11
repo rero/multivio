@@ -32,6 +32,13 @@
 */
 Multivio.imageController = SC.ArrayController.create(
 /** @scope Multivio.imageController.prototype */ {
+  
+  /**
+    Boolean that says if the image is loaded or loding
+    
+    @default NO
+  */
+  isLoading: NO,
 
   allowsMultipleSelection: NO,
   
@@ -197,6 +204,9 @@ Multivio.imageController = SC.ArrayController.create(
       var cont = this.get('content');
       var image = cont[newPosition];
       this.set('selection', SC.SelectionSet.create().addObject(image));
+      SC.RunLoop.begin();
+      this.set('isLoading', YES);
+      SC.RunLoop.end();
       Multivio.logger.info('imageController#positionDidChange: %@'.
           fmt(this.get('selection').firstObject()));
     }

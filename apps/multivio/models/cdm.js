@@ -35,6 +35,7 @@ Multivio.CDM = SC.Object.create(
   fileMetadata: undefined,
   logicalStructure: undefined,
   physicalStructure: undefined,
+  imageSize: undefined,
 
   /**
     Store the fileMetadata for a specific url
@@ -236,6 +237,58 @@ Multivio.CDM = SC.Object.create(
       var pst = this.get('physicalStructure')[url];
       Multivio.logger.debug('physicalStructure returned by cdm ' + pst);
       return pst;
+    }
+  },
+  
+  /**
+    Return the size of the image or send the request to the server
+    and return -1
+  
+    @param {String} url
+    @return {Object}
+  */
+  getImageSize: function (url) {
+    if (SC.none(this.get('imageSize')) || 
+        this.get('imageSize')[url] === undefined) {
+      // ask the server    
+      var serverAdress = Multivio.configurator.
+          getPath('baseUrlParameters.imageSize');
+      serverAdress += url;
+      Multivio.requestHandler.
+          sendGetRequest(serverAdress, this, 'setImageSize', url);
+      return -1;
+    }
+    else {
+      var size = this.get('imageSize')[url];
+      Multivio.logger.debug('imageSize returned by cdm ' + size);
+      return size;
+    }
+
+  },
+
+  /**
+    Store the size of an image
+
+    @param {String} response the response received from the server
+    @param {url} url the corresponding url
+  */
+  setImageSize: function (response, url) {
+    if (SC.ok(response)) {
+      Multivio.logger.debug('imageSize received from the server: %@'.
+          fmt(response.get("body")));    
+      var jsonRes = response.get("body");
+      var t2 = {};
+      if (!SC.none(this.get('imageSize'))) {
+        var oldSize = this.get('imageSize');
+        t2 = this.clone(oldSize);
+      }
+      t2[url] = jsonRes;
+      this.set('imageSize', t2);
+      Multivio.logger.debug('New imageSize added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
     }
   }
 

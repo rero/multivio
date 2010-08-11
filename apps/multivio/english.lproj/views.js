@@ -312,7 +312,8 @@ Multivio.views = SC.Page.design(
         layout: { left: 90, centerY: 0, width: 180, height: 24 },
         items: [
           {title: "Full", value: "Full", enabled: YES},
-          {title: "Width", value: "Width", enabled: YES}
+          {title: "Width", value: "Width", enabled: YES},
+          {title: "Native", value: "Native", enabled: YES}
         ],
         itemTitleKey: 'title',
         itemValueKey: 'value',
