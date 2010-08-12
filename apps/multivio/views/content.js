@@ -280,10 +280,18 @@ Multivio.ContentView = SC.ScrollView.extend(
     }
   },
   
-  /*frameDidChange: function () {
-    console.info('Frame has changed');
-  }.observes('frame'),*/
- 
+  /**
+    The view size has changed load a new image if the zoom state is Full or
+    Width. 
+  */
+  viewDidResize: function () {
+    var zoomSt = this.get('zoomState');
+    if (zoomSt === Multivio.zoomController.PAGEWIDTH || 
+        zoomSt === Multivio.zoomController.FULLPAGE) {
+      this._loadNewImage();
+    }
+  },
+  
   /**
     Updates value by observing changes in the imageController's
     selection
