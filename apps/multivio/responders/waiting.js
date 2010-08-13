@@ -27,6 +27,13 @@ Multivio.WAITING = SC.Responder.create(
   },
   
   /**
+    An error occured during waiting state, change state to ERROR
+  */
+  errorOccured: function () {
+    Multivio.makeFirstResponder(Multivio.ERROR);
+  },
+  
+  /**
     First fileMetadata has been received. Remove waiting page, initialize 
     metadataController and change state to INIT.
     
