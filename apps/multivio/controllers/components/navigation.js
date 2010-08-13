@@ -49,14 +49,14 @@ Multivio.navigationController = SC.ObjectController.create(
   _numberOfPages: null,
   
   /**
-    Binds to the imageController isLoading property.
+    Binds to the masterController isLoading property.
     
     This binding is used to enabled and disabled navigation buttons
 
     @binding {Boolean}
   */
   isLoading: null,
-  isLoadingBinding: 'Multivio.imageController.isLoading',
+  isLoadingBinding: 'Multivio.masterController.isLoading',
   
   /**
     Boolean to enabled and disabled Buttons

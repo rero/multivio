@@ -52,6 +52,13 @@ Multivio.masterController = SC.ObjectController.create(
   currentType: null,
   
   /**
+    Boolean that says if the application is in a loading state
+    
+    @default NO
+  */
+  isLoading: NO,  
+  
+  /**
     Binds to the cdm fileMetadata
 
     @binding {String}

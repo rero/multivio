@@ -27,14 +27,14 @@ Multivio.rotateController = SC.ObjectController.create(
   currentValue: 0,
   
   /**
-    Binds to the imageController isLoading property.
+    Binds to the masterController isLoading property.
     
     This binding is used to enabled and disabled rotate buttons
 
     @binding {Boolean}
   */
   isLoading: null,
-  isLoadingBinding: 'Multivio.imageController.isLoading',
+  isLoadingBinding: 'Multivio.masterController.isLoading',
   
   /**
     Boolean to enabled and disabled rotate Button

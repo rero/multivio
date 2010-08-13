@@ -52,14 +52,14 @@ Multivio.zoomController = SC.ObjectController.create(
   minVal: 0.0,
   
   /**
-    Binds to the imageController isLoading property.
+    Binds to the masterController isLoading property.
     
     This binding is used to enabled and disabled navigation buttons
 
     @binding {Boolean}
   */
   isLoading: null,
-  isLoadingBinding: 'Multivio.imageController.isLoading',
+  isLoadingBinding: 'Multivio.masterController.isLoading',
   
   /**
     Boolean to enabled and disabled zoom Button
@@ -194,6 +194,34 @@ Multivio.zoomController = SC.ObjectController.create(
       }
     }
     return step;
+  },
+  
+  /**
+   Found the best value for the zoomStep (and the zoomValue) so that 
+   the loaded image size doesn't exceed the max value defined 
+   in the configurator.
+   
+   @param {String} url the url of the image to load
+  */ 
+  setBestStep: function (url) {
+    var max = Multivio.configurator.get('zoomParameters').max;
+    var nativeImageSize = Multivio.CDM.getImageSize(url);
+    var step = 0;
+    while (step < this.zoomScale.length) {
+      var zoomVal = this.zoomScale[step];
+      var imageSize = (nativeImageSize.width * zoomVal) * 
+          (nativeImageSize.height * zoomVal);
+      if (imageSize <= max) {
+        step++;
+      }
+      else {
+        break;
+      }
+    }
+    step--;
+    this.set('currentZoomState', null);
+    this.set('zoomStep', step);
+    this.set('zoomValue', this.zoomScale[step]); 
   },
   
   /**

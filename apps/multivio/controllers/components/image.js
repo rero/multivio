@@ -34,11 +34,12 @@ Multivio.imageController = SC.ArrayController.create(
 /** @scope Multivio.imageController.prototype */ {
   
   /**
-    Boolean that says if the image is loaded or loding
-    
-    @default NO
+    Binds to the masterController isLoading property.
+
+    @binding {Boolean}
   */
-  isLoading: NO,
+  isLoading: null,
+  isLoadingBinding: 'Multivio.masterController.isLoading',
 
   allowsMultipleSelection: NO,
   

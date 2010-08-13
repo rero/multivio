@@ -71,8 +71,7 @@ Multivio.configurator = SC.Object.create(
     @property {Object}
   */
   zoomParameters: {
-    max: 2000,
-    min: 100,
+    max: 4000000,
     initState: 'Full'
   },
   
