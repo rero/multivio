@@ -34,22 +34,8 @@ Multivio.layoutController = SC.Object.create(
     The list of controllers with their view
   */
   viewByController: {},
-  
-  // TODO-CR: move this object to the configurator
-  /**
-    Translate mimetype received from the server to a local type
-    used by the config layout file
-  */
-  typeForMimeType: {
-    'text/xml':               'xml',
-    'text/xml;charset=utf-8': 'xml',
-    'application/xml':        'xml',
-    'application/pdf':        'pdf',
-    'image/jpg':              'image',
-    'image/jpeg':             'image'
-  },
 
-  // TODO-CR: move this function to the initializer, the layout controller has
+  // TODO: move this function to the initializer, the layout controller has
   // nothing to do with controller setup
   /**
     For a mimetype retrieves the local type, the list of controllers needed
@@ -60,7 +46,7 @@ Multivio.layoutController = SC.Object.create(
   */
   getListOfControllers: function (type) {
     // set localType using the matching table
-    this.localType = this.get('typeForMimeType')[type];
+    this.localType = Multivio.configurator.get('typeForMimeType')[type];
     
     // TODO: remove
     if (this.localType === 'image') {
@@ -88,7 +74,7 @@ Multivio.layoutController = SC.Object.create(
     return listOfControllers;
   },
   
-  // TODO-CR: when getListOfControllers() moves to the initializer this
+  // TODO: when getListOfControllers() moves to the initializer this
   // function should probably go along as well
   /**
     currentListOfWidget has changed, verify if all controller have create the

@@ -21,8 +21,8 @@ Multivio.zoomController = SC.ObjectController.create(
   /**
     Pre-defined zoom mode
   */
-  FULLPAGE: 'Full',
-  PAGEWIDTH: 'Width',
+  FULLPAGE:       'Full',
+  PAGEWIDTH:      'Width',
   HUNDREDPERCENT: 'Native',
   
   /**
@@ -32,140 +32,133 @@ Multivio.zoomController = SC.ObjectController.create(
         the pre-defined mode
     zoomStep = if zoomStep = -1 one of the pre-defined mode has been selected
         else (zoomStep >= 0) we are in the 'zoom' mode
-    zoomValue = the value (percentage) of the image size
+    zoomRatio = the ratio (percentage) of the image size
     zoomScale = one of the scale defined in the configurator 
   */
   currentZoomState: undefined,
-  zoomStep: -1,
-  zoomValue: 0.0,
-  zoomScale: undefined,
+  zoomStep:         -1,
+  zoomRatio:        0.0,
+  zoomScale:        undefined,
  
   /**
     @property 
     
     maxStep = the number of steps of the scale
-    maxVal = the scale value of the last step
-    minVal = the scale value of the first step
+    maxRatio = the scale ratio of the last step
+    minRatio = the scale ratio of the first step
   */
-  maxStep: 0,
-  maxVal: 0.0,
-  minVal: 0.0,
+  maxStep:  0,
+  maxRatio: 0.0,
+  minRatio: 0.0,
   
   /**
-    Binds to the masterController isLoading property.
+    Binds to the masterController isLoadingContent property.
     
-    This binding is used to enabled and disabled navigation buttons
+    This binding is used to enable and disable navigation buttons
 
     @binding {Boolean}
   */
-  isLoading: null,
-  isLoadingBinding: 'Multivio.masterController.isLoading',
+  isLoadingContent: null,
+  isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
   
   /**
-    Boolean to enabled and disabled zoom Button
+    Booleans to enable and disable the zoom buttons
   */
-  isZoomInAllow: YES,
-  isZoomOutAllow: YES,
-  isStateEnabled: YES,
+  isZoomInAllowed:  YES,
+  isZoomOutAllowed: YES,
+  isStateEnabled:   YES,
   
   /**
     Initialize this controller. Retrieve zoom values from the configurator.
   */
   initialize: function () {
-    this.currentZoomState = Multivio.configurator.get('zoomParameters').initState;
-    // TO DO Change choosing the scale
-    if (Multivio.masterController.currentType === 'image/jpeg' || 
-        Multivio.masterController.currentType === 'image/jpg') { 
-      this.zoomScale = Multivio.configurator.get('zoomStep2');    
-    }
-    else {
-      this.zoomScale = Multivio.configurator.get('zoomStep1');
-    }
+    this.currentZoomState =
+        Multivio.configurator.get('zoomParameters').initState;
+    // get zoomScale parameter in the configurator 
+    var type = Multivio.configurator.get('typeForMimeType')
+        [Multivio.masterController.currentFileType];
+    var config = Multivio.configurator.get('layoutConfig')[type];
+    var scaleParameter = config.zoomScale;
+    this.zoomScale = Multivio.configurator.get('zoomParameters')
+        [scaleParameter];
+    
     this.maxStep = this.zoomScale.length - 1;
-    this.minVal = this.zoomScale[0];
-    this.maxVal = this.zoomScale[this.maxStep];
+    this.minRatio = this.zoomScale[0];
+    this.maxRatio = this.zoomScale[this.maxStep];
     Multivio.sendAction('addComponent', 'zoomController');
   },
-  
-  /**
-    The currentZoomState
-  */
-  zoomState: function () {
-    return this.get('currentZoomState');
-  }.property('currentZoomState').cacheable(),
 
   /**
-    Zoom in. _current_zoom_step + 1
+    Zoom in. _currentZoomStep + 1
   */  
   doZoomIn: function () {
+    // TODO why is the zoom controller updating the variable
+    // isLoadingContent? 
+    // => No change now because I have to understand how to order call of bindings
     SC.RunLoop.begin();
-    this.set('isLoading', YES);
+    this.set('isLoadingContent', YES);
     SC.RunLoop.end();
     
     var zoomSt = this.get('zoomStep');
     if (zoomSt !== -1) {
       zoomSt++;
       this.set('zoomStep', zoomSt);
-      var newZoomVal = this.zoomScale[zoomSt];
-      this.set('zoomValue', newZoomVal);
+      //var newZoomRatio = this.zoomScale[zoomSt];
     }
     else {
       // first set zoomState undefined to change mode to zoom 
       this.set('currentZoomState', null);
-      var zoomVal = this.get('zoomValue');
-      if (zoomVal < this.minVal) {
-        this.set('zoomStep', 0);
-        this.set('zoomValue', this.minVal);  
+      var zoomRatio = this.get('zoomRatio');
+      // check if zoomRatio is out of the scale
+      if (zoomRatio < this.minRatio) {
+        this.set('zoomStep', 0); 
       }
       else {
-        var nexStep = this.getNextStep(zoomVal);
+        var nexStep = this.getNextStep(zoomRatio);
         this.set('zoomStep', nexStep);
-        this.set('zoomValue', this.zoomScale[nexStep]);
       }
     }
   },
 
   /** 
-    Zoom out. _current_zoom_step - 1
+    Zoom out. _currentZoomStep - 1
   */   
   doZoomOut: function () {
     SC.RunLoop.begin();
-    this.set('isLoading', YES);
+    this.set('isLoadingContent', YES);
     SC.RunLoop.end();
     var zoomSt = this.get('zoomStep');
     if (zoomSt !== -1) {
       zoomSt--;
       this.set('zoomStep', zoomSt);
-      var newZoomVal = this.zoomScale[zoomSt];
-      this.set('zoomValue', newZoomVal);
+      var newZoomRatio = this.zoomScale[zoomSt];
     }
     else {
       // first set zoomState undefined to change mode to zoom
       this.set('currentZoomState', null);
-      var zoomVal = this.get('zoomValue');
-      if (zoomVal > this.maxVal) {
-        this.set('zoomStep', this.maxStep);
-        this.set('zoomValue', this.maxVal);  
+      var zoomRatio = this.get('zoomRatio');
+      // check if zoomRatio is out of the scale
+      if (zoomRatio > this.maxRatio) {
+        this.set('zoomStep', this.maxStep); 
       }
       else {
-        var preStep = this.getPreviousStep(zoomVal);
+        var preStep = this.getPreviousStep(zoomRatio);
         this.set('zoomStep', preStep);
-        this.set('zoomValue', this.zoomScale[preStep]);
       }
     }
   },
   
   /**
-    Get the next zoom step for this value
+    Get the next zoom step for this ratio
    
-    @param {Number} the current value
+    @param {Number} ratio the current ratio
     @return {Number} the next step
   */
-  getNextStep: function (val) {
+  getNextStep: function (ratio) {
     var step = 0;
     while (step < this.zoomScale.length) {
-      var zoomVal = this.zoomScale[step];
-      if (zoomVal <= val) {
+      var zRatio = this.zoomScale[step];
+      if (zRatio <= ratio) {
         step++;
       }
       else {
@@ -176,16 +169,16 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-    Get the previous zoom step for this value
+    Get the previous zoom step for this ratio
    
-    @param {Number} the current value
+    @param {Number} ratio the current ratio
     @return {Number} the previous step
   */
-  getPreviousStep: function (val) {
+  getPreviousStep: function (ratio) {
     var step = 0;
     while (step < this.zoomScale.length) {
-      var zoomVal = this.zoomScale[step];
-      if (zoomVal >= val) {
+      var zRatio = this.zoomScale[step];
+      if (zRatio >= ratio) {
         step--;
         break;
       }
@@ -197,21 +190,19 @@ Multivio.zoomController = SC.ObjectController.create(
   },
   
   /**
-   Found the best value for the zoomStep (and the zoomValue) so that 
-   the loaded image size doesn't exceed the max value defined 
-   in the configurator.
+   Find the best value for the zoomStep so that the loaded image size 
+   doesn't exceed the max resolution value defined in the configurator.
    
-   @param {String} url the url of the image to load
-  */ 
-  setBestStep: function (url) {
-    var max = Multivio.configurator.get('zoomParameters').max;
-    var nativeImageSize = Multivio.CDM.getImageSize(url);
+   @param {Number} width the native width of the image to load
+   @param {Number} height the native height of the image to load
+  */
+  setBestStep: function (width, height) {
+    var maxRes = Multivio.configurator.get('zoomParameters').maxResolution;
     var step = 0;
     while (step < this.zoomScale.length) {
-      var zoomVal = this.zoomScale[step];
-      var imageSize = (nativeImageSize.width * zoomVal) * 
-          (nativeImageSize.height * zoomVal);
-      if (imageSize <= max) {
+      var zoomRatio = this.zoomScale[step];
+      var imageSize = (width * zoomRatio) * (height * zoomRatio);
+      if (imageSize <= maxRes) {
         step++;
       }
       else {
@@ -221,20 +212,49 @@ Multivio.zoomController = SC.ObjectController.create(
     step--;
     this.set('currentZoomState', null);
     this.set('zoomStep', step);
-    this.set('zoomValue', this.zoomScale[step]); 
   },
   
   /**
-    Change buttons status observing isloading property.
+    Calculate the zoomRatio
     
-    @observes isLoading
+    @param {Number} rotate the ratate value
+    @param {Number} imageW the width of the image loaded
+    @param {Number} imageH the height of the image loaded
+    @param {Number} nativeW the native width of the image
   */
-  isLoadingDidChange: function () {
-    var isLoading = this.get('isLoading');
-    if (isLoading) {
+  calculateRatio: function (rotate, imageW, imageH, nativeW) {
+    var ratio = 0;
+    if (rotate % 180 === 0) {
+      ratio = imageW / nativeW;
+    }
+    else {
+      ratio = imageH / nativeW;
+    }
+    this.set('zoomRatio', ratio);
+  },
+  
+  /**
+    Set the value of the zoomRatio observing the value of the zoomStep
+    
+    @observes zoomStep
+  */
+  setRatio: function () {
+    var step = this.get('zoomStep');
+    var newRatio = this.zoomScale[step];
+    this.set('zoomRatio', newRatio);
+  }.observes('zoomStep'),
+  
+  /**
+    Change buttons status observing isLoadingContent property.
+    
+    @observes isLoadingContent
+  */
+  isLoadingContentDidChange: function () {
+    var isLoadingContent = this.get('isLoadingContent');
+    if (isLoadingContent) {
       // disabled
-      this.set('isZoomInAllow', NO);
-      this.set('isZoomOutAllow', NO);
+      this.set('isZoomInAllowed', NO);
+      this.set('isZoomOutAllowed', NO);
       this.set('isStateEnabled', NO);
     }
     else {
@@ -242,29 +262,29 @@ Multivio.zoomController = SC.ObjectController.create(
       this.set('isStateEnabled', YES);
       var newZoomStep = this.get('zoomStep');
       if (newZoomStep === -1) {
-        var receivedZoomVal = this.get('zoomValue');
-        if (receivedZoomVal > this.minVal) {
-          this.set('isZoomOutAllow', YES);
+        var receivedZoomRatio = this.get('zoomRatio');
+        if (receivedZoomRatio > this.minRatio) {
+          this.set('isZoomOutAllowed', YES);
         }
-        if (receivedZoomVal < this.maxVal) {
-          this.set('isZoomInAllow', YES);
+        if (receivedZoomRatio < this.maxRatio) {
+          this.set('isZoomInAllowed', YES);
         }
       }
       else {
         if (newZoomStep > 0) {
-          this.set('isZoomOutAllow', YES);
+          this.set('isZoomOutAllowed', YES);
         }
         if (newZoomStep < this.maxStep) {
-          this.set('isZoomInAllow', YES);
+          this.set('isZoomInAllowed', YES);
         }
       }
     }  
-  }.observes('isLoading'),
+  }.observes('isLoadingContent'),
   
   /**
     Set the new pre-defined zoom.
-    Enabled zoomOut and zoomIn and reset current_zoomFactor and
-    _current_zoom_step.
+    Enable zoomOut and zoomIn and reset current_zoomFactor and
+    _currentZoomStep.
     
     @param {Object} button selected 
   */
@@ -273,7 +293,7 @@ Multivio.zoomController = SC.ObjectController.create(
     if (this.get('currentZoomState') !== newMode) {
       this.zoomStep = -1;
       SC.RunLoop.begin();
-      this.set('isLoading', YES);
+      this.set('isLoadingContent', YES);
       SC.RunLoop.end();
       this.set('currentZoomState', newMode);
     }

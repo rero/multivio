@@ -127,7 +127,7 @@ Multivio.initializer = SC.Object.create(
       
       if (areCompatible) {
         Multivio.logger.debug('Client and server are compatible');
-        // TODO-CR: would prefer to change state here, instead of initializing the master
+        // TODO: would prefer to change state here, instead of initializing the master
         Multivio.masterController.initialize();
       }
       else {

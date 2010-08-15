@@ -293,7 +293,7 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-minus.png'),
-        isEnabledBinding: "Multivio.zoomController.isZoomOutAllow",
+        isEnabledBinding: "Multivio.zoomController.isZoomOutAllowed",
         target: "Multivio.zoomController", 
         action: "doZoomOut"
       }),
@@ -303,7 +303,7 @@ Multivio.views = SC.Page.design(
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-plus.png'),
-        isEnabledBinding: "Multivio.zoomController.isZoomInAllow",
+        isEnabledBinding: "Multivio.zoomController.isZoomInAllowed",
         target: "Multivio.zoomController", 
         action: "doZoomIn"
       }),
@@ -318,7 +318,7 @@ Multivio.views = SC.Page.design(
         itemTitleKey: 'title',
         itemValueKey: 'value',
         itemIsEnabledKey: 'enabled',
-        valueBinding: "Multivio.zoomController.zoomState",
+        valueBinding: "Multivio.zoomController.currentZoomState",
         isEnabledBinding: 'Multivio.zoomController.isStateEnabled',
         target: "Multivio.zoomController",
         action: "setPredefinedZoom"

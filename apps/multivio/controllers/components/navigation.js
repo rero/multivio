@@ -49,14 +49,14 @@ Multivio.navigationController = SC.ObjectController.create(
   _numberOfPages: null,
   
   /**
-    Binds to the masterController isLoading property.
+    Binds to the masterController isLoadingContent property.
     
     This binding is used to enabled and disabled navigation buttons
 
     @binding {Boolean}
   */
-  isLoading: null,
-  isLoadingBinding: 'Multivio.masterController.isLoading',
+  isLoadingContent: null,
+  isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
   
   /**
     Boolean to enabled and disabled Buttons
@@ -153,7 +153,7 @@ Multivio.navigationController = SC.ObjectController.create(
       // verify if we need to set selection (avoid loopbacks)
       var currentPageNumber = this.get('currentPage');
       if (currentPageNumber !== newPosition) {
-        this.set('isLoading', YES);
+        this.set('isLoadingContent', YES);
         this.set('currentPage', newPosition);
         Multivio.logger.info('navigationController#positionDidChange: %@'.
             fmt(this.get('currentPage')));
@@ -213,13 +213,13 @@ Multivio.navigationController = SC.ObjectController.create(
   },
   
   /**
-    Change buttons status observing isloading property.
+    Change buttons status observing isLoadingContent property.
     
-    @observes isLoading
+    @observes isLoadingContent
   */
-  isLoadingDidChange: function () {
-    var isLoading = this.get('isLoading');
-    if (isLoading) {
+  isLoadingContentDidChange: function () {
+    var isLoadingContent = this.get('isLoadingContent');
+    if (isLoadingContent) {
       // disabled buttons
       this.set('isPreviousEnabled', NO);
       this.set('isNextEnabled', NO);
@@ -234,7 +234,7 @@ Multivio.navigationController = SC.ObjectController.create(
         this.set('isNextEnabled', YES);
       }
     }  
-  }.observes('isLoading'),
+  }.observes('isLoadingContent'),
   
   /**
     Go to the next page.    
@@ -243,10 +243,13 @@ Multivio.navigationController = SC.ObjectController.create(
     this.set('isPreviousEnabled', YES);
     var np = this.get('currentPage') + 1;
     if (np <= this.get('_numberOfPages')) {
+      SC.RunLoop.begin();
+      this.set('isLoadingContent', YES);
+      SC.RunLoop.end();
       this.set('currentPage', np);
-      if (np === this.get('_numberOfPages')) {
+      /*if (np === this.get('_numberOfPages')) {
         this.set('isNextEnabled', NO);
-      }
+      }*/
     }
   },
   
@@ -257,10 +260,13 @@ Multivio.navigationController = SC.ObjectController.create(
     this.set('isNextEnabled', YES);
     var pp = this.get('currentPage') - 1;
     if (pp > 0) {
+      SC.RunLoop.begin();
+      this.set('isLoadingContent', YES);
+      SC.RunLoop.end();
       this.set('currentPage', pp);
-      if (pp === 1) {
+      /*if (pp === 1) {
         this.set('isPreviousEnabled', NO);
-      }
+      }*/
     }
   },
   
@@ -268,6 +274,9 @@ Multivio.navigationController = SC.ObjectController.create(
     Go to the first page.
   */    
   goToFirstPage: function () {
+    SC.RunLoop.begin();
+    this.set('isLoadingContent', YES);
+    SC.RunLoop.end();
     this.set('currentPage', 1);
     this.set('isNextEnabled', YES);
     this.set('isPreviousEnabled', NO);
@@ -277,6 +286,9 @@ Multivio.navigationController = SC.ObjectController.create(
     Go to the last page.
   */ 
   goToLastPage: function () {
+    SC.RunLoop.begin();
+    this.set('isLoadingContent', YES);
+    SC.RunLoop.end();
     var nbp = this.get('_numberOfPages');
     this.set('currentPage', nbp);
     this.set('isPreviousEnabled', YES);

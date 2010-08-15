@@ -71,15 +71,11 @@ Multivio.configurator = SC.Object.create(
     @property {Object}
   */
   zoomParameters: {
-    max: 4000000,
-    initState: 'Full'
+    maxResolution:          4000000,
+    scaleForVectorGraphics: [ 0.25, 0.5, 1.0, 1.5, 2.0, 4.0],
+    scaleForBitmapGraphics: [ 0.1, 0.25, 0.5, 0.75, 1.0 ],
+    initState:              'Full'
   },
-  
-  /**
-    Zoom scale for PDF and for images
-  */
-  zoomStep1: [ 0.25, 0.5, 1.0, 1.5, 2.0, 4.0],
-  zoomStep2: [ 0.1, 0.25, 0.5, 0.75, 1.0 ],
   
   /**
     This object contains all urls used by the application
@@ -94,7 +90,7 @@ Multivio.configurator = SC.Object.create(
     
     thumbnail: "/document/render?max_height=100&max_width=100",
     
-    image: "/document/render?width=1500",
+    image: "/document/render?",
     imageSize: "/document/get_size?",
     
     fixtures: {
@@ -169,15 +165,32 @@ Multivio.configurator = SC.Object.create(
         {name: 'views.treeAndContentView', coord: 'A2:B2'},
         {name: 'views.toolbar',            coord: 'A3:C3'},
         {name: 'views.thumbnailView',      coord: 'C2:C2'}
-      ]
+      ],
+      zoomScale: 'scaleForVectorGraphics'
     },
     image : {
       components: [
         {name: 'views.treeAndContentView', coord: 'A2:B2'},
         {name: 'views.toolbar',            coord: 'A3:C3'},
         {name: 'views.thumbnailView',      coord: 'C2:C2'}
-      ]
+      ],
+      zoomScale: 'scaleForBitmapGraphics'
     }
+  },
+  
+  /**
+    Translate mimetype received from the server to a local type
+    used by the config layout file
+  */
+  typeForMimeType: {
+    'text/xml':               'xml',
+    'text/xml;charset=utf-8': 'xml',
+    'application/xml':        'xml',
+    'application/pdf':        'pdf',
+    'image/gif':              'image',
+    'image/png':              'image',
+    'image/jpg':              'image',
+    'image/jpeg':             'image'
   },
   
   /**
@@ -229,9 +242,12 @@ Multivio.configurator = SC.Object.create(
     case 'get':
       modifiedUrl = this.getPath('baseUrlParameters.image');
       if (pageNumber !== 0) {
-        modifiedUrl += "&page_nr=" + pageNumber;
-      } 
-      modifiedUrl += "&url=" + url;
+        modifiedUrl += "page_nr=" + pageNumber;
+        modifiedUrl += "&url=" + url;
+      }
+      else {
+        modifiedUrl += "url=" + url;
+      }
       break;
     
     case 'fixtures':

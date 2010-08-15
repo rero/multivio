@@ -32,21 +32,21 @@ test("_isZoomStepValid method", function () {
 
 test("doZoomIn method", function () {
   myZoomController.doZoomIn();
-  equals(myZoomController.get('_current_zoom_step'), 1, "should find the _current_zoom_step with the value 1");
-  equals(myZoomController.get('current_zoom_factor'), 1.3, "should find the current_zoom_factor with the value 1.3");  
+  equals(myZoomController.get('_currentZoomStep'), 1, "should find the _currentZoomStep with the value 1");
+  equals(myZoomController.get('currentZoomFactor'), 1.3, "should find the currentZoomFactor with the value 1.3");  
 });
 
 test("doZoomOut method", function () {
   myZoomController.doZoomOut();
-  equals(myZoomController.get('_current_zoom_step'), 0, "should find the _current_zoom_step with the value 0");
-  equals(myZoomController.get('current_zoom_factor'), 1, "should find the current_zoom_factor with the value 1");
+  equals(myZoomController.get('_currentZoomStep'), 0, "should find the _currentZoomStep with the value 0");
+  equals(myZoomController.get('currentZoomFactor'), 1, "should find the currentZoomFactor with the value 1");
   myZoomController.doZoomOut();
-  equals(myZoomController.get('_current_zoom_step'), -1, "should find the _current_zoom_step with the value -1");
-  equals(myZoomController.get('current_zoom_factor'), myZoomController._zoomFactorForStep(-1), "should find the current_zoom_factor with the value 0.7"); 
+  equals(myZoomController.get('_currentZoomStep'), -1, "should find the _currentZoomStep with the value -1");
+  equals(myZoomController.get('currentZoomFactor'), myZoomController._zoomFactorForStep(-1), "should find the currentZoomFactor with the value 0.7"); 
 });
 
 test("doZoomOriginal method", function () {
   myZoomController.doZoomOriginal();
-  equals(myZoomController.get('_current_zoom_step'), 0, "should find the _current_zoom_step with the value 0");
-  equals(myZoomController.get('current_zoom_factor'), myZoomController.ZOOM_ORIGINAL_FACTOR, "should find the current_zoom_factor with the value ZOOM_ORIGINAL_FACTOR");  
+  equals(myZoomController.get('_currentZoomStep'), 0, "should find the _currentZoomStep with the value 0");
+  equals(myZoomController.get('currentZoomFactor'), myZoomController.ZOOM_ORIGINAL_FACTOR, "should find the currentZoomFactor with the value ZOOM_ORIGINAL_FACTOR");  
 });

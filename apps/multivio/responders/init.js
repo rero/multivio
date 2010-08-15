@@ -31,7 +31,7 @@ Multivio.INIT = SC.Responder.create(
   notAllowSelection: function () {
     Multivio.treeController.allowSelection(NO);
   },
-  
+
   /**
     An error occured during the INIT state, don't stop the application, only
     show an errorPane with the error message
@@ -52,8 +52,8 @@ Multivio.INIT = SC.Responder.create(
     Multivio.usco.showAlertPaneError('_An error occurred'.loc(), errorMessage);
     Multivio.treeController.allowSelection(YES);
   },
-  
-  // TODO-CR: there's an inconsistency here: trying to add a component and
+
+  // TODO: there's an inconsistency here: trying to add a component and
   // providing a controller instead
   /**
     Add a component to the page. 

@@ -19,20 +19,20 @@ Multivio.ContentView = SC.ScrollView.extend(
 /** @scope Multivio.ContentView.prototype */ {
 
   /**
-    Binds to the masterController isLoading property.
+    Binds to the masterController isLoadingContent property.
 
     @binding {Boolean}
   */
-  isLoading: null,
-  isLoadingBinding: 'Multivio.masterController.isLoading',
+  isLoadingContent: null,
+  isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
   
   /**
-    Binds to the zoomValue in the zoom controller.
+    Binds to the zoomRatio in the zoom controller.
     
     @binding {Number}
   */ 
-  zoomValue: null,
-  zoomValueBinding: 'Multivio.zoomController.zoomValue',
+  zoomRatio: null,
+  zoomRatioBinding: 'Multivio.zoomController.zoomRatio',
   
   /**
     Binds to the currentZoomState in the zoom controller.
@@ -80,16 +80,16 @@ Multivio.ContentView = SC.ScrollView.extend(
   _nextUrl: null,
   
   /**
-    ZoomValue has changed, check if we need to load a new image
+    ZoomRatio has changed, check if we need to load a new image
 
-    @observes zoomValue
+    @observes zoomRatio
   */  
-  zoomValueDidChange: function () {
-    var zoomVal = this.get('zoomValue');
+  zoomRatioDidChange: function () {
+    var zoomVal = this.get('zoomRatio');
     if (SC.none(this.get('zoomState'))) {
       this._loadNewImage();
     }
-  }.observes('zoomValue'),
+  }.observes('zoomRatio'),
   
   /**
     ZoomState has changed, check if we need to load a new image
@@ -127,11 +127,11 @@ Multivio.ContentView = SC.ScrollView.extend(
       if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
         
         var defaultUrl = currentSelection.firstObject().url;
-        var index = defaultUrl.indexOf('&page_nr=');
+        var index = defaultUrl.indexOf('page_nr=');
         if (index === -1) {
-          index = defaultUrl.indexOf('&url=');
+          index = defaultUrl.indexOf('url=');
         }
-        var fileUrl = defaultUrl.substring(index + 1, defaultUrl.length);
+        var fileUrl = defaultUrl.substring(index, defaultUrl.length);
         var imageSize = this.get('imageSize')[fileUrl];
         
         // imageSize is avalaible
@@ -161,7 +161,7 @@ Multivio.ContentView = SC.ScrollView.extend(
   */
   _adjustSize: function (url, image) {
     SC.RunLoop.begin();
-    //this.set('isLoading', NO);
+    //this.set('isLoadingContent', NO);
     var content =  this.get('contentView');
     content.set('value', url);
     content.adjust('width', image.width);
@@ -171,30 +171,18 @@ Multivio.ContentView = SC.ScrollView.extend(
     if (!this.get('isHorizontalScrollerVisible')) {
       content.adjust('left', undefined);
     }
-    
-    // calculate zoomValue if zoomState !== null
+
+    // calculate zoomRatio if zoomState !== null
     var state = this.get('zoomState');
     if (!SC.none(state)) {
-      //this.zoomValue = 0;
       var rot = this.get('rotateValue');
-      var rat = 0;
-      
-      // verify the position of the image
-      if (rot % 180 === 0) {
-        rat = image.width / this.nativeWidth;
-      }
-      else {
-        rat = image.height / this.nativeWidth;
-      }
-      SC.RunLoop.begin();
-      this.set('zoomValue', Math.round(rat * 100) / 100);      
-      SC.RunLoop.end();
-      Multivio.logger.info('New zoomValue setted ' + Math.round(rat * 100) / 100);
+      Multivio.zoomController.calculateRatio(rot, image.width, image.height,
+          this.nativeWidth);
     }
     
     //enabled buttons
     SC.RunLoop.begin();
-    this.set('isLoading', NO);
+    this.set('isLoadingContent', NO);
     SC.RunLoop.end();
     Multivio.logger.debug('ContentView#_adjustSize');
   },
@@ -207,10 +195,12 @@ Multivio.ContentView = SC.ScrollView.extend(
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
       var defaultUrl = currentSelection.firstObject().url;
+      // the index of the url parameter
+      var urlIndex = defaultUrl.indexOf('url');
       // get zoomState
       var zoomSt = this.get('zoomState');
       var rot = this.get('rotateValue');
-      var max = Multivio.configurator.get('zoomParameters').max;
+      var maxRes = Multivio.configurator.get('zoomParameters').maxResolution;
       var isBiggerThanMax = NO;
       var newUrl = "";
       
@@ -218,47 +208,68 @@ Multivio.ContentView = SC.ScrollView.extend(
       case Multivio.zoomController.FULLPAGE:
         var windowWidth = this.get('frame').width;
         var windowHeight = this.get('frame').height;
-        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-            windowWidth + '&max_height=' + windowHeight + '&angle=' + rot);
-        // calculate if the image size > max  
+        if (rot % 180 === 0) {
+          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+              windowWidth + '&max_height=' + windowHeight + '&angle=' + rot +
+              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+        }
+        else {
+          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+              windowHeight + '&max_height=' + windowWidth + '&angle=' + rot +
+              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+        }
+          
+        // calculate if the image size > maxRes  
         var imageMaxW = this.nativeWidth / windowWidth;
         var imageMaxH = this.nativeHeight / windowHeight;
         var maxRat = imageMaxW > imageMaxH ? imageMaxW : imageMaxH;
         var tempM = (this.nativeWidth / maxRat) * (this.nativeHeight / maxRat);
-        if (tempM > max) {
+        if (tempM > maxRes) {
           isBiggerThanMax = YES;
         }
         break;
 
       case Multivio.zoomController.PAGEWIDTH:
-        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-            this.get('frame').width + '&angle=' + rot);
-        // calculate if the image size > max  
+        if (rot % 180 === 0) {  
+          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+              this.get('frame').width + '&angle=' + rot +
+              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+        }
+        else {
+          newUrl = defaultUrl.substring(0, urlIndex).concat('max_height=' +
+              this.get('frame').width + '&angle=' + rot +
+              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));          
+        }  
+        // calculate if the image size > maxRes  
         var rat = this.nativeWidth / windowWidth;
         var nextSize = (this.nativeWidth / rat) * (this.nativeHeight / rat);
-        if (nextSize > max) {
+        if (nextSize > maxRes) {
           isBiggerThanMax = YES;
         }
         break;
 
       case Multivio.zoomController.HUNDREDPERCENT:
-        newUrl = defaultUrl.replace('width=1500', 'angle=' + rot);
-        // calculate if the image size > max
-        if (this.nativeWidth * this.nativeHeight > max) {
+        newUrl = defaultUrl.substring(0, urlIndex).concat('angle=' + rot +
+          '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+        
+        // calculate if the image size > maxRes
+        if (this.nativeWidth * this.nativeHeight > maxRes) {
           isBiggerThanMax = YES;
         }
         break;
         
       default:
-        var zoomVal = this.get('zoomValue');
+        var zoomVal = this.get('zoomRatio');
         Multivio.logger.info('currentpercent ' + zoomVal);
         var newWidth = this.nativeWidth * zoomVal;
         var newHeight = this.nativeHeight * zoomVal;
-        newUrl = defaultUrl.replace('width=1500', 'max_width=' +
-            parseInt(newWidth, 10) + '&max_height=' + parseInt(newHeight, 10) +
-            '&angle=' + rot);
-        // calculate if the image size > max
-        if (parseInt(newWidth, 10) * parseInt(newHeight, 10) > max) {
+        newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+            parseInt(newWidth, 10) + '&max_height=' + 
+            parseInt(newHeight, 10) + '&angle=' + rot + 
+            '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+            
+        // calculate if the image size > maxRes
+        if (parseInt(newWidth, 10) * parseInt(newHeight, 10) > maxRes) {
           isBiggerThanMax = YES;
         } 
         break;
@@ -295,14 +306,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     case SC.BUTTON2_STATUS:
       // load the best image
       var currentSelection = this.get('selection');
-      var defaultUrl = currentSelection.firstObject().url;
-      // first check if page_nr exist
-      var index = defaultUrl.indexOf('&page_nr=');
-      if (index === -1) {
-        index = defaultUrl.indexOf('&url=');
-      }
-      var fileUrl = defaultUrl.substring(index + 1, defaultUrl.length);
-      Multivio.zoomController.setBestStep(fileUrl);
+      Multivio.zoomController.setBestStep(this.nativeWidth, this.nativeHeight);
       break;
     }
   },
@@ -335,12 +339,11 @@ Multivio.ContentView = SC.ScrollView.extend(
       
       var defaultUrl = currentSelection.firstObject().url;
       // first check if page_nr exist
-      var index = defaultUrl.indexOf('&page_nr=');
+      var index = defaultUrl.indexOf('page_nr=');
       if (index === -1) {
-        index = defaultUrl.indexOf('&url=');
+        index = defaultUrl.indexOf('url=');
       }
-      var fileUrl = defaultUrl.substring(index + 1, defaultUrl.length);
-           
+      var fileUrl = defaultUrl.substring(index, defaultUrl.length);
       var nativeSize = Multivio.CDM.getImageSize(fileUrl);
       // nativeSize is avalaible
       if (nativeSize !== -1) {

@@ -31,11 +31,6 @@ Multivio.masterController = SC.ObjectController.create(
   currentFile: null,
   
   /**
-    Boolean that say if files must be grouped or not
-  */
-  isGrouped: NO,
-  
-  /**
     The index of the file_position
   
     Now it's a number but it can be something else
@@ -43,20 +38,25 @@ Multivio.masterController = SC.ObjectController.create(
     @property {position}
   */
   currentPosition: null,
+  
+  /**
+    Boolean that say if files must be grouped or not
+  */
+  isGrouped: NO,
     
   /**
-    The type of the currentDocument
+    The type of the current file
   
-    @property {currentType}
+    @property {currentFileType}
   */
-  currentType: null,
+  currentFileType: null,
   
   /**
     Boolean that says if the application is in a loading state
     
     @default NO
   */
-  isLoading: NO,  
+  isLoadingContent: NO,  
   
   /**
     Binds to the cdm fileMetadata
@@ -84,7 +84,7 @@ Multivio.masterController = SC.ObjectController.create(
   reset: function () {
     this.set('currentFile', null);
     this.set('currentPosition', null);
-    this.set('currentType', null);
+    this.set('currentFileType', null);
   },
 
   /**
@@ -99,7 +99,7 @@ Multivio.masterController = SC.ObjectController.create(
       var currentMeta = this.get('metadata')[cf];
       if (currentMeta !== -1) {
         Multivio.sendAction('fileMetadataDidChange', cf);
-        this.set('currentType', currentMeta.mime);
+        this.set('currentFileType', currentMeta.mime);
       }
     }
   }.observes('metadata'),
@@ -142,12 +142,12 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   /**
-    Initialize new controllers depending of the currentType
+    Initialize new controllers depending of the currentFileType
   
-    @observes currentType
+    @observes currentFileType
   */
-  currentTypeDidChange: function () {
-    var ct = this.get('currentType');
+  currentFileTypeDidChange: function () {
+    var ct = this.get('currentFileType');
     var cf = this.get('currentFile');
     var listOfControllerss = Multivio.layoutController.getListOfControllers(ct);
     
@@ -156,7 +156,7 @@ Multivio.masterController = SC.ObjectController.create(
       console.info('master initialize controller ' + oneController + ' type ' + ct);
       Multivio[oneController].initialize(cf);
     }
-  }.observes('currentType'),
+  }.observes('currentFileType'),
   
   /**
     A new file has been selected, retrieves metadata for it
@@ -165,16 +165,16 @@ Multivio.masterController = SC.ObjectController.create(
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
-      // TODO-CR: why not this.set('currentType', null) ?
-      this.currentType = null;
+      // TODO: why not this.set('currentFileType', null) ?
+      this.currentFileType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
       var meta = Multivio.CDM.getFileMetadata(cf);
-      // TODO-CR document this: what does -1 mean? is it part of the server API?
+      // meta === -1 => fileMetadata not in the client wait until fileMetadata
+      // is available => metadataDidChange
       if (meta !== -1) {
-        this.set('currentType', meta.mime);
+        this.set('currentFileType', meta.mime);
       }
-      // TODO-CR what happens (or should happen) if meta === -1?
     }
   }.observes('currentFile'),
   
