@@ -182,6 +182,11 @@ Multivio.initializer = SC.Object.create(
       physical[name] = Multivio.CDM.FIXTURES.physical[name];
       Multivio.CDM.physicalStructure = physical;
       
+      // get and set size
+      var size = {};
+      size = Multivio.CDM.FIXTURES.size[name];
+      Multivio.CDM.imageSize = size;
+      
       Multivio.masterController.set('currentFile', name);
       Multivio.logger.debug('Fixtures "%@" setted'.fmt(name));
     }

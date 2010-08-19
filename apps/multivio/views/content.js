@@ -138,9 +138,6 @@ Multivio.ContentView = SC.ScrollView.extend(
         if (imageSize !== -1) {
           this.nativeWidth = imageSize.width;
           this.nativeHeight = imageSize.height;
-          // new selection rotate value = 0
-          this.rotateValue = 0;
-          Multivio.rotateController.resetRotateValue();
           this._loadNewImage();
         }
       }
@@ -161,7 +158,6 @@ Multivio.ContentView = SC.ScrollView.extend(
   */
   _adjustSize: function (url, image) {
     SC.RunLoop.begin();
-    //this.set('isLoadingContent', NO);
     var content =  this.get('contentView');
     content.set('value', url);
     content.adjust('width', image.width);
@@ -203,76 +199,81 @@ Multivio.ContentView = SC.ScrollView.extend(
       var maxRes = Multivio.configurator.get('zoomParameters').maxResolution;
       var isBiggerThanMax = NO;
       var newUrl = "";
-      
-      switch (zoomSt) {    
-      case Multivio.zoomController.FULLPAGE:
-        var windowWidth = this.get('frame').width;
-        var windowHeight = this.get('frame').height;
-        if (rot % 180 === 0) {
-          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
-              windowWidth + '&max_height=' + windowHeight + '&angle=' + rot +
-              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
-        }
-        else {
-          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
-              windowHeight + '&max_height=' + windowWidth + '&angle=' + rot +
-              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
-        }
+      // load fixtures or real images
+      if (Multivio.initializer.get('inputParameters').scenario === 'fixtures') {
+        newUrl = defaultUrl;
+      }
+      else {
+        switch (zoomSt) {    
+        case Multivio.zoomController.FULLPAGE:
+          var windowWidth = this.get('frame').width;
+          var windowHeight = this.get('frame').height;
+          if (rot % 180 === 0) {
+            newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+                windowWidth + '&max_height=' + windowHeight + '&angle=' + rot +
+                '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+          }
+          else {
+            newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+                windowHeight + '&max_height=' + windowWidth + '&angle=' + rot +
+                '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+          }
           
-        // calculate if the image size > maxRes  
-        var imageMaxW = this.nativeWidth / windowWidth;
-        var imageMaxH = this.nativeHeight / windowHeight;
-        var maxRat = imageMaxW > imageMaxH ? imageMaxW : imageMaxH;
-        var tempM = (this.nativeWidth / maxRat) * (this.nativeHeight / maxRat);
-        if (tempM > maxRes) {
-          isBiggerThanMax = YES;
-        }
-        break;
+          // calculate if the image size > maxRes  
+          var imageMaxW = this.nativeWidth / windowWidth;
+          var imageMaxH = this.nativeHeight / windowHeight;
+          var maxRat = imageMaxW > imageMaxH ? imageMaxW : imageMaxH;
+          var tempM = (this.nativeWidth / maxRat) * (this.nativeHeight / maxRat);
+          if (tempM > maxRes) {
+            isBiggerThanMax = YES;
+          }
+          break;
 
-      case Multivio.zoomController.PAGEWIDTH:
-        if (rot % 180 === 0) {  
-          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
-              this.get('frame').width + '&angle=' + rot +
-              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
-        }
-        else {
-          newUrl = defaultUrl.substring(0, urlIndex).concat('max_height=' +
-              this.get('frame').width + '&angle=' + rot +
-              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));          
-        }  
-        // calculate if the image size > maxRes  
-        var rat = this.nativeWidth / windowWidth;
-        var nextSize = (this.nativeWidth / rat) * (this.nativeHeight / rat);
-        if (nextSize > maxRes) {
-          isBiggerThanMax = YES;
-        }
-        break;
+        case Multivio.zoomController.PAGEWIDTH:
+          if (rot % 180 === 0) {  
+            newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+                this.get('frame').width + '&angle=' + rot +
+                '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+          }
+          else {
+            newUrl = defaultUrl.substring(0, urlIndex).concat('max_height=' +
+                this.get('frame').width + '&angle=' + rot +
+                '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));          
+          }  
+          // calculate if the image size > maxRes  
+          var rat = this.nativeWidth / windowWidth;
+          var nextSize = (this.nativeWidth / rat) * (this.nativeHeight / rat);
+          if (nextSize > maxRes) {
+            isBiggerThanMax = YES;
+          }
+          break;
 
-      case Multivio.zoomController.HUNDREDPERCENT:
-        newUrl = defaultUrl.substring(0, urlIndex).concat('angle=' + rot +
-          '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
-        
-        // calculate if the image size > maxRes
-        if (this.nativeWidth * this.nativeHeight > maxRes) {
-          isBiggerThanMax = YES;
-        }
-        break;
-        
-      default:
-        var zoomVal = this.get('zoomRatio');
-        Multivio.logger.info('currentpercent ' + zoomVal);
-        var newWidth = this.nativeWidth * zoomVal;
-        var newHeight = this.nativeHeight * zoomVal;
-        newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
-            parseInt(newWidth, 10) + '&max_height=' + 
-            parseInt(newHeight, 10) + '&angle=' + rot + 
+        case Multivio.zoomController.HUNDREDPERCENT:
+          newUrl = defaultUrl.substring(0, urlIndex).concat('angle=' + rot +
             '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
+        
+          // calculate if the image size > maxRes
+          if (this.nativeWidth * this.nativeHeight > maxRes) {
+            isBiggerThanMax = YES;
+          }
+          break;
+        
+        default:
+          var zoomVal = this.get('zoomRatio');
+          Multivio.logger.info('currentpercent ' + zoomVal);
+          var newWidth = this.nativeWidth * zoomVal;
+          var newHeight = this.nativeHeight * zoomVal;
+          newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
+              parseInt(newWidth, 10) + '&max_height=' + 
+              parseInt(newHeight, 10) + '&angle=' + rot + 
+              '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
             
-        // calculate if the image size > maxRes
-        if (parseInt(newWidth, 10) * parseInt(newHeight, 10) > maxRes) {
-          isBiggerThanMax = YES;
-        } 
-        break;
+          // calculate if the image size > maxRes
+          if (parseInt(newWidth, 10) * parseInt(newHeight, 10) > maxRes) {
+            isBiggerThanMax = YES;
+          } 
+          break;
+        }
       }
       if (isBiggerThanMax) {
         this._nextUrl = newUrl;
@@ -313,7 +314,9 @@ Multivio.ContentView = SC.ScrollView.extend(
   
   /**
     The view size has changed load a new image if the zoom state is Full or
-    Width. 
+    Width.
+    
+    TODO: if possible find a method that is called once.
   */
   viewDidResize: function () {
     var zoomSt = this.get('zoomState');
@@ -333,9 +336,10 @@ Multivio.ContentView = SC.ScrollView.extend(
   _selectionDidChange: function () {
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
-      // reset nativeWidth & nativeHeight
+      // reset nativeWidth, nativeHeight & rotate
       this.nativeWidth = 0;
       this.nativeHeight = 0;
+      Multivio.rotateController.resetRotateValue();
       
       var defaultUrl = currentSelection.firstObject().url;
       // first check if page_nr exist
@@ -349,9 +353,6 @@ Multivio.ContentView = SC.ScrollView.extend(
       if (nativeSize !== -1) {
         this.nativeWidth = nativeSize.width;
         this.nativeHeight = nativeSize.height;
-        // new selection rotate value = 0
-        this.rotateValue = 0;
-        Multivio.rotateController.resetRotateValue();
         this._loadNewImage();
       }
     }

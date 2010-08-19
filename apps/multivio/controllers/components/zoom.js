@@ -101,21 +101,25 @@ Multivio.zoomController = SC.ObjectController.create(
     
     var zoomSt = this.get('zoomStep');
     if (zoomSt !== -1) {
-      zoomSt++;
-      this.set('zoomStep', zoomSt);
-      //var newZoomRatio = this.zoomScale[zoomSt];
+      if (zoomSt < this.maxStep) {
+        zoomSt++;
+        this.set('zoomStep', zoomSt);
+      }
     }
     else {
       // first set zoomState undefined to change mode to zoom 
       this.set('currentZoomState', null);
       var zoomRatio = this.get('zoomRatio');
-      // check if zoomRatio is out of the scale
+      // check if zoomRatio is smaller than the minRatio
       if (zoomRatio < this.minRatio) {
         this.set('zoomStep', 0); 
       }
       else {
-        var nexStep = this.getNextStep(zoomRatio);
-        this.set('zoomStep', nexStep);
+        // check if zoomratio is smaller than the maxRatio
+        if (zoomRatio < this.maxRatio) {
+          var nexStep = this.getNextStep(zoomRatio);
+          this.set('zoomStep', nexStep);
+        }
       }
     }
   },
@@ -129,21 +133,25 @@ Multivio.zoomController = SC.ObjectController.create(
     SC.RunLoop.end();
     var zoomSt = this.get('zoomStep');
     if (zoomSt !== -1) {
-      zoomSt--;
-      this.set('zoomStep', zoomSt);
-      var newZoomRatio = this.zoomScale[zoomSt];
+      if (zoomSt > 0) {
+        zoomSt--;
+        this.set('zoomStep', zoomSt);
+      }
     }
     else {
       // first set zoomState undefined to change mode to zoom
       this.set('currentZoomState', null);
       var zoomRatio = this.get('zoomRatio');
-      // check if zoomRatio is out of the scale
+      // check if zoomRatio is bigger than the maxRatio
       if (zoomRatio > this.maxRatio) {
         this.set('zoomStep', this.maxStep); 
       }
       else {
-        var preStep = this.getPreviousStep(zoomRatio);
-        this.set('zoomStep', preStep);
+        //check if zoomRatio is bigger than the minRatio
+        if (zoomRatio > this.minRatio) {
+          var preStep = this.getPreviousStep(zoomRatio);
+          this.set('zoomStep', preStep);
+        }
       }
     }
   },

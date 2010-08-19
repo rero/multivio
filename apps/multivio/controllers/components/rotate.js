@@ -46,7 +46,10 @@ Multivio.rotateController = SC.ObjectController.create(
     Set currentValue to 0
   */
   resetRotateValue: function () {
-    this.currentValue = 0;
+    //this.currentValue = 0;
+    SC.RunLoop.begin();
+    this.set('currentValue', 0);
+    SC.RunLoop.end();
   },
   
   /**

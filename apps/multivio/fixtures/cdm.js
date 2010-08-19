@@ -16,7 +16,7 @@ Multivio.CDM.FIXTURES = {
       title: 'The Problem of Practical Eugenics'
     },
     'http://purl.dlib.indiana.edu/iudl/brittlebooks/page/VAA1194-01-screen.gif': {
-      mime: 'image/jpg'
+      mime: 'image/gif'
     }
   },
   logical: {
@@ -315,4 +315,212 @@ Multivio.CDM.FIXTURES = {
       }
     ]
   },
+  size: {
+    'VAA': {
+      "/static/multivio/en/current/images/VAA/VAA1194-01-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-02-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-03-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-04-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-05-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-06-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-07-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-08-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-09-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-10-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-11-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-12-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-13-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-14-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-15-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-16-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-17-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-18-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-19-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-20-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-21-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-22-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-23-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-24-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-25-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-26-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-27-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-28-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-29-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-30-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-31-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-32-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-33-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-34-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-35-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-36-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-37-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-38-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-39-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-40-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-41-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-42-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-43-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-44-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-45-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-46-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-47-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-48-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-49-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-50-screen.gif": {
+        "width": 1500,
+        "height":1500
+      },
+      "/static/multivio/en/current/images/VAA/VAA1194-51-screen.gif": {
+        "width": 1500,
+        "height":1500
+      }
+    }
+  }
 };
