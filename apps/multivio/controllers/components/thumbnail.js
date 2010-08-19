@@ -66,7 +66,14 @@ Multivio.thumbnailController = SC.ArrayController.create(
     if (SC.none(meta.nPages)) {
       if (Multivio.masterController.isGrouped) {
         var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
-        this._createThumbnails(refStruct);
+        // check if physical structure of the referer is on the client
+        // else create a binding
+        if (refStruct !== -1) {
+          this._createThumbnails(refStruct);
+        }
+        else {
+          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+        }
       }
       else {
         var phSt = Multivio.CDM.getPhysicalstructure(url);
@@ -120,12 +127,20 @@ Multivio.thumbnailController = SC.ArrayController.create(
   physicalStructureDidChange: function () {
     var phStr = this.get('physicalStructure');
     if (!SC.none(phStr)) {
-      var cf = Multivio.masterController.get('currentFile');
-      if (!SC.none(cf)) {
-        var ph = this.get('physicalStructure')[cf];
-        if (ph !== -1) {
-          if (!SC.none(ph)) {
-            this._createThumbnails(ph);
+      if (Multivio.masterController.isGrouped) {
+        var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+        if (refStruct !== -1) {
+          this._createThumbnails(refStruct);
+        }
+      }
+      else {
+        var cf = Multivio.masterController.get('currentFile');
+        if (!SC.none(cf)) {
+          var ph = this.get('physicalStructure')[cf];
+          if (ph !== -1) {
+            if (!SC.none(ph)) {
+              this._createThumbnails(ph);
+            }
           }
         }
       }

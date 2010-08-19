@@ -72,8 +72,9 @@ Multivio.configurator = SC.Object.create(
   */
   zoomParameters: {
     maxResolution:          4000000,
-    scaleForVectorGraphics: [ 0.25, 0.5, 1.0, 1.5, 2.0, 4.0],
-    scaleForBitmapGraphics: [ 0.1, 0.25, 0.5, 0.75, 1.0 ],
+    scaleForVectorGraphics: [ 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 1.5,
+        2.0, 3.0, 4.0 ],
+    scaleForBitmapGraphics: [ 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0 ],
     initState:              'Full'
   },
   

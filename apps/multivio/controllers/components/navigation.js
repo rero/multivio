@@ -89,8 +89,15 @@ Multivio.navigationController = SC.ObjectController.create(
       // _numberOfPages = physicalstructure length of the referer 
       if (Multivio.masterController.isGrouped) {
         var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
-        this.set('_numberOfPages', refStruct.length);
-        Multivio.sendAction('addComponent', 'navigationController');
+        // check if physical structure of the referer is on the client
+        // else create a binding
+        if (refStruct !== -1) {
+          this.set('_numberOfPages', refStruct.length);
+          Multivio.sendAction('addComponent', 'navigationController');
+        }
+        else {
+          this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+        }
       }
       else {
         var ph = Multivio.CDM.getPhysicalstructure(url);
@@ -129,13 +136,22 @@ Multivio.navigationController = SC.ObjectController.create(
   physicalStructureDidChange: function () {
     var ph = this.get('physicalStructure');
     if (!SC.none(ph)) {
-      var cf = Multivio.masterController.get('currentFile');
-      if (!SC.none(cf)) {
-        var currentPh = this.get('physicalStructure')[cf];
-        // we have physicalstructure
-        if (currentPh !== -1 && !SC.none(currentPh)) {
-          this.set('_numberOfPages', currentPh.length);
+      if (Multivio.masterController.isGrouped) {
+        var refStruct = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+        if (refStruct !== -1) {
+          this.set('_numberOfPages', refStruct.length);
           Multivio.sendAction('addComponent', 'navigationController');
+        }
+      }
+      else {
+        var cf = Multivio.masterController.get('currentFile');
+        if (!SC.none(cf)) {
+          var currentPh = this.get('physicalStructure')[cf];
+          // we have physicalstructure
+          if (currentPh !== -1 && !SC.none(currentPh)) {
+            this.set('_numberOfPages', currentPh.length);
+            Multivio.sendAction('addComponent', 'navigationController');
+          }
         }
       }
     }
