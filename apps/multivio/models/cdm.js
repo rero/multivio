@@ -58,7 +58,7 @@ Multivio.CDM = SC.Object.create(
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
-      Multivio.makeFirstResponder(Multivio.ERROR);
+      Multivio.sendAction('errorOccured');
     }
   },
   
@@ -158,7 +158,7 @@ Multivio.CDM = SC.Object.create(
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
-      Multivio.makeFirstResponder(Multivio.ERROR);
+      Multivio.sendAction('errorOccured');
     }
   },
 
@@ -210,7 +210,7 @@ Multivio.CDM = SC.Object.create(
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
-      Multivio.makeFirstResponder(Multivio.ERROR);
+      Multivio.sendAction('errorOccured');
     }
   },
 

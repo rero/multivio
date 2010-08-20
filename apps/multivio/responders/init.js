@@ -32,6 +32,27 @@ Multivio.INIT = SC.Responder.create(
     Multivio.treeController.allowSelection(NO);
   },
   
+  /**
+    An error occured during the INIT state, don't stop the application, only
+    show an errorPane with the error message
+  */  
+  errorOccured: function () {
+    var errorContent = Multivio.errorController.get('content');
+    var errorName = errorContent.err_name;
+    var errorMessage = ('_' + errorName).loc();
+    // if it's an unknown error get the default message
+    if (errorMessage[0] === '_') {
+      var support = Multivio.configurator.get('support');
+      if (SC.none(support)) {
+        // support variable not configured, fall back to a hard-coded default
+        support = 'info@multivio.org';
+      }
+      errorMessage = '_Default'.loc(support);
+    }
+    Multivio.usco.showAlertPaneError('_An error occurred'.loc(), errorMessage);
+    Multivio.treeController.allowSelection(YES);
+  },
+  
   // TODO-CR: there's an inconsistency here: trying to add a component and
   // providing a controller instead
   /**
