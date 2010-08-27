@@ -568,8 +568,15 @@ Multivio.treeController = SC.TreeController.create(
         for (var j = 0; j < listOfLabels.length; j++) {
           var elem = listOfLabels.objectAt(j);
           if (elem.file_position.url === Multivio.masterController.currentFile) {
-            this.set('selection', SC.SelectionSet.create().addObject(elem));
-            break;
+            // verify if label is not already selected
+            var currentS = !SC.none(this.get('selection')) ?
+                this.get('selection').firstObject() : undefined;
+            if (SC.none(currentS) || currentS.file_position.url !== 
+                elem.file_position.url && currentS.file_position.index !== 
+                elem.file_position.index) {
+              this.set('selection', SC.SelectionSet.create().addObject(elem));
+              break;
+            }
           }
         }
       }

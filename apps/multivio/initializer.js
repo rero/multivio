@@ -116,12 +116,15 @@ Multivio.initializer = SC.Object.create(
       var clientVersions = 
           Multivio.configurator.serverCompatibility[serverVersion];
       var currentVersion = Multivio.configurator.clientVersion;
-      var areCompatible = NO;
       
-      for (var i = 0; i < clientVersions.length; i++) {
-        if (currentVersion === clientVersions[i]) {
-          areCompatible = YES;
-          break;
+      if (!SC.none(clientVersions)) {  
+        var areCompatible = NO;
+      
+        for (var i = 0; i < clientVersions.length; i++) {
+          if (currentVersion === clientVersions[i]) {
+            areCompatible = YES;
+            break;
+          }
         }
       }
       
