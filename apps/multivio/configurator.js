@@ -60,7 +60,7 @@ Multivio.configurator = SC.Object.create(
   logParameters: {
     log: {
       //console:        "LOG_INFO",
-      browserConsole: "LOG_INFO",
+      browserConsole: "LOG_DEBUG", // "LOG_INFO"
       ajax:           "LOG_ERROR"
     },
     logFile: "/log/post"
@@ -166,7 +166,7 @@ Multivio.configurator = SC.Object.create(
       components: [
         {name: 'views.treeAndContentView', coord: 'A2:B2'},
         {name: 'views.toolbar',            coord: 'A3:C3'},
-        {name: 'views.thumbnailView',      coord: 'C2:C2'}
+        {name: 'views.searchView',         coord: 'C2:C2'} //{name: 'views.thumbnailView',      coord: 'C2:C2'}
       ],
       zoomScale: 'scaleForVectorGraphics'
     },

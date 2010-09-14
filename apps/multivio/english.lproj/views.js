@@ -10,6 +10,7 @@
 //require('views/thumbnail');
 //require('views/thumbnailContent');
 //require('views/tree');
+//require('views/search');
 
 /**
   @class
@@ -44,8 +45,10 @@ Multivio.views = SC.Page.design(
     dividerThickness: 20,
     canCollapseViews: NO,
 
-    //add controller(s) need for this view
-    controllers: ['treeController', 'imageController'],
+    //add controller(s) needed for this view
+    //wyd: TODO TEMP add highlight controller
+    //controllers: ['treeController', 'imageController'],
+    controllers: ['treeController', 'imageController', 'selectionController', 'searchController'],
 
     topLeftView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -89,6 +92,8 @@ Multivio.views = SC.Page.design(
       childViews: [
         // this intermediate view level is required due to odd behavior of
         // the SplitdDivider view
+        /*
+        wyd
         SC.View.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
@@ -101,7 +106,35 @@ Multivio.views = SC.Page.design(
               layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
               useImageCache: NO
             })
+          }),*/
+        // wyd
+        SC.View.design({
+          layout: { top: 0, bottom: 0, left: 0, right: 0 },
+
+          childViews: 'innerMainContent'.w(),
+          innerMainContent: Multivio.ContentView.design({
+            layout: { top: 10, bottom: 10, left: 10, right: 10 },
+            borderStyle: SC.BORDER_NONE,
+
+            // include here an intermediate view that contains the image + highlight pane
+            contentView: SC.View.design({
+              layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
+
+              // note: draw highlight pane on top of the content image
+              childViews: 'innerContent highlightpane'.w(),
+
+              innerContent: Multivio.ImageContentView.design({
+                layout: { top: 0, left: 0, minWidth: 1 },
+                useImageCache: NO
+              }),
+
+              highlightpane: Multivio.HighlightContentView.design({
+                layout: { top: 0, left: 0, right: 0, minWidth: 1 }
+              }).classNames('highlight-pane'.w())
+            }).classNames('image-and-highlight-container'.w())
+
           }),
+          
           render: function (context, firstTime) {
             if (context.needsContent) {
               this.renderChildViews(context, firstTime);
@@ -144,6 +177,33 @@ Multivio.views = SC.Page.design(
       }
     }
   }).classNames('inner_content_view'.w()),
+  
+  /**
+    Search view TODO
+  */
+  searchView: SC.View.design({
+    layout: { top: 0, bottom: 0, left: 0, right: 0 },
+    
+    //add controller(s) needed for this view
+    controllers: ['imageController', 'selectionController', 'searchController'],
+    
+    childViews: 'innerSearch'.w(),
+    innerSearch: Multivio.SearchView.design({
+      layout: { top: 10, bottom: 10, left: 10, right: 10 },
+      borderStyle: SC.BORDER_NONE
+    }),
+    render: function (context, firstTime) {
+      if (context.needsContent) {
+        this.renderChildViews(context, firstTime);
+        context.push(
+          "<div class='top-edge'></div>",
+          "<div class='right-edge'></div>",
+          "<div class='bottom-edge'></div>",
+          "<div class='left-edge'></div>");
+      }
+    }
+  }), //.classNames('shadow_light inner_view'.w()),  
+  
   
   /**
     Thumbnail view

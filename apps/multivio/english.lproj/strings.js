@@ -47,7 +47,13 @@ SC.stringsFor('English', {
   '_Please enter a number between 1 and %@': 'Please enter a number between 1 and %@',
   '_Yes': 'Yes',
   '_Ok': 'Ok',
-  '_No': 'No'
+  '_No': 'No',
 
+  // Strings for search and indexing functionality (MVO_SEIN)
+  '_doSearch': 'Search',
+  '_goToNext': 'Next',
+  '_goToPrevious': 'Previous',
+  '_searchIn': 'Search in: ',
+  '_doClear' : 'Clear'
 
 });

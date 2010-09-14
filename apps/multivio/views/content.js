@@ -6,6 +6,456 @@
 ==============================================================================
 */
 
+/** @class
+
+  The content view image. 
+  
+  @author {dwy}
+  @extends {SC.ImageView}
+  @since {0.1.0}
+*/
+Multivio.ImageContentView = SC.ImageView.extend(
+/** @scope Multivio.ImageContent.prototype */ {
+
+  /**
+    @method
+
+    Called when the parent view was resized.
+    Applies the same dimensions to this element.
+
+  */
+  parentViewDidResize: function () {
+
+    // get parent view of element, exit if none
+    var parent = this.get('parentView');
+
+    if (SC.none(parent)) return;
+
+    // get dimensions of parent element
+    var contentWidth = parent.get('layout').width;
+    var contentHeight = parent.get('layout').height;
+
+    // adjust dimensions of child accordingly
+    this.adjust('width',  contentWidth);
+    this.adjust('height', contentHeight);
+    
+    // debug message
+    //Multivio.logger.debug('ImageContentView#parentViewDidResize to %@x%@'.fmt(contentWidth, contentHeight));
+  }
+  
+});
+
+/** @class
+
+  The highlight layer on top of the content view image (Multivio.ImageContentView).
+  It contains the highlights for current search results as well as the words selected by the user
+  using drag and drop.
+  
+  @author {dwy}
+  @extends {SC.View}
+  @since {0.1.0}
+*/
+Multivio.HighlightContentView = SC.View.extend(
+/** @scope Multivio.HighlightContent.prototype */ {
+  
+  /**
+    @binding {Number}
+
+    Binds to the masterController's masterSelection.
+  */
+  currentPage: null,
+  currentPageBinding: 
+      SC.Binding.oneWay("Multivio.masterController.currentPosition"),
+  
+  /**
+      Binds to the masterController isLoadingContent property.
+      @binding {Boolean}
+  */
+  isLoadingContent: null,
+  isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
+  
+  /** 
+    @property {SC.Object}
+    
+    Determines whether the highlight view (this) needs to be redrawn or not.
+    
+    @default NO
+  */
+  highlightNeedsUpdate: NO,
+  
+  /** 
+    @binding {SC.Array}
+    
+    Array of selected zones.
+    
+    @default []
+  */
+  selections: [],
+  selectionsBinding: 'Multivio.selectionController.[]',
+  
+  /** 
+    @binding {SC.Array}
+    
+    Array of search results.
+    
+    @default []
+  */
+  searchResults: [],
+  searchResultsBinding: 'Multivio.searchController.[]',
+  
+  /**
+    @binding {Number}
+    
+    Binds to the zoom factor in the zoom controller.
+   */
+  zoomFactor: null, 
+  zoomFactorBinding:
+      SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
+  
+  /** 
+    @property {SC.View}
+    
+    rectangle of user selection during mouse drag
+    
+    @default null
+  */
+  userSelection: null,
+  
+  /** 
+    @property {SC.Object}
+    
+    offset of mouse on page relative to the frame, Y coordinate
+    
+    @default null
+  */
+  _mouseDownInfo: null,
+
+
+  /** 
+    @property {SC.Object}
+    
+    if selection is persistent, user-drawn rectangle remains on
+    view after mouseUp, otherwise removed.
+    
+    @default null
+  */  
+  persistentSelection: YES,
+  
+  /** 
+    @property {Number}
+    Original width.
+
+    @private
+    @default {null}
+  */  
+  _originalWidth: null,
+  
+  /** 
+    @property {Number}
+    
+    Original height.
+    
+    @private
+    @default {null}
+  */    
+  _originalHeight: null,
+  
+  init: function () {
+    
+    // create userSelection viewfor selection, with 0x0 dimensions for a start
+    this.userSelection = this.createChildView(
+      SC.View.design({
+        layout:  { top: 0, left: 0, width: 0, height: 0 },
+        classNames: 'selection-transparent'.w()
+      })
+    );
+    
+    this.appendChild(this.userSelection);
+    this.userSelection.set('isVisible', NO);
+    
+    //Multivio.logger.debug('HighlightContentView#init() %@x%@'.fmt(this));  
+
+    sc_super();
+  },
+  
+  currentPageDidChange: function () {
+    
+    //Multivio.logger.debug('HighlightContentView#currentPageDidChange() %@'.fmt(this.get('currentPage')));
+      
+    // ask for a redraw of highlight pane (each highlight zone is assigned to a page)
+    //this.set('layerNeedsUpdate', YES);
+    this.set('highlightNeedsUpdate', YES);
+    
+  }.observes('currentPage'),
+  
+  zoomFactorDidChange: function () {
+    //Multivio.logger.debug('HighlightContentView#zoomFactorDidChange() %@'.fmt(this.get('zoomFactor')));
+
+    Multivio.selectionController.set('zoomFactor', this.get('zoomFactor'));
+    Multivio.searchController.set('zoomFactor', this.get('zoomFactor'));
+    
+    // flag the view for a redraw, (causes render() function to be called)
+    //this.set('layerNeedsUpdate', YES);
+    this.set('highlightNeedsUpdate', YES);
+    
+  }.observes('zoomFactor'),
+  
+  isLoadingContentDidChange: function () {
+    
+    var loading = this.get('isLoadingContent');
+    var hnu     = this.get('highlightNeedsUpdate');
+    
+    // if the highlight pane needs an update, 
+    // flag the view for a redraw, which causes render() function to be called.
+    // Update only after 'isLoadingContent' is NO again, 
+    // to wait for the image to finish loading
+    if (hnu && !loading) {
+      this.set('layerNeedsUpdate', YES);
+    }  
+  }.observes('isLoadingContent'),
+  
+  
+  /* mouse events */
+
+  mouseDown: function (evt) {
+
+    // cancel selections on current page
+    Multivio.selectionController.removeAllHighlights();
+    //Multivio.searchController.removeAllHighlightsOnPage(this.get('currentPage'));
+    
+    // get current rectangle and view layout
+    var rectLayout = this.userSelection.get('layout');
+    var viewLayout = this.get('layout');
+    
+    // get position of mouse relative to the view
+    var loc = this.convertFrameFromView({ x: evt.pageX, y: evt.pageY });
+      
+    // save mouse and rectangle positions when mouse is clicked
+    this._mouseDownInfo = {
+      pageX:  evt.pageX,    // coordinates of mouse on the page
+      pageY:  evt.pageY,
+      x:      loc.x,        // coordinates of mouse on the view
+      y:      loc.y,       
+      rectLayout: rectLayout, // TODO: delete, unused // coordinates and dimensions of rectangle on the view
+      viewLayout: viewLayout
+    };
+    
+    //Multivio.logger.debug('# HIGHLIGHT PANE: loc x y %@, %@'.fmt(loc.x, loc.y));
+    
+    // set the start coordinates (top left) of the rectangle where the mouse was clicked
+    this.userSelection.adjust('left', loc.x);
+    this.userSelection.adjust('top',  loc.y);
+    this.userSelection.adjust('width',  0);
+    this.userSelection.adjust('height', 0);
+    this.userSelection.set('isVisible', YES);
+
+    return YES;
+  },
+  
+  mouseDragged: function (evt) {
+    var info = this._mouseDownInfo, dim;
+    
+    // handle width difference
+    dim = (evt.pageX - info.pageX);
+    
+    // "normal" direction (left-to-right), anchor point is 'left'
+    if (dim >= 0) {
+      this.userSelection.adjust('left', info.x);
+      this.userSelection.adjust('right', null);      
+    }
+    // reverse direction (right-to-left), anchor point is 'right'
+    else {
+      dim *= (-1); 
+      this.userSelection.adjust('right', info.viewLayout.width - info.x);
+      this.userSelection.adjust('left', null);
+    }
+    this.userSelection.adjust('width', dim);
+
+    // handle height difference
+    dim = (evt.pageY - info.pageY);
+    
+    // "normal" direction (top-to-bottom), anchor point is 'top'
+    if (dim >= 0) {
+      this.userSelection.adjust('top', info.y);
+      this.userSelection.adjust('bottom', null);      
+    }
+    // reverse direction (down-to-up), anchor point is 'bottom'    
+    else {
+      dim *= (-1); 
+      this.userSelection.adjust('bottom', info.viewLayout.height - info.y);
+      this.userSelection.adjust('top', null);
+    }
+    this.userSelection.adjust('height', dim);
+
+    return YES;
+  },
+
+  mouseUp: function (evt) {
+    
+    // current mouse position relative to view
+    //Multivio.logger.debug('# HIGHLIGHT PANE: mouse up %@, %@'.fmt(this._mouseDownInfo.x, this._mouseDownInfo.y));
+        
+    // if persistent, create a highlight zone from this user selection 
+    if (this.persistentSelection) {
+      var l = this.userSelection.get('layout'), top, left;
+      // compute top and left values, if absent ("reverse" selection)
+      // TODO: compute this in controller instead ? would need to pass view and user sel. layouts/dimensions
+      top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
+      left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
+      // send to controller
+      Multivio.selectionController.addHighlight(top, left, l.width, l.height, this.get('currentPage'), 'selection', this.get('zoomFactor'));
+      // TODO: test: create a "search result" highlight instead
+      //Multivio.searchController.addHighlight(top, left, l.width, l.height, this.get('currentPage'), 'search', this.get('zoomFactor'));
+    }
+    
+    // hide user selection rectangle
+    this.userSelection.set('isVisible', NO);
+
+    // clean 
+    this._mouseDownInfo = null;
+        
+    return YES;
+  },
+  
+
+  // NOTE: need to observe '[]' of the ArrayController.
+  //              observing local variable 'selections' does not work
+  selectionsDidChange: function () {
+    
+    Multivio.logger.debug('################ selectionsDidChange, enter');
+    
+    // flag the view for a redraw, causes render() function to be called
+    this.set('layerNeedsUpdate', YES);
+
+  }.observes('Multivio.selectionController.[]'),
+  
+  searchResultsDidChange: function () {
+    
+    Multivio.logger.debug('################ searchResultsDidChange, enter');
+    
+    // flag the view for a redraw, causes render() function to be called
+    this.set('layerNeedsUpdate', YES);
+
+  }.observes('Multivio.searchController.[]'),
+  
+  /**
+    @method
+
+    Called when the parent view was resized.
+    Applies the same dimensions to this element.
+
+  */
+  parentViewDidResize: function () {
+
+    // get parent view of element, exit if none
+    var parent = this.get('parentView');
+
+    if (SC.none(parent)) return;
+
+    // get dimensions of parent element
+    var contentWidth  = parent.get('layout').width;
+    var contentHeight = parent.get('layout').height;
+
+    // adjust dimensions of child accordingly
+    this.adjust('width',  contentWidth);
+    this.adjust('height', contentHeight);
+    
+    // debug message
+    //Multivio.logger.debug('HighlightContentView#parentViewDidResize to %@x%@'.fmt(contentWidth, contentHeight));
+  },
+  
+  /**
+    @method
+    
+    Override render method to draw highlight zones on the pane
+    
+    TODO: draw on the correct page. Must check that the place where there are search results
+    and/or text selections is visible
+    (on the main content page or thumbnails). 
+    Possible alternatives: - a highlight pane knows its page number and looks in the global search result list
+                            whether it must draw highlight zones or not
+                           - the search controller tells the pages with search results on it to redraw (render) their
+                            highlight pane
+
+    @param {Object} context
+    @param {Boolean} firstTime
+  */
+  render: function (context, firstTime) {
+
+    if (firstTime) {
+      sc_super();
+    }
+    
+    // TODO differentiate between user selection, highlight and search results
+    // TODO: more optimised way of replacing all children
+/*    // below is an optimized version of: this.replaceAllChildren(views);
+    containerView.beginPropertyChanges();
+    containerView.destroyLayer().removeAllChildren();
+    containerView.set('childViews', views); // quick swap
+    containerView.replaceLayer();
+    containerView.endPropertyChanges();
+*/    
+    this.removeAllChildren();
+    
+    // get selections' highlights
+    var zones = this.get('selections');
+    var len   = zones.get('length');
+    var i;
+    //Multivio.logger.debug('HighlightContentView#render [%@], positions %@, (%@)'.fmt(this, len, pos.objectAt(len - 1)));
+    
+    // redraw all selection zones
+    // NOTE: 'selections' is an array of zones
+    for (i = 0; i < len; i++) {
+      this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight');
+      //Multivio.logger.debug('HighlightContentView#render selections %@, (%@,%@)'.fmt(len, zones.objectAt(i).top, zones.objectAt(i).left));
+    }
+    
+    // TODO: redraw search results
+    // get current search results highlights
+    zones = this.get('searchResults');
+    len   = zones.get('length');
+    
+    // redraw all search results' zones
+    // NOTE: 'searchResults' is an array of search result, of which
+    // each contains a zone (named 'position' here, TODO rename ?)
+    for (i = 0; i < len; i++) {
+      this._drawHighlightZone(zones.objectAt(i).position, 'highlight search-highlight');
+      //Multivio.logger.debug('HighlightContentView#render search results %@, (%@,%@)'.fmt(len, zones.objectAt(i).current.top, zones.objectAt(i).current.left));
+    }
+    
+    // highlight pane just redrawn, no need for update anymore
+    this.set('highlightNeedsUpdate', NO);
+  },
+  
+  // TODO description
+  _drawHighlightZone: function (zone, classNames_) {
+    
+    //Multivio.logger.debug('_drawHighlightZone, drawing position (%@x%@) at [%@,%@] with classnames: [%@]'.fmt(zone.current.width, zone.current.height, zone.current.top, zone.current.left, classNames_));
+    
+    //Multivio.logger.debug('## draw zone. current page: %@, zone page: %@'.fmt(this.get('currentPage'), zone.index));
+    
+    // check if the zone belongs to the current page.
+    if (this.get('currentPage') !== zone.index) return;
+    
+    // NOTE: not applying zoom factor, we expect adapted data in zone.current
+    var cz = zone.current;
+    this.appendChild(this.createChildView(
+      SC.View.design({
+        layout:  { 
+          top:    cz.top,
+          left:   cz.left, 
+          width:  cz.width, 
+          height: cz.height 
+        },
+        classNames: classNames_.w()
+      })
+    ));
+    
+  }
+  
+  
+});
+
 /** 
   @class
 
@@ -159,7 +609,9 @@ Multivio.ContentView = SC.ScrollView.extend(
   _adjustSize: function (url, image) {
     SC.RunLoop.begin();
     var content =  this.get('contentView');
-    content.set('value', url);
+    //wyd: set inner content view instead
+    //content.set('value', url);
+    content.get('innerContent').set('value', url);
     content.adjust('width', image.width);
     content.adjust('height', image.height);    
     SC.RunLoop.end();

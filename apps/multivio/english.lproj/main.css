@@ -100,6 +100,10 @@ body.sc-theme {
   text-align: center;
 }
 
+.sc-text-field-view.search input {
+  text-align: left;
+}
+
 /* for LabelView */
 
 .sc-label-view.selected {
@@ -362,4 +366,53 @@ label.document-label-view {
   bottom: 0px;
   right: 0px;
   z-index: 2;
+}
+
+/*
+==========================================================================
+ Tests for text selection and search results highlight.
+ For now, styles "borrowed" from Google Quick View
+==========================================================================
+*/
+
+.highlight {
+  position: absolute;
+  font-size: 0;
+  line-height: 0;
+  cursor: text;
+  border-style: none;
+}
+
+.selection-highlight {
+  opacity: 0.20;
+  -moz-opacity: 0.20;
+  -khtml-opacity: 0.20;
+  filter: alpha(opacity=20);
+  background-color: #28F;
+}
+
+.selection-transparent {
+  border: 1px dashed blue;
+  width: 0;
+  height: 0;
+  position: absolute;
+  z-index: 5;
+}
+
+.search-highlight {
+  opacity: 0.50;
+  -moz-opacity: 0.50;
+  -khtml-opacity: 0.50;
+  filter: alpha(opacity=50);
+  background-color: #FF6;
+}
+
+.thumb-highlight {
+  cursor: pointer !important;
+  opacity: 0.50;
+  -moz-opacity: 0.50;
+  -khtml-opacity: 0.50;
+  filter: alpha(opacity=50);
+  background-color: #FF6;
+  padding: 3px;
 }
