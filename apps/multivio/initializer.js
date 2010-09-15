@@ -113,25 +113,12 @@ Multivio.initializer = SC.Object.create(
       
       var serverVersion = jsonRes.api_version;
       Multivio.configurator.set('serverVersion', jsonRes.version);
-      var clientVersions = 
-          Multivio.configurator.serverCompatibility[serverVersion];
-      var currentVersion = Multivio.configurator.clientVersion;
       
-      if (!SC.none(clientVersions)) {  
-        var areCompatible = NO;
-      
-        for (var i = 0; i < clientVersions.length; i++) {
-          if (currentVersion === clientVersions[i]) {
-            areCompatible = YES;
-            break;
-          }
-        }
-      }
-      
-      if (areCompatible) {
+      if (!SC.none(serverVersion) && 
+          serverVersion === Multivio.configurator.serverCompatibility) {
         Multivio.logger.debug('Client and server are compatible');
         // TODO: would prefer to change state here, instead of initializing the master
-        Multivio.masterController.initialize();
+        Multivio.masterController.initialize();   
       }
       else {
         Multivio.errorController.initialize({
@@ -139,12 +126,12 @@ Multivio.initializer = SC.Object.create(
             'err_description':  'Versions:' + 
               '<ul>' +
               '  <li>server = %@</li>'.fmt(serverVersion) +
-              '  <li>client = %@</li>'.fmt(currentVersion) +
+              '  <li>client = %@</li>'.fmt(Multivio.VERSION) +
               '</ul>'
           });
         Multivio.makeFirstResponder(Multivio.ERROR);
         Multivio.logger.logException('Client and server are incompatible: ' +
-            Multivio.configurator.clientVersion);
+            Multivio.VERSION);
       }
     }
     else {

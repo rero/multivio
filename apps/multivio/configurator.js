@@ -39,18 +39,9 @@ Multivio.configurator = SC.Object.create(
   serverVersion: null,
   
   /**
-    The current version of the client
+    The version of compatibility between server and client
   */
-  clientVersion: '0.2.1',
-  
-  /**
-    The table of compatibility between the server (key) and the client (value)
-  */
-  serverCompatibility: {
-    '0.1':   ['0.1'],
-    '0.2':   ['0.2'],
-    '0.2.1': ['0.2.1']
-  },
+  serverCompatibility: '0.2.1',
   
   /**
     This object contains all parameters for logs
