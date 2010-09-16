@@ -40,19 +40,19 @@ Multivio.HighlightController = SC.ArrayController.extend(
   minimalZoneDimension: 2, 
 
   // create a new highlight zone
-  addHighlight: function (top_, left_, width_, height_, page_, type_, current_zoom_factor) {
+  addHighlight: function (top_, left_, width_, height_, page_, type_, current_zoom_factor, is_original) {
 
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
        height_ <= this.minimalZoneDimension) return null;
 
     Multivio.logger.debug('selectionController#addhighlight (current): %@, %@, %@, %@'.fmt(top_, left_, width_, height_));
-
+    Multivio.logger.debug('selectionController#addhighlight (current): type:%@, page:%@, zoom:%@'.fmt(type_, page_, current_zoom_factor));
+    
     // dimensions and position of zone according to the current zoom factor
-    var current_zone;
+    var received_zone;
 
-    //TODO: use the store or not ?
-    current_zone = SC.Object.create(
+    received_zone = SC.Object.create(
       {
         top:    top_,
         left:   left_, 
@@ -60,20 +60,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         height: height_
       }
     );
-/*    current_zone = Multivio.store.createRecord(
-      Multivio.HighlightZone, {
-        top:    top_,
-        left:   left_, 
-        width:  width_, 
-        height: height_, 
-        page:   page_, 
-        type:   type_
-      }
-    );
-*/
-
-    // compute the dimensions and position according to original content size (zoom factor = 1)
-    var original_zone = this._getOriginalZone(current_zone, current_zoom_factor);
+    
 
     //Multivio.logger.debug('selectionController#addhighlight (original): %@, %@, %@, %@'
     //      .fmt(original_zone.top, original_zone.left, original_zone.width, original_zone.height));
@@ -82,19 +69,34 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // TODO: storing both current and original info, necessary ? 
     // TODO: test label for search results view
     //this.addObject({current: current_zone, original: original_zone, context: 'top: %@px'.fmt(top_) });
-    this.addObject({ 
-      index: page_, 
-      type: type_,
-      current: current_zone, 
-      original: original_zone 
-    });
+    var new_zone = null;
+    if (is_original) {
+      new_zone = this._getCurrentZone(received_zone, current_zoom_factor);
+      this.addObject({ 
+        page_number: page_, 
+        type: type_,
+        current: new_zone, 
+        original: received_zone 
+      });
+      
+    } else {
+      // compute the dimensions and position according to original content size (zoom factor = 1)
+      new_zone = this._getOriginalZone(received_zone, current_zoom_factor);
+      this.addObject({ 
+        page_number: page_, 
+        type: type_,
+        current: received_zone, 
+        original: new_zone 
+      });      
+    }
+
     
     
     //var len = this.get('length');
     //Multivio.logger.debug("length: " + len);
     //Multivio.logger.debug("highlight controller, last object: " + this.objectAt(len - 1).context);
     
-    return current_zone;
+    return YES;
   },
   
   // remove a given highlight zone and destroy 
@@ -204,6 +206,12 @@ Multivio.HighlightController = SC.ArrayController.extend(
     return new_zone;
   },
   
+  // compute the position and dimension of a zone as it is on the
+  // zoomed content, based on its original positioning data and the current zoom factor
+  _getCurrentZone: function (zone, zoom_factor) {
+    return this._getOriginalZone(zone, 1 / zoom_factor);
+  },
+  
   /**
     @method
 
@@ -263,7 +271,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
   // return a zone (which is inside a search result here)
   getZone: function (index) {
-    return this.objectAt(index).position;
+    return this.objectAt(index);
   },
 
   doSearch: function () {
@@ -277,8 +285,19 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // TODO: query multivio server
     
     // TODO: set example search results with fixtures
-    this.set('content', Multivio.SearchController.FIXTURES);
-    
+    //this.set('content', Multivio.SearchController.FIXTURES);
+    var l = Multivio.SearchController.FIXTURES.file_position.results.length;
+    var a = null, b  = null, c = null;
+    for (var i = 0; i < l; i++) {
+      a = Multivio.SearchController.FIXTURES.file_position.results[i];
+      b = a.index;
+      c = b.bounding_box;
+      this.addSearchResult(this.get('currentSearchTerm'), a.preview,
+                           c.y1, c.x1, 
+                           Math.abs(c.x1 - c.x2), Math.abs(c.y1 - c.y2), b.page,
+                           this.get('zoomFactor'));
+    }
+     
     return YES;
   },
   
@@ -334,8 +353,17 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     }
   },
 
-  addSearchResult: function (label, context, zone, page, current_zoom_factor) {
-    
+  addSearchResult: function (label, context, top_, left_, width_, height_, page_, current_zoom_factor) {
+
+    Multivio.logger.debug('SearchController.addSearchResult(): label: %@, context: %@, top: %@, left: %@, width: %@, height: %@, page: %@, zoom: %@'.fmt(label, context, top_, left_, width_, height_, page_, current_zoom_factor));
+
+    // first add a highlight zone
+    this.addHighlight(top_, left_, width_, height_, page_, 'search', current_zoom_factor, YES);
+
+    // insert additional search information
+    var obj = this.objectAt(this.get('length') - 1);
+    obj.label = label;
+    obj.context = context;
   },
 
   addSearchResults: function (results) {

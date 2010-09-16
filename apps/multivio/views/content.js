@@ -303,9 +303,9 @@ Multivio.HighlightContentView = SC.View.extend(
       top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
       left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
       // send to controller
-      Multivio.selectionController.addHighlight(top, left, l.width, l.height, this.get('currentPage'), 'selection', this.get('zoomFactor'));
+      Multivio.selectionController.addHighlight(top, left, l.width, l.height, this.get('currentPage'), 'selection', this.get('zoomFactor'), NO);
       // TODO: test: create a "search result" highlight instead
-      //Multivio.searchController.addHighlight(top, left, l.width, l.height, this.get('currentPage'), 'search', this.get('zoomFactor'));
+      //Multivio.searchController.addHighlight(top, left, l.width, l.height, this.get('currentPage'), 'search', this.get('zoomFactor'), NO);
     }
     
     // hide user selection rectangle
@@ -419,8 +419,8 @@ Multivio.HighlightContentView = SC.View.extend(
     // NOTE: 'searchResults' is an array of search result, of which
     // each contains a zone (named 'position' here, TODO rename ?)
     for (i = 0; i < len; i++) {
-      this._drawHighlightZone(zones.objectAt(i).position, 'highlight search-highlight');
-      //Multivio.logger.debug('HighlightContentView#render search results %@, (%@,%@)'.fmt(len, zones.objectAt(i).current.top, zones.objectAt(i).current.left));
+      Multivio.logger.debug('HighlightContentView#render search results %@, (%@,%@)'.fmt(len, zones.objectAt(i)));
+      this._drawHighlightZone(zones.objectAt(i), 'highlight search-highlight');
     }
     
     // highlight pane just redrawn, no need for update anymore
@@ -435,7 +435,7 @@ Multivio.HighlightContentView = SC.View.extend(
     //Multivio.logger.debug('## draw zone. current page: %@, zone page: %@'.fmt(this.get('currentPage'), zone.index));
     
     // check if the zone belongs to the current page.
-    if (this.get('currentPage') !== zone.index) return;
+    if (this.get('currentPage') !== zone.page_number) return;
     
     // NOTE: not applying zoom factor, we expect adapted data in zone.current
     var cz = zone.current;
