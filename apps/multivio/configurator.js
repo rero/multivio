@@ -96,9 +96,7 @@ Multivio.configurator = SC.Object.create(
     imageSize: "/document/get_size?",
     
     search: "/document/search?query=%@&from=%@&to=%@&context_size=%@&max_results=%@&url=",
-    
-    getText: "/document/get_text?page_nr=%@&x1=%@&y1=%@&x2=%@&y2=%@&url=",
-    
+    getText: "/document/get_text?page_nr=%@&x1=%@&y1=%@&x2=%@&y2=%@&url=",    
     getPageIndexing: "/document/get_indexing?page_nr=%@&from=%@&to=%@&url=",
     
     fixtures: {

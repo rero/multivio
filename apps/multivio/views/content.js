@@ -322,7 +322,7 @@ Multivio.HighlightContentView = SC.View.extend(
   //              observing local variable 'selections' does not work
   selectionsDidChange: function () {
     
-    Multivio.logger.debug('################ selectionsDidChange, enter');
+    //Multivio.logger.debug('################ selectionsDidChange, enter');
     
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
@@ -331,7 +331,7 @@ Multivio.HighlightContentView = SC.View.extend(
   
   searchResultsDidChange: function () {
     
-    Multivio.logger.debug('################ searchResultsDidChange, enter');
+    //Multivio.logger.debug('################ searchResultsDidChange, enter');
     
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
@@ -419,7 +419,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // NOTE: 'searchResults' is an array of search result, of which
     // each contains a zone (named 'position' here, TODO rename ?)
     for (i = 0; i < len; i++) {
-      Multivio.logger.debug('HighlightContentView#render search results %@, (%@,%@)'.fmt(len, zones.objectAt(i)));
+      //Multivio.logger.debug('HighlightContentView#render search results %@, (%@,%@)'.fmt(len, zones.objectAt(i)));
       this._drawHighlightZone(zones.objectAt(i), 'highlight search-highlight');
     }
     

@@ -46,8 +46,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
     if (width_ <= this.minimalZoneDimension ||
        height_ <= this.minimalZoneDimension) return null;
 
-    Multivio.logger.debug('selectionController#addhighlight (current): %@, %@, %@, %@'.fmt(top_, left_, width_, height_));
-    Multivio.logger.debug('selectionController#addhighlight (current): type:%@, page:%@, zoom:%@'.fmt(type_, page_, current_zoom_factor));
+    //Multivio.logger.debug('selectionController#addhighlight (current): %@, %@, %@, %@'.fmt(top_, left_, width_, height_));
+    //Multivio.logger.debug('selectionController#addhighlight (current): type:%@, page:%@, zoom:%@'.fmt(type_, page_, current_zoom_factor));
     
     // dimensions and position of zone according to the current zoom factor
     var received_zone;
@@ -248,22 +248,32 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   // property, should be bound to the value of the searchQueryView textfield
   currentSearchTerm: 'test',
   
-  // testing property binding
-/*  currentSearchTermDidChange: function () {
-    Multivio.logger.debug('SearchController.currentSearchTermDidChange(): %@'.fmt(this.get('currentSearchTerm')));
-  }.observes('currentSearchTerm'),
-*/
+  url: undefined,
+  
+  currentResults: null,
+  currentResultsBinding: 'Multivio.CDM.searchResults',
+
+  _currentResultsDidChange: function () {
+    
+    var res = this.get('currentResults');
+    
+    if (!SC.none(res) && !SC.none(res[this.get('url')])) {
+      this._setSearchResults(res[this.get('url')]);
+    }
+    
+  }.observes('currentResults'),
+
+
 
   selectionDidChange: function () {
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     
     if (SC.none(selectedObject)) return NO;
-    
-    //Multivio.logger.debug('SearchController.selectionDidChange(), term: %@'.fmt(selectedObject.term));
-    
-    // TODO change 'masterSelection'(currentFile, currentPosition,...) so that we 'jump' to the place 
-    //in the content where the search result points
+        
+    // change master's currentPosition so that we 'jump' to the place 
+    // in the content where the search result points
+    Multivio.masterController.set('currentPosition', selectedObject.page_number);
     
     return YES;
     
@@ -275,18 +285,24 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   },
 
   doSearch: function () {
-    var s = this.get('currentSearchTerm');
+    var query = this.get('currentSearchTerm');
     
     // discard empty strings
-    if (SC.none(s) || SC.empty(s.trim())) return NO;
+    if (SC.none(query) || SC.empty(query.trim())) return NO;
     
-    Multivio.logger.debug('SearchController.doSearch("%@")'.fmt(s));
+    Multivio.logger.debug('SearchController.doSearch("%@")'.fmt(query));
+    
+    // clear previous results
+    this.doClear();
     
     // TODO: query multivio server
+    var res = Multivio.CDM.getSearchResults(this.get('url'), query, '', '', 15, 11);
+    
+    this._setSearchResults(res);
     
     // TODO: set example search results with fixtures
     //this.set('content', Multivio.SearchController.FIXTURES);
-    var l = Multivio.SearchController.FIXTURES.file_position.results.length;
+    /*var l = Multivio.SearchController.FIXTURES.file_position.results.length;
     var a = null, b  = null, c = null;
     for (var i = 0; i < l; i++) {
       a = Multivio.SearchController.FIXTURES.file_position.results[i];
@@ -296,16 +312,35 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                            c.y1, c.x1, 
                            Math.abs(c.x1 - c.x2), Math.abs(c.y1 - c.y2), b.page,
                            this.get('zoomFactor'));
-    }
+    } */
      
     return YES;
   },
   
+  _setSearchResults: function (res) {
+                                            
+    if (res !== -1) {
+      var l = res.file_position.results.length;
+      
+      var a = null, b  = null, c = null;
+      for (var i = 0; i < l; i++) {
+        a = res.file_position.results[i];
+        b = a.index;
+        c = b.bounding_box;
+
+        this.addSearchResult(this.get('currentSearchTerm'), a.preview,
+                             c.y1, c.x1, 
+                             Math.abs(c.x1 - c.x2), Math.abs(c.y1 - c.y2), b.page,
+                             this.get('zoomFactor'));
+      }
+    }
+  },
 
   doClear: function () {
     //Multivio.logger.debug('SearchController.doClear()');
     
     // clear all current search results.
+    Multivio.CDM.set('searchResults', undefined);
     this.set('content', []);
     
     // clear current search term
@@ -354,13 +389,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   },
 
   addSearchResult: function (label, context, top_, left_, width_, height_, page_, current_zoom_factor) {
+    //Multivio.logger.debug('SearchController.addSearchResult(): label: %@, context: %@, top: %@, left: %@, width: %@, height: %@, page: %@, zoom: %@'.fmt(label, context, top_, left_, width_, height_, page_, current_zoom_factor));
 
-    Multivio.logger.debug('SearchController.addSearchResult(): label: %@, context: %@, top: %@, left: %@, width: %@, height: %@, page: %@, zoom: %@'.fmt(label, context, top_, left_, width_, height_, page_, current_zoom_factor));
-
-    // first add a highlight zone
+    // first, add a highlight zone
     this.addHighlight(top_, left_, width_, height_, page_, 'search', current_zoom_factor, YES);
 
-    // insert additional search information
+    // then insert additional search information
     var obj = this.objectAt(this.get('length') - 1);
     obj.label = label;
     obj.context = context;
@@ -381,6 +415,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
   */
   initialize: function (url) {
+    this.set('url', url);
     this.set('content', []);
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('SearchController initialized');
