@@ -74,13 +74,13 @@ Multivio.zoomController = SC.ObjectController.create(
   initialize: function () {
     this.currentZoomState =
         Multivio.configurator.get('zoomParameters').initState;
-    // get zoomScale parameter in the configurator 
-    var type = Multivio.configurator.get('typeForMimeType')
-        [Multivio.masterController.currentFileType];
+    // get zoomScale parameter in the configurator
+    var type = Multivio.configurator.
+        getTypeForMimeType(Multivio.masterController.currentFileType);
     var config = Multivio.configurator.get('layoutConfig')[type];
     var scaleParameter = config.zoomScale;
-    this.zoomScale = Multivio.configurator.get('zoomParameters')
-        [scaleParameter];
+    this.zoomScale = Multivio.configurator.
+        get('zoomParameters')[scaleParameter];
     
     this.maxStep = this.zoomScale.length - 1;
     this.minRatio = this.zoomScale[0];
