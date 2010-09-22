@@ -159,6 +159,55 @@ Multivio.ContentView = SC.ScrollView.extend(
   _adjustSize: function (url, image) {
     SC.RunLoop.begin();
     var content =  this.get('contentView');
+    
+    // verify if verticalScroll and horizontalScroll exist and need to be moved
+    var needVerticalScrollToMove = (this.get('isVerticalScrollerVisible') &&
+        this.get('verticalScrollOffset') !== 0) ? YES : NO;
+    var needHorizontalScrollToMove = (this.get('isHorizontalScrollerVisible') && 
+        this.get('horizontalScrollOffset') !== 0) ? YES : NO;
+    
+    if (needVerticalScrollToMove || needHorizontalScrollToMove) {
+      // verify if we have a new image (not same url) 
+      var currentUrl = content.get('value');
+      var currentUrlIndex = currentUrl.indexOf('&url=');
+      var tempUrl = currentUrl.substring(currentUrlIndex + 5, currentUrl.length);
+      
+      var nextUrlIndex = url.indexOf('&url=');
+      var nextUrl = url.substring(nextUrlIndex + 5, url.length);
+      // if new url move scroll bar if needed
+      if (tempUrl !== nextUrl) {
+        if (needHorizontalScrollToMove) {
+          this.set('horizontalScrollOffset', 0);
+        }
+        if (needVerticalScrollToMove) {
+          this.set('verticalScrollOffset', 0);
+        }
+      }
+      else {
+        // same url, verify if page_nr is different
+        var currentPagenrIndex = currentUrl.indexOf('page_nr=');
+        var currentPageNumber = undefined;
+        if (currentPagenrIndex !== -1) {
+          var pagenrEnd = currentUrl.indexOf('&');
+          currentPageNumber = currentUrl.substring(currentPagenrIndex + 8, pagenrEnd);
+        }
+        var nextPagenrIndex = url.indexOf('page_nr=');
+        var nextPageNumber = undefined;
+        if (nextPagenrIndex !== -1) {
+          var nextpagenrEnd = url.indexOf('&');
+          nextPageNumber = url.substring(nextPagenrIndex + 8, nextpagenrEnd);
+        }
+        if (currentPageNumber !== nextPageNumber) {
+          if (needHorizontalScrollToMove) {
+            this.set('horizontalScrollOffset', 0);
+          }
+          if (needVerticalScrollToMove) {
+            this.set('verticalScrollOffset', 0);
+          }
+        }
+      }
+    }
+
     content.set('value', url);
     content.adjust('width', image.width);
     content.adjust('height', image.height);    
