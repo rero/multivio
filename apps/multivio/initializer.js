@@ -32,39 +32,64 @@ Multivio.initializer = SC.Object.create(
     
     @param {String} params 
   */
-  readInputParameters: function (params) {
-    var prop = {};
-    for (var key in params) {
-      if (params.hasOwnProperty(key)) {
-        switch (key) {
-        case "":
-          prop.scenario = params[key];
-          break;
-        case 'url':
-          // use location.hash to prevent splitting the url
-          var url = !SC.none(location.hash) ? location.hash : undefined;
-          if (url !== undefined) {
-            // regular expression
-            var regExp = /(.*?)url=(.*)/;
-            var res = url.match(regExp);
-            url = res.pop();
-            prop.url = url;
-            Multivio.CDM.setReferer(url);
+  readInputParameters: function () {
+    // first split url and get parameters
+    var inputUrl = !SC.none(location.hash) ? location.hash : undefined;
+    if (inputUrl !== undefined) {
+      var listOfParams = inputUrl.split('&');
+      var params = {};
+      for (var i = 0; i < listOfParams.length; i++) {
+        var parts = listOfParams[i].split('=');
+        // no key
+        if (parts.length === 1) {
+          params[""] = parts[0].replace('#', '');
+        }
+        if (parts.length === 2) {
+          params[parts[0]] = parts[1];
+        }
+        if (parts.length > 2) {
+          var newParam = parts[1];
+          for (var j = 2; j < parts.length; j++) {
+            newParam += parts[j];
           }
-          break;
-        case 'server':
-          // server is an optional parameter
-          Multivio.configurator.set('serverName', params[key]);
-          break;
-        default:
-          // dump the other input parameters as-is in the table
-          var value = params[key];
-          prop[key] = value;
-          break;
+          params[parts[0]] = newParam;
+        }
+      } 
+      var prop = {};
+      for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+          switch (key) {
+          case "": 
+            prop.scenario = params[key];
+            break;
+         
+          case 'url':
+            // use location.hash to prevent splitting the url
+            var url = !SC.none(location.hash) ? location.hash : undefined;
+            if (url !== undefined) {
+              // regular expression
+              var regExp = /(.*?)url=(.*)/;
+              var res = url.match(regExp);
+              url = res.pop();
+              prop.url = url;
+              Multivio.CDM.setReferer(url);
+            }
+            break;
+
+          case 'server':
+            // server is an optional parameter
+            Multivio.configurator.set('serverName', params[key]);
+            break;
+          default:
+            // dump the other input parameters as-is in the table
+            var value = params[key];
+            prop[key] = value;
+            break;
+          }
         }
       }
+      this.set('inputParameters', prop);
     }
-    this.set('inputParameters', prop);
     // need to have serverName before this
     Multivio.logger.initialize();
     Multivio.logger.debug('end of configurator.readInputParameters()');

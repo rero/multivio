@@ -6,7 +6,7 @@
 ==============================================================================
 */
 
-//require('configurator');
+sc_require('configurator');
  
 /**
 Define Log levels

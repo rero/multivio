@@ -210,7 +210,8 @@ Multivio.ContentView = SC.ScrollView.extend(
 
     content.set('value', url);
     content.adjust('width', image.width);
-    content.adjust('height', image.height);    
+    content.adjust('height', image.height);
+    content.adjust('left', 0);
     SC.RunLoop.end();
     
     if (!this.get('isHorizontalScrollerVisible')) {
@@ -229,7 +230,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     SC.RunLoop.begin();
     this.set('isLoadingContent', NO);
     SC.RunLoop.end();
-    Multivio.logger.debug('ContentView#_adjustSize');
+    Multivio.logger.info('ContentView#_adjustSize');
   },
   
   /**
@@ -279,14 +280,16 @@ Multivio.ContentView = SC.ScrollView.extend(
           break;
 
         case Multivio.zoomController.PAGEWIDTH:
+          var calculatedWidth = this.get('frame').width - 
+              this.get('childViews')[1].get('scrollbarThickness');
           if (rot % 180 === 0) {  
             newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
-                this.get('frame').width + '&angle=' + rot +
+                calculatedWidth + '&angle=' + rot +
                 '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));
           }
           else {
             newUrl = defaultUrl.substring(0, urlIndex).concat('max_height=' +
-                this.get('frame').width + '&angle=' + rot +
+                calculatedWidth + '&angle=' + rot +
                 '&').concat(defaultUrl.substring(urlIndex, defaultUrl.length));          
           }  
           // calculate if the image size > maxRes  
@@ -340,6 +343,17 @@ Multivio.ContentView = SC.ScrollView.extend(
   },
   
   /**
+    Override render method to force top set frame property
+    
+    @param {Object} context
+    @param {Boolean} firstTime 
+  */
+  render: function (context, firstTime) {
+    this.set('frame', {});
+    sc_super();
+  },
+  
+  /**
     Delegate method of the Multivio.usco.showAlertPaneWarn
     
     @param {String} pane the pane instance
@@ -368,6 +382,12 @@ Multivio.ContentView = SC.ScrollView.extend(
     TODO: if possible find a method that is called once.
   */
   viewDidResize: function () {
+    // force frame to be updated and refresh all children
+    this.set('frame', {});
+    for (var i = 0; i < this.get('childViews').length; i++) {
+      var oneChild = this.get('childViews')[i];
+      oneChild.layoutDidChange();
+    }
     var zoomSt = this.get('zoomState');
     if (zoomSt === Multivio.zoomController.PAGEWIDTH || 
         zoomSt === Multivio.zoomController.FULLPAGE) {

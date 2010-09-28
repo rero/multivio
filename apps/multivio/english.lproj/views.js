@@ -6,10 +6,10 @@
 ==============================================================================
 */
 
-//require('views/content');
-//require('views/thumbnail');
-//require('views/thumbnailContent');
-//require('views/tree');
+sc_require('views/content');
+sc_require('views/thumbnail');
+sc_require('views/thumbnail_content');
+sc_require('views/tree');
 
 /**
   @class
@@ -42,7 +42,7 @@ Multivio.views = SC.Page.design(
     topLeftMinThickness: 100,
     topLeftMaxThickness: 2000,
     dividerThickness: 20,
-    canCollapseViews: NO,
+    canCollapseViews: YES,
 
     //add controller(s) need for this view
     controllers: ['treeController', 'imageController'],
@@ -84,6 +84,13 @@ Multivio.views = SC.Page.design(
       ]
     }),
     
+    dividerView: SC.SplitDividerView.design({
+      layout: {top: 0, bottom: 0, left: 0, right: 0},
+      render: function (context, firstTime) {
+        context.removeClass('sc-split-divider-view');
+      }
+    }),
+    
     bottomRightView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       childViews: [
@@ -98,7 +105,7 @@ Multivio.views = SC.Page.design(
             borderStyle: SC.BORDER_NONE,
 
             contentView: SC.ImageView.design({
-              layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
+              layout: { top: 0, bottom: 0, centerX: 0, centerY: 0},
               useImageCache: NO
             })
           }),
@@ -230,7 +237,7 @@ Multivio.views = SC.Page.design(
     
     //navigation
     navigationView: SC.View.design({
-      layout: { centerX: -0, centerY: 0, width: 220, height: 24 },
+      layout: { centerX: 0, centerY: 0, width: 220, height: 24 },
 
       childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView'.w(),
 
