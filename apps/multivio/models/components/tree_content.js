@@ -38,6 +38,18 @@ Multivio.TreeContent =  SC.Object.extend({
   
   position: undefined,
 
+
+  /**
+  The number of search results for this element 
+  
+  @property {Number}  
+  */
+  nb_results: undefined,
+
+  setSearchResultsNumber: function (num) {
+    this.set('nb_results', num);
+  },
+
   /**
     Return the list of the children of this Multivio.Tree as TreeContent
   */

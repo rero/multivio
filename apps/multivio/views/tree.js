@@ -79,6 +79,13 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     @param {String} label
   */    
   renderLabel: function (context, label) {
+    // display number of search results for this element
+    var nb = this.content.get('nb_results');
+    
+    if (!SC.none(nb) && nb !== 0) {
+      label = label + " (" + nb + ")";
+    }
+    
     if (SC.none(this.content.get('file_position').index)) {
       context.push('<label class="document-label-view">', label || '', '</label>');
     }

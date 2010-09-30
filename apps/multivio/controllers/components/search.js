@@ -248,22 +248,51 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   // property, should be bound to the value of the searchQueryView textfield
   currentSearchTerm: 'test',
   
+  // property, should be bound to the value of the searchScopeView
+  currentSearchFile: undefined,
+  
+  lastSearchQuery: undefined,
+  
   url: undefined,
   
-  currentResults: null,
+  currentResults: undefined,
   currentResultsBinding: 'Multivio.CDM.searchResults',
 
+  currentFileList: undefined,
+  
+  physicalStructure: undefined,
+  physicalStructureBinding: 'Multivio.CDM.physicalStructure',
+  
+  // extract file list (labels + urls) from physical structure, store as a flat list
+  _physicalStructureDidChange: function () {
+    
+    var phys = this.get('physicalStructure');
+    var url = Multivio.CDM.getReferer();
+
+    if (!SC.none(phys)) {
+      this.set('currentFileList', phys[url]);
+      // select first file in list
+      this.set('currentSearchFile', phys[url][0].url);
+    }
+  }.observes('physicalStructure'),
+  
+  _currentSearchFileDidChange: function () {
+    
+    var res = this.get('currentSearchFile');
+    console.info("_currentSearchFileDidChange: url:" + res);
+    
+  }.observes('currentSearchFile'),
+  
   _currentResultsDidChange: function () {
     
     var res = this.get('currentResults');
+    var current_url = this.get('currentSearchFile');
     
-    if (!SC.none(res) && !SC.none(res[this.get('url')])) {
-      this._setSearchResults(res[this.get('url')]);
+    if (!SC.none(res) && !SC.none(res[current_url])) {
+      this._setSearchResults(res[current_url], this.get('lastSearchQuery'));
     }
     
   }.observes('currentResults'),
-
-
 
   selectionDidChange: function () {
     var selSet = this.get('selection');
@@ -275,6 +304,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // in the content where the search result points
     Multivio.masterController.set('currentPosition', selectedObject.page_number);
     
+    // TODO scroll ?
+    
     return YES;
     
   }.observes('selection'),
@@ -285,7 +316,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   },
 
   doSearch: function () {
+    
+    // store last search query for later use
     var query = this.get('currentSearchTerm');
+    this.set('lastSearchQuery', query);
     
     // discard empty strings
     if (SC.none(query) || SC.empty(query.trim())) return NO;
@@ -295,44 +329,51 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // clear previous results
     this.doClear();
     
-    // TODO: query multivio server
-    var res = Multivio.CDM.getSearchResults(this.get('url'), query, '', '', 15, 11);
+    // get rotation angle
+    var angle = Multivio.rotateController.currentValue || 0;
     
-    this._setSearchResults(res);
+    // TODO: query multivio server: context size=15, max_results=11
+    var res = Multivio.CDM.getSearchResults(this.get('currentSearchFile'), query, '', '', 15, 11, angle);
     
-    // TODO: set example search results with fixtures
-    //this.set('content', Multivio.SearchController.FIXTURES);
-    /*var l = Multivio.SearchController.FIXTURES.file_position.results.length;
-    var a = null, b  = null, c = null;
-    for (var i = 0; i < l; i++) {
-      a = Multivio.SearchController.FIXTURES.file_position.results[i];
-      b = a.index;
-      c = b.bounding_box;
-      this.addSearchResult(this.get('currentSearchTerm'), a.preview,
-                           c.y1, c.x1, 
-                           Math.abs(c.x1 - c.x2), Math.abs(c.y1 - c.y2), b.page,
-                           this.get('zoomFactor'));
-    } */
+    // store results
+    this._setSearchResults(res, query);
      
     return YES;
   },
   
-  _setSearchResults: function (res) {
+  _setSearchResults: function (res, query) {
+    
+    //console.info("_setSearchResults(), query=" +  query);          
                                             
     if (res !== -1) {
-      var l = res.file_position.results.length;
+      var num_res = res.file_position.results.length;
       
       var a = null, b  = null, c = null;
-      for (var i = 0; i < l; i++) {
+      for (var i = 0; i < num_res; i++) {
         a = res.file_position.results[i];
         b = a.index;
         c = b.bounding_box;
 
-        this.addSearchResult(this.get('currentSearchTerm'), a.preview,
+        this.addSearchResult(query, a.preview,
                              c.y1, c.x1, 
                              Math.abs(c.x1 - c.x2), Math.abs(c.y1 - c.y2), b.page,
                              this.get('zoomFactor'));
+        
       }
+      
+      // TODO: add number of search results to some nodes (which ones? all ? ...)
+      var treeItems = Multivio.treeController.get('arrangedObjects');
+      //console.info("treeItems: " + treeItems);
+    
+      // TODO: testing, set number for first tree element 
+      // --> OK, works
+      if (!SC.none(treeItems) && treeItems.length > 0) {
+        //console.info("setting number of search results on page " + treeItems.objectAt(0).file_position.index);
+        treeItems.objectAt(0).setSearchResultsNumber(num_res);
+      }
+      
+      // select first result
+      this.goToNextResult();
     }
   },
 
@@ -344,7 +385,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('content', []);
     
     // clear current search term
-    this.set('currentSearchTerm', '');
+    //this.set('currentSearchTerm', '');
     
   },
 
@@ -415,7 +456,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
   */
   initialize: function (url) {
-    this.set('url', url);
+    
+    // set referer url
+    // NOTE: don't use 'url' arg, contains the url to the first file (does not work for documents with multiple files)
+    this.set('url', Multivio.CDM.getReferer());
+
     this.set('content', []);
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('SearchController initialized');

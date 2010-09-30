@@ -53,7 +53,7 @@ SC.stringsFor('English', {
   '_doSearch': 'Search',
   '_goToNext': 'Next',
   '_goToPrevious': 'Previous',
-  '_searchIn': 'Search in: ',
+  '_searchIn': 'Search in file: ',
   '_doClear' : 'Clear'
 
 });

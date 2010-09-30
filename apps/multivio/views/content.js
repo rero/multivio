@@ -74,6 +74,14 @@ Multivio.HighlightContentView = SC.View.extend(
   isLoadingContent: null,
   isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
   
+  /**
+    Binds to the search result selection in the search controller
+
+    @binding {String}
+  */
+  searchResultSelection: null,
+  searchResultSelectionBinding: "Multivio.searchController.selection",
+  
   /** 
     @property {SC.Object}
     
@@ -178,25 +186,64 @@ Multivio.HighlightContentView = SC.View.extend(
     sc_super();
   },
   
+  /**
+    Update the position of the scroll in the view if needed.
+
+    @private
+    @observes searchResultSelection
+  */
+  _searchResultSelectionDidChange: function () {
+    var selection = this.get('searchResultSelection').firstObject();
+    if (!SC.none(selection)) {
+      // retrieve the list of the search results visible in the view
+      var listView = this.get('childViews');
+      console.info("_searchResultSelectionDidChange, listView=" + listView);
+      var needToScroll = YES;
+      // don't verify the first and the last child to force to scroll
+      for (var i = 1; i < listView.get('length') - 1; i++) {
+        var thumb = listView[i].content;
+        if (thumb === selection) {
+          needToScroll = NO;
+          console.info("_searchResultSelectionDidChange, no need to scroll");
+        }
+      }
+      //var needToScroll = YES;
+      // if needed scroll to the new position
+      if (needToScroll) {
+        var selectionIndex = Multivio.searchController.indexOf(selection);
+        //console.info("_searchResultSelectionDidChange, this: " + this);
+        //this.get('resultsScrollView').scrollToContentIndex(selectionIndex);
+        //console.info(" " + s);
+        //listView[0].scrollToVisible();
+        //Multivio.logger.debug('update search result scroll'); 
+      }
+    }
+    
+  }.observes('searchResultSelection'),
+  
   currentPageDidChange: function () {
     
     //Multivio.logger.debug('HighlightContentView#currentPageDidChange() %@'.fmt(this.get('currentPage')));
       
     // ask for a redraw of highlight pane (each highlight zone is assigned to a page)
     //this.set('layerNeedsUpdate', YES);
+    //SC.RunLoop.begin();
     this.set('highlightNeedsUpdate', YES);
+    //SC.RunLoop.end();
     
   }.observes('currentPage'),
   
   zoomFactorDidChange: function () {
-    //Multivio.logger.debug('HighlightContentView#zoomFactorDidChange() %@'.fmt(this.get('zoomFactor')));
+    Multivio.logger.debug('HighlightContentView#zoomFactorDidChange() %@'.fmt(this.get('zoomFactor')));
 
     Multivio.selectionController.set('zoomFactor', this.get('zoomFactor'));
     Multivio.searchController.set('zoomFactor', this.get('zoomFactor'));
     
     // flag the view for a redraw, (causes render() function to be called)
     //this.set('layerNeedsUpdate', YES);
+    //SC.RunLoop.begin();
     this.set('highlightNeedsUpdate', YES);
+    //SC.RunLoop.end();
     
   }.observes('zoomFactor'),
   
@@ -204,6 +251,8 @@ Multivio.HighlightContentView = SC.View.extend(
     
     var loading = this.get('isLoadingContent');
     var hnu     = this.get('highlightNeedsUpdate');
+    
+    Multivio.logger.debug('HighlightContentView#isLoadingContentDidChange() loading: %@, highlight: %@'.fmt(loading, hnu));
     
     // if the highlight pane needs an update, 
     // flag the view for a redraw, which causes render() function to be called.
@@ -325,7 +374,8 @@ Multivio.HighlightContentView = SC.View.extend(
     //Multivio.logger.debug('################ selectionsDidChange, enter');
     
     // flag the view for a redraw, causes render() function to be called
-    this.set('layerNeedsUpdate', YES);
+    //this.set('layerNeedsUpdate', YES);
+    this.set('highlightNeedsUpdate', YES);
 
   }.observes('Multivio.selectionController.[]'),
   
@@ -360,8 +410,12 @@ Multivio.HighlightContentView = SC.View.extend(
     this.adjust('width',  contentWidth);
     this.adjust('height', contentHeight);
     
+    // TODO TEST
+    //this.set('highlightNeedsUpdate', YES);
+    this.set('layerNeedsUpdate', YES);
+    
     // debug message
-    //Multivio.logger.debug('HighlightContentView#parentViewDidResize to %@x%@'.fmt(contentWidth, contentHeight));
+    Multivio.logger.debug('HighlightContentView#parentViewDidResize to %@x%@'.fmt(contentWidth, contentHeight));
   },
   
   /**

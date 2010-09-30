@@ -15,7 +15,14 @@ Multivio.SearchView = SC.View.extend(
 
   childViews: 'scopeLabelView searchQueryView clearButtonView searchButtonView previousResultButtonView nextResultButtonView resultsScrollView searchScopeView'.w(),
   
-  //searchTerm: '',
+  _physDidChange: function () {
+    
+    var url = Multivio.CDM.getReferer();
+    this.set('docs', this.phys[url]);
+    
+    //console.info("_physDidChange: ref url:" + url + ", label: " + this.get('docs')[0].label);
+    
+  }.observes('phys'),
   
   searchQueryView: SC.TextFieldView.design({ 
     layout: { left: 0, right: 0, height: 22 },
@@ -82,18 +89,16 @@ Multivio.SearchView = SC.View.extend(
   //searchScopeView : SC.SelectFieldView.design({
 	
     layout: { top: 50, left: 40, right: 0 },
-    // TODO: sample data
-    objects: [{ title: "document 1", pos: 0, icon: 'select-button-icon'},
-              { title: "document 2", pos: 1, icon: 'select-button-icon'},
-              { title: "document 3", pos: 2, icon: 'select-button-icon'},
-              { title: "document 4", pos: 3, icon: 'select-button-icon'}],
-    nameKey: 'title',
+
+    valueBinding: 'Multivio.searchController.currentSearchFile', 
+    objectsBinding: 'Multivio.searchController.currentFileList',         
+    nameKey: 'label',
     theme: 'square',
-    iconkey: 'icon',
-    value: 'document 1',
-    valueKey: 'title',
-    sortKey: 'pos',
-    checkboxEnabled: YES
+    valueKey: 'url',
+    //sortKey: 'label',
+    disableSort: YES,
+    checkboxEnabled: YES,
+    itemIdx: 1 // select first item by default, does not work...
   }), 
   
   scopeLabelView: SC.LabelView.design({

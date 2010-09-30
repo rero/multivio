@@ -300,13 +300,13 @@ Multivio.CDM = SC.Object.create(
     @param {String} url
     @return {Object}
   */
-  getSearchResults: function (url, query, from, to, context_size, max_results) {
+  getSearchResults: function (url, query, from, to, context_size, max_results, angle) {
     if (SC.none(this.get('searchResults')) || 
         this.get('searchResults')[url] === undefined) {
       // ask the server    
       var serverAdress = Multivio.configurator.
           getPath('baseUrlParameters.search');
-      serverAdress = serverAdress.fmt(query, from, to, context_size, max_results) + url;
+      serverAdress = serverAdress.fmt(query, from, to, context_size, max_results, angle) + url;
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setSearchResults', url);
           
