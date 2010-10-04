@@ -15,15 +15,6 @@ Multivio.SearchView = SC.View.extend(
 
   childViews: 'scopeLabelView searchQueryView clearButtonView searchButtonView previousResultButtonView nextResultButtonView resultsScrollView searchScopeView'.w(),
   
-  _physDidChange: function () {
-    
-    var url = Multivio.CDM.getReferer();
-    this.set('docs', this.phys[url]);
-    
-    //console.info("_physDidChange: ref url:" + url + ", label: " + this.get('docs')[0].label);
-    
-  }.observes('phys'),
-  
   searchQueryView: SC.TextFieldView.design({ 
     layout: { left: 0, right: 0, height: 22 },
     classNames: 'search',

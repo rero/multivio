@@ -415,7 +415,7 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('layerNeedsUpdate', YES);
     
     // debug message
-    Multivio.logger.debug('HighlightContentView#parentViewDidResize to %@x%@'.fmt(contentWidth, contentHeight));
+    //Multivio.logger.debug('HighlightContentView#parentViewDidResize to %@x%@'.fmt(contentWidth, contentHeight));
   },
   
   /**
