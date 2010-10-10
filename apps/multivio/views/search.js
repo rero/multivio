@@ -18,8 +18,7 @@ Multivio.SearchView = SC.View.extend(
   searchQueryView: SC.TextFieldView.design({ 
     layout: { left: 0, right: 0, height: 22 },
     classNames: 'search',
-    valueBinding: 'Multivio.searchController.currentSearchTerm' // TODO ??
-    //value: ''
+    valueBinding: 'Multivio.searchController.currentSearchTerm'
   }),
 
   searchButtonView: SC.ButtonView.design({
@@ -30,11 +29,6 @@ Multivio.SearchView = SC.View.extend(
     action: 'doSearch'
   }),
   
-/*  search: function () {
-    Multivio.logger.debug('SearchView::doSearch("%@")'.fmt(this.searchQueryView.get('value')));
-    Multivio.searchController.doSearch(this.searchQueryView.get('value'));
-  },
-*/  
   clearButtonView: SC.ButtonView.design({
     layout: { top: 80, left: 0, right: "50%" },
     title : '_doClear'.loc(),
@@ -58,6 +52,37 @@ Multivio.SearchView = SC.View.extend(
       contentValueKey: 'context'
     })
   }),
+  
+  /**
+    Update the position of the scroll in the view if needed.
+
+    @private
+    @observes Multivio.searchController.selection
+  */
+  _searchResultSelectionDidChange: function () {
+    var selection = Multivio.searchController.get('selection').firstObject();
+
+    if (!SC.none(selection)) {
+      // retrieve the list of the results visible in the view
+      var listView = this.get('resultsScrollView').get('contentView').get('childViews');
+      var needToScroll = YES;
+      // don't verify the first and the last child to force to scroll
+      for (var i = 1; i < listView.get('length') - 1; i++) {
+        var res = listView[i].content;
+
+        if (res === selection) {
+          needToScroll = NO;
+        }
+      }
+
+      // if needed, scroll to the new position
+      if (needToScroll) {
+        var selectionIndex = Multivio.searchController.indexOf(selection);
+        this.get('resultsScrollView').get('contentView').scrollToContentIndex(selectionIndex);
+        Multivio.logger.debug("update search results' list scroll"); 
+      }
+    }
+  }.observes('Multivio.searchController.selection'),
   
   previousResultButtonView: SC.ButtonView.design({
     layout: { bottom: 0, height: 25, left: 0, right: "40%" },

@@ -416,3 +416,9 @@ label.document-label-view {
   background-color: #FF6;
   padding: 3px;
 }
+
+.selected-highlight {
+  /* background-color:#FF9632 !important;*/
+  /*border: 3px groove blue; */
+  outline: 2px solid blue;
+}

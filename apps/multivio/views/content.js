@@ -94,7 +94,7 @@ Multivio.HighlightContentView = SC.View.extend(
   /** 
     @binding {SC.Array}
     
-    Array of selected zones.
+    Array of user selected zones.
     
     @default []
   */
@@ -168,6 +168,17 @@ Multivio.HighlightContentView = SC.View.extend(
   */    
   _originalHeight: null,
   
+  /** 
+    @property {Number}
+    
+    index of currently selected search result
+    
+    @private
+    @default {null}
+  */    
+  _selectionIndex: null,
+  
+  
   init: function () {
     
     // create userSelection viewfor selection, with 0x0 dimensions for a start
@@ -193,32 +204,38 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes searchResultSelection
   */
   _searchResultSelectionDidChange: function () {
+    
     var selection = this.get('searchResultSelection').firstObject();
+    var selectionIndex = Multivio.searchController.indexOf(selection);
+    
+    // store selection index, will be used to apply a specific style in render()
+    SC.RunLoop.begin();
+    this.set('_selectionIndex', selectionIndex);
+    SC.RunLoop.end();
+    
+    //console.info("_searchResultSelectionDidChange selection: " + selection);
+    //console.info("_searchResultSelectionDidChange selectionIndex: " + selectionIndex);
+    
     if (!SC.none(selection)) {
       // retrieve the list of the search results visible in the view
+      //var listView = this.get('contentView').get('childViews');
       var listView = this.get('childViews');
-      console.info("_searchResultSelectionDidChange, listView=" + listView);
-      var needToScroll = YES;
-      // don't verify the first and the last child to force to scroll
-      for (var i = 1; i < listView.get('length') - 1; i++) {
-        var thumb = listView[i].content;
-        if (thumb === selection) {
-          needToScroll = NO;
-          console.info("_searchResultSelectionDidChange, no need to scroll");
+      var sr = undefined;
+      for (var i = 0; i < listView.get('length'); i++) {
+        sr = listView[i];
+
+        if (sr.id === selectionIndex) {
+          Multivio.logger.debug('updating search result scroll'); 
+          //console.info("selection id: " + selectionIndex);
+          //console.info("listView id: " + sr.id);
+          sr.scrollToVisible();
+        
+          break;
         }
       }
-      //var needToScroll = YES;
-      // if needed scroll to the new position
-      if (needToScroll) {
-        var selectionIndex = Multivio.searchController.indexOf(selection);
-        //console.info("_searchResultSelectionDidChange, this: " + this);
-        //this.get('resultsScrollView').scrollToContentIndex(selectionIndex);
-        //console.info(" " + s);
-        //listView[0].scrollToVisible();
-        //Multivio.logger.debug('update search result scroll'); 
-      }
+      // need to redraw the highlight zones to show current selection
+      this.set('layerNeedsUpdate', YES);
     }
-    
   }.observes('searchResultSelection'),
   
   currentPageDidChange: function () {
@@ -360,7 +377,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // hide user selection rectangle
     this.userSelection.set('isVisible', NO);
 
-    // clean 
+    // clean up
     this._mouseDownInfo = null;
         
     return YES;
@@ -460,21 +477,22 @@ Multivio.HighlightContentView = SC.View.extend(
     // redraw all selection zones
     // NOTE: 'selections' is an array of zones
     for (i = 0; i < len; i++) {
-      this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight');
+      this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight', i);
       //Multivio.logger.debug('HighlightContentView#render selections %@, (%@,%@)'.fmt(len, zones.objectAt(i).top, zones.objectAt(i).left));
     }
     
-    // TODO: redraw search results
     // get current search results highlights
     zones = this.get('searchResults');
     len   = zones.get('length');
     
     // redraw all search results' zones
-    // NOTE: 'searchResults' is an array of search result, of which
-    // each contains a zone (named 'position' here, TODO rename ?)
+    var cl = 'highlight search-highlight';
+    var cn = '';
+    var index = this.get('_selectionIndex');
     for (i = 0; i < len; i++) {
       //Multivio.logger.debug('HighlightContentView#render search results %@, (%@,%@)'.fmt(len, zones.objectAt(i)));
-      this._drawHighlightZone(zones.objectAt(i), 'highlight search-highlight');
+      cn = (i === index? cl + ' selected-highlight' : cl);
+      this._drawHighlightZone(zones.objectAt(i), cn, i);
     }
     
     // highlight pane just redrawn, no need for update anymore
@@ -482,7 +500,7 @@ Multivio.HighlightContentView = SC.View.extend(
   },
   
   // TODO description
-  _drawHighlightZone: function (zone, classNames_) {
+  _drawHighlightZone: function (zone, classNames_, index) {
     
     //Multivio.logger.debug('_drawHighlightZone, drawing position (%@x%@) at [%@,%@] with classnames: [%@]'.fmt(zone.current.width, zone.current.height, zone.current.top, zone.current.left, classNames_));
     
@@ -501,7 +519,8 @@ Multivio.HighlightContentView = SC.View.extend(
           width:  cz.width, 
           height: cz.height 
         },
-        classNames: classNames_.w()
+        classNames: classNames_.w(),
+        id: index
       })
     ));
     
