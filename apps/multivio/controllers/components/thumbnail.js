@@ -210,6 +210,18 @@ Multivio.thumbnailController = SC.ArrayController.create(
   },
   
   /**
+    Create a modal view with thumbnails
+    
+    @param {Object} view the view to append the new thumbnailsView
+  */  
+  showThumbnails: function(view) {
+    var parentHeight = view.get('parentView').get('frame').height;
+    var thumbnailPane = Multivio.getPath('views.thumbnailPicker');
+    thumbnailPane.set('layout', {width: 150, height: parentHeight});
+    thumbnailPane.popup(view, SC.PICKER_POINTER, [1,0,0,2,2]);
+  },
+  
+  /**
     Updates selection by observing changes of the position property.
     
     @observes position

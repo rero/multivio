@@ -363,3 +363,26 @@ label.document-label-view {
   right: 0px;
   z-index: 2;
 }
+
+.mvo-front-view {
+  z-index: 1;
+  /*opacity : 1.0;
+  moz-opacity : 1.0;
+  ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
+  /*filter : alpha(opacity=10);*/
+}
+
+/*.mvo-backend-view {
+  z-index: 1;
+  opacity : 0.0;
+  moz-opacity : 0.0;
+  ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
+  /*filter : alpha(opacity=10);
+}*/
+
+.mvo-transparent {
+  opacity : 0.8;
+  moz-opacity : 0.8;
+  ms-filter: "alpha(opacity=10)"; /* IE 8 */
+  filter : alpha(opacity=10); /* IE < 8 */
+}

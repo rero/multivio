@@ -34,6 +34,28 @@ Multivio.metadataController = SC.ObjectController.create(
     }
     Multivio.logger.info('metadataController initialized');    
   },
+  
+  /**
+    Create a modal view that contain all metadata of the document
+    
+    @param {Object} button the button clicked
+  */
+  showMetadata: function (button) {
+    var metadataView = Multivio.getPath('views.textFieldPicker');
+    var textField = metadataView.get('contentView').get('childViews')[0];
+    var cont = this.get('content');
+    var toShow = '';
+    for (var key in cont) {
+      if (cont.hasOwnProperty(key)) {
+        toShow += key;
+        toShow += ' : ';
+        toShow += cont[key];
+        toShow += '\n';
+      }
+    }
+    textField.set('value', toShow);
+    metadataView.popup(button, SC.PICKER_POINTER, [0, 1, 2, 3, 0]);
+  },
    
   /**
     The document's descriptive metadata

@@ -719,6 +719,18 @@ Multivio.treeController = SC.TreeController.create(
   },
   
   /**
+    Create a modal view with the tree
+    
+    @param {Object} view the view to append the new treeView
+  */  
+  showTree: function(view) {
+    var parentHeight = view.get('parentView').get('frame').height;
+    var treePane = Multivio.getPath('views.treePicker');
+    treePane.set('layout', {width: 450, height: parentHeight});
+    treePane.popup(view, SC.PICKER_POINTER, [1,0,0,2,2]);
+  },
+  
+  /**
     Updates position by observing changes of the selection property.
     
     @observes selection
