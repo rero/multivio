@@ -1,30 +1,28 @@
 /**
 ==============================================================================
-  Project:    Multivio - https://www.multivio.org/
-  Copyright:  (c) 2009-2010 RERO
-  License:    See file license.js
+Project: Multivio - https://www.multivio.org/
+Copyright: (c) 2009-2010 RERO
+License: See file license.js
 ==============================================================================
 */
 
-//require('views/content');
-//require('views/thumbnail');
-//require('views/thumbnailContent');
-//require('views/tree');
-//require('views/search');
+sc_require('views/content');
+sc_require('views/thumbnail');
+sc_require('views/thumbnail_content');
+sc_require('views/tree');
 
 /**
-  @class
-  
-  The main page object contains all views configuration
-*/  
+@class
+The main page object contains all views configuration
+*/
 Multivio.views = SC.Page.design(
 /** @scope Multivio.views.prototype */ {
   
   defaultResponder: Multivio,
 
   /**
-    Title view
-  */
+Title view
+*/
   titleView: SC.LabelView.design({
     layout: { left: 20, top: 10 },
     classNames: '',
@@ -34,8 +32,8 @@ Multivio.views = SC.Page.design(
   }),
 
   /**
-    Split View with tree and main content views
-  */
+Split View with tree and main content views
+*/
   treeAndContentView: SC.SplitView.design({
     layoutDirection: SC.LAYOUT_HORIZONTAL,
     autoresizeBehavior: SC.RESIZE_BOTTOM_RIGHT,
@@ -43,12 +41,10 @@ Multivio.views = SC.Page.design(
     topLeftMinThickness: 100,
     topLeftMaxThickness: 2000,
     dividerThickness: 20,
-    canCollapseViews: NO,
+    canCollapseViews: YES,
 
-    //add controller(s) needed for this view
-    //wyd: TODO TEMP add highlight controller
-    //controllers: ['treeController', 'imageController'],
-    controllers: ['treeController', 'imageController', 'selectionController', 'searchController'],
+    //add controller(s) need for this view
+    controllers: ['treeController', 'imageController'],
 
     topLeftView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -87,13 +83,18 @@ Multivio.views = SC.Page.design(
       ]
     }),
     
+    dividerView: SC.SplitDividerView.design({
+      layout: {top: 0, bottom: 0, left: 0, right: 0},
+      render: function (context, firstTime) {
+        context.removeClass('sc-split-divider-view');
+      }
+    }),
+    
     bottomRightView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       childViews: [
         // this intermediate view level is required due to odd behavior of
         // the SplitdDivider view
-        /*
-        wyd
         SC.View.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
 
@@ -103,38 +104,10 @@ Multivio.views = SC.Page.design(
             borderStyle: SC.BORDER_NONE,
 
             contentView: SC.ImageView.design({
-              layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
+              layout: { top: 0, bottom: 0, centerX: 0, centerY: 0},
               useImageCache: NO
             })
-          }),*/
-        // wyd
-        SC.View.design({
-          layout: { top: 0, bottom: 0, left: 0, right: 0 },
-
-          childViews: 'innerMainContent'.w(),
-          innerMainContent: Multivio.ContentView.design({
-            layout: { top: 10, bottom: 10, left: 10, right: 10 },
-            borderStyle: SC.BORDER_NONE,
-
-            // include here an intermediate view that contains the image + highlight pane
-            contentView: SC.View.design({
-              layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
-
-              // note: draw highlight pane on top of the content image
-              childViews: 'innerContent highlightpane'.w(),
-
-              innerContent: Multivio.ImageContentView.design({
-                layout: { top: 0, left: 0, minWidth: 1 },
-                useImageCache: NO
-              }),
-
-              highlightpane: Multivio.HighlightContentView.design({
-                layout: { top: 0, left: 0, right: 0, minWidth: 1 }
-              }).classNames('highlight-pane'.w())
-            }).classNames('image-and-highlight-container'.w())
-
           }),
-          
           render: function (context, firstTime) {
             if (context.needsContent) {
               this.renderChildViews(context, firstTime);
@@ -148,11 +121,11 @@ Multivio.views = SC.Page.design(
         }).classNames('inner_content_view'.w())
       ]
     })
-  }),  
+  }),
 
   /**
-    Main content view
-  */
+Main content view
+*/
   mainContentView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     
@@ -179,35 +152,8 @@ Multivio.views = SC.Page.design(
   }).classNames('inner_content_view'.w()),
   
   /**
-    Search view TODO
-  */
-  searchView: SC.View.design({
-    layout: { top: 0, bottom: 0, left: 0, right: 0 },
-    
-    //add controller(s) needed for this view
-    controllers: ['imageController', 'selectionController', 'searchController'],
-    
-    childViews: 'innerSearch'.w(),
-    innerSearch: Multivio.SearchView.design({
-      layout: { top: 10, bottom: 10, left: 10, right: 10 },
-      borderStyle: SC.BORDER_NONE
-    }),
-    render: function (context, firstTime) {
-      if (context.needsContent) {
-        this.renderChildViews(context, firstTime);
-        context.push(
-          "<div class='top-edge'></div>",
-          "<div class='right-edge'></div>",
-          "<div class='bottom-edge'></div>",
-          "<div class='left-edge'></div>");
-      }
-    }
-  }), //.classNames('shadow_light inner_view'.w()),  
-  
-  
-  /**
-    Thumbnail view
-  */
+Thumbnail view
+*/
   thumbnailView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     // add controller(s) need for this view
@@ -242,15 +188,15 @@ Multivio.views = SC.Page.design(
   }).classNames('shadow_light inner_view'.w()),
 
   /**
-    Tree view
-  */
+Tree view
+*/
   treeView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     // add controller(s) need for this view
     controllers: ['treeController'],
     
     childViews: 'innerTree'.w(),
-    innerTree:  Multivio.TreeView.design({
+    innerTree: Multivio.TreeView.design({
       layout: { top: 10, bottom: 10, left: 10, right: 10 },
       borderStyle: SC.BORDER_NONE,
 
@@ -279,8 +225,8 @@ Multivio.views = SC.Page.design(
 
 
   /**
-    toolbar view
-  */
+toolbar view
+*/
   toolbar: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     //add controller(s) need for this view
@@ -290,7 +236,7 @@ Multivio.views = SC.Page.design(
     
     //navigation
     navigationView: SC.View.design({
-      layout: { centerX: -0, centerY: 0, width: 220, height: 24 },
+      layout: { centerX: 0, centerY: 0, width: 220, height: 24 },
 
       childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView'.w(),
 
@@ -300,21 +246,21 @@ Multivio.views = SC.Page.design(
         needsEllipsis: NO,
         icon: static_url('images/icons/beginning.png'),
         isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
-        target: "Multivio.navigationController", 
+        target: "Multivio.navigationController",
         action: "goToFirstPage"
       }),
     
       previousPageView: SC.ButtonView.design({
-        layout: { centerX: -45, centerY: 0,  width: 40, height: 24 },
+        layout: { centerX: -45, centerY: 0, width: 40, height: 24 },
         titleMinWidth : 0,
         needsEllipsis: NO,
         icon: static_url('images/icons/previous.png'),
         isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
-        target: "Multivio.navigationController", 
+        target: "Multivio.navigationController",
         action: "goToPreviousPage"
-      }),    
+      }),
     
-      textPageView: SC.TextFieldView.design({ 
+      textPageView: SC.TextFieldView.design({
         layout: { centerX: 0, centerY: -1, width: 40, height: 24 },
         textAlign: SC.ALIGN_CENTER,
         valueBinding: 'Multivio.navigationController.currentPage',
@@ -327,7 +273,7 @@ Multivio.views = SC.Page.design(
         needsEllipsis: NO,
         icon: static_url('images/icons/next.png'),
         isEnabledBinding: "Multivio.navigationController.isNextEnabled",
-        target: "Multivio.navigationController", 
+        target: "Multivio.navigationController",
         action: "goToNextPage"
       }),
 
@@ -337,10 +283,10 @@ Multivio.views = SC.Page.design(
         needsEllipsis: NO,
         icon: static_url('images/icons/end.png'),
         isEnabledBinding: "Multivio.navigationController.isNextEnabled",
-        target: "Multivio.navigationController", 
+        target: "Multivio.navigationController",
         action: "goToLastPage"
       })
-    }),    
+    }),
     
     //zoom
     zoomView: SC.View.design({
@@ -354,7 +300,7 @@ Multivio.views = SC.Page.design(
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-minus.png'),
         isEnabledBinding: "Multivio.zoomController.isZoomOutAllowed",
-        target: "Multivio.zoomController", 
+        target: "Multivio.zoomController",
         action: "doZoomOut"
       }),
       
@@ -364,7 +310,7 @@ Multivio.views = SC.Page.design(
         needsEllipsis: NO,
         icon: static_url('images/icons/zoom-plus.png'),
         isEnabledBinding: "Multivio.zoomController.isZoomInAllowed",
-        target: "Multivio.zoomController", 
+        target: "Multivio.zoomController",
         action: "doZoomIn"
       }),
       
@@ -400,7 +346,7 @@ Multivio.views = SC.Page.design(
         needsEllipsis: NO,
         icon: static_url('images/icons/rotate_left.png'),
         target: "Multivio.rotateController",
-        isEnabledBinding: 'Multivio.rotateController.isLeftAllow', 
+        isEnabledBinding: 'Multivio.rotateController.isLeftAllow',
         action: "rotateLeft"
       }),
       
@@ -455,8 +401,8 @@ Multivio.views = SC.Page.design(
   }),
 
   /**
-    Metadata view
-  */
+Metadata view
+*/
   headerView: SC.View.design({
     childViews: 'metadataView logoView'.w(),
 
@@ -491,7 +437,7 @@ Multivio.views = SC.Page.design(
         SC.ImageView.design({
           layout: { top: 10, height: 44, right: 6, width: 140 },
           value: static_url('images/multivio_logo_bw_beta_140x44'),
-          toolTip: 'Go to Multivio website. Client release: ' + 
+          toolTip: 'Go to Multivio website. Client release: ' +
               Multivio.VERSION
         })
       ],

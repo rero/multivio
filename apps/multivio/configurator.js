@@ -39,18 +39,9 @@ Multivio.configurator = SC.Object.create(
   serverVersion: null,
   
   /**
-    The current version of the client
+    The version of compatibility between server and client
   */
-  clientVersion: '0.2.1',
-  
-  /**
-    The table of compatibility between the server (key) and the client (value)
-  */
-  serverCompatibility: {
-    '0.1':   ['0.1'],
-    '0.2':   ['0.2'],
-    '0.2.1': ['0.2.1']
-  },
+  serverCompatibility: '0.2.1',
   
   /**
     This object contains all parameters for logs
@@ -185,18 +176,26 @@ Multivio.configurator = SC.Object.create(
   },
   
   /**
-    Translate mimetype received from the server to a local type
-    used by the config layout file
+    Return a local type used by the application that matches the mime type 
+    received from the server
+    
+    @param {String} mime the mime type received
+    @return {String} the local type
   */
-  typeForMimeType: {
-    'text/xml':               'xml',
-    'text/xml;charset=utf-8': 'xml',
-    'application/xml':        'xml',
-    'application/pdf':        'pdf',
-    'image/gif':              'image',
-    'image/png':              'image',
-    'image/jpg':              'image',
-    'image/jpeg':             'image'
+  getTypeForMimeType: function (mime) {
+    var typeToReturn = undefined;
+    if (mime.match('.*?/xml.*?')) {
+      typeToReturn = 'xml';
+    }
+    
+    if (mime.match('.*?/pdf.*?')) {
+      typeToReturn = 'pdf';
+    }
+    
+    if (mime.match('image/.*?')) {
+      typeToReturn = 'image';
+    }
+    return typeToReturn;
   },
   
   /**
