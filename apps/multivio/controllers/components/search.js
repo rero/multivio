@@ -267,8 +267,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   
   // this property should be bound to the value of the searchScopeView
   currentSearchFile: undefined,
-  // TODO: test
-  //currentSearchFileBinding: 'Multivio.masterController.currentFile',
   
   // keep track of the last query sent to server
   lastSearchQuery: undefined,
@@ -283,6 +281,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   // display the results. NO = don't display (results cleared)
   displayResults: {},
   
+  /**
+    Binds to the currentValue in the rotate controller.
+    This binding is read only
+    
+    @binding {Number}
+  */
+  rotateValue: undefined,      
+  rotateValueBinding: SC.Binding.oneWay('Multivio.rotateController.currentValue'),
+  
   // all search results
   searchResults: undefined,
   searchResultsBinding: SC.Binding.oneWay('Multivio.CDM.searchResults'),
@@ -293,6 +300,20 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   // physical srtucture of the document, contains the files' urls and labels
   physicalStructure: undefined,
   physicalStructureBinding: 'Multivio.CDM.physicalStructure',
+  
+  // send a new request to the server with the new angle
+  _rotateValueDidChange: function () {
+    
+    console.info("_rotateValueDidChange: " + this.get('rotateValue'));
+    
+    // if there are already search results, send a new request to get new coordinates
+    var res = this.get('searchResults');
+    if (!SC.none(res) && !SC.none(res[this.get('currentSearchFile')])) {
+      this.doSearch();      
+    }
+
+    
+  }.observes('rotateValue'),
   
   // extract file list (labels + urls) from physical structure, store as a flat list
   _physicalStructureDidChange: function () {
@@ -340,7 +361,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     SC.RunLoop.begin();
     this.set('currentSearchFile', current_file);
     SC.RunLoop.end();
-    
+    console.info('Multivio.masterController.currentFile did change: ' + current_file);
   }.observes('Multivio.masterController.currentFile'), 
 
   
@@ -360,7 +381,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       console.info("_loadExistingSearchResultsForFile: found results:" + all_results[url].file_position.results[0].preview);
       new_results = Multivio.CDM.clone(all_results);
       SC.RunLoop.begin();
-      this.set('load_url', url);
+      this.set('_load_url', url);
       this.set('searchResults', new_results); // should trigger _searchResultsDidChange()
       SC.RunLoop.end();
     }
@@ -375,6 +396,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     //console.info("_selectionDidChange, begin");
     
     //SC.RunLoop.begin();
+    
+    // TODO: try to store angle and restore it ? for rotate support
     
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
@@ -416,6 +439,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
   doSearch: function () {
     
+    // TODO test
+    this.doClear();
+    
     // store last search query for later use
     var query = this.get('currentSearchTerm');
     this.set('lastSearchQuery', query);
@@ -427,12 +453,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     Multivio.logger.debug('SearchController.doSearch("%@")'.fmt(query));
     
     // get rotation angle
-    var angle = Multivio.rotateController.currentValue || 0;
+    var angle = this.get('rotateValue'); //Multivio.rotateController.currentValue || 0;
+    
+    console.info("doSearch(): angle: " + angle);
     
     // get file url
     var url = this.get('currentSearchFile');
     
-    // TODO: query multivio server: context size=15, max_results=11
+    // TODO: query multivio server: context size=15, max_results=50
     // Note: this triggers _searchResultsDidChange(), only the first time the server response is received
     var res = Multivio.CDM.getSearchResults(url, query, '', '', 15, 11, angle);
     
@@ -455,6 +483,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       var nd = this.get('displayResults');
       nd[url] = YES;
       this.set('displayResults', nd);
+      this.set('_load_url', url);
       this.set('searchResults', new_res);
       SC.RunLoop.end();
     }
@@ -467,8 +496,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     Multivio.logger.debug('SearchController.doClear()');
     
     // clear all current search results (ie. for current file only).
-    // note: don't clear the results stored in the CDM, just don't display them
-    /*var cf = this.get('currentSearchFile');
+    // ?? note: don't clear the results stored in the CDM, just don't display them
+    
+    var cf = this.get('currentSearchFile');
     var all_results = Multivio.CDM.get('searchResults');
     var new_results = {};
     
@@ -479,7 +509,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       SC.RunLoop.begin();
       Multivio.CDM.set('searchResults', new_results);
       SC.RunLoop.end();
-    }*/
+    }
     
     this.set('content', []);
     var url = this.get('currentSearchFile');
@@ -498,7 +528,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // TODO: check if there is a difference in the results to avoid calling _setSearchResults() for nothing ?
     
     var res = this.get('searchResults');
-    var url = this.get('load_url');
+    var url = this.get('_load_url');
     var current_url = (SC.none(url)? this.get('currentSearchFile') : url);
     var query = this.get('lastSearchQuery');
     
@@ -507,31 +537,36 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     console.info("_searchResultsDidChange: current_url:" + current_url);
     console.info("_searchResultsDidChange: query:" + query);
     
-    if (!SC.none(res[current_url])) {
-      console.info("_searchResultsDidChange: res[]:" + res[current_url]); //.file_position.results[0].preview);
-      this.set('TODO', res[current_url]);
+    var key = current_url; //{'url': current_url, 'query': query};
+    
+    // debug
+    if (!SC.none(res[key])) {
+      console.info("_searchResultsDidChange: res[]:" + res[key]); //.file_position.results[0].preview);
+      this.set('TODO', res[key]);
       
-      if (!SC.none(res[current_url].file_position)) {
-        console.info("_searchResultsDidChange: res[].f_p:" + res[current_url].file_position); //.file_position.results[0].preview);
+      if (!SC.none(res[key].file_position)) {
+        console.info("_searchResultsDidChange: res[].f_p:" + res[key].file_position); //.file_position.results[0].preview);
         
-        if (!SC.none(res[current_url].file_position.results)) {
-          console.info("_searchResultsDidChange: res[].f_p.results:" + res[current_url].file_position.results); //.file_position.results[0].preview);
+        if (!SC.none(res[key].file_position.results)) {
+          console.info("_searchResultsDidChange: res[].f_p.results:" + res[key].file_position.results); //.file_position.results[0].preview);
           
-          if (!SC.none(res[current_url].file_position.results[0].preview)) {
-            console.info("_searchResultsDidChange: res[].f_p.results:" + res[current_url].file_position.results[0].preview); //.file_position.results[0].preview);
+          if (res[key].file_position.results.length > 0 && !SC.none(res[key].file_position.results[0].preview)) {
+            console.info("_searchResultsDidChange: res[].f_p.results:" + res[key].file_position.results[0].preview); //.file_position.results[0].preview);
           }
         }
       
       }
-    }
-   
+    } // end debug
   
+    // clear load_url 
+    this.set('_load_url', undefined);
+    
     // do nothing if we don't have to display the results
     if (!this.get('displayResults')[current_url]) return;
     
-    if (!SC.none(res) && !SC.none(res[current_url])) {
+    if (!SC.none(res) && !SC.none(res[key])) {
       SC.RunLoop.begin();
-      this._setSearchResults(res[current_url], query);
+      this._setSearchResults(res[key], query);
       SC.RunLoop.end();
     }
     
@@ -638,7 +673,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   },
 
   addSearchResult: function (label, context, top_, left_, width_, height_, page_, current_zoom_factor) {
-    Multivio.logger.debug('SearchController.addSearchResult(): label: %@, context: %@, top: %@, left: %@, width: %@, height: %@, page: %@, zoom: %@'.fmt(label, context, top_, left_, width_, height_, page_, current_zoom_factor));
+    //Multivio.logger.debug('SearchController.addSearchResult(): label: %@, context: %@, top: %@, left: %@, width: %@, height: %@, page: %@, zoom: %@'.fmt(label, context, top_, left_, width_, height_, page_, current_zoom_factor));
 
     SC.RunLoop.begin();
 
@@ -673,6 +708,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   initialize: function (url) {
     
+    Multivio.logger.debug('searchController initialized with url (START):' + url);
+    
     // set referer url
     // NOTE: don't use 'url' arg, contains the url to the first file (does not work for documents with multiple files)
     this.set('url', Multivio.CDM.getReferer());
@@ -683,7 +720,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this._loadExistingSearchResultsForFile(url);
     
     Multivio.sendAction('addComponent', 'searchController');
-    Multivio.logger.info('searchController initialized with url:' + url);
+    Multivio.logger.info('searchController initialized with url (END):' + url);
   },
   
   /**

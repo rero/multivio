@@ -302,7 +302,8 @@ Multivio.CDM = SC.Object.create(
   */
   getSearchResults: function (url, query, from, to, context_size, max_results, angle) {
     if (SC.none(this.get('searchResults')) || 
-        this.get('searchResults')[url] === undefined) {
+        this.get('searchResults')[url] === undefined) {    
+          
       // ask the server    
       var serverAddress = Multivio.configurator.
           getPath('baseUrlParameters.search');
@@ -328,6 +329,9 @@ Multivio.CDM = SC.Object.create(
     @param {url} url the corresponding url
   */
   setSearchResults: function (response, url) {
+    // TODO TEST
+    this.set('TODO', url);
+    
     if (SC.ok(response)) {
       Multivio.logger.debug('search results received from the server: %@'.
           fmt(response.get("body")));    
@@ -337,6 +341,7 @@ Multivio.CDM = SC.Object.create(
         var oldRes = this.get('searchResults');
         t2 = this.clone(oldRes);
       }
+      //t2[{'url': url.url, 'query': url.query}] = jsonRes;
       t2[url] = jsonRes;
       this.set('searchResults', t2);
       Multivio.logger.debug('New search results added for ' + url);

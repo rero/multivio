@@ -55,8 +55,10 @@ Multivio.requestHandler = SC.Object.create(
       has been received
     @param {String} param1 the key (url) to store the response 
   */
-  sendGetRequest: function (uri, callbackTarget, callbackMethod, param1) {
-    if (this.notAsked(uri)) {
+  sendGetRequest: function (uri, callbackTarget, callbackMethod, param1, check_uri) {
+    // if check_uri is NO, don't call this.notAsked()
+    var check = SC.none(check_uri)? YES : check_uri;
+    if (!check_uri || this.notAsked(uri)) {
       var serverName = Multivio.configurator.get('serverName');
       var req = SC.Request.getUrl(serverName + uri).
           json().notify(callbackTarget, callbackMethod, param1);
