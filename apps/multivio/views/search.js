@@ -1,19 +1,25 @@
-// ==========================================================================
-// Project:   Multivio.SearchView
-// Copyright: ©2010 My Company, Inc.
-// ==========================================================================
-/*globals Multivio */
+/**
+==============================================================================
+  Project:    Multivio - https://www.multivio.org/
+  Copyright:  (c) 2009-2010 RERO
+  License:    See file license.js
+==============================================================================
+*/
 
 /** @class
 
-  View for the search functionality
+  View for the search functionality.
 
+  @author dwy
   @extends SC.View
+  @since 0.2.0
 */
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
-
-  childViews: 'scopeLabelView searchQueryView clearButtonView searchButtonView previousResultButtonView nextResultButtonView resultsScrollView searchScopeView'.w(),
+                  
+  childViews: ['scopeLabelView', 'searchQueryView', 'clearButtonView',
+               'searchButtonView', 'previousResultButtonView',
+               'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
   
   searchQueryView: SC.TextFieldView.design({ 
     layout: { left: 0, right: 0, height: 22 },
@@ -24,7 +30,9 @@ Multivio.SearchView = SC.View.extend(
   searchButtonView: SC.ButtonView.design({
     layout: { top: 80, right: 0, left: "50%" },
     title : '_doSearch'.loc(),
-    //isDefault: YES, // trigger action when pressing enter. Note: can interfere with other components
+    // trigger action when pressing enter. 
+    // Note: can interfere with other components
+    //isDefault: YES, 
     target: 'Multivio.searchController', 
     action: 'doSearch'
   }),
@@ -32,7 +40,9 @@ Multivio.SearchView = SC.View.extend(
   clearButtonView: SC.ButtonView.design({
     layout: { top: 80, left: 0, right: "50%" },
     title : '_doClear'.loc(),
-    //isCancel: YES, // trigger action when pressing escape. Note: can interfere with other components
+    // trigger action when pressing escape. 
+    // Note: can interfere with other components
+    //isCancel: YES, 
     target: 'Multivio.searchController', 
     action: 'doClear'
   }),
@@ -64,7 +74,8 @@ Multivio.SearchView = SC.View.extend(
 
     if (!SC.none(selection)) {
       // retrieve the list of the results visible in the view
-      var listView = this.get('resultsScrollView').get('contentView').get('childViews');
+      var listView = this.get('resultsScrollView')
+                          .get('contentView').get('childViews');
       var needToScroll = YES;
       // don't verify the first and the last child to force to scroll
       for (var i = 1; i < listView.get('length') - 1; i++) {
@@ -78,8 +89,8 @@ Multivio.SearchView = SC.View.extend(
       // if needed, scroll to the new position
       if (needToScroll) {
         var selectionIndex = Multivio.searchController.indexOf(selection);
-        this.get('resultsScrollView').get('contentView').scrollToContentIndex(selectionIndex);
-        Multivio.logger.debug("update search results' list scroll"); 
+        this.get('resultsScrollView').get('contentView')
+                                    .scrollToContentIndex(selectionIndex);
       }
     }
   }.observes('Multivio.searchController.selection'),
@@ -100,18 +111,16 @@ Multivio.SearchView = SC.View.extend(
     action: 'goToNextResult'
   }),
   
-  //or SC.SelectFieldView ?
   searchScopeView : SC.SelectButtonView.design({
   //searchScopeView : SC.SelectFieldView.design({
 	
     layout: { top: 50, left: 40, right: 0 },
 
-    valueBinding: 'Multivio.searchController.currentSearchFile', 
-    objectsBinding: 'Multivio.searchController.currentFileList',         
+    valueBinding: 'Multivio.searchController.currentSearchFile',
+    objectsBinding: 'Multivio.searchController.currentFileList',       
     nameKey: 'label',
     theme: 'square',
     valueKey: 'url',
-    //sortKey: 'label',
     disableSort: YES,
     checkboxEnabled: YES,
     itemIdx: 1 // select first item by default, does not work...
