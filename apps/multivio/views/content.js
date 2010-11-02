@@ -40,6 +40,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     
     @binding {String}
   */
+  zoomState: null,
   zoomStateBinding:
       SC.Binding.oneWay('Multivio.zoomController.currentZoomState'), 
 
@@ -78,6 +79,9 @@ Multivio.ContentView = SC.ScrollView.extend(
     The next asked Url if user choose to proceed loading a bigg image
   */
   _nextUrl: null,
+  
+  needToScrollUp: YES,
+  isNewImage: NO,
   
   /**
     ZoomRatio has changed, check if we need to load a new image
@@ -133,9 +137,8 @@ Multivio.ContentView = SC.ScrollView.extend(
         }
         var fileUrl = defaultUrl.substring(index, defaultUrl.length);
         var imageSize = this.get('imageSize')[fileUrl];
-        
         // imageSize is avalaible
-        if (imageSize !== -1) {
+        if (imageSize !== -1 && !SC.none(imageSize)) {
           this.nativeWidth = imageSize.width;
           this.nativeHeight = imageSize.height;
           this._loadNewImage();
@@ -160,50 +163,22 @@ Multivio.ContentView = SC.ScrollView.extend(
     SC.RunLoop.begin();
     var content =  this.get('contentView');
     
-    // verify if verticalScroll and horizontalScroll exist and need to be moved
-    var needVerticalScrollToMove = (this.get('isVerticalScrollerVisible') &&
-        this.get('verticalScrollOffset') !== 0) ? YES : NO;
-    var needHorizontalScrollToMove = (this.get('isHorizontalScrollerVisible') && 
-        this.get('horizontalScrollOffset') !== 0) ? YES : NO;
-    
-    if (needVerticalScrollToMove || needHorizontalScrollToMove) {
-      // verify if we have a new image (not same url) 
-      var currentUrl = content.get('value');
-      var currentUrlIndex = currentUrl.indexOf('&url=');
-      var tempUrl = currentUrl.substring(currentUrlIndex + 5, currentUrl.length);
-      
-      var nextUrlIndex = url.indexOf('&url=');
-      var nextUrl = url.substring(nextUrlIndex + 5, url.length);
-      // if new url move scroll bar if needed
-      if (tempUrl !== nextUrl) {
-        if (needHorizontalScrollToMove) {
-          this.set('horizontalScrollOffset', 0);
-        }
-        if (needVerticalScrollToMove) {
-          this.set('verticalScrollOffset', 0);
-        }
-      }
-      else {
-        // same url, verify if page_nr is different
-        var currentPagenrIndex = currentUrl.indexOf('page_nr=');
-        var currentPageNumber = undefined;
-        if (currentPagenrIndex !== -1) {
-          var pagenrEnd = currentUrl.indexOf('&');
-          currentPageNumber = currentUrl.substring(currentPagenrIndex + 8, pagenrEnd);
-        }
-        var nextPagenrIndex = url.indexOf('page_nr=');
-        var nextPageNumber = undefined;
-        if (nextPagenrIndex !== -1) {
-          var nextpagenrEnd = url.indexOf('&');
-          nextPageNumber = url.substring(nextPagenrIndex + 8, nextpagenrEnd);
-        }
-        if (currentPageNumber !== nextPageNumber) {
-          if (needHorizontalScrollToMove) {
+    // adjust scroll
+    var isVerticalVisible = this.get('isVerticalScrollerVisible');
+    if (isVerticalVisible) {
+      if (this.isNewImage) {
+        if (this.needToScrollUp) {
+          if (this.get('isHorizontalScrollerVisible')) {
             this.set('horizontalScrollOffset', 0);
-          }
-          if (needVerticalScrollToMove) {
             this.set('verticalScrollOffset', 0);
           }
+          else {
+            this.set('verticalScrollOffset', 0);
+          }
+        }
+        else {
+          this.set('verticalScrollOffset', this.get('maximumVerticalScrollOffset'));
+          this.needToScrollUp = YES;
         }
       }
     }
@@ -230,6 +205,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     SC.RunLoop.begin();
     this.set('isLoadingContent', NO);
     SC.RunLoop.end();
+    this.isNewImage = NO;
     Multivio.logger.info('ContentView#_adjustSize');
   },
   
@@ -315,6 +291,7 @@ Multivio.ContentView = SC.ScrollView.extend(
           Multivio.logger.info('currentpercent ' + zoomVal);
           var newWidth = this.nativeWidth * zoomVal;
           var newHeight = this.nativeHeight * zoomVal;
+
           newUrl = defaultUrl.substring(0, urlIndex).concat('max_width=' +
               parseInt(newWidth, 10) + '&max_height=' + 
               parseInt(newHeight, 10) + '&angle=' + rot + 
@@ -409,6 +386,7 @@ Multivio.ContentView = SC.ScrollView.extend(
       this.nativeWidth = 0;
       this.nativeHeight = 0;
       Multivio.rotateController.resetRotateValue();
+      this.isNewImage = YES;
       
       var defaultUrl = currentSelection.firstObject().url;
       // first check if page_nr exist
@@ -425,6 +403,156 @@ Multivio.ContentView = SC.ScrollView.extend(
         this._loadNewImage();
       }
     }
-  }.observes('selection')
+  }.observes('selection'),
+  
+  /**
+    Return the value to scroll to see the next part of the document
+    
+    @return {Number} the value to scroll
+  */
+  scrollValueScreen: function () {
+    // calcalate the visible part of the document to scroll to the next part
+    var visiblePart = this.get('contentView').get('frame').height;
+    var frameHeight = this.get('frame').height;
+    var ratio = visiblePart / frameHeight;
+    var toScroll = this.get('maximumVerticalScrollOffset') / ratio;
+    toScroll += this.get('verticalScrollerView').thumbLength();
+    return toScroll;
+  },
+  
+  /**
+    This Method is call when a key of the keyboard has been selected
+      
+    @param {SC.Event} Event fired 
+    @returns {Boolean} Return value if executed or not 
+  */
+  keyDown: function (evt) {
+    if (! this.isLoadingContent) {
+      var isVisible = YES;
+      switch (evt.which) {
+      
+      // page_up
+      case 33:
+        // shift + page_up
+        if (evt.shiftKey) {
+          return NO;
+        }
+        else {
+          if (this.get('verticalScrollOffset') === 0) {
+            this.needToScrollUp = NO;
+            Multivio.navigationController.goToPreviousPage();
+          }
+          else {
+            this.scrollBy(null, -this.scrollValueScreen());
+          }
+          return YES;  
+        }
+        break;
+      
+      // page_down  
+      case 34:
+        // shift + page_down
+        if (evt.shiftKey) {
+          return NO;
+        }
+        else {
+          var vertical = this.get('verticalScrollOffset');
+          if (vertical >= this.get('maximumVerticalScrollOffset')) {
+            Multivio.navigationController.goToNextPage();
+          }
+          else {
+            this.scrollBy(null, +this.scrollValueScreen());
+          }
+          return YES;  
+        }
+        break;
+    
+      // left
+      case 37:
+        isVisible = this.get('isHorizontalScrollerVisible');
+        if (isVisible) {
+          if (this.get('horizontalScrollOffset') !== 0) {
+            this.scrollBy(-40, null);
+          }
+        }
+        return YES;
+      // up
+      case 38:
+        isVisible = this.get('isVerticalScrollerVisible');
+        if (isVisible) {
+          if (this.get('verticalScrollOffset') !== 0) {
+            this.scrollBy(null, -40);
+          }
+          else {
+            if (Multivio.masterController.get('currentPosition') !== 1) {
+              this.needToScrollUp = NO;
+              Multivio.navigationController.goToPreviousPage();
+            }
+          }
+        }
+        else {
+          // move to the previous page
+          this.needToScrollUp = YES;
+          Multivio.navigationController.goToPreviousPage();
+        }
+        return YES;
+      // right
+      case 39:
+        isVisible = this.get('isHorizontalScrollerVisible');   
+        if (isVisible) {
+          var maxHor = this.get('maximumHorizontalScrollOffset');
+          if (this.get('horizontalScrollOffset') < maxHor) {
+            this.scrollBy(40, null);
+          }
+        }
+        return YES;
+       // down
+      case 40:
+        isVisible = this.get('isVerticalScrollerVisible');
+        if (isVisible) {
+          var maxVert = this.get('maximumVerticalScrollOffset');
+          if (this.get('verticalScrollOffset') < maxVert) {
+            this.scrollBy(null, 40);
+          }
+          else {
+            Multivio.navigationController.goToNextPage();
+          } 
+        }
+        else {
+          // move to the next page
+          Multivio.navigationController.goToNextPage();
+        }
+        return YES;
+      default:
+        return NO;
+      }
+    }
+  },
+  
+  /**
+    Intercept mouse wheel event and see if we must go to the next or the
+    previous page.
+    
+    @param {SC.Event}
+  */  
+  mouseWheel: function (evt) {
+    if (! this.isLoadingContent) {
+      // evt.wheelDeltaY > 0 go down
+      if (evt.wheelDeltaY > 0) {
+        if (this.get('maximumVerticalScrollOffset') === 
+          this.get('verticalScrollOffset')) {
+          // move to the next page
+          Multivio.navigationController.goToNextPage();
+        }
+      }
+      if (evt.wheelDeltaY < 0) {
+        if (this.get('verticalScrollOffset') === 0) {
+          this.needToScrollUp = NO;
+          Multivio.navigationController.goToPreviousPage();
+        }
+      } 
+      sc_super();
+    }  
+  }
 
 });

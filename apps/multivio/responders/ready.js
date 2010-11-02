@@ -22,12 +22,9 @@ Multivio.READY = SC.Responder.create(
     First responder did change.
   */
   didBecomeFirstResponder: function () {
-    console.info('ready firstResponder '+ this);
     Multivio.logger.debug('Multivio state is READY');
     Multivio.treeController.allowSelection(YES);
-    Multivio.getPath('views.mainContentView').becomeFirstResponder();
-    //Multivio.mainPage.mainPane.makeKeyPane();
-    //Multivio.makeFirstResponder(Multivio.getPath('views.mainContentView'));
+    Multivio.getPath('views.mainContentView.innerMainContent').becomeFirstResponder();
   },
   
   /**
@@ -35,7 +32,6 @@ Multivio.READY = SC.Responder.create(
   */
   firstPosition: function () {
     Multivio.masterController.selectFirstPosition();
-    //Multivio.getPath('views.mainContentView').testi();
   },
   
   /**

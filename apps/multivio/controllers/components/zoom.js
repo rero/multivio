@@ -35,7 +35,7 @@ Multivio.zoomController = SC.ObjectController.create(
     zoomRatio = the ratio (percentage) of the image size
     zoomScale = one of the scale defined in the configurator 
   */
-  currentZoomState: undefined,
+  currentZoomState: null,
   zoomStep:         -1,
   zoomRatio:        0.0,
   zoomScale:        undefined,
@@ -72,8 +72,6 @@ Multivio.zoomController = SC.ObjectController.create(
     Initialize this controller. Retrieve zoom values from the configurator.
   */
   initialize: function () {
-    this.currentZoomState =
-        Multivio.configurator.get('zoomParameters').initState;
     // get zoomScale parameter in the configurator
     var type = Multivio.configurator.
         getTypeForMimeType(Multivio.masterController.currentFileType);
@@ -87,38 +85,52 @@ Multivio.zoomController = SC.ObjectController.create(
     this.maxRatio = this.zoomScale[this.maxStep];
     Multivio.sendAction('addComponent', 'zoomController');
   },
+  
+  /**
+    Set the currentZoomState
+    
+    @param {String} the new value of the currentZoomState
+  */
+  setZoomState: function (newState) {
+    this.set('currentZoomState', newState);
+  },
 
   /**
     Zoom in. _currentZoomStep + 1
   */  
   doZoomIn: function () {
-    // TODO why is the zoom controller updating the variable
-    // isLoadingContent? 
-    // => No change now because I have to understand how to order call of bindings
-    SC.RunLoop.begin();
-    this.set('isLoadingContent', YES);
-    SC.RunLoop.end();
-    
     var zoomSt = this.get('zoomStep');
-    if (zoomSt !== -1) {
-      if (zoomSt < this.maxStep) {
-        zoomSt++;
-        this.set('zoomStep', zoomSt);
-      }
-    }
-    else {
-      // first set zoomState undefined to change mode to zoom 
-      this.set('currentZoomState', null);
-      var zoomRatio = this.get('zoomRatio');
-      // check if zoomRatio is smaller than the minRatio
-      if (zoomRatio < this.minRatio) {
-        this.set('zoomStep', 0); 
+    //verify if we can make a zoomIn
+    if (zoomSt < this.maxStep) {
+      // TODO why is the zoom controller updating the variable
+      // isLoadingContent? 
+      // => No change now because I have to understand how to order call of bindings
+    
+      SC.RunLoop.begin();
+      this.set('isLoadingContent', YES);
+      SC.RunLoop.end();
+    
+      //var zoomSt = this.get('zoomStep');
+      if (zoomSt !== -1) {
+        if (zoomSt < this.maxStep) {
+          zoomSt++;
+          this.set('zoomStep', zoomSt);
+        }
       }
       else {
-        // check if zoomratio is smaller than the maxRatio
-        if (zoomRatio < this.maxRatio) {
-          var nexStep = this.getNextStep(zoomRatio);
-          this.set('zoomStep', nexStep);
+        // first set zoomState undefined to change mode to zoom 
+        this.set('currentZoomState', null);
+        var zoomRatio = this.get('zoomRatio');
+        // check if zoomRatio is smaller than the minRatio
+        if (zoomRatio < this.minRatio) {
+          this.set('zoomStep', 0); 
+        }
+        else {
+          // check if zoomratio is smaller than the maxRatio
+          if (zoomRatio < this.maxRatio) {
+            var nexStep = this.getNextStep(zoomRatio);
+            this.set('zoomStep', nexStep);
+          }
         }
       }
     }
@@ -128,29 +140,35 @@ Multivio.zoomController = SC.ObjectController.create(
     Zoom out. _currentZoomStep - 1
   */   
   doZoomOut: function () {
-    SC.RunLoop.begin();
-    this.set('isLoadingContent', YES);
-    SC.RunLoop.end();
-    var zoomSt = this.get('zoomStep');
-    if (zoomSt !== -1) {
-      if (zoomSt > 0) {
-        zoomSt--;
-        this.set('zoomStep', zoomSt);
-      }
-    }
-    else {
-      // first set zoomState undefined to change mode to zoom
-      this.set('currentZoomState', null);
-      var zoomRatio = this.get('zoomRatio');
-      // check if zoomRatio is bigger than the maxRatio
-      if (zoomRatio > this.maxRatio) {
-        this.set('zoomStep', this.maxStep); 
+    var zoomRatio = this.get('zoomRatio');
+    // verify if we can make a zoomOut
+    if (zoomRatio > this.minRatio) {
+    
+      SC.RunLoop.begin();
+      this.set('isLoadingContent', YES);
+      SC.RunLoop.end();
+      
+      var zoomSt = this.get('zoomStep');
+      if (zoomSt !== -1) {
+        if (zoomSt > 0) {
+          zoomSt--;
+          this.set('zoomStep', zoomSt);
+        }
       }
       else {
-        //check if zoomRatio is bigger than the minRatio
-        if (zoomRatio > this.minRatio) {
-          var preStep = this.getPreviousStep(zoomRatio);
-          this.set('zoomStep', preStep);
+        // first set zoomState undefined to change mode to zoom
+        this.set('currentZoomState', null);
+        var zoomRatio = this.get('zoomRatio');
+        // check if zoomRatio is bigger than the maxRatio
+        if (zoomRatio > this.maxRatio) {
+          this.set('zoomStep', this.maxStep); 
+        }
+        else {
+          //check if zoomRatio is bigger than the minRatio
+          if (zoomRatio > this.minRatio) {
+            var preStep = this.getPreviousStep(zoomRatio);
+            this.set('zoomStep', preStep);
+          }
         }
       }
     }
@@ -304,6 +322,26 @@ Multivio.zoomController = SC.ObjectController.create(
       this.set('isLoadingContent', YES);
       SC.RunLoop.end();
       this.set('currentZoomState', newMode);
+    }
+  },
+  
+  /**
+    Intercept the key event and call the good zoom method
+  
+    @param {SC.Event} evt the event fired
+  */
+  keyEvent: function (evt) {
+    switch (evt.which) {
+    // -
+    case 45:
+      this.doZoomOut();
+      return YES;
+    // +
+    case 43:
+      this.doZoomIn();
+      return YES;
+    default:
+      return NO;
     }
   }
   

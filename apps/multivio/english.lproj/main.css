@@ -386,3 +386,25 @@ label.document-label-view {
   ms-filter: "alpha(opacity=10)"; /* IE 8 */
   filter : alpha(opacity=10); /* IE < 8 */
 }
+
+.mvo-metadata-label {
+  font: 1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+  position: absolute;
+  width: 100px;
+  height: 30px;
+  left: 5px;
+  font-weight: bold;
+  text-align: left;
+  
+}
+
+.mvo-metadata-data {
+  font: 1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+  position: absolute;
+  width: 220px;
+  top: 0px;
+  bottom: 0px;
+  left: 110px;
+  white-space: normal;
+  
+}

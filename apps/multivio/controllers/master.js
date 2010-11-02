@@ -56,8 +56,10 @@ Multivio.masterController = SC.ObjectController.create(
     
     @default NO
   */
-  isLoadingContent: NO,  
-  
+  isLoadingContent: NO,
+
+  zoomState: null,
+    
   /**
     Binds to the cdm fileMetadata
 
@@ -75,6 +77,7 @@ Multivio.masterController = SC.ObjectController.create(
     Multivio.makeFirstResponder(Multivio.WAITING);
     var reference = Multivio.CDM.getReferer();
     this.set('currentFile', reference);
+    this.zoomState = Multivio.configurator.get('zoomParameters').initState;
     Multivio.logger.info('masterController initialized');
   },
   
@@ -153,8 +156,11 @@ Multivio.masterController = SC.ObjectController.create(
     
     for (var i = 0; i < listOfControllerss.length; i++) {
       var oneController = listOfControllerss[i];
-      console.info('master initialize controller ' + oneController + ' type ' + ct);
       Multivio[oneController].initialize(cf);
+      // if we need zoomController set it state
+      if (oneController === 'zoomController') {
+        Multivio.zoomController.setZoomState(this.zoomState);
+      }
     }
   }.observes('currentFileType'),
   

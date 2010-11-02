@@ -309,6 +309,26 @@ Multivio.navigationController = SC.ObjectController.create(
     this.set('currentPage', nbp);
     this.set('isPreviousEnabled', YES);
     this.set('isNextEnabled', NO);
+  },
+  
+  /**
+    Method that is called when an event occured
+  
+    @param {SC.Event} evt the event that trigged this action
+  */
+  keyEvent: function (evt) {
+    switch (evt.which) {
+    // page_up
+    case 33:
+      this.goToPreviousPage();
+      return YES;
+    // page_down
+    case 34:
+      this.goToNextPage();
+      return YES;
+    default:
+      return NO;
+    }
   }
 
 });

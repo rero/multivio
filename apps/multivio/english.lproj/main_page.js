@@ -22,7 +22,41 @@ Multivio.mainPage = SC.Page.design({
   mainPane: SC.MainPane.design({
     
     // setting default responder to the application
-    defaultResponder: 'Multivio'
+    defaultResponder: 'Multivio',
+
+    /**
+      @property
+    */
+    acceptsFirstResponder: YES,
+    isKeyResponder: YES,
+      
+    /**
+      This Method is call when a key of the keyboard has been selected
+      
+      @param {SC.Event} Event fired 
+      @returns {Boolean} Return value if executed or not 
+    */  
+    keyDown: function (evt) {
+      switch (evt.which) {
+        
+      // page_up
+      // page_down
+      case 33:
+      case 34:
+        this.sendEvent('keyEvent', evt, Multivio.navigationController);
+        return YES;
+        
+      // +
+      // -
+      case 43:
+      case 45:
+        this.sendEvent('keyEvent', evt, Multivio.zoomController);
+        return YES;
+        
+      default:
+        return NO;
+      }
+    }
     
   // child view are defined in views.js
   }).classNames('workspace_black')

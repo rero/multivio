@@ -18,6 +18,8 @@
 Multivio.FileButtonView = SC.View.extend( 
 /** @scope Multivio.FileButtonView.prototype */ {
   
+  hideTimer: undefined,
+  
   /**
     Override render method to create a timer that hides the view after 3 sec.
     
@@ -26,7 +28,7 @@ Multivio.FileButtonView = SC.View.extend(
   */  
   render: function (context, firstTime) {
     if (firstTime) {
-      SC.Timer.schedule({
+      this.hideTimer = SC.Timer.schedule({
         target: this, 
         action: 'hideView', 
         interval: 3000
@@ -42,21 +44,26 @@ Multivio.FileButtonView = SC.View.extend(
     @param {SC.Event}
   */   
   mouseEntered: function (evt) {
-    this.showView();
+    if(!SC.none(this.hideTimer)) {
+      this.hideTimer.invalidate();
+    }
+    else {
+      this.showView();
+    }
     return YES;
   },
   
   /**
     Event that occurs when the mouse exit this view. Create a timer that hides
-    the view after 1 sec.
+    the view after - 1 sec.
     
     @param {SC.Event}
   */
   mouseExited: function (evt) {
-    SC.Timer.schedule({
+    this.hideTimer = SC.Timer.schedule({
       target: this, 
       action: 'hideView', 
-      interval: 3000
+      interval: 800
     });
     return YES;
   },
@@ -65,6 +72,7 @@ Multivio.FileButtonView = SC.View.extend(
     Hide this view
   */
   hideView: function () {
+    this.hideTimer = undefined;
     this.removeAllChildren();
   },
   

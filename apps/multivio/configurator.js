@@ -102,12 +102,12 @@ Multivio.configurator = SC.Object.create(
       layoutParams: {
         'leftStripWidth':  200,
         'rightStripWidth': 200,
-        'headerHeight':     40,
-        'footerHeight':     50,
-        'marginTop':        10,
-        'marginRight':      10,
-        'marginBottom':     10,
-        'marginLeft':       10
+        'headerHeight':     35,
+        'footerHeight':     45,
+        'marginTop':        5,
+        'marginRight':      5,
+        'marginBottom':     5,
+        'marginLeft':       5
       }
     }
   },
@@ -165,9 +165,7 @@ Multivio.configurator = SC.Object.create(
     },
     image : {
       components: [
-        {name: 'views.treeAndContentView', coord: 'A2:B2'},
-        {name: 'views.toolbar',            coord: 'A3:C3'},
-        {name: 'views.thumbnailView',      coord: 'C2:C2'}
+        {name: 'views.mainContentView', coord: 'A2:C2'}
       ],
       zoomScale: 'scaleForBitmapGraphics'
     }
