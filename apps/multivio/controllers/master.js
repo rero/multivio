@@ -174,6 +174,8 @@ Multivio.masterController = SC.ObjectController.create(
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;
       this.set('currentPosition', null);
+      // TODO WYD:debug message
+      console.info("currentFileDidChange: " + this.get('currentFile'));
       var cf = this.get('currentFile');
       var meta = Multivio.CDM.getFileMetadata(cf);
       // meta === -1 => fileMetadata not in the client wait until fileMetadata

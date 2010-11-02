@@ -51,7 +51,7 @@ Multivio.configurator = SC.Object.create(
   logParameters: {
     log: {
       //console:        "LOG_INFO",
-      browserConsole: "LOG_INFO",
+      browserConsole: "LOG_DEBUG", // "LOG_INFO"
       ajax:           "LOG_ERROR"
     },
     logFile: "/log/post"
@@ -85,6 +85,10 @@ Multivio.configurator = SC.Object.create(
     
     image: "/document/render?",
     imageSize: "/document/get_size?",
+    
+    search: "/document/search?query=%@&from=%@&to=%@&context_size=%@&max_results=%@&angle=%@&url=",
+    getText: "/document/get_text?page_nr=%@&x1=%@&y1=%@&x2=%@&y2=%@&url=",    
+    getPageIndexing: "/document/get_indexing?page_nr=%@&from=%@&to=%@&url=",
     
     fixtures: {
       VAA: "/static/multivio/en/current/images/VAA"

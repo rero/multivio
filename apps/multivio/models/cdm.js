@@ -30,12 +30,14 @@ Multivio.CDM = SC.Object.create(
     fileMetadata {Object}: descriptive and technical metadata of the file
     logicalStructure {Object}: the logical structure of the file (can be null)
     physicalStructure {Object}: the physical structure of the file 
+    searchResults {Object}: the current search results
   */
   referer: undefined,
   fileMetadata: undefined,
   logicalStructure: undefined,
   physicalStructure: undefined,
   imageSize: undefined,
+  searchResults: undefined,
 
   /**
     Store the fileMetadata for a specific url
@@ -290,6 +292,73 @@ Multivio.CDM = SC.Object.create(
       Multivio.errorController.initialize(response.get('body'));
       Multivio.makeFirstResponder(Multivio.ERROR);
     }
-  }
+  },
+  
+  /**
+    Return the search results or send the request to the server
+    and return -1.
+  
+    @param {String} url
+    @param {String} query the serach query
+    @param {Number} from page number start
+    @param {Number} to page number stop
+    @param {Number} context_size number of characters around found words
+    @param {Number} max_results maximal amout of occurences to return
+    @param {Number} angle the rotation angle in degrees
+    
+    @return {Object}
+  */
+  getSearchResults: 
+        function (url, query, from, to, context_size, max_results, angle) {
+          
+    if (SC.none(this.get('searchResults')) || 
+        this.get('searchResults')[url] === undefined) {    
+          
+      // ask the server    
+      var serverAddress = Multivio.configurator.
+          getPath('baseUrlParameters.search');
+      serverAddress = serverAddress.
+                fmt(query, from, to, context_size, max_results, angle) + url;
+      Multivio.requestHandler.
+          sendGetRequest(serverAddress, this, 'setSearchResults', url);
+      Multivio.logger.debug('request sent to server: ' + serverAddress);
+          
+      return -1;
+    }
+    else {
+      var res = this.get('searchResults')[url];
+      Multivio.logger.debug('search results returned by cdm ' + res);
+      return res;
+    }
 
+  },
+
+  /**
+    Store the current search results
+
+    @param {String} response the response received from the server
+    @param {url} url the corresponding url
+  */
+  setSearchResults: function (response, url) {
+    
+    if (SC.ok(response)) {
+      Multivio.logger.debug('search results received from the server: %@'.
+          fmt(response.get("body")));    
+      var jsonRes = response.get("body");
+      var t2 = {};
+      if (!SC.none(this.get('searchResults'))) {
+        var oldRes = this.get('searchResults');
+        t2 = this.clone(oldRes);
+      }
+      //t2[{'url': url.url, 'query': url.query}] = jsonRes;
+      t2[url] = jsonRes;
+      this.set('searchResults', t2);
+      Multivio.logger.debug('New search results added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
+    }
+  }
+  
 });

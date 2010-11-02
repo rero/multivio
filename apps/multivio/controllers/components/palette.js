@@ -132,6 +132,39 @@ Multivio.paletteController = SC.ObjectController.create(
     }
   },
   
+  
+  /**
+     Tree button has been pressed show the treePalette or hide it
+
+     @param {SC.Button} button the button pressed
+   */
+   showSearch: function (button) {
+     var searchPalette = Multivio.getPath('views.searchPalette');
+     // no activeButton => show this palette
+     if (SC.none(this.activeButton)) {
+       this.activeButton = button;
+       var ref = Multivio.CDM.getReferer();
+       var phys = Multivio.CDM.getPhysicalstructure(ref);
+       if ( phys !== -1 && phys.length < 2) {
+         searchPalette.get('contentView').get('childViews')[0].
+             get('childViews')[7].remove();
+       }
+       searchPalette.set('layout', this.paletteLayout(YES));
+       searchPalette.append();
+     }
+     else {
+       if (this.activeButton !== button) {
+         this.hidePalette(this.activeButton.name);
+         this.activeButton = null;
+         this.showOtherPalette(button);
+       }
+       else {
+         this.activeButton = null;
+         searchPalette.remove();
+       }
+     }
+   },
+  
   /**
     Call the method to show the good palette
     
@@ -148,6 +181,9 @@ Multivio.paletteController = SC.ObjectController.create(
     case 'metadata':
       this.showMetadata(button);
       break;
+    case 'search':
+    this.showSearch(button);
+    break;
       
     default:
       Multivio.logger.info('unable to show the selected palette');
@@ -171,6 +207,9 @@ Multivio.paletteController = SC.ObjectController.create(
     case 'metadata':
       Multivio.getPath('views.metadataPalette').remove();
       break;
+    case 'search':
+    Multivio.getPath('views.searchPalette').remove();
+    break;
       
     default:
       Multivio.logger.info('unable to hide the selected palette');

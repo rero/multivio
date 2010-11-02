@@ -1,8 +1,8 @@
 /**
 ==============================================================================
-  Project:    Multivio - https://www.multivio.org/
-  Copyright:  (c) 2009-2010 RERO
-  License:    See file license.js
+Project: Multivio - https://www.multivio.org/
+Copyright: (c) 2009-2010 RERO
+License: See file license.js
 ==============================================================================
 */
 
@@ -12,12 +12,12 @@ sc_require('views/thumbnail_content');
 sc_require('views/tree');
 sc_require('views/file_button');
 sc_require('views/metadata');
+sc_require('views/search');
 
 /**
-  @class
-  
-  The main page object contains all views configuration
-*/  
+@class
+The main page object contains all views configuration
+*/
 Multivio.views = SC.Page.design(
 /** @scope Multivio.views.prototype */ {
 
@@ -28,7 +28,7 @@ Multivio.views = SC.Page.design(
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     acceptsFirstResponder: YES,
     isKeyResponder: YES,
-    controllers: [ 'zoomController', 'navigationController',
+    controllers: [ 'zoomController', 'navigationController', 'searchController',
         'imageController',  'treeController', 'thumbnailController'],
       
     childViews: 'bottomButtons leftButtons innerMainContent'.w(),
@@ -218,7 +218,18 @@ Multivio.views = SC.Page.design(
           //target: "Multivio.treeController",
           target: "Multivio.paletteController",
           action: "showTree"
-        })
+        }),
+        SC.ButtonView.design({
+          layout: { top: 100, centerX: 0, width: 35, height: 24 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'search',
+          toolTip: '_Search'.loc(),
+          icon: static_url('images/icon/movie.gif'),
+          //target: "Multivio.thumbnailController",
+          target: "Multivio.paletteController",
+          action: "showSearch"
+        }),
       ]
     }),
     
@@ -233,9 +244,22 @@ Multivio.views = SC.Page.design(
 
       contentView: SC.ImageView.design({
         layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
-        useImageCache: NO
-      }),
+        useImageCache: NO,
+        
+        // note: draw highlight pane on top of the content image
+        childViews: 'innerContent highlightpane'.w(),
+
+        innerContent: Multivio.ImageContentView.design({
+          layout: { top: 0, left: 0, minWidth: 1 },
+          useImageCache: NO
+        }),
+
+        highlightpane: Multivio.HighlightContentView.design({
+          layout: { top: 0, left: 0, right: 0, minWidth: 1 }
+        }).classNames('highlight-pane'.w())
+      }).classNames('image-and-highlight-container'.w())
     }),
+    
     render: function (context, firstTime) {
       if (context.needsContent) {
         this.renderChildViews(context, firstTime);
@@ -248,9 +272,7 @@ Multivio.views = SC.Page.design(
     }
   }),
   
-  /**
-    Thumbnail view
-  */
+
   thumbnailPalette: SC.PalettePane.design({
     layout: {width: 150},
     classNames: 'mvo-transparent',
@@ -290,6 +312,38 @@ Multivio.views = SC.Page.design(
   }),
     
     
+  /**
+    Search view 
+  */
+  searchPalette: SC.PalettePane.design({
+    classNames: 'mvo-transparent',
+    contentView: SC.View.design({
+    layout: { top: 0, bottom: 0, left: 0, right: 0 },
+    
+    //add controller(s) needed for this view
+    controllers: ['imageController'],
+    
+    childViews: 'innerSearch'.w(),
+    innerSearch: Multivio.SearchView.design({
+      layout: { top: 10, bottom: 10, left: 10, right: 10 },
+      borderStyle: SC.BORDER_NONE
+    }),
+    render: function (context, firstTime) {
+      if (context.needsContent) {
+        this.renderChildViews(context, firstTime);
+        context.push(
+          "<div class='top-edge'></div>",
+          "<div class='right-edge'></div>",
+          "<div class='bottom-edge'></div>",
+          "<div class='left-edge'></div>");
+        }
+      }
+    })
+  }), //.classNames('shadow_light inner_view'.w()),
+  
+  /**
+Thumbnail view
+*/
   thumbnailView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     // add controller(s) need for this view
@@ -459,8 +513,8 @@ Multivio.views = SC.Page.design(
   }),
 
   /**
-    Metadata view
-  */
+Metadata view
+*/
   headerView: SC.View.design({
     childViews: 'metadataView'.w(),
 
