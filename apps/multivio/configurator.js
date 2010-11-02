@@ -107,11 +107,11 @@ Multivio.configurator = SC.Object.create(
         'leftStripWidth':  200,
         'rightStripWidth': 200,
         'headerHeight':     35,
-        'footerHeight':     45,
+        'footerHeight':     60,
         'marginTop':        5,
-        'marginRight':      5,
+        'marginRight':      10,
         'marginBottom':     5,
-        'marginLeft':       5
+        'marginLeft':       10
       }
     }
   },

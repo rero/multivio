@@ -15,6 +15,89 @@
 ==========================================================================
 */
 
+
+.sc-theme .sc-button-view .img.thumbnails_new {
+   background-image: sc_static("images/icons/24x24/thumbnails_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.tree_new {
+   background-image: sc_static("images/icons/24x24/tree_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.search_new {
+   background-image: sc_static("images/icons/24x24/search_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.info_new {
+   background-image: sc_static("images/icons/24x24/information_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+
+.sc-theme .sc-button-view .img.rotate_left_new {
+   background-image: sc_static("images/icons/24x24/rotate_left_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.rotate_right_new {
+   background-image: sc_static("images/icons/24x24/rotate_right_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+
+.sc-theme .sc-button-view .img.go_backwards_new {
+   background-image: sc_static("images/icons/24x24/go_backwards_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.go_forward_new {
+   background-image: sc_static("images/icons/24x24/go_forward_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.jump_backwards_new {
+   background-image: sc_static("images/icons/24x24/jump_backwards_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.jump_forward_new {
+   background-image: sc_static("images/icons/24x24/jump_forward_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+
+.sc-theme .sc-button-view .img.zoom_minus_new {
+   background-image: sc_static("images/icons/24x24/zoom_minus_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.zoom_plus_new {
+   background-image: sc_static("images/icons/24x24/zoom_plus_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+
+.sc-theme .sc-button-view .img.full_size_new {
+   background-image: sc_static("images/icons/24x24/full_size_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.full_width_new {
+   background-image: sc_static("images/icons/24x24/full_width_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+.sc-theme .sc-button-view .img.100_percent_new {
+   background-image: sc_static("images/icons/24x24/100_percent_light_24x24.png");
+   width: 24px;
+   height: 24px;
+}
+
+
+
 body.sc-theme {
   /*
   font: 12px/18px "Lucida Grande", "Lucida Sans", Verdana, Arial, sans-serif;
@@ -91,9 +174,37 @@ body.sc-theme {
 
 .sc-theme .sc-button-view.sc-regular-size.square .sc-button-label {
   /*height: 24px;*/
-  height: 22px;
+  /*height: 22px;*/
   /*line-height: 24px;*/
-  line-height: 22px;
+  /*line-height: 22px;*/
+}
+
+.sc-theme .sc-button-view.sc-regular-size.square {
+  max-height: 36px;
+  background: none;
+}
+
+
+.sc-theme .sc-button-view.sc-regular-size.square.active,
+.sc-theme .sc-button-view.sc-regular-size.square.active .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.square.active .sc-button-label {
+  background: #777;
+}
+
+.sc-theme .sc-button-view.sc-regular-size.square.disabled,
+.sc-theme .sc-button-view.sc-regular-size.square.disabled .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.square.disabled .sc-button-label {
+  background: none;
+  opacity: 0.4;
+}
+
+.sc-theme .sc-button-view.sc-regular-size.square.def.active,
+.sc-theme .sc-button-view.sc-regular-size.square.sel.active,
+.sc-theme .sc-button-view.sc-regular-size.square.def .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.square.sel .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.square.def .sc-button-label,
+.sc-theme .sc-button-view.sc-regular-size.square.sel .sc-button-label {
+  background: #bbb;
 }
 
 .sc-text-field-view input {
@@ -370,6 +481,15 @@ label.document-label-view {
 
 .mvo-front-view {
   z-index: 1;
+  /*opacity : 1.0;
+  moz-opacity : 1.0;
+  ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
+  /*filter : alpha(opacity=10);*/
+}
+
+.mvo-front-view-transparent {
+  z-index: -10000;
+  background-image: sc_static("images/transparency_60.png");
   /*opacity : 1.0;
   moz-opacity : 1.0;
   ms-filter: "alpha(opacity=10)";*/ /* IE 8 */

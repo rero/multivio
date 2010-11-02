@@ -38,8 +38,13 @@ Multivio.views = SC.Page.design(
       layout: {bottom: -40, centerX: 0, width: 850, height: 150},
       classNames: 'mvo-front-view',
       
-      childViews: 'navigationView zoomView rotateView'.w(),
-      
+      childViews: 'backgroundView navigationView zoomView rotateView'.w(),
+
+      backgroundView: SC.View.design({
+        layout: { left: 150, right: 0, top: 40, bottom: 40 },
+        classNames: 'mvo-front-view-transparent'
+      }),
+
       //navigation
       navigationView: SC.View.design({
         layout: { centerX: 0, centerY: 0, width: 220, height: 24 },
@@ -47,22 +52,24 @@ Multivio.views = SC.Page.design(
         childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView'.w(),
 
         firstPageView: SC.ButtonView.design({
-          layout: { centerX: -90, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: -90, centerY: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_FirstPage'.loc(),
-          icon: static_url('images/icons/beginning.png'),
+          renderStyle: "renderImage",
+          icon: 'jump_backwards_new',
           isEnabledBinding: "Multivio.navigationController.isFirstEnabled",
           target: "Multivio.navigationController", 
           action: "goToFirstPage"
         }),
 
         previousPageView: SC.ButtonView.design({
-          layout: { centerX: -45, centerY: 0,  width: 40, height: 24 },
+          layout: { centerX: -45, centerY: 0,  width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_PreviousPage'.loc(),
-          icon: static_url('images/icons/previous.png'),
+          renderStyle: "renderImage",
+          icon: 'go_backwards_new',
           isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
           target: "Multivio.navigationController", 
           action: "goToPreviousPage"
@@ -76,23 +83,25 @@ Multivio.views = SC.Page.design(
         }),
 
         nextPageView: SC.ButtonView.design({
-          layout: { centerX: 45, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: 45, centerY: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_NextPage'.loc(),
           acceptsFirstResponder: YES,
-          icon: static_url('images/icons/next.png'),
+          renderStyle: "renderImage",
+          icon: 'go_forward_new',
           isEnabledBinding: "Multivio.navigationController.isNextEnabled",
           target: "Multivio.navigationController", 
           action: "goToNextPage"
         }),
 
         lastPageView: SC.ButtonView.design({
-          layout: { centerX: 90, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: 90, centerY: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_LastPage'.loc(),
-          icon: static_url('images/icons/end.png'),
+          renderStyle: "renderImage",
+          icon: 'jump_forward_new',
           isEnabledBinding: "Multivio.navigationController.isLastEnabled",
           target: "Multivio.navigationController", 
           action: "goToLastPage"
@@ -106,22 +115,24 @@ Multivio.views = SC.Page.design(
         childViews: 'zoomOutPageView zoomInPageView zoomPredefinedView'.w(),
 
         zoomOutPageView: SC.ButtonView.design({
-          layout: { centerX: -180, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: -180, centerY: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_Zoom-'.loc(),
-          icon: static_url('images/icons/zoom-minus.png'),
+          renderStyle: "renderImage",
+          icon: 'zoom_minus_new',
           isEnabledBinding: "Multivio.zoomController.isZoomOutAllowed",
           target: "Multivio.zoomController", 
           action: "doZoomOut"
         }),
 
         zoomInPageView: SC.ButtonView.design({
-          layout: { centerX: -135, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: -135, centerY: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_Zoom+'.loc(),
-          icon: static_url('images/icons/zoom-plus.png'),
+          renderStyle: "renderImage",
+          icon: 'zoom_plus_new',
           isEnabledBinding: "Multivio.zoomController.isZoomInAllowed",
           target: "Multivio.zoomController", 
           action: "doZoomIn"
@@ -148,30 +159,32 @@ Multivio.views = SC.Page.design(
 
       //rotate
       rotateView: SC.View.design({
-        layout: { centerX: -190, centerY: 0, width: 90, height: 24 },
+        layout: { centerX: -160, centerY: 0, width: 90, height: 24 },
         layerId: "rotatePageId",
 
         childViews: 'rotateLeftView rotateRightView'.w(),
 
         rotateLeftView: SC.ButtonView.design({
-          layout: { centerX: -25, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: -20, centerY: 0, width: 24, height: 24 },
           layerId: "rotateLeftPageId",
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_RotateLeft'.loc(),
-          icon: static_url('images/icons/rotate_left.png'),
+          renderStyle: "renderImage",
+          icon: 'rotate_left_new',
           target: "Multivio.rotateController",
           isEnabledBinding: 'Multivio.rotateController.isLeftAllow', 
           action: "rotateLeft"
         }),
 
         rotateRightView: SC.ButtonView.design({
-          layout: { centerX: 20, centerY: 0, width: 40, height: 24 },
+          layout: { centerX: 15, centerY: 0, width: 24, height: 24 },
           layerId: "rotateRightPageId",
           titleMinWidth : 0,
           needsEllipsis: NO,
           toolTip: '_RotateRight'.loc(),
-          icon: static_url('images/icons/rotate_right.png'),
+          renderStyle: "renderImage",
+          icon: 'rotate_right_new',
           target: "Multivio.rotateController",
           isEnabledBinding: 'Multivio.rotateController.isRigthAllow',
           action: "rotateRight"
@@ -180,58 +193,60 @@ Multivio.views = SC.Page.design(
     }),
     
     leftButtons: SC.View.design({
-      layout: { top: 0, left: 5, bottom: 0, width: 40},
+      layout: { top: 0, left: 4, bottom: 0, width: 40},
       //classNames: 'mvo-front-view',
       classNames: 'workspace_black',
       
       childViews: [
         SC.ButtonView.design({
-          layout: { top: 10, centerX: 0, width: 35, height: 24 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'metadata',
-          toolTip: '_Metadata'.loc(),
-          icon: static_url('images/icon/info.gif'),
-          target: "Multivio.paletteController",
-          action: "showMetadata"
-        }),
-        SC.ButtonView.design({
-          layout: { top: 40, centerX: 0, width: 35, height: 24 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'thumbnails',
-          toolTip: '_Thumbnails'.loc(),
-          icon: static_url('images/icon/movie.gif'),
-          target: "Multivio.paletteController",
-          action: "showThumbnails"
-        }),
-        SC.ButtonView.design({
-          layout: { top: 70, centerX: 0, width: 35, height: 24 },
+          layout: { top: 10, centerX: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           name: 'tree',
           toolTip: '_Tree'.loc(),
-          icon: static_url('images/icon/fs_tree_2.gif'),
-          //target: "Multivio.treeController",
+          renderStyle: "renderImage",
+          icon: 'tree_new',
           target: "Multivio.paletteController",
           action: "showTree"
         }),
         SC.ButtonView.design({
-          layout: { top: 100, centerX: 0, width: 35, height: 24 },
+          layout: { top: 50, centerX: 0, width: 24, height: 24 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'thumbnails',
+          toolTip: '_Thumbnails'.loc(),
+          renderStyle: "renderImage",
+          icon: 'thumbnails_new',
+          target: "Multivio.paletteController",
+          action: "showThumbnails"
+        }),
+        SC.ButtonView.design({
+          layout: { top: 90, centerX: 0, width: 24, height: 24 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           name: 'search',
           toolTip: '_Search'.loc(),
-          icon: static_url('images/icon/movie.gif'),
-          //target: "Multivio.thumbnailController",
+          renderStyle: "renderImage",
+          icon: 'search_new',
           target: "Multivio.paletteController",
           action: "showSearch"
         }),
+        SC.ButtonView.design({
+          layout: { top: 130, centerX: 0, width: 24, height: 24 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'metadata',
+          toolTip: '_Metadata'.loc(),
+          renderStyle: "renderImage",
+          icon: 'info_new',
+          target: "Multivio.paletteController",
+          action: "showMetadata"
+        })
       ]
     }),
     
     innerMainContent: Multivio.ContentView.design({
-      layout: { top: 0, bottom: 0, left: 45, right: 0 },
+      layout: { top: 0, bottom: 0, left: 44, right: 0 },
       isFirstResponder: YES,
       acceptsFirstResponder: YES,
       isKeyResponder: YES,
@@ -315,24 +330,24 @@ Multivio.views = SC.Page.design(
     isAnchored: YES,
     classNames: 'mvo-transparent',
     contentView: SC.View.design({
-    layout: { top: 0, bottom: 0, left: 0, right: 0 },
+      layout: { top: 0, bottom: 0, left: 0, right: 0 },
     
-    //add controller(s) needed for this view
-    controllers: ['imageController'],
+      //add controller(s) needed for this view
+      controllers: ['imageController'],
     
-    childViews: 'innerSearch'.w(),
-    innerSearch: Multivio.SearchView.design({
-      layout: { top: 10, bottom: 10, left: 10, right: 10 },
-      borderStyle: SC.BORDER_NONE
-    }),
-    render: function (context, firstTime) {
-      if (context.needsContent) {
-        this.renderChildViews(context, firstTime);
-        context.push(
-          "<div class='top-edge'></div>",
-          "<div class='right-edge'></div>",
-          "<div class='bottom-edge'></div>",
-          "<div class='left-edge'></div>");
+      childViews: 'innerSearch'.w(),
+      innerSearch: Multivio.SearchView.design({
+        layout: { top: 10, bottom: 10, left: 10, right: 10 },
+        borderStyle: SC.BORDER_NONE
+      }),
+      render: function (context, firstTime) {
+        if (context.needsContent) {
+          this.renderChildViews(context, firstTime);
+          context.push(
+            "<div class='top-edge'></div>",
+            "<div class='right-edge'></div>",
+            "<div class='bottom-edge'></div>",
+            "<div class='left-edge'></div>");
         }
       }
     })
@@ -377,7 +392,7 @@ Multivio.views = SC.Page.design(
   treeView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     // add controller(s) need for this view
-    controllers: ['treeController'],
+    controllers: ['treeController']
   }),
   
   // metadata
@@ -390,13 +405,13 @@ Multivio.views = SC.Page.design(
 
       childViews: [
         SC.ListView.design({
-          layout: { top:10, left:10, bottom: 10, right:10},
+          layout: { top: 10, left: 10, bottom: 10, right: 10},
           exampleView: Multivio.Metadata,
           // update row position
           didCreateLayer: function () {
             var childs = this.get('childViews');
             var newTopPosition = 0;
-            for(var i = 0; i < childs.length; i++) {
+            for (var i = 0; i < childs.length; i++) {
               childs[i].set('layout', {'top': newTopPosition});
               newTopPosition += childs[i].get('customHeight');
             }
@@ -417,17 +432,17 @@ Multivio.views = SC.Page.design(
   }),
   
   navigationView: SC.PalettePane.design({
-    layout: { height: 150, width: 300, centerX:0, top:45},
+    layout: { height: 150, width: 300, centerX: 0, top: 45},
     classNames: 'mvo-transparent',
     contentView: SC.View.design({
       childViews: [
         SC.LabelView.design({
-          layout: {width: 280, height: 20, centerX:0, centerY:0},
+          layout: {width: 280, height: 20, centerX: 0, centerY: 0},
           classNames: 'mvo-metadata-label',
           textAlign: 'center',
           escapeHTML: NO,
-          value: null,
-        }),
+          value: null
+        })
       ],
       render: function (context, firstTime) {
         if (context.needsContent) {
@@ -489,7 +504,7 @@ Multivio.views = SC.Page.design(
     isTextSelectable: YES,
     childViews: [
       SC.ImageView.design({
-        layout: { top: 0, left: 0, height: 35, width: 140 },
+        layout: { top: 0, left: 0, height: 44, width: 140 },
         value: static_url('images/multivio_logo_bw_beta_140x44.png'),
         toolTip: 'Go to Multivio website. Client release: ' + 
             Multivio.VERSION
@@ -527,7 +542,7 @@ Multivio.views = SC.Page.design(
           contentValueKey: 'title'
         })
       ]
-    }).classNames(''.w()),
+    }).classNames(''.w())
   }),
 
   usageView: SC.View.design({
