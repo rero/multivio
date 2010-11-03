@@ -171,6 +171,9 @@ Multivio.masterController = SC.ObjectController.create(
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
+      // test
+      console.info('File did change '+this.get('currentFile'));
+      this.showNavigationPalette(YES, this.get('currentFile'));
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;
       this.set('currentPosition', null);
@@ -193,8 +196,38 @@ Multivio.masterController = SC.ObjectController.create(
     @observe currentPosition
   */
   currentPositionDidChange: function () {
+    if (!SC.none(this.get('currentPosition'))) {
+    this.showNavigationPalette(NO, this.get('currentPosition'));
+  }
     console.info('currentPosition did Change....');
     console.info('new Val = ' + this.get('currentPosition'));
-  }.observes('currentPosition')
+  }.observes('currentPosition'),
+  
+  /**
+  */
+  showNavigationPalette: function(isNewFile, toShow) {
+    var navView = Multivio.getPath('views.navigationView');
+    var label = navView.get('contentView').get('childViews')[0];
+    if (isNewFile) {
+      label.set('value', toShow);
+    }
+    else {
+      var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
+      label.set('value', toShow +'/'+max);
+    }
+    
+    navView.append();
+    SC.Timer.schedule({
+      target: this, 
+      action: 'hidePalette', 
+      interval: 1000
+    });
+  },
+  
+  hidePalette: function () {
+    console.info('hide');
+    this.valueTS = null;
+    Multivio.getPath('views.navigationView').remove();
+  }
   
 });

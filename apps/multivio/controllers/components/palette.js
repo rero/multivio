@@ -36,7 +36,7 @@ Multivio.paletteController = SC.ObjectController.create(
     var toAppend = Multivio.getPath('views.mainContentView.innerMainContent');
     var viewHeight = toAppend.get('frame').height;
     var layout = [];
-    layout.height = viewHeight - 50;
+    layout.height = viewHeight - 60;
     layout.top = toAppend.get('parentView').get('frame').y;
     layout.left = toAppend.get('frame').x + 5;
     if (withDefaultWidth) {
@@ -145,7 +145,9 @@ Multivio.paletteController = SC.ObjectController.create(
        this.activeButton = button;
        var ref = Multivio.CDM.getReferer();
        var phys = Multivio.CDM.getPhysicalstructure(ref);
-       if ( phys !== -1 && phys.length < 2) {
+       if ( phys !== -1 && phys.length < 2 && 
+           searchPalette.get('contentView').get('childViews')[0].
+           get('childViews').length === 8) {
          searchPalette.get('contentView').get('childViews')[0].
              get('childViews')[7].remove();
        }

@@ -465,7 +465,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
     if (!SC.none(phys) && !SC.none(phys[url]) && phys[url].length > 0) {
       console.info('ICI '+phys[url].length);
-      if (phys[url].length < 2) {
+      if (phys[url].length < 2 && 
+          Multivio.getPath('views.searchPalette.contentView.innerSearch').
+          get('childViews').length === 8) {
         var childToRemove = Multivio.getPath(
             'views.searchPalette.contentView.innerSearch.searchScopeView');
         Multivio.getPath('views.searchPalette.contentView.innerSearch').
@@ -486,7 +488,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       }
     }
   }.observes('physicalStructure'),
-  
   
   /**
     When search file selection changes,

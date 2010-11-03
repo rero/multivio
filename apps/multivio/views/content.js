@@ -724,10 +724,7 @@ It puts the image in the container and adjust the size
 
     // wyd: set inner content view instead 
     // (additional layer because of highlight pane)
-    console.info('URL B '+url);
-    content.set('value', url);
-    console.info('content '+ content);
-    //content.get('innerContent').set('value', url);
+    content.get('innerContent').set('value', url);
     content.adjust('width', image.width);
     content.adjust('height', image.height);
     content.adjust('left', 0);

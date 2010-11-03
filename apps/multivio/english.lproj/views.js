@@ -192,8 +192,6 @@ Multivio.views = SC.Page.design(
           name: 'metadata',
           toolTip: '_Metadata'.loc(),
           icon: static_url('images/icon/info.gif'),
-          /*target: "Multivio.metadataController",
-          action: "showMetadata"*/
           target: "Multivio.paletteController",
           action: "showMetadata"
         }),
@@ -204,7 +202,6 @@ Multivio.views = SC.Page.design(
           name: 'thumbnails',
           toolTip: '_Thumbnails'.loc(),
           icon: static_url('images/icon/movie.gif'),
-          //target: "Multivio.thumbnailController",
           target: "Multivio.paletteController",
           action: "showThumbnails"
         }),
@@ -242,7 +239,7 @@ Multivio.views = SC.Page.design(
       borderStyle: SC.BORDER_NONE,
       classNames: 'inner_content_view',
 
-      contentView: SC.ImageView.design({
+      contentView: SC.View.design({
         layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
         useImageCache: NO,
         
@@ -272,9 +269,9 @@ Multivio.views = SC.Page.design(
     }
   }),
   
-
+  // Thumbnails
   thumbnailPalette: SC.PalettePane.design({
-    layout: {width: 150},
+    isAnchored: YES,
     classNames: 'mvo-transparent',
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -283,7 +280,6 @@ Multivio.views = SC.Page.design(
       innerThumbnail: Multivio.ThumbnailView.design({
         layout: { top: 10, bottom: 10, left: 10, right: 10 },
         hasHorizontalScroller: NO,
-        //classNames: 'mvo-transparent',
         borderStyle: SC.BORDER_NONE,
 
         contentView: SC.ListView.design({
@@ -316,6 +312,7 @@ Multivio.views = SC.Page.design(
     Search view 
   */
   searchPalette: SC.PalettePane.design({
+    isAnchored: YES,
     classNames: 'mvo-transparent',
     contentView: SC.View.design({
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -340,47 +337,12 @@ Multivio.views = SC.Page.design(
       }
     })
   }), //.classNames('shadow_light inner_view'.w()),
-  
-  /**
-Thumbnail view
-*/
-  thumbnailView: SC.View.design({
-    layout: { top: 0, bottom: 0, left: 0, right: 0 },
-    // add controller(s) need for this view
-    controllers: ['thumbnailController'],
-    
-    childViews: 'innerThumbnail'.w(),
-    innerThumbnail: Multivio.ThumbnailView.design({
-      layout: { top: 10, bottom: 10, left: 10, right: 10 },
-      hasHorizontalScroller: NO,
-      borderStyle: SC.BORDER_NONE,
-
-      contentView: SC.ListView.design({
-        layout: { top: 0, bottom: 0, left: 0, right: 0 },
-        insertionOrientation: SC.VERTICAL_ORIENTATION,
-        rowHeight: 130,
-        exampleView: Multivio.ThumbnailContentView,
-        //useImageCache: NO,
-        contentBinding: 'Multivio.thumbnailController.arrangedObjects',
-        selectionBinding: 'Multivio.thumbnailController.selection'
-      })
-    }),
-    render: function (context, firstTime) {
-      if (context.needsContent) {
-        this.renderChildViews(context, firstTime);
-        context.push(
-          "<div class='top-edge'></div>",
-          "<div class='right-edge'></div>",
-          "<div class='bottom-edge'></div>",
-          "<div class='left-edge'></div>");
-      }
-    }
-  }).classNames('shadow_light inner_view'.w()),
 
   /**
     Tree palette
   */
   treePalette: SC.PalettePane.design({
+    isAnchored: YES,
     classNames: 'mvo-transparent',
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -418,7 +380,7 @@ Thumbnail view
     controllers: ['treeController'],
   }),
   
-  
+  // metadata
   metadataPalette: SC.PalettePane.design({
     isAnchored: YES,
     classNames: 'mvo-transparent',
@@ -445,6 +407,31 @@ Thumbnail view
     })
   }),
   
+  navigationView: SC.PalettePane.design({
+    layout: { height: 150, width: 300, centerX:0, top:45},
+    classNames: 'mvo-transparent',
+    contentView: SC.View.design({
+      childViews: [
+        SC.LabelView.design({
+          layout: {width: 280, height: 20, centerX:0, centerY:0},
+          classNames: 'mvo-metadata-label',
+          textAlign: 'center',
+          escapeHTML: NO,
+          value: null,
+        }),
+      ],
+      render: function (context, firstTime) {
+        if (context.needsContent) {
+          this.renderChildViews(context, firstTime);
+          context.push(
+            "<div class='top-edge'></div>",
+            "<div class='right-edge'></div>",
+            "<div class='bottom-edge'></div>",
+            "<div class='left-edge'></div>");
+        }
+      }
+    })
+  }),
   
   /**
     Logo of e-lib & rero
@@ -513,8 +500,8 @@ Thumbnail view
   }),
 
   /**
-Metadata view
-*/
+    Header view
+  */
   headerView: SC.View.design({
     childViews: 'metadataView'.w(),
 
