@@ -464,7 +464,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var url = Multivio.CDM.getReferer();
 
     if (!SC.none(phys) && !SC.none(phys[url]) && phys[url].length > 0) {
-      console.info('ICI '+phys[url].length);
+      console.info('ICI ' + phys[url].length);
       if (phys[url].length < 2 && 
           Multivio.getPath('views.searchPalette.contentView.innerSearch').
           get('childViews').length === 8) {
@@ -616,12 +616,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   doSearch: function () {
     
-    // clear previous results
-    this.doClear();
-    
     // store last search query for later use
     var query = this.get('currentSearchTerm');
     this.set('lastSearchQuery', query);
+    
+    // clear previous results
+    this.doClear();
     
     // discard empty strings
     if (SC.none(query) || SC.empty(query.trim())) return NO;
@@ -687,14 +687,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     SC.RunLoop.begin();
     this.set('displayResults', nd);
     SC.RunLoop.end();
-       
   },
   
   /**
     When search results change, load the new results.
     If there is a result selection, try to restore it after the results
     are loaded. This happens when the user rotates the content while
-    a serach result is selected.
+    a search result is selected.
 
     @private
     @observes searchResults
@@ -754,6 +753,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // if there are results                                         
     if (res !== -1 && !SC.none(res)) {
       var num_res = res.file_position.results.length;
+      
+      // TODO: test
+      if (num_res === 0) {
+        Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
+          '_noSearchResultDesc'.loc(), 'OK');
+      }
       
       var a = null, b  = null, c = null;
       for (var i = 0; i < num_res; i++) {

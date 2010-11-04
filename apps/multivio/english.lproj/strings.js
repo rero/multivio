@@ -74,6 +74,7 @@ SC.stringsFor('English', {
   '_goToNext': 'Next',
   '_goToPrevious': 'Previous',
   '_searchIn': 'Search in file: ',
-  '_doClear' : 'Clear'
-
+  '_doClear' : 'Clear',
+  '_noSearchResultTitle': 'No search result',
+  '_noSearchResultDesc': 'No result was found for the given query'
 });
