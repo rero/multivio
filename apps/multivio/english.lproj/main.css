@@ -111,6 +111,10 @@ body.sc-theme {
   color:#333333;
 }
 
+.sc-label-view.message {
+  color:#333333;
+}
+
 label.document-label-view {
   font-weight: bold;  
 }

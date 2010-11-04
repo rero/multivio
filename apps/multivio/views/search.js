@@ -17,13 +17,15 @@
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
                   
-  childViews: ['scopeLabelView', 'searchQueryView', 'clearButtonView',
+  childViews: ['searchQueryView', 'clearButtonView',
                'searchButtonView', 'previousResultButtonView',
-               'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
+               'nextResultButtonView', 'resultsScrollView', 'searchScopeView',
+               'messageLabelView'],
   
   searchQueryView: SC.TextFieldView.design({ 
     layout: { left: 0, width: 250, height: 22 },
     classNames: 'search',
+    hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm'
   }),
 
@@ -53,7 +55,7 @@ Multivio.SearchView = SC.View.extend(
   }),
   
   resultsScrollView: SC.ScrollView.design({
-    layout: { top: 70, left: 0, right: 0, bottom: 10 },
+    layout: { top: 80, left: 0, right: 0, bottom: 0 },
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
     hasVerticalScroller: YES,    
@@ -136,11 +138,17 @@ Multivio.SearchView = SC.View.extend(
     itemIdx: 1 // select first item by default, does not work...
   }), 
   
-  scopeLabelView: SC.LabelView.design({
+  /*scopeLabelView: SC.LabelView.design({
     layout: { top: 30, left: 0, height: 50, width: 80 },
     textAlign: SC.ALIGN_LEFT,
     value: '_searchIn'.loc()
+  })*/
+  
+  messageLabelView: SC.LabelView.design({
+    layout: { top: 55, right: 0, height: 22 },
+    textAlign: SC.ALIGN_RIGHT,
+    classNames: 'message',
+    valueBinding: 'Multivio.searchController.searchStatus'
   })
   
-
 });

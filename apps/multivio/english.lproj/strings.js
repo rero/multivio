@@ -70,11 +70,17 @@ SC.stringsFor('English', {
   '_No': 'No',
 
   // Strings for search and indexing functionality (MVO_SEIN)
-  '_doSearch': 'Search',
-  '_goToNext': 'Next',
-  '_goToPrevious': 'Previous',
-  '_searchIn': 'Search in file: ',
-  '_doClear' : 'Clear',
+  '_doSearch':            'Search',
+  '_goToNext':            'Next',
+  '_goToPrevious':        'Previous',
+  '_searchIn':            'Search in file: ',
+  '_doClear' :            'Clear',
   '_noSearchResultTitle': 'No search result',
-  '_noSearchResultDesc': 'No result was found for the given query'
+  '_noSearchResultDesc':  'No result was found for the given query',
+  '_typeQueryHere':       'type search query here',
+  '_tooManyResults':      'Search result limit reached',
+  '_firstOccurrences':    'Only the first %@ occurences are displayed.',
+  '_noResult':            'No result was found',
+  '_searchInProgress':    'Searching...',
+  '_resultSelection':     'Result %@/%@'
 });

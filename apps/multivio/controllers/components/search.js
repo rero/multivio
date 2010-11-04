@@ -1,7 +1,10 @@
-// ==========================================================================
-// Project:   Multivio.searchController
-// Copyright: ©2010 RERO, Inc.
-// ==========================================================================
+/**
+==============================================================================
+Project: Multivio - https://www.multivio.org/
+Copyright: (c) 2009-2010 RERO
+License: See file license.js
+==============================================================================
+*/
 /*globals Multivio */
 
 /**
@@ -420,6 +423,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   physicalStructureBinding: 
                 SC.Binding.oneWay('Multivio.CDM.physicalStructure'),
   
+  /** 
+    String representing the search status
+    (search in progress, number found results...) used to inform the user.
+
+    @property {SC.String}
+
+    @default ''
+  */  
+  searchStatus: '',
+  
   /**
     When the rotation angle changes, send a new search request to the server
     to obtain the new coordinates.
@@ -568,6 +581,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // TODO: is it possible to detect the case when we come here from initialize()
     // and thus avoid jumping back to the current ?
     
+    // TODO: update search status with current selection
+    
+    // update search status
+    this._updateSearchStatus();
+    
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     
@@ -597,6 +615,24 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
   }.observes('selection'),
 
+  _updateSearchStatus: function () {
+    
+    var selSet = this.get('selection');
+    var selectedObject = selSet.firstObject();
+    var selectedIndex = this.indexOf(selectedObject);
+    
+    //if (SC.none(selectedObject)) return NO;
+    
+    // display selection index in search status
+    // note: assuming indexOf() always returns -1 when nothing is selected
+    SC.RunLoop.begin();
+    this.set('searchStatus', '_resultSelection'.loc(selectedIndex + 1, 
+                                                    this.get('length')));
+    SC.RunLoop.end();
+    
+  },
+
+
   /**
     Return a highlight zone (which is inside a search result),
     given by its index in the array.
@@ -621,7 +657,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('lastSearchQuery', query);
     
     // clear previous results
-    this.doClear();
+    //this.doClear();
+    this.clearResults();
     
     // discard empty strings
     if (SC.none(query) || SC.empty(query.trim())) return NO;
@@ -659,15 +696,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   /**
     Clear all current search results (ie. for current file only).
   */
-  doClear: function () {
+  clearResults: function () {
     
-    Multivio.logger.debug('SearchController.doClear()');
+    Multivio.logger.debug('SearchController.clearResults()');
     
     var cf = this.get('currentSearchFile');
     var all_results = Multivio.CDM.get('searchResults');
     var new_results = {};
     
-    // clear serach results stored in CDM
+    // clear search results stored in CDM
     if (!SC.none(all_results) && !SC.none(all_results[cf])) {
       Multivio.logger.debug("clearing...");
       new_results = Multivio.CDM.clone(all_results);
@@ -686,6 +723,22 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     nd[url] = NO;
     SC.RunLoop.begin();
     this.set('displayResults', nd);
+    SC.RunLoop.end();
+  },
+  
+  /**
+    When clear button is pressed, clear all current search results 
+    (ie. for current file only) and clear query field.
+  */
+  doClear: function () {
+    
+    Multivio.logger.debug('SearchController.doClear()');
+    
+    this.clearResults();
+    
+    SC.RunLoop.begin();
+    this.set('currentSearchTerm', '');
+    this.set('searchStatus', '');
     SC.RunLoop.end();
   },
   
@@ -736,6 +789,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         this.set('selection', newSel);        
       }
       SC.RunLoop.end();
+      
+      // warn user if results truncated because limit was reached
+      if (res[key].max_reached > 0) {
+        Multivio.usco.showAlertPaneInfo('_tooManyResults'.loc(), 
+          '_firstOccurrences'.loc(res[key].max_reached), 'OK');
+      }
+      
     }
     
   }.observes('searchResults'),
@@ -754,11 +814,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (res !== -1 && !SC.none(res)) {
       var num_res = res.file_position.results.length;
       
-      // TODO: test
-      if (num_res === 0) {
+      // inform user if no search result was found
+      /*if (num_res === 0) {
         Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
           '_noSearchResultDesc'.loc(), 'OK');
-      }
+        SC.RunLoop.begin();
+        this.set('searchStatus', '_noResult'.loc());
+        SC.RunLoop.end();  
+      }*/
       
       var a = null, b  = null, c = null;
       for (var i = 0; i < num_res; i++) {
@@ -772,6 +835,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              Math.abs(c.y1 - c.y2), b.page,
                              this.get('zoomFactor'));
       }
+      
+      // update search status
+      this._updateSearchStatus();
       
       // TODO: add number of search results to some nodes:
       //      (which ones? all ? ...)
