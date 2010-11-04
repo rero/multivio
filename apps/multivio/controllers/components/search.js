@@ -583,13 +583,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // TODO: update search status with current selection
     
-    // update search status
-    this._updateSearchStatus();
-    
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     
     if (SC.none(selectedObject)) return NO;
+    
+    // update search status
+    this._updateSearchStatus();
     
     // if necessary, switch to the corresponding document
     // WARNING: changing master's currentFile initialises controllers anew.
@@ -656,8 +656,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var query = this.get('currentSearchTerm');
     this.set('lastSearchQuery', query);
     
+    SC.RunLoop.begin();
+    this.set('searchStatus', '_searchInProgress'.loc());
+    SC.RunLoop.end();
+    
     // clear previous results
-    //this.doClear();
     this.clearResults();
     
     // discard empty strings
