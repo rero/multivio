@@ -59,6 +59,9 @@ Multivio.masterController = SC.ObjectController.create(
   isLoadingContent: NO,
 
   zoomState: null,
+  
+  listOfFiles: null,
+  currentFilePosition: null,
     
   /**
     Binds to the cdm fileMetadata
@@ -67,6 +70,9 @@ Multivio.masterController = SC.ObjectController.create(
   */
   metadata: null,
   metadataBinding: SC.Binding.oneWay("Multivio.CDM.fileMetadata"),
+  
+  physicalStructure: null,
+  physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
    
   /**
     Initialize masterController. Get the referer (the url given to multivio) 
@@ -77,6 +83,7 @@ Multivio.masterController = SC.ObjectController.create(
     Multivio.makeFirstResponder(Multivio.WAITING);
     var reference = Multivio.CDM.getReferer();
     this.set('currentFile', reference);
+    Multivio.CDM.getPhysicalstructure(reference);
     this.zoomState = Multivio.configurator.get('zoomParameters').initState;
     Multivio.logger.info('masterController initialized');
   },
@@ -106,6 +113,41 @@ Multivio.masterController = SC.ObjectController.create(
       }
     }
   }.observes('metadata'),
+  
+  physicalStructureDidChange: function () {
+    var ph = this.get('physicalStructure');
+    if (!SC.none(ph)) {
+      var refPh = this.get('physicalStructure')[Multivio.CDM.getReferer()];
+      if (refPh !== -1) {
+        if (refPh.length !== 1) {
+          this.listOfFiles = [];
+          for(var i = 0; i < refPh.length; i++) {
+            this.listOfFiles[i] = refPh[i];
+          }
+          this.currentFilePosition = 0;
+        } 
+      }
+    }
+  }.observes('physicalStructure'),
+  
+  currentFilePositionDidChange: function () {
+    this.currentFileType = null;
+    this.set('currentPosition', null);
+    var newFilePos =  this.get('currentFilePosition');
+    var newFile = this.listOfFiles[newFilePos];
+    this.set('currentFile', newFile.url);
+  }.observes('currentFilePosition'),
+  
+  setCurrentFilePosition: function (fileUrl) {
+    if (!SC.none(this.listOfFiles)) {
+      for(var i = 0; i < this.listOfFiles.length; i++) {
+        if (this.listOfFiles[i].url === fileUrl){
+          this.set('currentFilePosition', i);
+          break;
+        }
+      }
+    }
+  },
   
   /**
     Set current position to 1
@@ -171,8 +213,6 @@ Multivio.masterController = SC.ObjectController.create(
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
-      // test
-      console.info('File did change '+this.get('currentFile'));
       this.showNavigationPalette(YES, this.get('currentFile'));
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;
@@ -180,6 +220,7 @@ Multivio.masterController = SC.ObjectController.create(
       // TODO WYD:debug message
       console.info("currentFileDidChange: " + this.get('currentFile'));
       var cf = this.get('currentFile');
+      this.setCurrentFilePosition(cf);
       var meta = Multivio.CDM.getFileMetadata(cf);
       // meta === -1 => fileMetadata not in the client wait until fileMetadata
       // is available => metadataDidChange
@@ -197,8 +238,8 @@ Multivio.masterController = SC.ObjectController.create(
   */
   currentPositionDidChange: function () {
     if (!SC.none(this.get('currentPosition'))) {
-    this.showNavigationPalette(NO, this.get('currentPosition'));
-  }
+      this.showNavigationPalette(NO, this.get('currentPosition'));
+    }
     console.info('currentPosition did Change....');
     console.info('new Val = ' + this.get('currentPosition'));
   }.observes('currentPosition'),
@@ -209,7 +250,17 @@ Multivio.masterController = SC.ObjectController.create(
     var navView = Multivio.getPath('views.navigationView');
     var label = navView.get('contentView').get('childViews')[0];
     if (isNewFile) {
-      label.set('value', toShow);
+      if (SC.none(this.listOfFiles)) {
+        label.set('value', toShow);
+      }
+      else {
+        for(var i = 0; i < this.listOfFiles.length; i++) {
+          if (this.listOfFiles[i].url === toShow){
+            label.set('value', this.listOfFiles[i].label);
+            break;
+          }
+        }
+      }
     }
     else {
       var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
@@ -225,7 +276,6 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   hidePalette: function () {
-    console.info('hide');
     this.valueTS = null;
     Multivio.getPath('views.navigationView').remove();
   }

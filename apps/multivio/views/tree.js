@@ -32,21 +32,22 @@ Multivio.TreeView = SC.ScrollView.extend(
     @observes treeSelection
   */  
   treeSelectionDidChange: function () {
-    var selection = this.get('treeSelection').firstObject();
+    var selection = this.get('treeSelection');
     if (!SC.none(selection)) {
+      var treeS = this.get('treeSelection').firstObject();
       var needToScroll = YES;
       var childViews = this.get('contentView').get('childViews');
       // Don't verify the first and the last child to force to scroll
       for (var j = 1; j < childViews.get('length') - 1 ; j++) {
         var treeBranch = childViews[j].content;
-        if (treeBranch === selection) {
+        if (treeBranch === treeS) {
           needToScroll = NO;
           break;
         }
       }
       if (needToScroll) {
         var arrayOfTree = Multivio.treeController.get('arrangedObjects');
-        var selectionIndex = arrayOfTree.indexOf(selection);
+        var selectionIndex = arrayOfTree.indexOf(treeS);
         // get the scroll offset before the move and set it after
         var leftScroll = this.get('horizontalScrollOffset');
         this.get('contentView').scrollToContentIndex(selectionIndex);

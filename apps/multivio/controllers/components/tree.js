@@ -244,8 +244,9 @@ Multivio.treeController = SC.TreeController.create(
     for (var i = 0; i < listOfBindings.length; i++) {
       var oneBinding = listOfBindings[i];
       oneBinding.disconnect();
-    }   
-    this.set('bindings', []);
+    }
+    //this.selection =  SC.SelectionSet.EMPTY;
+    this.bindings =  [];
   },
   
   /**
@@ -673,11 +674,11 @@ Multivio.treeController = SC.TreeController.create(
       var oneBinding = listOfBindings[j];
       oneBinding.disconnect();
     }
-    this.set('bindings', []);
+    this.bindings = [];
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');    
-    this.set('selection', null);
-    this.set('content', null);
+    this.selection = null;
+    this.content = null;
     
     // retrieve the old structure and append at the right position the new one
     var globs = this.get('globalStructure');

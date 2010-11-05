@@ -40,6 +40,9 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   currentPage: null,
   
+  currentFile: null,
+  //currentFileBinding: 'Multivio.masterController.currentFilePosition',
+  
   /**
     @property {Number} 
     
@@ -63,6 +66,8 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   isNextEnabled: YES,
   isPreviousEnabled: YES,
+  isFirstEnabled: YES,
+  isLastEnabled: YES,
   isCurrentPageEnabled: YES,
   
   /**
@@ -82,6 +87,7 @@ Multivio.navigationController = SC.ObjectController.create(
   initialize: function (url) {
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
+    this.bind('currentFile', 'Multivio.masterController.currentFilePosition');
     
     var meta = Multivio.CDM.getFileMetadata(url);
     if (SC.none(meta.nPages)) {  
@@ -124,6 +130,9 @@ Multivio.navigationController = SC.ObjectController.create(
       }
     }
     //this.checkButton();  
+    if (!SC.none(this.get('currentFile')) && this.get('currentFile') > 0) {
+      this.set('isFirstEnabled', YES);
+    } 
     Multivio.logger.info('navigationController initialized');
   },
   
@@ -239,15 +248,39 @@ Multivio.navigationController = SC.ObjectController.create(
       // disabled buttons
       this.set('isPreviousEnabled', NO);
       this.set('isNextEnabled', NO);
+      this.set('isFirstEnabled', NO);
+      this.set('isLastEnabled', NO);
     }
     else {
       // enabled buttons after checking conditions
       var current = this.get('currentPage');
-      if (current !== 1) {
-        this.set('isPreviousEnabled', YES);
+      var currentFileP = this.get('currentFile');
+      if (!SC.none(currentFileP)) {
+        if (current !== 1) {
+          this.set('isPreviousEnabled', YES);
+        }
+        if (currentFileP !== 0) {
+          this.set('isFirstEnabled', YES);
+        }
+        if (current !== this.get('_numberOfPages')) {
+          this.set('isNextEnabled', YES);
+        }
+        if (currentFileP < Multivio.masterController.listOfFiles.length - 1 ||
+            (currentFileP === Multivio.masterController.listOfFiles.length - 1 
+            && current !== this.get('_numberOfPages'))) {
+          this.set('isLastEnabled', YES);
+        }
       }
-      if (current !== this.get('_numberOfPages')) {
-        this.set('isNextEnabled', YES);
+      else {
+        // only one file
+        if (current !== 1) {
+          this.set('isPreviousEnabled', YES);
+          this.set('isFirstEnabled', YES);
+        }
+        if (current !== this.get('_numberOfPages')) {
+          this.set('isNextEnabled', YES);
+          this.set('isLastEnabled', YES);
+        }
       }
     }  
   }.observes('isLoadingContent'),
@@ -293,9 +326,20 @@ Multivio.navigationController = SC.ObjectController.create(
     SC.RunLoop.begin();
     this.set('isLoadingContent', YES);
     SC.RunLoop.end();
-    this.set('currentPage', 1);
-    this.set('isNextEnabled', YES);
-    this.set('isPreviousEnabled', NO);
+    if (!SC.none(this.get('currentFile')) && this.get('currentFile') !== 0) {
+      var current = this.get('currentFile');
+      current--; 
+      Multivio.makeFirstResponder(Multivio.INIT);
+      Multivio.sendAction('notAllowSelection');
+      Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
+      this.currentPage = null;
+      this.set('currentFile', current); 
+    }
+    else {
+      this.set('currentPage', 1);
+      this.set('isNextEnabled', YES);
+      this.set('isPreviousEnabled', NO);
+    }
   },
   
   /**
@@ -305,11 +349,31 @@ Multivio.navigationController = SC.ObjectController.create(
     SC.RunLoop.begin();
     this.set('isLoadingContent', YES);
     SC.RunLoop.end();
-    var nbp = this.get('_numberOfPages');
-    this.set('currentPage', nbp);
-    this.set('isPreviousEnabled', YES);
-    this.set('isNextEnabled', NO);
+    if (!SC.none(this.get('currentFile')) && this.get('currentFile') !== 
+        Multivio.masterController.listOfFiles.length -1) {
+       var current = this.get('currentFile');   
+      current++; 
+      Multivio.makeFirstResponder(Multivio.INIT);
+      Multivio.sendAction('notAllowSelection');
+      Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
+      this.set('currentFile', current);   
+    }
+    else {
+      var nbp = this.get('_numberOfPages');
+      this.set('currentPage', nbp);
+      this.set('isPreviousEnabled', YES);
+      this.set('isNextEnabled', NO);
+    }
   },
+  
+  /*currentFileDidChange: function () {
+    var cur = this.get('currentFile'); 
+    if (!SC.none(cur)) {
+      if (cur > 0 ) {
+        
+      }
+    }
+  }.obeserves('currentFile'),*/
   
   /**
     Method that is called when an event occured

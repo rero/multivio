@@ -117,10 +117,6 @@ Multivio.paletteController = SC.ObjectController.create(
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
       this.activeButton = button;
-     /* console.info('test '+Multivio.treeController.get('arrangedObjects').length);
-      for(var i = 0; i < Multivio.treeController.get('arrangedObjects').length; i++) {
-        console.info(Multivio.treeController.get('arrangedObjects')[i]);
-      }*/
       treeView.set('layout', this.paletteLayout(YES));
       treeView.append();
     }

@@ -52,7 +52,7 @@ Multivio.views = SC.Page.design(
           needsEllipsis: NO,
           toolTip: '_FirstPage'.loc(),
           icon: static_url('images/icons/beginning.png'),
-          isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
+          isEnabledBinding: "Multivio.navigationController.isFirstEnabled",
           target: "Multivio.navigationController", 
           action: "goToFirstPage"
         }),
@@ -93,7 +93,7 @@ Multivio.views = SC.Page.design(
           needsEllipsis: NO,
           toolTip: '_LastPage'.loc(),
           icon: static_url('images/icons/end.png'),
-          isEnabledBinding: "Multivio.navigationController.isNextEnabled",
+          isEnabledBinding: "Multivio.navigationController.isLastEnabled",
           target: "Multivio.navigationController", 
           action: "goToLastPage"
         })
