@@ -36,7 +36,8 @@ Multivio.paletteController = SC.ObjectController.create(
     var toAppend = Multivio.getPath('views.mainContentView.innerMainContent');
     var viewHeight = toAppend.get('frame').height;
     var layout = [];
-    layout.height = viewHeight - 60;
+    //layout.height = viewHeight - 60;
+    layout.bottom = 110;
     layout.top = toAppend.get('parentView').get('frame').y;
     layout.left = toAppend.get('frame').x + 5;
     if (withDefaultWidth) {
@@ -116,6 +117,10 @@ Multivio.paletteController = SC.ObjectController.create(
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
       this.activeButton = button;
+     /* console.info('test '+Multivio.treeController.get('arrangedObjects').length);
+      for(var i = 0; i < Multivio.treeController.get('arrangedObjects').length; i++) {
+        console.info(Multivio.treeController.get('arrangedObjects')[i]);
+      }*/
       treeView.set('layout', this.paletteLayout(YES));
       treeView.append();
     }

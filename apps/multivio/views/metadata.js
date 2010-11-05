@@ -20,6 +20,9 @@ Multivio.Metadata = SC.View.extend(SC.ContentDisplay,
 
   contentDisplayProperties: 'key data'.w(),
   isTextSelectable: YES,
+  // property used by the listView to calculate new position of the line
+  customHeight: 0,
+  
   
   /**
     Override render method to create the label and the data for the table of 
@@ -37,6 +40,8 @@ Multivio.Metadata = SC.View.extend(SC.ContentDisplay,
     var dataHeight = SC.heightForString(data, 
         220, '1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;');
     context.addStyle('height', dataHeight);
+    
+    this.set('customHeight', dataHeight);
     
     context = context.begin().addClass('key');
     context = context.begin('span').addClass('mvo-metadata-label').push(key).end();

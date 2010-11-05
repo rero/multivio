@@ -24,7 +24,7 @@ Multivio.TreeView = SC.ScrollView.extend(
     @binding
   */  
   treeSelection: null,
-  treeSelectionBinding: SC.Binding.oneWay('Multivio.treeController.selection'), 
+  treeSelectionBinding: SC.Binding.oneWay('Multivio.treeController.selection'),
   
   /**
     Updates scrollposition by observing changes of the treeController selection.
@@ -47,17 +47,32 @@ Multivio.TreeView = SC.ScrollView.extend(
       if (needToScroll) {
         var arrayOfTree = Multivio.treeController.get('arrangedObjects');
         var selectionIndex = arrayOfTree.indexOf(selection);
+        // get the scroll offset before the move and set it after
+        var leftScroll = this.get('horizontalScrollOffset');
         this.get('contentView').scrollToContentIndex(selectionIndex);
+        this.set('horizontalScrollOffset', leftScroll);
         Multivio.logger.debug('update tree scroll'); 
       }
     }
   }.observes('treeSelection')
-  
 });
 
 Multivio.TreeLabelView = SC.ListItemView.extend(
 /** @scope Multivio.TreeLabelView.prototype */ {
   hasContentIcon: YES,
+  
+  render: function (context, firstTime) {
+    sc_super();
+    var lab = this.get('content').label;
+    // TODO: find a better method to calculate size
+    var labelSize = SC.metricsForString(lab, 
+        '"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;');
+    var newWith = labelSize.width + ((this.get('outlineLevel')+1)*32);
+    //update size if necessary
+    if (this.get('parentView').get('frame').width < newWith) {
+      this.get('parentView').adjust('width', newWith);
+    }
+  },
     
   /**
     Override renderIcon method to add a generic icon 

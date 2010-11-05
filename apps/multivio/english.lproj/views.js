@@ -392,6 +392,15 @@ Multivio.views = SC.Page.design(
         SC.ListView.design({
           layout: { top:10, left:10, bottom: 10, right:10},
           exampleView: Multivio.Metadata,
+          // update row position
+          didCreateLayer: function () {
+            var childs = this.get('childViews');
+            var newTopPosition = 0;
+            for(var i = 0; i < childs.length; i++) {
+              childs[i].set('layout', {'top': newTopPosition});
+              newTopPosition += childs[i].get('customHeight');
+            }
+          }
         })
       ],
       render: function (context, firstTime) {

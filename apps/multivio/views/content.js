@@ -772,7 +772,6 @@ Load the image with adapated width and height and rotation
       else {
         switch (zoomSt) {
         case Multivio.zoomController.FULLPAGE:
-        console.info('Full ');
           var windowWidth = this.get('frame').width;
           var windowHeight = this.get('frame').height;
           if (rot % 180 === 0) {
@@ -855,7 +854,6 @@ Load the image with adapated width and height and rotation
             this);
       }
       else {
-        console.info('URL '+newUrl);
         SC.imageCache.loadImage(newUrl, this, this._adjustSize);
       }
     }
@@ -893,10 +891,11 @@ Delegate method of the Multivio.usco.showAlertPaneWarn
   },
   
   /**
-The view size has changed load a new image if the zoom state is Full or
-Width.
-TODO: if possible find a method that is called once.
-*/
+    The view size has changed load a new image if the zoom state is Full or
+    Width.
+   
+   TODO: if possible find a method that is called once.
+  */
   viewDidResize: function () {
     // force frame to be updated and refresh all children
     this.set('frame', {});
@@ -912,11 +911,12 @@ TODO: if possible find a method that is called once.
   },
   
   /**
-Updates value by observing changes in the imageController's
-selection
-@private
-@observes selection
-*/
+    Updates value by observing changes in the imageController's
+    selection
+    
+    @private
+    @observes selection
+  */
   _selectionDidChange: function () {
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
@@ -933,7 +933,6 @@ selection
         index = defaultUrl.indexOf('url=');
       }
       var fileUrl = defaultUrl.substring(index, defaultUrl.length);
-      console.info('A= '+fileUrl);
       var nativeSize = Multivio.CDM.getImageSize(fileUrl);
       // nativeSize is avalaible
       if (nativeSize !== -1) {

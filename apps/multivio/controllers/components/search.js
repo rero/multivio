@@ -464,7 +464,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var url = Multivio.CDM.getReferer();
 
     if (!SC.none(phys) && !SC.none(phys[url]) && phys[url].length > 0) {
-      console.info('ICI '+phys[url].length);
       if (phys[url].length < 2 && 
           Multivio.getPath('views.searchPalette.contentView.innerSearch').
           get('childViews').length === 8) {
