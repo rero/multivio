@@ -22,7 +22,8 @@ proxy '/local',
 # required libraries
 mode :all do
  config :all,
-   :required => [:sproutcore, :LOG]
+   :required => [:sproutcore, :LOG],
+   :theme_name => 'sc-theme mvo-dark-gray-theme'
 end
 
 # URL prefix - production

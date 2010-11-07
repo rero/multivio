@@ -16,87 +16,6 @@
 */
 
 
-.sc-theme .sc-button-view .img.thumbnails_new {
-   background-image: sc_static("images/icons/24x24/thumbnails_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.tree_new {
-   background-image: sc_static("images/icons/24x24/tree_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.search_new {
-   background-image: sc_static("images/icons/24x24/search_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.info_new {
-   background-image: sc_static("images/icons/24x24/information_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-
-.sc-theme .sc-button-view .img.rotate_left_new {
-   background-image: sc_static("images/icons/24x24/rotate_left_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.rotate_right_new {
-   background-image: sc_static("images/icons/24x24/rotate_right_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-
-.sc-theme .sc-button-view .img.go_backwards_new {
-   background-image: sc_static("images/icons/24x24/go_backwards_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.go_forward_new {
-   background-image: sc_static("images/icons/24x24/go_forward_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.jump_backwards_new {
-   background-image: sc_static("images/icons/24x24/jump_backwards_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.jump_forward_new {
-   background-image: sc_static("images/icons/24x24/jump_forward_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-
-.sc-theme .sc-button-view .img.zoom_minus_new {
-   background-image: sc_static("images/icons/24x24/zoom_minus_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.zoom_plus_new {
-   background-image: sc_static("images/icons/24x24/zoom_plus_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-
-.sc-theme .sc-button-view .img.full_size_new {
-   background-image: sc_static("images/icons/24x24/full_size_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.full_width_new {
-   background-image: sc_static("images/icons/24x24/full_width_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-.sc-theme .sc-button-view .img.100_percent_new {
-   background-image: sc_static("images/icons/24x24/100_percent_light_24x24.png");
-   width: 24px;
-   height: 24px;
-}
-
-
 
 body.sc-theme {
   /*
@@ -104,8 +23,6 @@ body.sc-theme {
   background-color: #57647f ;
   padding: 0px;
   */
-  background-color: #444;
-  color: #fff;
   font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
 }
 
@@ -113,7 +30,6 @@ body.sc-theme {
   /*
   background-color: white ;
   */
-  background-color: #aaa;
 }
 
 .sc-theme #loading {
@@ -126,7 +42,7 @@ body.sc-theme {
   background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
   color: white;
   */
-  background: #fff;
+  background-color: white;
 }
 
 .sc-theme .sc-pane.sc-main {
@@ -134,7 +50,6 @@ body.sc-theme {
   background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
   color: white;
   */
-  background: #444;
 }
 
 .sc-theme #loading {
@@ -298,12 +213,10 @@ label.document-label-view {
 }
 
 .inner_content_view {
-  background-color: #666;
   border: 1px solid #666666;
 }
 
 .inner_view {
-  background-color: #aaa;
   border: 1px solid #666666;
 }
 
@@ -342,13 +255,11 @@ label.document-label-view {
 .workspace_black .metadata_primary {
  font: 1.3em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
  font-weight: bold;
- color: #fff;
 }
 
 .workspace_black .metadata_secondary {
  font: 1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
  font-weight: bold;
- color: #aaa;
 }
 
 .workspace_black .toolbox_icon {

@@ -467,9 +467,9 @@ Multivio.views = SC.Page.design(
       SC.View.design({
         layout: { top: 0, height: 32, right: 100, width: 100 },
         childViews: [
-          SC.ImageView.design({
+          SC.View.design({
             layout: { top: 0, bottom: 0, left: 0, right: 0 },
-            value: static_url('images/logo_rero_100x36_bw.png')
+            classNames: 'rero_logo'
           })
         ],
         render: function (context, firstTime) {
@@ -481,9 +481,9 @@ Multivio.views = SC.Page.design(
       SC.View.design({
         layout: { top: 0, height: 32, right: 0, width: 80 },
         childViews: [
-          SC.ImageView.design({
+          SC.View.design({
             layout: { top: 0, bottom: 0, left: 0, right: 0 },
-            value: static_url('images/e-lib.ch_80x32_bw.png')
+            classNames: 'e-lib_ch_logo'
           })
         ],
         render: function (context, firstTime) {
@@ -503,9 +503,9 @@ Multivio.views = SC.Page.design(
 
     isTextSelectable: YES,
     childViews: [
-      SC.ImageView.design({
+      SC.View.design({
         layout: { top: 0, left: 0, height: 44, width: 140 },
-        value: static_url('images/multivio_logo_bw_beta_140x44.png'),
+        classNames: 'multivio_logo',
         toolTip: 'Go to Multivio website. Client release: ' + 
             Multivio.VERSION
       })
