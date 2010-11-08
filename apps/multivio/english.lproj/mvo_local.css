@@ -119,6 +119,30 @@ body.mvo-white-theme {
    width: 24px;
    height: 24px;
 }
+.mvo-dark-gray-theme .sc-button-view .img.search_new_16 {
+   background-image: sc_static("images/icons/16x16/search_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
+.mvo-white-theme .sc-button-view .img.search_new_16 {
+   background-image: sc_static("images/icons/16x16/search_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
+.mvo-dark-gray-theme .sc-button-view .img.cancel_new_16 {
+   background-image: sc_static("images/icons/16x16/cancel_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
+.mvo-white-theme .sc-button-view .img.cancel_new_16 {
+   background-image: sc_static("images/icons/16x16/cancel_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
 .mvo-dark-gray-theme .sc-button-view .img.info_new {
    background-image: sc_static("images/icons/24x24/information_light_24x24.png");
    width: 24px;
@@ -161,8 +185,20 @@ body.mvo-white-theme {
    width: 24px;
    height: 24px;
 }
+.mvo-dark-gray-theme .sc-button-view .img.go_backwards_new_16 {
+   background-image: sc_static("images/icons/16x16/go_backwards_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
+.mvo-white-theme .sc-button-view .img.go_backwards_new_16 {
+   background-image: sc_static("images/icons/16x16/go_backwards_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
 .mvo-dark-gray-theme .sc-button-view .img.go_forward_new {
-   background-image: sc_static("images/icons/24x24/go_forward_light_24x24.png");
+   background-image: sc_static("images/icons/24x24/go_forward_dark_24x24.png");
    width: 24px;
    height: 24px;
 }
@@ -170,6 +206,18 @@ body.mvo-white-theme {
    background-image: sc_static("images/icons/24x24/go_forward_light_24x24.png");
    width: 24px;
    height: 24px;
+}
+.mvo-dark-gray-theme .sc-button-view .img.go_forward_new_16 {
+   background-image: sc_static("images/icons/16x16/go_forward_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
+.mvo-white-theme .sc-button-view .img.go_forward_new_16 {
+   background-image: sc_static("images/icons/16x16/go_forward_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
 }
 .mvo-dark-gray-theme .sc-button-view .img.jump_backwards_new {
    background-image: sc_static("images/icons/24x24/jump_backwards_light_24x24.png");

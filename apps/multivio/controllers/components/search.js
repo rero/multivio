@@ -421,6 +421,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                 SC.Binding.oneWay('Multivio.CDM.physicalStructure'),
   
   /**
+    String representing the search status
+    (search in progress, number found results...) used to inform the user.
+    
+    @property {SC.String}
+    @default ''
+  */
+  searchStatus: '',  
+  
+  /**
     When the rotation angle changes, send a new search request to the server
     to obtain the new coordinates.
     
@@ -572,6 +581,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     if (SC.none(selectedObject)) return NO;
     
+    // update search status
+    this._updateSearchStatus();
+    
     // if necessary, switch to the corresponding document
     // WARNING: changing master's currentFile initialises controllers anew.
     // in initialize(), check for existing results in CDM
@@ -597,6 +609,26 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   }.observes('selection'),
 
   /**
+    Update the message status for serach information.
+  
+    @private
+  */
+  _updateSearchStatus: function () {
+    
+    var selSet = this.get('selection');
+    var selectedObject = selSet.firstObject();
+    var selectedIndex = this.indexOf(selectedObject);
+    
+    // display selection index in search status
+    // note: assuming indexOf() always returns -1 when nothing is selected
+    SC.RunLoop.begin();
+    this.set('searchStatus', '_resultSelection'.loc(selectedIndex + 1,
+                                                    this.get('length')));
+    SC.RunLoop.end();
+    
+  },
+
+  /**
     Return a highlight zone (which is inside a search result),
     given by its index in the array.
     
@@ -620,10 +652,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('lastSearchQuery', query);
     
     // clear previous results
-    this.doClear();
+    this.clearResults();
     
     // discard empty strings
     if (SC.none(query) || SC.empty(query.trim())) return NO;
+    
+    SC.RunLoop.begin();
+    this.set('searchStatus', '_searchInProgress'.loc());
+    SC.RunLoop.end();
     
     Multivio.logger.debug('SearchController.doSearch("%@")'.fmt(query));
     
@@ -658,15 +694,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   /**
     Clear all current search results (ie. for current file only).
   */
-  doClear: function () {
-    
-    Multivio.logger.debug('SearchController.doClear()');
-    
+  clearResults: function () {
+
+    Multivio.logger.debug('SearchController.clearResults()');
+
     var cf = this.get('currentSearchFile');
     var all_results = Multivio.CDM.get('searchResults');
     var new_results = {};
-    
-    // clear serach results stored in CDM
+
+    // clear search results stored in CDM
     if (!SC.none(all_results) && !SC.none(all_results[cf])) {
       Multivio.logger.debug("clearing...");
       new_results = Multivio.CDM.clone(all_results);
@@ -675,16 +711,32 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       Multivio.CDM.set('searchResults', new_results);
       SC.RunLoop.end();
     }
-    
+
     // clear local array
     this.set('content', []);
     var url = this.get('currentSearchFile');
-    
+
     // set display flag to false for this file
     var nd = this.get('displayResults');
     nd[url] = NO;
     SC.RunLoop.begin();
     this.set('displayResults', nd);
+    SC.RunLoop.end();
+  },
+
+  /**
+    When clear button is pressed, clear all current search results
+    (ie. for current file only) and clear query field.
+  */
+  doClear: function () {
+
+    Multivio.logger.debug('SearchController.doClear()');
+
+    this.clearResults();
+
+    SC.RunLoop.begin();
+    this.set('currentSearchTerm', '');
+    this.set('searchStatus', '');
     SC.RunLoop.end();
   },
   
@@ -771,6 +823,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              Math.abs(c.y1 - c.y2), b.page,
                              this.get('zoomFactor'));
       }
+      
+      // update search status
+      this._updateSearchStatus();
       
       // TODO: add number of search results to some nodes:
       //      (which ones? all ? ...)

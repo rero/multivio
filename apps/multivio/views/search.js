@@ -17,36 +17,39 @@
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
                   
-  childViews: ['scopeLabelView', 'searchQueryView', 'clearButtonView',
+  childViews: ['messageLabelView', 'searchQueryView', 'clearButtonView',
                'searchButtonView', 'previousResultButtonView',
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
   
   searchQueryView: SC.TextFieldView.design({ 
-    layout: { left: 0, width: 250, height: 22 },
+    layout: { top: 0, left: 0, width: 270, height: 22 },
     classNames: 'search',
     valueBinding: 'Multivio.searchController.currentSearchTerm'
   }),
 
   searchButtonView: SC.ButtonView.design({
-    layout: { top: 0, right: 43, width: 40 },
-    icon: static_url('images/icons/loupe.png'), // TODO: search icon
+    layout: { top: 0, right: 30, width: 30, height: 30 },
+    icon: 'search_new_16',
+    renderStyle: "renderImage",
     titleMinWidth : 0,
     // trigger action when pressing enter. 
     // Note: can interfere with other components
-    isDefault: YES, 
-    needsEllipsis: NO,
+    keyEquivalent: 'return', 
+    //needsEllipsis: NO,
     toolTip: '_doSearch'.loc(),
     target: 'Multivio.searchController', 
     action: 'doSearch'
   }),
   
   clearButtonView: SC.ButtonView.design({
-    layout: { top: 0, right: 0, width: 40 },
-    icon: static_url('images/icons/pause.png'), // TODO: search icon
+    layout: { top: 0, right: 0, width: 30, height: 30 },
+    icon: 'cancel_new_16',
+    renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
     // trigger action when pressing escape. 
     // Note: can interfere with other components
     //isCancel: YES, 
+    //keyEquivalent: 'escape', 
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'doClear'
@@ -101,20 +104,22 @@ Multivio.SearchView = SC.View.extend(
   }.observes('Multivio.searchController.selection'),
   
   previousResultButtonView: SC.ButtonView.design({
-    layout: { top: 30, height: 25, width: 40, right: 43 },
+    layout: { top: 30, height: 30, width: 30, right: 30 },
     needsEllipsis: NO,
     toolTip : '_goToPrevious'.loc(),
-    icon: static_url('images/icons/previous.png'),
+    icon: 'go_backwards_new_16',
+    renderStyle: "renderImage",
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'goToPreviousResult'
   }),
   
   nextResultButtonView: SC.ButtonView.design({
-    layout: { top: 30, height: 25, width: 40, right: 0 },
+    layout: { top: 30, height: 30, width: 30, right: 0 },
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
-    icon: static_url('images/icons/next.png'),
+    icon: 'go_forward_new_16',
+    renderStyle: "renderImage",
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'goToNextResult'
@@ -123,24 +128,32 @@ Multivio.SearchView = SC.View.extend(
   searchScopeView : SC.SelectButtonView.design({
   //searchScopeView : SC.SelectFieldView.design({
 	
-    layout: { top: 30, left: 0, right: 90 },
+    layout: { top: 30, left: 0, width: 270, height: 25 },
 
     toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
     objectsBinding: 'Multivio.searchController.currentFileList',       
     nameKey: 'label',
-    theme: 'square',
+    theme: 'square', // supports "square", "regular", "capsule", "checkbox", and "radio"
     valueKey: 'url',
     disableSort: YES,
     checkboxEnabled: YES,
+    needsEllipsis: NO,
+    supportFocusRing: NO,
     itemIdx: 1 // select first item by default, does not work...
   }), 
   
-  scopeLabelView: SC.LabelView.design({
+  /*scopeLabelView: SC.LabelView.design({
     layout: { top: 30, left: 0, height: 50, width: 80 },
     textAlign: SC.ALIGN_LEFT,
     value: '_searchIn'.loc()
-  })
+  })*/
   
+  messageLabelView: SC.LabelView.design({
+    layout: { top: 55, right: 0, height: 22 },
+    textAlign: SC.ALIGN_RIGHT,
+    classNames: 'message',
+    valueBinding: 'Multivio.searchController.searchStatus'
+  })
 
 });
