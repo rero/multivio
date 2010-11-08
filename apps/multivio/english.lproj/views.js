@@ -34,7 +34,7 @@ Multivio.views = SC.Page.design(
     childViews: 'leftButtons innerMainContent bottomButtons'.w(),
       
     bottomButtons: Multivio.FileButtonView.design({
-      layout: {bottom: -40, centerX: 0, width: 828, height: 150},
+      layout: {bottom: -40, centerX: 24, width: 828, height: 150},
       classNames: 'mvo-front-view',
       
       childViews: 'backgroundView '.w(),
@@ -247,7 +247,7 @@ Multivio.views = SC.Page.design(
     }),
     
     innerMainContent: Multivio.ContentView.design({
-      layout: { top: 0, bottom: 0, left: 44, right: 0 },
+      layout: { top: 0, bottom: 0, left: 48, right: 0 },
       isFirstResponder: YES,
       acceptsFirstResponder: YES,
       isKeyResponder: YES,
@@ -393,12 +393,12 @@ Multivio.views = SC.Page.design(
   }),
   
   navigationView: SC.PalettePane.design({
-    layout: { height: 150, width: 300, centerX: 0, top: 45},
+    layout: { height: 60, width: 400, centerX: 0, top: 55},
     classNames: 'mvo-front-view-transparent',
     contentView: SC.View.design({
       childViews: [
         SC.LabelView.design({
-          layout: {width: 280, height: 20, centerX: 0, centerY: 0},
+          layout: {width: 350, height: 20, centerX: 0, centerY: 0},
           classNames: 'mvo-metadata-label',
           textAlign: 'center',
           escapeHTML: NO,

@@ -34,7 +34,7 @@ Multivio.Metadata = SC.View.extend(SC.ContentDisplay,
   render: function (context, firstTime) {
     // retreive key and data of the content
     var content = this.get('content');
-    var key = content.key;
+    var key = content.key.capitalize();
     var data = content.data;
     // calculate the height of the data and set the height of the parentView
     var dataHeight = SC.heightForString(data, 

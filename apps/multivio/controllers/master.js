@@ -121,7 +121,7 @@ Multivio.masterController = SC.ObjectController.create(
       if (refPh !== -1) {
         if (refPh.length !== 1) {
           this.listOfFiles = [];
-          for(var i = 0; i < refPh.length; i++) {
+          for (var i = 0; i < refPh.length; i++) {
             this.listOfFiles[i] = refPh[i];
           }
           this.currentFilePosition = 0;
@@ -140,8 +140,8 @@ Multivio.masterController = SC.ObjectController.create(
   
   setCurrentFilePosition: function (fileUrl) {
     if (!SC.none(this.listOfFiles)) {
-      for(var i = 0; i < this.listOfFiles.length; i++) {
-        if (this.listOfFiles[i].url === fileUrl){
+      for (var i = 0; i < this.listOfFiles.length; i++) {
+        if (this.listOfFiles[i].url === fileUrl) {
           this.set('currentFilePosition', i);
           break;
         }
@@ -246,7 +246,7 @@ Multivio.masterController = SC.ObjectController.create(
   
   /**
   */
-  showNavigationPalette: function(isNewFile, toShow) {
+  showNavigationPalette: function (isNewFile, toShow) {
     var navView = Multivio.getPath('views.navigationView');
     var label = navView.get('contentView').get('childViews')[0];
     if (isNewFile) {
@@ -254,8 +254,8 @@ Multivio.masterController = SC.ObjectController.create(
         label.set('value', toShow);
       }
       else {
-        for(var i = 0; i < this.listOfFiles.length; i++) {
-          if (this.listOfFiles[i].url === toShow){
+        for (var i = 0; i < this.listOfFiles.length; i++) {
+          if (this.listOfFiles[i].url === toShow) {
             label.set('value', this.listOfFiles[i].label);
             break;
           }
@@ -264,13 +264,13 @@ Multivio.masterController = SC.ObjectController.create(
     }
     else {
       var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
-      label.set('value', toShow +'/'+max);
+      label.set('value', toShow + '/' + max);
     }
     
     navView.append();
     SC.Timer.schedule({
       target: this, 
-      action: 'hidePalette', 
+      action: 'hidePalette',
       interval: 1000
     });
   },

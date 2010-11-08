@@ -15,18 +15,21 @@
 SC.stringsFor('English', {
   
   // ToolTips
-  '_Metadata': 'Show bibliographic data',
-  '_Thumbnails': 'Show thumbnails of the document',
+  '_Metadata': 'Show metadata',
+  '_Thumbnails': 'Show page thumbnails',
   '_Tree': 'Show the document structure',
-  '_RotateLeft': 'Rotate Left',
-  '_RotateRight': 'Rotate Right',
-  '_FirstPage': 'Go to the first page',
+  '_RotateLeft': 'Rotate left',
+  '_RotateRight': 'Rotate right',
+  '_FirstPage': 'Jump to the first page or to the previous file',
   '_PreviousPage': 'Go to the previous page',
   '_NextPage': 'Go to the next page',
-  '_LastPage': 'Go to the last page', 
-  '_Zoom+': 'Scale document up',
-  '_Zoom-': 'Scale document down',
-  
+  '_LastPage': 'Jump to the last page or to the next file',
+  '_Zoom+': 'Zoom in',
+  '_Zoom-': 'Zoom out',
+  '_Change theme to white': 'Change theme to white',
+  '_Change theme to dark gray': 'Change theme to dark gray',
+  '_Change theme to blue': 'Change theme to blue',
+
   // Strings for metadata
   '_creator': 'author',
   '_mime': 'document type',

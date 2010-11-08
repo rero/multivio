@@ -36,10 +36,9 @@ Multivio.paletteController = SC.ObjectController.create(
     var toAppend = Multivio.getPath('views.mainContentView.innerMainContent');
     var viewHeight = toAppend.get('frame').height;
     var layout = [];
-    //layout.height = viewHeight - 60;
-    layout.bottom = 110;
-    layout.top = toAppend.get('parentView').get('frame').y;
-    layout.left = toAppend.get('frame').x + 5;
+    layout.bottom = 150;
+    layout.top = toAppend.get('parentView').get('frame').y + 5;
+    layout.left = toAppend.get('frame').x + 15;
     if (withDefaultWidth) {
       layout.width = this.defaultWidth;
     }
