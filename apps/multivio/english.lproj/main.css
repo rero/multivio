@@ -266,6 +266,25 @@ label.document-label-view {
   padding: 5px;
 }
 
+.sc-button-view .img.theme-button-white {
+  background-image: sc_static("images/icons/16x16/theme_switching_white.png");
+  width: 16px;
+  height: 16px;
+  margin: 4px;
+}
+.sc-button-view .img.theme-button-dark-gray {
+  background-image: sc_static("images/icons/16x16/theme_switching_gray.png");
+  width: 16px;
+  height: 16px;
+  margin: 4px;
+}
+.sc-button-view .img.theme-button-blue {
+  background-image: sc_static("images/icons/16x16/theme_switching_blue.png");
+  width: 16px;
+  height: 16px;
+  margin: 4px;
+}
+
 
 
 /*
@@ -400,7 +419,7 @@ label.document-label-view {
 
 .mvo-front-view-transparent {
   z-index: -10000;
-  background-image: sc_static("images/transparency_60.png");
+  background-image: sc_static("images/transparency_70.png");
   /*opacity : 1.0;
   moz-opacity : 1.0;
   ms-filter: "alpha(opacity=10)";*/ /* IE 8 */

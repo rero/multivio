@@ -106,8 +106,8 @@ Multivio.configurator = SC.Object.create(
       layoutParams: {
         'leftStripWidth':  200,
         'rightStripWidth': 200,
-        'headerHeight':     35,
-        'footerHeight':     60,
+        'headerHeight':     40,
+        'footerHeight':     70,
         'marginTop':        5,
         'marginRight':      10,
         'marginBottom':     5,
@@ -127,9 +127,9 @@ Multivio.configurator = SC.Object.create(
     'init': {
       baseLayout: 'default',
       components: [
-        {name: 'views.headerView',    coord: 'A1:C1'},
-        {name: 'views.logoMvoView',   coord: 'A3:A3'},
-        {name: 'views.logoElib',      coord: 'C3:C3'}
+        {name: 'views.headerView',       coord: 'A1:C1'},
+        {name: 'views.logoMvoView',      coord: 'A3:A3'},
+        {name: 'views.logosREROandElib', coord: 'C3:C3'}
       ]
     },
     'usage': {
