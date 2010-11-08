@@ -22,7 +22,7 @@ Multivio.SearchView = SC.View.extend(
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
   
   searchQueryView: SC.TextFieldView.design({ 
-    layout: { top: 0, left: 0, width: 270, height: 22 },
+    layout: { top: 0, left: 0, right: 70, height: 22 },
     classNames: 'search',
     hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm'
@@ -59,7 +59,7 @@ Multivio.SearchView = SC.View.extend(
   
   resultsScrollView: SC.ScrollView.design({
 
-    layout: { top: 70, left: 0, right: 0, bottom: 10 },
+    layout: { top: 72, left: 0, right: 0, bottom: 10 },
 
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
@@ -132,20 +132,19 @@ Multivio.SearchView = SC.View.extend(
   searchScopeView : SC.SelectButtonView.design({
   //searchScopeView : SC.SelectFieldView.design({
 
-    layout: { top: 30, left: 0, width: 270, height: 25 },
+    layout: { top: 30, left: 0, right: 70, height: 25 },
 
     toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
     objectsBinding: 'Multivio.searchController.currentFileList',       
     nameKey: 'label',
-    theme: 'square', // supports "square", "regular", "capsule", "checkbox", and "radio"
+    theme: 'square',
     valueKey: 'url',
     disableSort: YES,
     checkboxEnabled: YES,
     needsEllipsis: NO,
-    supportFocusRing: NO,
-    itemIdx: 1 // select first item by default, does not work...
-  }), 
+    supportFocusRing: NO
+  }),
   
   /*scopeLabelView: SC.LabelView.design({
     layout: { top: 30, left: 0, height: 50, width: 80 },
@@ -154,8 +153,8 @@ Multivio.SearchView = SC.View.extend(
   })*/
   
   messageLabelView: SC.LabelView.design({
-    layout: { top: 55, right: 0, height: 22 },
-    textAlign: SC.ALIGN_RIGHT,
+    layout: { top: 54, left: 0, right: 0, height: 22 },
+    textAlign: SC.ALIGN_LEFT,
     classNames: 'message',
     valueBinding: 'Multivio.searchController.searchStatus'
   })

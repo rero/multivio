@@ -431,16 +431,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
     @default ''
   */  
-  searchStatus: '',
-  
-  /**
-    String representing the search status
-    (search in progress, number found results...) used to inform the user.
-    
-    @property {SC.String}
-    @default ''
-  */
-  searchStatus: '',  
+  searchStatus: '', 
   
   /**
     When the rotation angle changes, send a new search request to the server
@@ -562,8 +553,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var new_results = {};    
         
     if (!SC.none(all_results) && !SC.none(all_results[url])) {
-      Multivio.logger.debug("_loadExistingSearchResults: found results:" +
-                            all_results[url].file_position.results[0].preview);
       new_results = Multivio.CDM.clone(all_results);
       SC.RunLoop.begin();
       this.set('_load_url', url);
@@ -597,7 +586,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (SC.none(selectedObject)) return NO;
     
     // update search status
-    this._updateSearchStatus();
+    //this._updateSearchStatus();
     
     // if necessary, switch to the corresponding document
     // WARNING: changing master's currentFile initialises controllers anew.
@@ -622,24 +611,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     return YES;
     
   }.observes('selection'),
-
-  _updateSearchStatus: function () {
-    
-    var selSet = this.get('selection');
-    var selectedObject = selSet.firstObject();
-    var selectedIndex = this.indexOf(selectedObject);
-    
-    //if (SC.none(selectedObject)) return NO;
-    
-    // display selection index in search status
-    // note: assuming indexOf() always returns -1 when nothing is selected
-    SC.RunLoop.begin();
-    this.set('searchStatus', '_resultSelection'.loc(selectedIndex + 1, 
-                                                    this.get('length')));
-    SC.RunLoop.end();
-    
-  },
-
 
   /**
     Update the message status for serach information.
@@ -847,8 +818,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       
       // warn user if no result found
       if (num_res === 0) {
-        Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
-          '_noSearchResultDesc'.loc(), 'OK');
+        /*Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
+          '_noSearchResultDesc'.loc(), 'OK');*/
+        SC.RunLoop.begin();  
+        this.set('searchStatus', '_noResult'.loc());  
+        SC.RunLoop.end();
+      } else {
+        SC.RunLoop.begin();  
+        this.set('searchStatus', '');  
+        SC.RunLoop.end();
       }
       
       var a = null, b  = null, c = null;
@@ -865,7 +843,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       }
       
       // update search status
-      this._updateSearchStatus();
+      //this._updateSearchStatus();
       
       // TODO: add number of search results to some nodes:
       //      (which ones? all ? ...)
