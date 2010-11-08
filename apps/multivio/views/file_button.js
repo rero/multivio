@@ -80,9 +80,15 @@ Multivio.FileButtonView = SC.View.extend(
     Show this view
   */
   showView: function () {
-    var navView = Multivio.getPath('views.mainContentView.bottomButtons.navigationView');
-    var zoomView = Multivio.getPath('views.mainContentView.bottomButtons.zoomView');
-    var rotView = Multivio.getPath('views.mainContentView.bottomButtons.rotateView');
+    var globalView = Multivio.getPath(
+        'views.mainContentView.bottomButtons.backgroundView');
+    var navView = Multivio.getPath(
+        'views.mainContentView.bottomButtons.backgroundView.navigationView');
+    var zoomView = Multivio.getPath(
+        'views.mainContentView.bottomButtons.backgroundView.zoomView');
+    var rotView = Multivio.getPath(
+        'views.mainContentView.bottomButtons.backgroundView.rotateView');
+    this.appendChild(globalView);
     this.appendChild(navView);
     this.appendChild(zoomView);
     this.appendChild(rotView);

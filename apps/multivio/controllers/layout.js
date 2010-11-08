@@ -34,6 +34,11 @@ Multivio.layoutController = SC.Object.create(
     The list of controllers with their view
   */
   viewByController: {},
+  
+  /**
+    The graphical theme that is currently selected
+  */
+  currentTheme: 'mvo-dark-gray-theme',
 
   // TODO: move this function to the initializer, the layout controller has
   // nothing to do with controller setup
@@ -168,6 +173,44 @@ Multivio.layoutController = SC.Object.create(
     this.set('nbOfComponentToAdd', this.get('nbOfComponentToAdd') - 1);
   },
   
+
+  /**
+    Change the graphical theme that is currently selected to
+    'mvo-white-theme'
+  */
+  changeThemeToWhite: function () {
+    var newTheme = 'mvo-white-theme';
+    if (newTheme != this.currentTheme) {
+      SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
+    }
+    this.currentTheme = 'mvo-white-theme';
+  },
+
+  /**
+    Change the graphical theme that is currently selected to
+    'mvo-dark-gray-theme'
+  */
+  changeThemeToDarkGray: function () {
+    var newTheme = 'mvo-dark-gray-theme';
+    if (newTheme != this.currentTheme) {
+      SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
+    }
+    this.currentTheme = 'mvo-dark-gray-theme';
+  },
+
+  /**
+    Change the graphical theme that is currently selected to
+    'mvo-blue-theme'
+  */
+  changeThemeToBlue: function () {
+    var newTheme = 'mvo-blue-theme';
+    if (newTheme != this.currentTheme) {
+      SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
+    }
+    this.currentTheme = 'mvo-blue-theme';
+  },
+
+
   /**
     Show usage page
 
