@@ -141,9 +141,9 @@ Multivio.views = SC.Page.design(
           zoomPredefinedView: SC.SegmentedView.design({
             layout: { centerX: 48, centerY: 0, width: 128, height: 24 },
             items: [
-              {title: "", value: "Full", icon: sc_static("images/icons/24x24/full_size_dark_24x24.png"), enabled: YES },
-              {title: "", value: "Width", icon: sc_static("images/icons/24x24/full_width_dark_24x24.png"), enabled: YES },
-              {title: "", value: "Native", icon: sc_static("images/icons/24x24/100_percent_dark_24x24.png"), enabled: YES }
+              {title: "", value: "Full", icon: sc_static("images/icons/16x16/full_size_dark_16x16.png"), enabled: YES },
+              {title: "", value: "Width", icon: sc_static("images/icons/16x16/full_width_dark_16x16.png"), enabled: YES },
+              {title: "", value: "Native", icon: sc_static("images/icons/16x16/100_percent_dark_16x16.png"), enabled: YES }
             ],
             itemTitleKey: 'title',
             itemValueKey: 'value',

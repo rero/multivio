@@ -122,6 +122,17 @@ body.sc-theme {
   background: #bbb;
 }
 
+.sc-theme .sc-segment img.icon {
+	position: relative;
+	vertical-align: middle;
+	/* top: -2px;	*/
+	top: -1px;
+	/* margin-right: 2px; */
+	margin-right: 0px;
+	height: 16px;
+	width: 16px;
+}
+
 .sc-text-field-view input {
   text-align: center;
 }
