@@ -24,6 +24,7 @@ Multivio.SearchView = SC.View.extend(
   searchQueryView: SC.TextFieldView.design({ 
     layout: { top: 0, left: 0, width: 270, height: 22 },
     classNames: 'search',
+    hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm'
   }),
 
@@ -50,13 +51,16 @@ Multivio.SearchView = SC.View.extend(
     // Note: can interfere with other components
     //isCancel: YES, 
     //keyEquivalent: 'escape', 
+
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'doClear'
   }),
   
   resultsScrollView: SC.ScrollView.design({
+
     layout: { top: 70, left: 0, right: 0, bottom: 10 },
+
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
     hasVerticalScroller: YES,    
@@ -127,7 +131,7 @@ Multivio.SearchView = SC.View.extend(
   
   searchScopeView : SC.SelectButtonView.design({
   //searchScopeView : SC.SelectFieldView.design({
-	
+
     layout: { top: 30, left: 0, width: 270, height: 25 },
 
     toolTip: '_searchIn'.loc(),
@@ -155,5 +159,4 @@ Multivio.SearchView = SC.View.extend(
     classNames: 'message',
     valueBinding: 'Multivio.searchController.searchStatus'
   })
-
 });

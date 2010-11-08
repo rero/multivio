@@ -1,7 +1,10 @@
-// ==========================================================================
-// Project:   Multivio.searchController
-// Copyright: ©2010 RERO, Inc.
-// ==========================================================================
+/**
+==============================================================================
+Project: Multivio - https://www.multivio.org/
+Copyright: (c) 2009-2010 RERO
+License: See file license.js
+==============================================================================
+*/
 /*globals Multivio */
 
 /**
@@ -420,6 +423,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   physicalStructureBinding: 
                 SC.Binding.oneWay('Multivio.CDM.physicalStructure'),
   
+  /** 
+    String representing the search status
+    (search in progress, number found results...) used to inform the user.
+
+    @property {SC.String}
+
+    @default ''
+  */  
+  searchStatus: '',
+  
   /**
     String representing the search status
     (search in progress, number found results...) used to inform the user.
@@ -576,6 +589,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // TODO: is it possible to detect the case when we come here from initialize()
     // and thus avoid jumping back to the current ?
     
+    // TODO: update search status with current selection
+    
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     
@@ -607,6 +622,24 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     return YES;
     
   }.observes('selection'),
+
+  _updateSearchStatus: function () {
+    
+    var selSet = this.get('selection');
+    var selectedObject = selSet.firstObject();
+    var selectedIndex = this.indexOf(selectedObject);
+    
+    //if (SC.none(selectedObject)) return NO;
+    
+    // display selection index in search status
+    // note: assuming indexOf() always returns -1 when nothing is selected
+    SC.RunLoop.begin();
+    this.set('searchStatus', '_resultSelection'.loc(selectedIndex + 1, 
+                                                    this.get('length')));
+    SC.RunLoop.end();
+    
+  },
+
 
   /**
     Update the message status for serach information.
@@ -787,6 +820,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         this.set('selection', newSel);        
       }
       SC.RunLoop.end();
+      
+      // warn user if results truncated because limit was reached
+      if (res[key].max_reached > 0) {
+        Multivio.usco.showAlertPaneInfo('_tooManyResults'.loc(), 
+          '_firstOccurrences'.loc(res[key].max_reached), 'OK');
+      }
+      
     }
     
   }.observes('searchResults'),
@@ -805,7 +845,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (res !== -1 && !SC.none(res)) {
       var num_res = res.file_position.results.length;
       
-      // TODO: test
+      // warn user if no result found
       if (num_res === 0) {
         Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
           '_noSearchResultDesc'.loc(), 'OK');
