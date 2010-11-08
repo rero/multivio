@@ -58,6 +58,7 @@ Multivio.paletteController = SC.ObjectController.create(
     var metadataView = Multivio.getPath('views.metadataPalette');
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
+      button.set('isActive', YES);
       this.activeButton = button;
       // retreive the view and set the content
       var textField = metadataView.get('contentView').get('childViews')[0];
@@ -69,9 +70,7 @@ Multivio.paletteController = SC.ObjectController.create(
       // if activeButton = button close the palette
       // else replace the palette by an other one
       if (this.activeButton !== button) {
-        this.activeButton ;
         this.hidePalette(this.activeButton.name);
-        this.activeButton = null;
         this.showOtherPalette(button);
       }
       else {
@@ -90,6 +89,7 @@ Multivio.paletteController = SC.ObjectController.create(
     var thumbnailsView = Multivio.getPath('views.thumbnailPalette');
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
+      button.set('isActive', YES);
       this.activeButton = button;
       thumbnailsView.set('layout', this.paletteLayout(NO));
       thumbnailsView.append();
@@ -97,7 +97,6 @@ Multivio.paletteController = SC.ObjectController.create(
     else {
       if (this.activeButton !== button) {
         this.hidePalette(this.activeButton.name);
-        this.activeButton = null;
         this.showOtherPalette(button);
       }
       else {
@@ -116,6 +115,7 @@ Multivio.paletteController = SC.ObjectController.create(
     var treeView = Multivio.getPath('views.treePalette');
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
+      button.set('isActive', YES);
       this.activeButton = button;
       treeView.set('layout', this.paletteLayout(YES));
       treeView.append();
@@ -123,7 +123,6 @@ Multivio.paletteController = SC.ObjectController.create(
     else {
       if (this.activeButton !== button) {
         this.hidePalette(this.activeButton.name);
-        this.activeButton = null;
         this.showOtherPalette(button);
       }
       else {
@@ -135,38 +134,38 @@ Multivio.paletteController = SC.ObjectController.create(
   
   
   /**
-     Tree button has been pressed show the treePalette or hide it
+    Tree button has been pressed show the treePalette or hide it
 
-     @param {SC.Button} button the button pressed
-   */
-   showSearch: function (button) {
-     var searchPalette = Multivio.getPath('views.searchPalette');
-     // no activeButton => show this palette
-     if (SC.none(this.activeButton)) {
-       this.activeButton = button;
-       var ref = Multivio.CDM.getReferer();
-       var phys = Multivio.CDM.getPhysicalstructure(ref);
-       if ( phys !== -1 && phys.length < 2 && 
-           searchPalette.get('contentView').get('childViews')[0].
-           get('childViews').length === 8) {
-         searchPalette.get('contentView').get('childViews')[0].
-             get('childViews')[7].remove();
-       }
-       searchPalette.set('layout', this.paletteLayout(YES));
-       searchPalette.append();
-     }
-     else {
-       if (this.activeButton !== button) {
-         this.hidePalette(this.activeButton.name);
-         this.activeButton = null;
-         this.showOtherPalette(button);
-       }
-       else {
-         this.activeButton = null;
-         searchPalette.remove();
-       }
-     }
-   },
+    @param {SC.Button} button the button pressed
+  */
+  showSearch: function (button) {
+    var searchPalette = Multivio.getPath('views.searchPalette');
+    // no activeButton => show this palette
+    if (SC.none(this.activeButton)) {
+      button.set('isActive', YES);
+      this.activeButton = button;
+      var ref = Multivio.CDM.getReferer();
+      var phys = Multivio.CDM.getPhysicalstructure(ref);
+      if (phys !== -1 && phys.length < 2 && 
+          searchPalette.get('contentView').get('childViews')[0].
+          get('childViews').length === 8) {
+        searchPalette.get('contentView').get('childViews')[0].
+            get('childViews')[7].remove();
+      }
+      searchPalette.set('layout', this.paletteLayout(YES));
+      searchPalette.append();
+    }
+    else {
+      if (this.activeButton !== button) {
+        this.hidePalette(this.activeButton.name);
+        this.showOtherPalette(button);
+      }
+      else {
+        this.activeButton = null;
+        searchPalette.remove();
+      }
+    }
+  },
   
   /**
     Call the method to show the good palette
@@ -185,8 +184,8 @@ Multivio.paletteController = SC.ObjectController.create(
       this.showMetadata(button);
       break;
     case 'search':
-    this.showSearch(button);
-    break;
+      this.showSearch(button);
+      break;
       
     default:
       Multivio.logger.info('unable to show the selected palette');
@@ -200,23 +199,30 @@ Multivio.paletteController = SC.ObjectController.create(
     @param {String} the name of the button
   */
   hidePalette: function (buttonName) {
-    switch (buttonName) {
-    case 'thumbnails': 
-      Multivio.getPath('views.thumbnailPalette').remove(); 
-      break;
-    case 'tree':
-      Multivio.getPath('views.treePalette').remove();
-      break;
-    case 'metadata':
-      Multivio.getPath('views.metadataPalette').remove();
-      break;
-    case 'search':
-    Multivio.getPath('views.searchPalette').remove();
-    break;
+    if (!SC.none(this.activeButton)) {
+      var hidePaletteName = !SC.none(buttonName) ? buttonName : 
+          this.activeButton.name;
       
-    default:
-      Multivio.logger.info('unable to hide the selected palette');
-      break;
+      switch (hidePaletteName) {
+      case 'thumbnails': 
+        Multivio.getPath('views.thumbnailPalette').remove(); 
+        break;
+      case 'tree':
+        Multivio.getPath('views.treePalette').remove();
+        break;
+      case 'metadata':
+        Multivio.getPath('views.metadataPalette').remove();
+        break;
+      case 'search':
+        Multivio.getPath('views.searchPalette').remove();
+        break;
+      
+      default:
+        Multivio.logger.info('unable to hide the selected palette');
+        break;
+      }
+      this.activeButton.set('isActive', NO);
+      this.activeButton = null;
     }
   }
 });

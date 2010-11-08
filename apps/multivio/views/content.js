@@ -40,7 +40,6 @@ Multivio.ImageContentView = SC.ImageView.extend(
     this.adjust('height', contentHeight);
 
   }
-  
 });
 
 /** @class
@@ -307,7 +306,9 @@ Multivio.HighlightContentView = SC.View.extend(
     @return {Boolean} true if everything OK
   */
   mouseDown: function (evt) {
-
+    
+    // hide a palette
+    Multivio.paletteController.hidePalette(null);
     // cancel selections on current page
     Multivio.selectionController.removeAllHighlights();
     
@@ -564,17 +565,18 @@ Multivio.ContentView = SC.ScrollView.extend(
 /** @scope Multivio.ContentView.prototype */ {
 
   /**
-Binds to the masterController isLoadingContent property.
+    Binds to the masterController isLoadingContent property.
 
-@binding {Boolean}
-*/
+    @binding {Boolean}
+  */
   isLoadingContent: null,
   isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
   
   /**
-Binds to the zoomRatio in the zoom controller.
-@binding {Number}
-*/
+    Binds to the zoomRatio in the zoom controller.
+    
+    @binding {Number}
+  */
   zoomRatio: null,
   zoomRatioBinding: 'Multivio.zoomController.zoomRatio',
   
@@ -589,32 +591,33 @@ Binds to the zoomRatio in the zoom controller.
       SC.Binding.oneWay('Multivio.zoomController.currentZoomState'),
 
   /**
-Binds to the currentValue in the rotate controller.
-This binding is read only
-@binding {Number}
-*/
+    Binds to the currentValue in the rotate controller.
+    This binding is read only
+    
+    @binding {Number}
+  */
   rotateValueBinding:
       SC.Binding.oneWay('Multivio.rotateController.currentValue'),
  
   /**
-Binds to the imageController's selection
+    Binds to the imageController's selection
 
-@binding {url}
-*/
+    @binding {url}
+  */
   selection: null,
   selectionBinding: 'Multivio.imageController.selection',
   
   /**
-Binds to the imageSize object of the CDM
+    Binds to the imageSize object of the CDM
 
-@binding {Hash}
-*/
+    @binding {Hash}
+  */
   imageSize: null,
   imageSizeBinding: 'Multivio.CDM.imageSize',
 
   /**
-The native image size
-*/
+    The native image size
+  */
   nativeWidth: undefined,
   nativeHeight: undefined,
   
@@ -627,10 +630,10 @@ The next asked Url if user choose to proceed loading a bigg image
   isNewImage: NO,
   
   /**
-ZoomRatio has changed, check if we need to load a new image
+    ZoomRatio has changed, check if we need to load a new image
 
-@observes zoomRatio
-*/
+    @observes zoomRatio
+  */
   zoomRatioDidChange: function () {
     var zoomVal = this.get('zoomRatio');
     if (SC.none(this.get('zoomState'))) {
@@ -639,9 +642,10 @@ ZoomRatio has changed, check if we need to load a new image
   }.observes('zoomRatio'),
   
   /**
-ZoomState has changed, check if we need to load a new image
-@observes zoomState
-*/
+    ZoomState has changed, check if we need to load a new image
+    
+    @observes zoomState
+  */
   zoomStateDidChange: function () {
     var state = this.get('zoomState');
     if (!SC.none(state)) {
@@ -650,9 +654,10 @@ ZoomState has changed, check if we need to load a new image
   }.observes('zoomState'),
   
   /**
-Rotate value has changed, check if we need to load a new image.
-@observes rotateValue
-*/
+    Rotate value has changed, check if we need to load a new image.
+    
+    @observes rotateValue
+  */
   rotateValueDidChange: function () {
     var rot = this.get('rotateValue');
     if (!SC.none(rot)) {
@@ -661,9 +666,10 @@ Rotate value has changed, check if we need to load a new image.
   }.observes('rotateValue'),
   
   /**
-ImageSize object has changed, see if we can load the image
-@observes imageSize
-*/
+    ImageSize object has changed, see if we can load the image
+   
+    @observes imageSize
+  */
   imageSizeDidChange: function () {
     var size = this.get('imageSize');
     if (!SC.none(size)) {
@@ -689,15 +695,15 @@ ImageSize object has changed, see if we can load the image
   
 
   /**
-Callback applied after image has been loaded.
-It puts the image in the container and adjust the size
-(add & remove scroll), then check zoom buttons.
+    Callback applied after image has been loaded.
+    It puts the image in the container and adjust the size
+    (add & remove scroll), then check zoom buttons.
 
-@private
-@callback SC.imageCache.load
-@param {String} url
-@param {Image} image
-*/
+    @private
+    @callback SC.imageCache.load
+    @param {String} url
+    @param {Image} image
+  */
   _adjustSize: function (url, image) {
     SC.RunLoop.begin();
     var content = this.get('contentView');
@@ -751,8 +757,8 @@ It puts the image in the container and adjust the size
   },
   
   /**
-Load the image with adapated width and height and rotation
-*/
+    Load the image with adapated width and height and rotation
+  */
   _loadNewImage: function () {
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
@@ -860,20 +866,22 @@ Load the image with adapated width and height and rotation
   },
   
   /**
-Override render method to force top set frame property
-@param {Object} context
-@param {Boolean} firstTime
-*/
+    Override render method to force top set frame property
+
+    @param {Object} context
+    @param {Boolean} firstTime
+  */
   render: function (context, firstTime) {
     this.set('frame', {});
     sc_super();
   },
   
   /**
-Delegate method of the Multivio.usco.showAlertPaneWarn
-@param {String} pane the pane instance
-@param {} status
-*/
+    Delegate method of the Multivio.usco.showAlertPaneWarn
+    
+    @param {String} pane the pane instance
+    @param {} status
+  */
   alertPaneDidDismiss: function (pane, status) {
 
     switch (status) {
@@ -956,6 +964,16 @@ Delegate method of the Multivio.usco.showAlertPaneWarn
     var toScroll = this.get('maximumVerticalScrollOffset') / ratio;
     toScroll += this.get('verticalScrollerView').thumbLength();
     return toScroll;
+  },
+  
+  /**
+    On mouse down hide the current palette
+    
+    @param {SC.Event} Event fired
+  */
+  mouseDown: function (evt) {
+    console.info('mouse down');
+    Multivio.paletteController.hidePalette(null);
   },
   
   /**

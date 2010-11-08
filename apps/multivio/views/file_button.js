@@ -44,7 +44,7 @@ Multivio.FileButtonView = SC.View.extend(
     @param {SC.Event}
   */   
   mouseEntered: function (evt) {
-    if(!SC.none(this.hideTimer)) {
+    if (!SC.none(this.hideTimer)) {
       this.hideTimer.invalidate();
     }
     else {
@@ -74,6 +74,8 @@ Multivio.FileButtonView = SC.View.extend(
   hideView: function () {
     this.hideTimer = undefined;
     this.removeAllChildren();
+    Multivio.getPath('views.mainContentView.innerMainContent').
+        becomeFirstResponder();
   },
   
   /**
