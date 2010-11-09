@@ -87,6 +87,11 @@ body.sc-theme {
   left: 0px;
 }
 
+/* fix for focus artifacts on SC.SelectButtonView */
+.sc-theme .sc-button-view.focus {
+   overflow: hidden;
+}
+
 .sc-theme .sc-button-view.sc-regular-size.square .sc-button-label {
   /*height: 24px;*/
   /*height: 22px;*/
@@ -145,6 +150,10 @@ body.sc-theme {
 
 .sc-label-view.selected {
   background-color:#DDDDDD;
+  color:#333333;
+}
+
+.sc-label-view.message {
   color:#333333;
 }
 

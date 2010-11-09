@@ -17,38 +17,50 @@
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
                   
-  childViews: ['scopeLabelView', 'searchQueryView', 'clearButtonView',
+  childViews: ['messageLabelView', 'searchQueryView', 'clearButtonView',
                'searchButtonView', 'previousResultButtonView',
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
   
   searchQueryView: SC.TextFieldView.design({ 
-    layout: { left: 0, right: 0, height: 22 },
+    layout: { top: 0, left: 0, right: 70, height: 22 },
     classNames: 'search',
+    hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm'
   }),
 
   searchButtonView: SC.ButtonView.design({
-    layout: { top: 80, right: 0, left: "50%" },
-    title : '_doSearch'.loc(),
+    layout: { top: 0, right: 30, width: 30, height: 30 },
+    icon: 'search_new_16',
+    renderStyle: "renderImage",
+    titleMinWidth : 0,
     // trigger action when pressing enter. 
     // Note: can interfere with other components
-    //isDefault: YES, 
+    keyEquivalent: 'return', 
+    //needsEllipsis: NO,
+    toolTip: '_doSearch'.loc(),
     target: 'Multivio.searchController', 
     action: 'doSearch'
   }),
   
   clearButtonView: SC.ButtonView.design({
-    layout: { top: 80, left: 0, right: "50%" },
-    title : '_doClear'.loc(),
+    layout: { top: 0, right: 0, width: 30, height: 30 },
+    icon: 'cancel_new_16',
+    renderStyle: "renderImage",
+    toolTip : '_doClear'.loc(),
     // trigger action when pressing escape. 
     // Note: can interfere with other components
     //isCancel: YES, 
+    //keyEquivalent: 'escape', 
+
+    titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'doClear'
   }),
   
   resultsScrollView: SC.ScrollView.design({
-    layout: { top: 120, left: 0, right: 0, bottom: 35 },
+
+    layout: { top: 72, left: 0, right: 0, bottom: 10 },
+
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
     hasVerticalScroller: YES,    
@@ -96,26 +108,33 @@ Multivio.SearchView = SC.View.extend(
   }.observes('Multivio.searchController.selection'),
   
   previousResultButtonView: SC.ButtonView.design({
-    layout: { bottom: 0, height: 25, left: 0, right: "40%" },
-    
-    title : '_goToPrevious'.loc(),
+    layout: { top: 30, height: 30, width: 30, right: 30 },
+    needsEllipsis: NO,
+    toolTip : '_goToPrevious'.loc(),
+    icon: 'go_backwards_new_16',
+    renderStyle: "renderImage",
+    titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'goToPreviousResult'
   }),
   
   nextResultButtonView: SC.ButtonView.design({
-    layout: { bottom: 0, height: 25, left: "40%", right: 0 },
-    
-    title : '_goToNext'.loc(),
+    layout: { top: 30, height: 30, width: 30, right: 0 },
+    needsEllipsis: NO,
+    toolTip : '_goToNext'.loc(),
+    icon: 'go_forward_new_16',
+    renderStyle: "renderImage",
+    titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'goToNextResult'
   }),
   
   searchScopeView : SC.SelectButtonView.design({
   //searchScopeView : SC.SelectFieldView.design({
-	
-    layout: { top: 50, left: 40, right: 0 },
 
+    layout: { top: 30, left: 0, right: 70, height: 25 },
+
+    toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
     objectsBinding: 'Multivio.searchController.currentFileList',       
     nameKey: 'label',
@@ -123,14 +142,20 @@ Multivio.SearchView = SC.View.extend(
     valueKey: 'url',
     disableSort: YES,
     checkboxEnabled: YES,
-    itemIdx: 1 // select first item by default, does not work...
-  }), 
+    needsEllipsis: NO,
+    supportFocusRing: NO
+  }),
   
-  scopeLabelView: SC.LabelView.design({
+  /*scopeLabelView: SC.LabelView.design({
     layout: { top: 30, left: 0, height: 50, width: 80 },
     textAlign: SC.ALIGN_LEFT,
     value: '_searchIn'.loc()
-  })
+  })*/
   
-
+  messageLabelView: SC.LabelView.design({
+    layout: { top: 54, left: 0, right: 0, height: 22 },
+    textAlign: SC.ALIGN_LEFT,
+    classNames: 'message',
+    valueBinding: 'Multivio.searchController.searchStatus'
+  })
 });

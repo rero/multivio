@@ -246,7 +246,7 @@ Multivio.HighlightContentView = SC.View.extend(
   }.observes('currentPage'),
   
   /**
-    When the zoom changes, notify the highlight and serach controllers
+    When the zoom changes, notify the highlight and search controllers
     and flag the view for a redraw.
 
     @observes zoomFactor
@@ -267,7 +267,7 @@ Multivio.HighlightContentView = SC.View.extend(
   
   /**
     When content has finished loading (isLoadingContent changes to NO),
-    update serach results' scroll and flag the view for a redraw.
+    update search results' scroll and flag the view for a redraw.
 
     @observes isLoadingContent
   */

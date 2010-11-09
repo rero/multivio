@@ -299,7 +299,7 @@ Multivio.CDM = SC.Object.create(
     and return -1.
   
     @param {String} url
-    @param {String} query the serach query
+    @param {String} query the search query
     @param {Number} from page number start
     @param {Number} to page number stop
     @param {Number} context_size number of characters around found words
