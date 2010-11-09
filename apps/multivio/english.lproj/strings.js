@@ -18,6 +18,7 @@ SC.stringsFor('English', {
   '_Metadata': 'Show metadata',
   '_Thumbnails': 'Show page thumbnails',
   '_Tree': 'Show the document structure',
+  '_Search': 'Search',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',

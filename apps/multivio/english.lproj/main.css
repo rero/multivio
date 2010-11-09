@@ -92,38 +92,27 @@ body.sc-theme {
    overflow: hidden;
 }
 
-.sc-theme .sc-button-view.sc-regular-size.square .sc-button-label {
-  /*height: 24px;*/
-  /*height: 22px;*/
-  /*line-height: 24px;*/
-  /*line-height: 22px;*/
-}
-
-.sc-theme .sc-button-view.sc-regular-size.square {
-  max-height: 36px;
-  background: none;
-}
 
 
-.sc-theme .sc-button-view.sc-regular-size.square.active,
-.sc-theme .sc-button-view.sc-regular-size.square.active .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.square.active .sc-button-label {
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.active,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.active .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.active .sc-button-label {
   background: #777;
 }
 
-.sc-theme .sc-button-view.sc-regular-size.square.disabled,
-.sc-theme .sc-button-view.sc-regular-size.square.disabled .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.square.disabled .sc-button-label {
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled .sc-button-label {
   background: none;
   opacity: 0.4;
 }
 
-.sc-theme .sc-button-view.sc-regular-size.square.def.active,
-.sc-theme .sc-button-view.sc-regular-size.square.sel.active,
-.sc-theme .sc-button-view.sc-regular-size.square.def .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.square.sel .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.square.def .sc-button-label,
-.sc-theme .sc-button-view.sc-regular-size.square.sel .sc-button-label {
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.def.active,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.sel.active,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.def .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.sel .sc-button-inner,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.def .sc-button-label,
+.sc-theme .sc-button-view.sc-regular-size.mvo-button.sel .sc-button-label {
   background: #bbb;
 }
 
@@ -455,8 +444,8 @@ label.document-label-view {
 }*/
 
 .mvo-transparent {
-  opacity : 0.8;
-  moz-opacity : 0.8;
+  opacity : 0.9;
+  moz-opacity : 0.9;
   ms-filter: "alpha(opacity=10)"; /* IE 8 */
   filter : alpha(opacity=10); /* IE < 8 */
 }

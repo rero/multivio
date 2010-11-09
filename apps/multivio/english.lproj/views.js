@@ -58,6 +58,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_FirstPage'.loc(),
             renderStyle: "renderImage",
             icon: 'jump_backwards_new',
+            theme: 'mvo-button',
             isEnabledBinding: "Multivio.navigationController.isFirstEnabled",
             target: "Multivio.navigationController", 
             action: "goToFirstPage"
@@ -70,6 +71,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_PreviousPage'.loc(),
             renderStyle: "renderImage",
             icon: 'go_backwards_new',
+            theme: 'mvo-button',
             isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
             target: "Multivio.navigationController", 
             action: "goToPreviousPage"
@@ -90,6 +92,7 @@ Multivio.views = SC.Page.design(
             acceptsFirstResponder: YES,
             renderStyle: "renderImage",
             icon: 'go_forward_new',
+            theme: 'mvo-button',
             isEnabledBinding: "Multivio.navigationController.isNextEnabled",
             target: "Multivio.navigationController", 
             action: "goToNextPage"
@@ -102,6 +105,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_LastPage'.loc(),
             renderStyle: "renderImage",
             icon: 'jump_forward_new',
+            theme: 'mvo-button',
             isEnabledBinding: "Multivio.navigationController.isLastEnabled",
             target: "Multivio.navigationController", 
             action: "goToLastPage"
@@ -121,6 +125,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_Zoom-'.loc(),
             renderStyle: "renderImage",
             icon: 'zoom_minus_new',
+            theme: 'mvo-button',
             isEnabledBinding: "Multivio.zoomController.isZoomOutAllowed",
             target: "Multivio.zoomController", 
             action: "doZoomOut"
@@ -133,6 +138,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_Zoom+'.loc(),
             renderStyle: "renderImage",
             icon: 'zoom_plus_new',
+            theme: 'mvo-button',
             isEnabledBinding: "Multivio.zoomController.isZoomInAllowed",
             target: "Multivio.zoomController", 
             action: "doZoomIn"
@@ -172,6 +178,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_RotateLeft'.loc(),
             renderStyle: "renderImage",
             icon: 'rotate_left_new',
+            theme: 'mvo-button',
             target: "Multivio.rotateController",
             isEnabledBinding: 'Multivio.rotateController.isLeftAllow', 
             action: "rotateLeft"
@@ -185,6 +192,7 @@ Multivio.views = SC.Page.design(
             toolTip: '_RotateRight'.loc(),
             renderStyle: "renderImage",
             icon: 'rotate_right_new',
+            theme: 'mvo-button',
             target: "Multivio.rotateController",
             isEnabledBinding: 'Multivio.rotateController.isRigthAllow',
             action: "rotateRight"
@@ -207,6 +215,7 @@ Multivio.views = SC.Page.design(
           toolTip: '_Tree'.loc(),
           renderStyle: "renderImage",
           icon: 'tree_new',
+          theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showTree"
         }),
@@ -218,6 +227,7 @@ Multivio.views = SC.Page.design(
           toolTip: '_Thumbnails'.loc(),
           renderStyle: "renderImage",
           icon: 'thumbnails_new',
+          theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showThumbnails"
         }),
@@ -229,6 +239,7 @@ Multivio.views = SC.Page.design(
           toolTip: '_Search'.loc(),
           renderStyle: "renderImage",
           icon: 'search_new',
+          theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showSearch"
         }),
@@ -240,6 +251,7 @@ Multivio.views = SC.Page.design(
           toolTip: '_Metadata'.loc(),
           renderStyle: "renderImage",
           icon: 'info_new',
+          theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showMetadata"
         })
@@ -339,7 +351,7 @@ Multivio.views = SC.Page.design(
   */
   treePalette: SC.PalettePane.design({
     isAnchored: YES,
-    //classNames: 'mvo-transparent',
+    classNames: 'mvo-transparent',
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       childViews: 'innerTree '.w(),
@@ -503,6 +515,7 @@ Multivio.views = SC.Page.design(
               toolTip: '_Change theme to white'.loc(),
               renderStyle: 'renderImage',
               icon: 'theme-button-white',
+              theme: 'mvo-button',
               target: "Multivio.layoutController",
               action: "changeThemeToWhite"
             }),
@@ -512,6 +525,7 @@ Multivio.views = SC.Page.design(
               toolTip: '_Change theme to dark gray'.loc(),
               renderStyle: 'renderImage',
               icon: 'theme-button-dark-gray',
+              theme: 'mvo-button',
               target: "Multivio.layoutController",
               action: "changeThemeToDarkGray"
             }),
@@ -521,6 +535,7 @@ Multivio.views = SC.Page.design(
               toolTip: '_Change theme to blue'.loc(),
               renderStyle: 'renderImage',
               icon: 'theme-button-blue',
+              theme: 'mvo-button',
               target: "Multivio.layoutController",
               action: "changeThemeToBlue"
             })

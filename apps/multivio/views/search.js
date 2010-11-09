@@ -37,6 +37,7 @@ Multivio.SearchView = SC.View.extend(
     // Note: can interfere with other components
     keyEquivalent: 'return', 
     //needsEllipsis: NO,
+    theme: 'mvo-button',
     toolTip: '_doSearch'.loc(),
     target: 'Multivio.searchController', 
     action: 'doSearch'
@@ -47,6 +48,7 @@ Multivio.SearchView = SC.View.extend(
     icon: 'cancel_new_16',
     renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
+    theme: 'mvo-button',
     // trigger action when pressing escape. 
     // Note: can interfere with other components
     //isCancel: YES, 
@@ -59,7 +61,7 @@ Multivio.SearchView = SC.View.extend(
   
   resultsScrollView: SC.ScrollView.design({
 
-    layout: { top: 72, left: 0, right: 0, bottom: 10 },
+    layout: { top: 82, left: 0, right: 0, bottom: 0 },
 
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
@@ -112,6 +114,7 @@ Multivio.SearchView = SC.View.extend(
     needsEllipsis: NO,
     toolTip : '_goToPrevious'.loc(),
     icon: 'go_backwards_new_16',
+    theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
@@ -123,6 +126,7 @@ Multivio.SearchView = SC.View.extend(
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
     icon: 'go_forward_new_16',
+    theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
@@ -153,7 +157,7 @@ Multivio.SearchView = SC.View.extend(
   })*/
   
   messageLabelView: SC.LabelView.design({
-    layout: { top: 54, left: 0, right: 0, height: 22 },
+    layout: { top: 60, left: 0, right: 0, height: 22 },
     textAlign: SC.ALIGN_LEFT,
     classNames: 'message',
     valueBinding: 'Multivio.searchController.searchStatus'
