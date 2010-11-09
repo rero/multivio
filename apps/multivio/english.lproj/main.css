@@ -464,7 +464,7 @@ label.document-label-view {
 .mvo-metadata-label {
   font: 1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
   position: absolute;
-  width: 100px;
+  width: 110px;
   height: 30px;
   left: 5px;
   font-weight: bold;
@@ -479,7 +479,7 @@ label.document-label-view {
   width: 220px;
   top: 0px;
   bottom: 0px;
-  left: 110px;
+  left: 120px;
   white-space: normal;
   
 }

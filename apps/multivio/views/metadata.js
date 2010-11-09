@@ -43,9 +43,7 @@ Multivio.Metadata = SC.View.extend(SC.ContentDisplay,
     
     this.set('customHeight', dataHeight);
     
-    context = context.begin().addClass('key');
     context = context.begin('span').addClass('mvo-metadata-label').push(key).end();
-    context = context.begin().addClass('data');
     context = context.begin('p').addClass('mvo-metadata-data').push(data).end();
 
     sc_super();

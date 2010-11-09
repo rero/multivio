@@ -246,7 +246,7 @@ body.mvo-white-theme {
 }
 .mvo-dark-gray-theme .sc-button-view .img.go_forward_new,
 .mvo-blue-theme .sc-button-view .img.go_forward_new {
-   background-image: sc_static("images/icons/24x24/go_forward_dark_24x24.png");
+   background-image: sc_static("images/icons/24x24/go_forward_light_24x24.png");
    width: 24px;
    height: 24px;
    margin: 4px;

@@ -339,7 +339,7 @@ Multivio.views = SC.Page.design(
   */
   treePalette: SC.PalettePane.design({
     isAnchored: YES,
-    classNames: 'mvo-transparent',
+    //classNames: 'mvo-transparent',
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       childViews: 'innerTree '.w(),
@@ -349,6 +349,7 @@ Multivio.views = SC.Page.design(
 
         contentView: SC.ListView.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
+          classNames: 'mvo-test',
           rowHeight: 18,
           borderStyle: SC.BORDER_NONE,
           exampleView: Multivio.TreeLabelView,

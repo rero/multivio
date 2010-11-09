@@ -114,6 +114,11 @@ Multivio.masterController = SC.ObjectController.create(
     }
   }.observes('metadata'),
   
+  /**
+     Multivio.CDM.physicalStructure has changed. Set list of file.
+
+     @observe metadata
+   */
   physicalStructureDidChange: function () {
     var ph = this.get('physicalStructure');
     if (!SC.none(ph)) {
@@ -264,6 +269,9 @@ Multivio.masterController = SC.ObjectController.create(
     }
     else {
       var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
+      if (SC.none(max)) {
+        max = this.listOfFiles.length;
+      }
       label.set('value', toShow + '/' + max);
     }
     
