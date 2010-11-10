@@ -39,13 +39,17 @@ Multivio.Metadata = SC.View.extend(SC.ContentDisplay,
     // calculate the height of the data and set the height of the parentView
     var dataHeight = SC.heightForString(data, 
         220, '1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;');
-    context.addStyle('height', dataHeight);
+        
+    // if no data, skip this line
+    if (dataHeight !== 0) {
+      context.addStyle('height', dataHeight);
     
-    this.set('customHeight', dataHeight);
+      this.set('customHeight', dataHeight);
     
-    context = context.begin('span').addClass('mvo-metadata-label').push(key).end();
-    context = context.begin('p').addClass('mvo-metadata-data').push(data).end();
+      context = context.begin('span').addClass('mvo-metadata-label').push(key).end();
+      context = context.begin('p').addClass('mvo-metadata-data').push(data).end();
 
-    sc_super();
+      sc_super();
+    }
   }
 });

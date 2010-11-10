@@ -269,7 +269,13 @@ Multivio.masterController = SC.ObjectController.create(
     else {
       var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
       if (SC.none(max)) {
-        max = this.listOfFiles.length;
+        if (!SC.none(this.listOfFiles)) {
+          max = this.listOfFiles.length;
+        }
+        else {
+          max = 1;
+        }
+        
       }
       label.set('value', toShow + '/' + max);
     }
