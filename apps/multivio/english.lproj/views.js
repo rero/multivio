@@ -34,6 +34,7 @@ Multivio.views = SC.Page.design(
     childViews: 'leftButtons innerMainContent bottomButtons'.w(),
       
     bottomButtons: Multivio.FileButtonView.design({
+      //layout: {bottom: -40, centerX: 24, width: 728, height: 150},
       layout: {bottom: -40, centerX: 24, width: 828, height: 150},
       classNames: 'mvo-front-view',
       
@@ -114,12 +115,14 @@ Multivio.views = SC.Page.design(
 
         //zoom
         zoomView: SC.View.design({
+          //layout: { centerX: 240, centerY: 0, width: 192, height: 32 },
           layout: { centerX: 240, centerY: 0, width: 224, height: 32 },
           
-          childViews: 'zoomOutPageView zoomInPageView zoomPredefinedView'.w(),
+          //childViews: 'zoomOutView zoomInView zoomFullSizeView zoomFullWidthView zoomNativeSizeView'.w(),
+          childViews: 'zoomOutView zoomInView zoomPredefinedView'.w(),
 
-          zoomOutPageView: SC.ButtonView.design({
-            layout: { centerX: -96, centerY: 0, width: 32, height: 32 },
+          zoomOutView: SC.ButtonView.design({
+            layout: { centerX: -80, centerY: 0, width: 32, height: 32 },
             titleMinWidth : 0,
             needsEllipsis: NO,
             toolTip: '_Zoom-'.loc(),
@@ -131,8 +134,8 @@ Multivio.views = SC.Page.design(
             action: "doZoomOut"
           }),
 
-          zoomInPageView: SC.ButtonView.design({
-            layout: { centerX: -64, centerY: 0, width: 32, height: 32 },
+          zoomInView: SC.ButtonView.design({
+            layout: { centerX: -48, centerY: 0, width: 32, height: 32 },
             titleMinWidth : 0,
             needsEllipsis: NO,
             toolTip: '_Zoom+'.loc(),
@@ -143,6 +146,47 @@ Multivio.views = SC.Page.design(
             target: "Multivio.zoomController", 
             action: "doZoomIn"
           }),
+
+          /*
+          zoomFullSizeView: SC.ButtonView.design({
+            layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
+            titleMinWidth : 0,
+            needsEllipsis: NO,
+            toolTip: '_FullSize'.loc(),
+            renderStyle: "renderImage",
+            icon: 'full_size_new',
+            theme: 'mvo-button',
+            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+            target: "Multivio.zoomController", 
+            action: "doFullSizeZoom"
+          }),
+
+          zoomFullWidthView: SC.ButtonView.design({
+            layout: { centerX: 48, centerY: 0, width: 32, height: 32 },
+            titleMinWidth : 0,
+            needsEllipsis: NO,
+            toolTip: '_FullWidth'.loc(),
+            renderStyle: "renderImage",
+            icon: 'full_width_new',
+            theme: 'mvo-button',
+            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+            target: "Multivio.zoomController", 
+            action: "doFullWidthZoom"
+          }),
+
+          zoomNativeSizeView: SC.ButtonView.design({
+            layout: { centerX: 80, centerY: 0, width: 32, height: 32 },
+            titleMinWidth : 0,
+            needsEllipsis: NO,
+            toolTip: '_NativeSize'.loc(),
+            renderStyle: "renderImage",
+            icon: 'native_size_new',
+            theme: 'mvo-button',
+            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+            target: "Multivio.zoomController", 
+            action: "doNativeSizeZoom"
+          })
+          */
 
           zoomPredefinedView: SC.SegmentedView.design({
             layout: { centerX: 48, centerY: 0, width: 128, height: 24 },
@@ -340,7 +384,7 @@ Multivio.views = SC.Page.design(
     
       childViews: 'innerSearch'.w(),
       innerSearch: Multivio.SearchView.design({
-        layout: { top: 2, bottom: 2, left: 2, right: 2 },
+        layout: { top: 5, bottom: 5, left: 5, right: 5 },
         borderStyle: SC.BORDER_NONE
       })
     })

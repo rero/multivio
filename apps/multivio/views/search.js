@@ -22,14 +22,14 @@ Multivio.SearchView = SC.View.extend(
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
   
   searchQueryView: SC.TextFieldView.design({ 
-    layout: { top: 0, left: 0, right: 70, height: 22 },
+    layout: { top: 0, left: 0, right: 54, height: 24 },
     classNames: 'search',
     hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm'
   }),
 
   searchButtonView: SC.ButtonView.design({
-    layout: { top: 0, right: 30, width: 30, height: 30 },
+    layout: { top: 0, right: 24, width: 24, height: 24 },
     icon: 'search_new_16',
     renderStyle: "renderImage",
     titleMinWidth : 0,
@@ -44,7 +44,7 @@ Multivio.SearchView = SC.View.extend(
   }),
   
   clearButtonView: SC.ButtonView.design({
-    layout: { top: 0, right: 0, width: 30, height: 30 },
+    layout: { top: 0, right: 0, width: 24, height: 24 },
     icon: 'cancel_new_16',
     renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
@@ -61,20 +61,30 @@ Multivio.SearchView = SC.View.extend(
   
   resultsScrollView: SC.ScrollView.design({
 
-    layout: { top: 82, left: 0, right: 0, bottom: 0 },
+    layout: { top: 100, left: 0, right: 0, bottom: 0 },
 
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
     hasVerticalScroller: YES,    
     
     contentView: SC.ListView.design({
-      layout: { top: 0, left: 0, right: 0, bottom: 0 },
+      layout: { top: 5, left: 5, right: 5, bottom: 5 },
       insertionOrientation: SC.VERTICAL_ORIENTATION,
       rowHeight: 15,
       contentBinding: 'Multivio.searchController.arrangedObjects',
       selectionBinding: 'Multivio.searchController.selection',
       contentValueKey: 'context'
-    })
+    }),
+    render: function (context, firstTime) {
+      if (context.needsContent) {
+        this.renderChildViews(context, firstTime);
+        context.push(
+          "<div class='top-edge'></div>",
+          "<div class='right-edge'></div>",
+          "<div class='bottom-edge'></div>",
+          "<div class='left-edge'></div>");
+      }
+    }
   }),
   
   /**
@@ -110,7 +120,7 @@ Multivio.SearchView = SC.View.extend(
   }.observes('Multivio.searchController.selection'),
   
   previousResultButtonView: SC.ButtonView.design({
-    layout: { top: 30, height: 30, width: 30, right: 30 },
+    layout: { top: 70, height: 24, width: 24, right: 24 },
     needsEllipsis: NO,
     toolTip : '_goToPrevious'.loc(),
     icon: 'go_backwards_new_16',
@@ -122,7 +132,7 @@ Multivio.SearchView = SC.View.extend(
   }),
   
   nextResultButtonView: SC.ButtonView.design({
-    layout: { top: 30, height: 30, width: 30, right: 0 },
+    layout: { top: 70, height: 24, width: 24, right: 0 },
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
     icon: 'go_forward_new_16',
@@ -136,7 +146,7 @@ Multivio.SearchView = SC.View.extend(
   searchScopeView : SC.SelectButtonView.design({
   //searchScopeView : SC.SelectFieldView.design({
 
-    layout: { top: 30, left: 0, right: 70, height: 25 },
+    layout: { top: 36, left: 0, right: 0, height: 25 },
 
     toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
@@ -157,7 +167,7 @@ Multivio.SearchView = SC.View.extend(
   })*/
   
   messageLabelView: SC.LabelView.design({
-    layout: { top: 60, left: 0, right: 0, height: 22 },
+    layout: { top: 72, left: 0, right: 0, height: 22 },
     textAlign: SC.ALIGN_LEFT,
     classNames: 'message',
     valueBinding: 'Multivio.searchController.searchStatus'
