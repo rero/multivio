@@ -169,6 +169,14 @@ body.mvo-white-theme     {
 .mvo-white-theme     .sc-button-view .img.show_toolbar_new {
    background-image: sc_static("images/icons/24x24/show_toolbar_dark_24x24.png");
 }
+/* Show toolbar */
+.mvo-dark-gray-theme .sc-button-view .img.show_toolbar_new,
+.mvo-blue-theme      .sc-button-view .img.show_toolbar_new {
+   background-image: sc_static("images/icons/24x24/show_toolbar_light_24x24.png");
+}
+.mvo-white-theme     .sc-button-view .img.show_toolbar_new {
+   background-image: sc_static("images/icons/24x24/show_toolbar_dark_24x24.png");
+}
 /* Cancel */
 .mvo-dark-gray-theme .sc-button-view .img.cancel_new_16,
 .mvo-blue-theme      .sc-button-view .img.cancel_new_16,
