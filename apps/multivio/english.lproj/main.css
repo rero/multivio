@@ -238,10 +238,12 @@ label.document-label-view {
 }
 
 
+/*
 .mvo_transparent {
   background: 'transparent';
   background-color: 'none';
 }
+*/
 
 .centered-image {
   margin: auto auto;
@@ -446,10 +448,10 @@ label.document-label-view {
 }*/
 
 .mvo-transparent {
-  opacity : 0.9;
-  moz-opacity : 0.9;
-  ms-filter: "alpha(opacity=10)"; /* IE 8 */
-  filter : alpha(opacity=10); /* IE < 8 */
+  opacity : 0.95;
+  moz-opacity : 0.95;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; /* IE 8 */
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95); /* IE < 8 */
 }
 
 .mvo-metadata-label {
