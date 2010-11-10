@@ -24,8 +24,8 @@ body.sc-theme {
   padding: 0px;
   */
   font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
-  min-height: 300px;
-  min-width: 300px;
+  min-height: 400px;
+  min-width: 600px;
 }
 
 .sc-theme .sc-list-view {

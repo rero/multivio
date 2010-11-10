@@ -32,7 +32,7 @@ Multivio.SearchView = SC.View.extend(
   }),
 
   searchButtonView: SC.ButtonView.design({
-    layout: { top: 2, right: 24, width: 20, height: 20 },
+    layout: { top: 0, right: 24, width: 24, height: 24 },
     icon: 'search_new_16',
     renderStyle: "renderImage",
     titleMinWidth : 0,
@@ -47,7 +47,7 @@ Multivio.SearchView = SC.View.extend(
   }),
   
   clearButtonView: SC.ButtonView.design({
-    layout: { top: 2, right: 0, width: 20, height: 20 },
+    layout: { top: 0, right: 0, width: 24, height: 24 },
     icon: 'cancel_new_16',
     renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
@@ -77,7 +77,17 @@ Multivio.SearchView = SC.View.extend(
       contentBinding: 'Multivio.searchController.arrangedObjects',
       selectionBinding: 'Multivio.searchController.selection',
       contentValueKey: 'context'
-    })
+    }),
+    render: function (context, firstTime) {
+      if (context.needsContent) {
+        this.renderChildViews(context, firstTime);
+        context.push(
+          "<div class='top-edge'></div>",
+          "<div class='right-edge'></div>",
+          "<div class='bottom-edge'></div>",
+          "<div class='left-edge'></div>");
+      }
+    }
   }),
   
   /**
@@ -112,8 +122,8 @@ Multivio.SearchView = SC.View.extend(
     }
   }.observes('Multivio.searchController.selection'),
   
-  nextResultButtonView: SC.ButtonView.design({
-    layout: { top: 70, height: 20, width: 20, right: 0 },
+  previousResultButtonView: SC.ButtonView.design({
+    layout: { top: 70, height: 24, width: 24, right: 24 },
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
     icon: 'down_new_16',
@@ -123,9 +133,9 @@ Multivio.SearchView = SC.View.extend(
     target: 'Multivio.searchController', 
     action: 'goToNextResult'
   }),
-
-  previousResultButtonView: SC.ButtonView.design({
-    layout: { top: 70, height: 20, width: 20, right: 24 },
+  
+  nextResultButtonView: SC.ButtonView.design({
+    layout: { top: 70, height: 24, width: 24, right: 0 },
     needsEllipsis: NO,
     toolTip : '_goToPrevious'.loc(),
     icon: 'up_new_16',
