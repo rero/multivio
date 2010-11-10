@@ -138,7 +138,7 @@ body.sc-theme {
 /* for LabelView */
 
 .sc-label-view.selected {
-  background-color:#DDDDDD;
+  background-color:#eee;
   color:#333333;
 }
 
