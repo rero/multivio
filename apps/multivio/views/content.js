@@ -718,7 +718,9 @@ The next asked Url if user choose to proceed loading a bigg image
             this.set('verticalScrollOffset', 0);
           }
           else {
+            SC.RunLoop.begin();
             this.set('verticalScrollOffset', 0);
+            SC.RunLoop.end();
           }
         }
         else {

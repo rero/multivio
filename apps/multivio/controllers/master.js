@@ -123,7 +123,7 @@ Multivio.masterController = SC.ObjectController.create(
     var ph = this.get('physicalStructure');
     if (!SC.none(ph)) {
       var refPh = this.get('physicalStructure')[Multivio.CDM.getReferer()];
-      if (refPh !== -1) {
+      if (refPh !== -1 && SC.none(this.listOfFiles)) {
         if (refPh.length !== 1) {
           this.listOfFiles = [];
           for (var i = 0; i < refPh.length; i++) {
@@ -137,7 +137,6 @@ Multivio.masterController = SC.ObjectController.create(
   
   currentFilePositionDidChange: function () {
     this.currentFileType = null;
-    this.set('currentPosition', null);
     var newFilePos =  this.get('currentFilePosition');
     var newFile = this.listOfFiles[newFilePos];
     this.set('currentFile', newFile.url);
