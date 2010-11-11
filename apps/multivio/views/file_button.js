@@ -28,7 +28,7 @@ Multivio.FileButtonView = SC.View.extend(
     @binding {Boolean}
   */
   isHorizontalToolbarActiveBinding: 
-      "Multivio.paletteController.isHorizontalToolbarActive",
+      SC.Binding.oneWay("Multivio.paletteController.isHorizontalToolbarActive"),
   
   /**
     Override render method to create a timer that hides the view after 3 sec.

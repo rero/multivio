@@ -158,7 +158,7 @@ Multivio.zoomController = SC.ObjectController.create(
       else {
         // first set zoomState undefined to change mode to zoom
         this.set('currentZoomState', null);
-        var zoomRatio = this.get('zoomRatio');
+        //var zoomRatio = this.get('zoomRatio');
         // check if zoomRatio is bigger than the maxRatio
         if (zoomRatio > this.maxRatio) {
           this.set('zoomStep', this.maxStep); 
@@ -315,7 +315,7 @@ Multivio.zoomController = SC.ObjectController.create(
     @param {Object} button selected 
   */
   setPredefinedZoom: function (button) {
-    var newMode = button.get('value');
+    var newMode = button.name;
     if (this.get('currentZoomState') !== newMode) {
       this.zoomStep = -1;
       SC.RunLoop.begin();
@@ -323,7 +323,47 @@ Multivio.zoomController = SC.ObjectController.create(
       SC.RunLoop.end();
       this.set('currentZoomState', newMode);
     }
+    else {
+      button.set('isActive', YES);
+    }
   },
+  
+  /**
+    Change buttons isActive property observing currentZoomState.
+
+    @observes currentZoomState
+  */
+  currentZoomStateDidChange: function () {
+    var zoomSt = this.get('currentZoomState');
+    var fullB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomView.zoomFullSizeView');
+    var widthB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomView.zoomFullWidthView');
+    var nativeB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomView.zoomNativeSizeView');
+      
+    switch (zoomSt) {
+    case 'Full':
+      fullB.set('isActive', YES);
+      widthB.set('isActive', NO);
+      nativeB.set('isActive', NO);
+      break;
+    case 'Width':
+      fullB.set('isActive', NO);
+      widthB.set('isActive', YES);
+      nativeB.set('isActive', NO);
+      break;
+    case 'Native':
+      fullB.set('isActive', NO);
+      widthB.set('isActive', NO);
+      nativeB.set('isActive', YES);
+      break;
+    case null:
+      fullB.set('isActive', NO);
+      widthB.set('isActive', NO);
+      nativeB.set('isActive', NO);
+      break;
+    default:
+      break;
+    }
+  }.observes('currentZoomState'),
   
   /**
     Intercept the key event and call the good zoom method

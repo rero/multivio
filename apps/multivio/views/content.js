@@ -974,7 +974,6 @@ The next asked Url if user choose to proceed loading a bigg image
     @param {SC.Event} Event fired
   */
   mouseDown: function (evt) {
-    console.info('mouse down');
     Multivio.paletteController.hidePalette(null);
   },
   
