@@ -21,6 +21,16 @@ Multivio.FileButtonView = SC.View.extend(
   hideTimer: undefined,
   
   /**
+    Binds to the paletteController isHorizontalToolbarActive property.
+    
+    This binding is used to show permanently the toolbar or to hide it.
+
+    @binding {Boolean}
+  */
+  isHorizontalToolbarActiveBinding: 
+      "Multivio.paletteController.isHorizontalToolbarActive",
+  
+  /**
     Override render method to create a timer that hides the view after 3 sec.
     
     @param {Object} context
@@ -44,11 +54,14 @@ Multivio.FileButtonView = SC.View.extend(
     @param {SC.Event}
   */   
   mouseEntered: function (evt) {
-    if (!SC.none(this.hideTimer)) {
-      this.hideTimer.invalidate();
-    }
-    else {
-      this.showView();
+    // if the toolbar button is active do nothing
+    if (!this.get('isHorizontalToolbarActive')) {
+      if (!SC.none(this.hideTimer)) {
+        this.hideTimer.invalidate();
+      }
+      else {
+        this.showView();
+      }
     }
     return YES;
   },
@@ -60,13 +73,32 @@ Multivio.FileButtonView = SC.View.extend(
     @param {SC.Event}
   */
   mouseExited: function (evt) {
-    this.hideTimer = SC.Timer.schedule({
-      target: this, 
-      action: 'hideView', 
-      interval: 800
-    });
+    // if the toolbar button is active do nothing
+    if (!this.get('isHorizontalToolbarActive')) {
+      this.hideTimer = SC.Timer.schedule({
+        target: this, 
+        action: 'hideView', 
+        interval: 800
+      });
+    }
     return YES;
   },
+  
+  /**
+    Toolbar button has been pressed, verify if we must show the toolbar or hide
+    it.
+  */
+  isHorizontalToolbarActivedidChange: function () {
+    var isActive = this.get('isHorizontalToolbarActive');
+    if (!SC.none(isActive)) {
+      if (isActive) {
+        this.showView();
+      }
+      else {
+        this.hideView();
+      }
+    }
+  }.observes('isHorizontalToolbarActive'),
   
   /**
     Hide this view

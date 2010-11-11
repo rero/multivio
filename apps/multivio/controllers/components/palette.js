@@ -27,6 +27,12 @@ Multivio.paletteController = SC.ObjectController.create(
   activeButton: null,
   
   /**
+    variable used to say if the toolbar has been actived by the user.
+    If the button is active the toolbar is permanently visible
+  */
+  isHorizontalToolbarActive: NO,
+  
+  /**
     Return the layout position of the palette
     
     @param {Boolean} withDefaultWidth says if used the default width or not
@@ -131,7 +137,6 @@ Multivio.paletteController = SC.ObjectController.create(
     }
   },
   
-  
   /**
     Tree button has been pressed show the treePalette or hide it
 
@@ -164,6 +169,22 @@ Multivio.paletteController = SC.ObjectController.create(
         searchPalette.remove();
       }
     }
+  },
+  
+  /**
+    Toolbar button has been pressed show the toolbar or hide it
+
+    @param {SC.Button} button the button pressed
+  */
+  showHorizontalToolbar: function (button) {
+    if (this.isHorizontalToolbarActive) {
+      button.set('isActive', NO);
+      this.set('isHorizontalToolbarActive', NO);
+    }
+    else {
+      button.set('isActive', YES);
+      this.set('isHorizontalToolbarActive', YES);
+    } 
   },
   
   /**

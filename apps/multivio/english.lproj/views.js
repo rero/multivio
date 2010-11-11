@@ -298,8 +298,7 @@ Multivio.views = SC.Page.design(
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showMetadata"
-        })
-        /*,
+        }),
         SC.ButtonView.design({
           layout: { bottom: 24, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
@@ -312,7 +311,6 @@ Multivio.views = SC.Page.design(
           target: "Multivio.paletteController",
           action: "showHorizontalToolbar"
         })
-        */
       ]
     }),
     

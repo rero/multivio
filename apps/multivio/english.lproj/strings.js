@@ -19,6 +19,7 @@ SC.stringsFor('English', {
   '_Thumbnails': 'Show page thumbnails',
   '_Tree': 'Show the document structure',
   '_Search': 'Search',
+  '_ShowToolbar': 'Show permanently the toolbar',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',
