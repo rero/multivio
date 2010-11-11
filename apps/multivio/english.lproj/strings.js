@@ -15,12 +15,11 @@
 SC.stringsFor('English', {
   
   // ToolTips
-  '_Metadata': 'Show or hide the metadata',
-  '_Thumbnails': 'Show or hide page thumbnails',
-  '_Tree': 'Show or hide the document structure',
-  '_Search': 'Search in the document',
-  '_Help': 'Help',
-  '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
+  '_Metadata': 'Show metadata',
+  '_Thumbnails': 'Show page thumbnails',
+  '_Tree': 'Show the document structure',
+  '_Search': 'Search',
+  '_ShowToolbar': 'Show permanently the toolbar',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',

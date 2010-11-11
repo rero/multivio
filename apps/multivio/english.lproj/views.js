@@ -388,7 +388,6 @@ Multivio.views = SC.Page.design(
           target: "Multivio.paletteController",
           action: "showHorizontalToolbar"
         })
-        */
       ]
     }),
 
