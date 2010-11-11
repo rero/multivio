@@ -303,7 +303,7 @@ Multivio.navigationController = SC.ObjectController.create(
   */ 
   goToNextPage: function () {
     this.set('isPreviousEnabled', YES);
-    var np = this.get('currentPage') + 1;
+    var np = parseInt(this.get('currentPage')) + 1;
     if (np <= this.get('_numberOfPages')) {
       SC.RunLoop.begin();
       this.set('isLoadingContent', YES);
