@@ -59,8 +59,7 @@ Multivio.views = SC.Page.design(
     }),
 
     bottomButtons: Multivio.FileButtonView.design({
-      //layout: {bottom: -40, centerX: 24, width: 728, height: 150},
-      layout: {bottom: -40, centerX: 24, width: 828, height: 150},
+      layout: {bottom: -40, centerX: 24, width: 728, height: 150},
       classNames: 'mvo-front-view',
       
       childViews: 'backgroundView '.w(),
@@ -140,11 +139,9 @@ Multivio.views = SC.Page.design(
 
         //zoom
         zoomView: SC.View.design({
-          //layout: { centerX: 240, centerY: 0, width: 192, height: 32 },
           layout: { centerX: 240, centerY: 0, width: 224, height: 32 },
           
-          //childViews: 'zoomOutView zoomInView zoomFullSizeView zoomFullWidthView zoomNativeSizeView'.w(),
-          childViews: 'zoomOutView zoomInView zoomPredefinedView'.w(),
+          childViews: 'zoomOutView zoomInView zoomFullSizeView zoomFullWidthView zoomNativeSizeView'.w(),
 
           zoomOutView: SC.ButtonView.design({
             layout: { centerX: -80, centerY: 0, width: 32, height: 32 },
@@ -205,55 +202,40 @@ Multivio.views = SC.Page.design(
             layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
             titleMinWidth : 0,
             needsEllipsis: NO,
+            name: 'Full',
             toolTip: '_FullSize'.loc(),
             renderStyle: "renderImage",
             icon: 'full_size_new',
             theme: 'mvo-button',
             isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController", 
-            action: "doFullSizeZoom"
+            target: "Multivio.zoomController",
+            action: "setPredefinedZoom"
           }),
 
           zoomFullWidthView: SC.ButtonView.design({
             layout: { centerX: 48, centerY: 0, width: 32, height: 32 },
             titleMinWidth : 0,
             needsEllipsis: NO,
+            name: 'Width',
             toolTip: '_FullWidth'.loc(),
             renderStyle: "renderImage",
             icon: 'full_width_new',
             theme: 'mvo-button',
             isEnabledBinding: "Multivio.zoomController.isStateEnabled",
             target: "Multivio.zoomController", 
-            action: "doFullWidthZoom"
+            action: "setPredefinedZoom"
           }),
 
           zoomNativeSizeView: SC.ButtonView.design({
             layout: { centerX: 80, centerY: 0, width: 32, height: 32 },
             titleMinWidth : 0,
             needsEllipsis: NO,
+            name: 'Native',
             toolTip: '_NativeSize'.loc(),
             renderStyle: "renderImage",
             icon: 'native_size_new',
             theme: 'mvo-button',
             isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController", 
-            action: "doNativeSizeZoom"
-          })
-          */
-
-          zoomPredefinedView: SC.SegmentedView.design({
-            layout: { centerX: 48, centerY: 0, width: 128, height: 24 },
-            items: [
-              {title: "", value: "Full", icon: sc_static("images/icons/16x16/full_size_dark_16x16.png"), enabled: YES },
-              {title: "", value: "Width", icon: sc_static("images/icons/16x16/full_width_dark_16x16.png"), enabled: YES },
-              {title: "", value: "Native", icon: sc_static("images/icons/16x16/100_percent_dark_16x16.png"), enabled: YES }
-            ],
-            itemTitleKey: 'title',
-            itemValueKey: 'value',
-            itemIconKey: 'icon',
-            itemIsEnabledKey: 'enabled',
-            valueBinding: "Multivio.zoomController.currentZoomState",
-            isEnabledBinding: 'Multivio.zoomController.isStateEnabled',
             target: "Multivio.zoomController",
             action: "setPredefinedZoom"
           })

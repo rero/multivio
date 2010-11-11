@@ -30,7 +30,7 @@ Multivio.paletteController = SC.ObjectController.create(
     variable used to say if the toolbar has been actived by the user.
     If the button is active the toolbar is permanently visible
   */
-  isHorizontalToolbarActive: NO,
+  isHorizontalToolbarActive: null,
   
   /**
     Return the layout position of the palette
