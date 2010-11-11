@@ -34,13 +34,13 @@ Multivio.views = SC.Page.design(
     childViews: 'bottomButtons leftButtons innerMainContent'.w(),
       
     bottomButtons: Multivio.FileButtonView.design({
-      layout: {bottom: -40, centerX: 24, width: 728, height: 150},
+      layout: {bottom: 0, centerX: 24, width: 728, height: 80},
       classNames: 'mvo-front-view',
       
       childViews: 'backgroundView '.w(),
       
       backgroundView: SC.View.design({
-        layout: { left: 0, right: 0, top: 40, bottom: 40 },
+        layout: { left: 0, right: 0, top: 10, bottom: 10 },
         classNames: 'mvo-front-view-transparent',
       
         childViews: 'navigationView zoomView rotateView'.w(),
@@ -546,33 +546,33 @@ Multivio.views = SC.Page.design(
           childViews: [
             SC.ButtonView.design({
               layout: { top: 0, bottom: 0, right: 48, width: 24 },
-              name: 'change_theme_white',
               toolTip: '_Change theme to white'.loc(),
               renderStyle: 'renderImage',
               icon: 'theme-button-white',
               theme: 'mvo-button',
               target: "Multivio.layoutController",
-              action: "changeThemeToWhite"
+              action: "changeTheme",
+              newTheme: 'mvo-white-theme'
             }),
             SC.ButtonView.design({
               layout: { top: 0, bottom: 0, right: 24, width: 24 },
-              name: 'change_theme_dark_gray',
               toolTip: '_Change theme to dark gray'.loc(),
               renderStyle: 'renderImage',
               icon: 'theme-button-dark-gray',
               theme: 'mvo-button',
               target: "Multivio.layoutController",
-              action: "changeThemeToDarkGray"
+              action: "changeTheme",
+              newTheme: 'mvo-dark-gray-theme'
             }),
             SC.ButtonView.design({
               layout: { top: 0, bottom: 0, right: 0, width: 24 },
-              name: 'change_theme_blue',
               toolTip: '_Change theme to blue'.loc(),
               renderStyle: 'renderImage',
               icon: 'theme-button-blue',
               theme: 'mvo-button',
               target: "Multivio.layoutController",
-              action: "changeThemeToBlue"
+              action: "changeTheme",
+              newTheme: 'mvo-blue-theme'
             })
           ]
         })

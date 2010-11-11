@@ -42,6 +42,20 @@ Multivio.configurator = SC.Object.create(
     The version of compatibility between server and client
   */
   serverCompatibility: '0.2.1',
+
+  /**
+    List of allowed themes
+  */
+  allowedThemes: [
+    'mvo-white-theme',
+    'mvo-dark-gray-theme',
+    'mvo-blue-theme'
+  ],
+  
+  /**
+    The theme to be used
+  */
+  initialTheme: 'mvo-white-theme',
   
   /**
     This object contains all parameters for logs

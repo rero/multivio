@@ -178,12 +178,23 @@ Multivio.layoutController = SC.Object.create(
     Change the graphical theme that is currently selected to
     'mvo-white-theme'
   */
-  changeThemeToWhite: function () {
-    var newTheme = 'mvo-white-theme';
-    if (newTheme != this.currentTheme) {
-      SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
+  changeTheme: function (view) {
+    var newTheme = view.get('newTheme');
+    if (newTheme !== this.currentTheme) {
+      // check that newTheme is in the list of allowed themes
+      var allowedThemes = Multivio.configurator.get('allowedThemes');
+      var found = NO;
+      for (var t = 0; t < allowedThemes.length; t++) {
+        if (newTheme === allowedThemes[t]) {
+          found = YES;
+          break;
+        }
+      }
+      if (found === YES) {
+        SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
+        this.currentTheme = newTheme;
+      }
     }
-    this.currentTheme = 'mvo-white-theme';
   },
 
   /**
@@ -192,7 +203,7 @@ Multivio.layoutController = SC.Object.create(
   */
   changeThemeToDarkGray: function () {
     var newTheme = 'mvo-dark-gray-theme';
-    if (newTheme != this.currentTheme) {
+    if (newTheme !== this.currentTheme) {
       SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
     }
     this.currentTheme = 'mvo-dark-gray-theme';
@@ -204,7 +215,7 @@ Multivio.layoutController = SC.Object.create(
   */
   changeThemeToBlue: function () {
     var newTheme = 'mvo-blue-theme';
-    if (newTheme != this.currentTheme) {
+    if (newTheme !== this.currentTheme) {
       SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
     }
     this.currentTheme = 'mvo-blue-theme';

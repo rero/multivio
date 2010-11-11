@@ -62,7 +62,7 @@ Multivio.initializer = SC.Object.create(
           case "": 
             prop.scenario = params[key];
             break;
-         
+
           case 'url':
             // use location.hash to prevent splitting the url
             var url = !SC.none(location.hash) ? location.hash : undefined;
@@ -80,6 +80,13 @@ Multivio.initializer = SC.Object.create(
             // server is an optional parameter
             Multivio.configurator.set('serverName', params[key]);
             break;
+
+          case 'theme':
+            Multivio.layoutController.changeTheme(SC.Object.create({
+              newTheme: 'mvo-%@-theme'.fmt(params[key])
+            }));
+            break;
+
           default:
             // dump the other input parameters as-is in the table
             var value = params[key];
