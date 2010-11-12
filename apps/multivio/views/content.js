@@ -636,6 +636,17 @@ The next asked Url if user choose to proceed loading a bigg image
   
   needToScrollUp: YES,
   isNewImage: NO,
+
+
+  /**
+    Whether the user has already authorized or not loading images of large
+    resolutions. This is used in order to avoid asking repeatedly the same
+    question:
+  
+    "Loading the requested resolution may take a long time. Would you like
+    to proceed?"
+  */
+  largeResolutionsAuthorized: NO,
   
   /**
     ZoomRatio has changed, check if we need to load a new image
@@ -864,7 +875,7 @@ The next asked Url if user choose to proceed loading a bigg image
           break;
         }
       }
-      if (isBiggerThanMax) {
+      if (isBiggerThanMax && this.get('largeResolutionsAuthorized') === NO) {
         this._nextUrl = newUrl;
         Multivio.usco.showAlertPaneWarn(
             '_Loading the requested resolution may take a long time'.loc(),
@@ -901,11 +912,14 @@ The next asked Url if user choose to proceed loading a bigg image
     switch (status) {
     
     case SC.BUTTON1_STATUS:
+      // go ahead and load image with large resolution
       SC.imageCache.loadImage(this._nextUrl, this, this._adjustSize);
+      // from now on large resolutions are permanently authorized
+      this.set('largeResolutionsAuthorized', YES);
       break;
         
     case SC.BUTTON2_STATUS:
-      // load the best image
+      // load the best possible image within the limited resolution
       var currentSelection = this.get('selection');
       Multivio.zoomController.setBestStep(this.nativeWidth, this.nativeHeight);
       break;
