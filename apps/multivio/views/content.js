@@ -74,7 +74,8 @@ Multivio.HighlightContentView = SC.View.extend(
       @binding {Boolean}
   */
   isLoadingContent: null,
-  isLoadingContentBinding: SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
+  isLoadingContentBinding: 
+              SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
   
   /**
     Binds to the search result selection in the search controller.
@@ -83,7 +84,8 @@ Multivio.HighlightContentView = SC.View.extend(
     @binding {SC.Selection}
   */
   searchResultSelection: null,
-  searchResultSelectionBinding: SC.Binding.oneWay('Multivio.searchController.selection'),
+  searchResultSelectionBinding: 
+                    SC.Binding.oneWay('Multivio.searchController.selection'),
   
   /** 
     Determines whether the highlight view (this) needs to be redrawn or not.
@@ -157,6 +159,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */    
   _selectionIndex: null,
   
+  
   /**
     Initialize the view, prepare the view for user selection
     (starts as invisible).
@@ -206,12 +209,9 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('_selectionIndex', selectionIndex);
     SC.RunLoop.end();
     
-    Multivio.logger.debug("_searchResultSelectionDidChange selection: " +
-                                                                  selection);
     Multivio.logger.debug("_searchResultSelectionDidChange selectionIndex: " +
                                                              selectionIndex);
-    
-    if (!SC.none(selection)) {
+    if (selectionIndex !== -1) {
       // retrieve the list of the search results visible in the view
       var listView = this.get('childViews');
       var sr = undefined;
@@ -261,6 +261,8 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
+    // TODO test
+    //this.set('layerNeedsUpdate', YES);
     
   }.observes('zoomFactor'),
   
@@ -484,6 +486,13 @@ Multivio.HighlightContentView = SC.View.extend(
     if (firstTime) {
       sc_super();
     }
+    
+    // update highlights only if the search results belong to the current
+    // file. TODO store this info in the zones themselves
+    var current_search_file = Multivio.searchController.get('currentSearchFile');
+    var current_master_file = Multivio.masterController.get('currentFile');
+    
+    if (current_search_file !== current_master_file) return;
       
     this.removeAllChildren();
     
@@ -621,19 +630,9 @@ Multivio.ContentView = SC.ScrollView.extend(
   nativeHeight: undefined,
   
   /**
-    The next asked Url if user choose to proceed loading a bigg image
-  */
+The next asked Url if user choose to proceed loading a bigg image
+*/
   _nextUrl: null,
-
-  /**
-    Whether the user has already authorized or not loading images of large
-    resolutions. This is used in order to avoid asking repeatedly the same
-    question:
-
-    "Loading the requested resolution may take a long time. Would you like
-    to proceed?"
-  */
-  largeResolutionsAuthorized: NO,
   
   needToScrollUp: YES,
   isNewImage: NO,
@@ -764,6 +763,10 @@ Multivio.ContentView = SC.ScrollView.extend(
     this.set('isLoadingContent', NO);
     SC.RunLoop.end();
     this.isNewImage = NO;
+    
+    // flag highlight pane for a redraw
+    content.get('highlightpane').set('layerNeedsUpdate', YES);
+    
     Multivio.logger.info('ContentView#_adjustSize');
   },
   
@@ -861,7 +864,7 @@ Multivio.ContentView = SC.ScrollView.extend(
           break;
         }
       }
-      if (isBiggerThanMax && this.get('largeResolutionsAuthorized') === NO) {
+      if (isBiggerThanMax) {
         this._nextUrl = newUrl;
         Multivio.usco.showAlertPaneWarn(
             '_Loading the requested resolution may take a long time'.loc(),
@@ -898,14 +901,11 @@ Multivio.ContentView = SC.ScrollView.extend(
     switch (status) {
     
     case SC.BUTTON1_STATUS:
-      // go ahead and load image with large resolution
       SC.imageCache.loadImage(this._nextUrl, this, this._adjustSize);
-      // from now on large resolutions are permanently authorized
-      this.set('largeResolutionsAuthorized', YES);
       break;
         
     case SC.BUTTON2_STATUS:
-      // load the best possible image within the limited resolution
+      // load the best image
       var currentSelection = this.get('selection');
       Multivio.zoomController.setBestStep(this.nativeWidth, this.nativeHeight);
       break;

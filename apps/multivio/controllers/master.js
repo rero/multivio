@@ -73,6 +73,14 @@ Multivio.masterController = SC.ObjectController.create(
   
   physicalStructure: null,
   physicalStructureBinding: SC.Binding.oneWay("Multivio.CDM.physicalStructure"),
+  
+  /**
+    The number of the currently selected search result.
+    If none selected, this value is -1.
+  
+    @property {currentSearchResultSelectionIndex}
+  */
+  currentSearchResultSelectionIndex: -1,
    
   /**
     Initialize masterController. Get the referer (the url given to multivio) 
