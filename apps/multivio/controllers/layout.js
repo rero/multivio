@@ -39,6 +39,11 @@ Multivio.layoutController = SC.Object.create(
     The graphical theme that is currently selected
   */
   currentTheme: 'mvo-dark-gray-theme',
+  
+  /**
+    Show the possibility of changing themes
+  */
+  showThemeSelector: YES,
 
   // TODO: move this function to the initializer, the layout controller has
   // nothing to do with controller setup
@@ -175,8 +180,13 @@ Multivio.layoutController = SC.Object.create(
   
 
   /**
-    Change the graphical theme that is currently selected to
-    'mvo-white-theme'
+    Change the graphical theme that is currently selected. The name of the
+    theme to be applied must be a property called 'newTheme' of the object
+    given as input. This object is usually a view that calls this method
+    through a target/action binding. In that case the view must contain the
+    newTheme property.
+
+    @param {SC.Object} the object that called this method (usually an SC.View)
   */
   changeTheme: function (view) {
     var newTheme = view.get('newTheme');
@@ -196,30 +206,7 @@ Multivio.layoutController = SC.Object.create(
       }
     }
   },
-
-  /**
-    Change the graphical theme that is currently selected to
-    'mvo-dark-gray-theme'
-  */
-  changeThemeToDarkGray: function () {
-    var newTheme = 'mvo-dark-gray-theme';
-    if (newTheme !== this.currentTheme) {
-      SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
-    }
-    this.currentTheme = 'mvo-dark-gray-theme';
-  },
-
-  /**
-    Change the graphical theme that is currently selected to
-    'mvo-blue-theme'
-  */
-  changeThemeToBlue: function () {
-    var newTheme = 'mvo-blue-theme';
-    if (newTheme !== this.currentTheme) {
-      SC.$('body').addClass(newTheme).removeClass(this.currentTheme);
-    }
-    this.currentTheme = 'mvo-blue-theme';
-  },
+  
 
 
   /**

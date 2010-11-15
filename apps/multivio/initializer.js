@@ -85,6 +85,7 @@ Multivio.initializer = SC.Object.create(
             Multivio.layoutController.changeTheme(SC.Object.create({
               newTheme: 'mvo-%@-theme'.fmt(params[key])
             }));
+            Multivio.layoutController.set('showThemeSelector', NO);
             break;
 
           default:

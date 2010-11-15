@@ -542,6 +542,7 @@ Multivio.views = SC.Page.design(
         }),
         SC.View.design({
           layout: { top: 2, height: 24, width: 72, right: 0 },
+          isVisibleBinding: 'Multivio.layoutController.showThemeSelector',
 
           childViews: [
             SC.ButtonView.design({
