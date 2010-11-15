@@ -40,7 +40,7 @@ Multivio.views = SC.Page.design(
       childViews: 'backgroundView '.w(),
       
       backgroundView: SC.View.design({
-        layout: { left: 0, right: 0, top: 10, bottom: 10 },
+        layout: { left: 16, right: 16, top: 16, bottom: 16 },
         classNames: 'mvo-front-view-transparent',
       
         childViews: 'navigationView zoomView rotateView'.w(),
