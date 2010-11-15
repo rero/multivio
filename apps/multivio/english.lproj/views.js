@@ -279,6 +279,20 @@ Multivio.views = SC.Page.design(
           target: "Multivio.paletteController",
           action: "showMetadata"
         }),
+        /*
+        SC.ButtonView.design({
+          layout: { top: 170, centerX: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'help',
+          toolTip: '_Help'.loc(),
+          renderStyle: "renderImage",
+          icon: 'help_new',
+          theme: 'mvo-button',
+          target: "Multivio.paletteController",
+          action: "showHelpToolbar"
+        }),
+        */
         SC.ButtonView.design({
           layout: { bottom: 24, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
