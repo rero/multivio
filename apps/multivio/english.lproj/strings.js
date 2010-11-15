@@ -15,11 +15,11 @@
 SC.stringsFor('English', {
   
   // ToolTips
-  '_Metadata': 'Show metadata',
-  '_Thumbnails': 'Show page thumbnails',
-  '_Tree': 'Show the document structure',
-  '_Search': 'Search',
-  '_ShowToolbar': 'Show permanently the toolbar',
+  '_Metadata': 'Show or hide the metadata',
+  '_Thumbnails': 'Show or hide page thumbnails',
+  '_Tree': 'Show or hide the document structure',
+  '_Search': 'Search in the document',
+  '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',
@@ -37,18 +37,18 @@ SC.stringsFor('English', {
 
   // Strings for metadata
   '_creator': 'author',
-  '_mime': 'document type',
+  '_mime': 'file type',
   '_language': 'language',
-  '_nPages': 'number of page',
+  '_nPages': 'number of pages',
   '_title': 'title',
 
   // Strings for "application usage" text
   '_How to launch Multivio': 'How to launch Multivio',
   '_The calling syntax is': 'The calling syntax is',
   '_The {TARGET} URL can link to': 'The {TARGET} URL can link to',
-  '_A Dublin Core record': 'A Dublin Core record',
-  '_A MARC21 record': 'A MARC21 record',
-  '_A MODS record': 'A MODS record',
+  '_A Dublin Core record': 'A record in Dublin Core format',
+  '_A MARC21 record': 'A record in MARC21 format',
+  '_A MODS record': 'A record in MODS format',
   '_A METS record (supported profiles only)': 'A METS record (supported profiles only)',
   '_Examples': 'Examples',
 
@@ -60,7 +60,7 @@ SC.stringsFor('English', {
   '_UnsupportedFormat':               'The format of the requested document is currently not supported.',
   '_InvalidArgument':                 'Incorrect arguments.',
   '_HttpMethodNotAllowed':            'The HTTP method is not supported by this server.',
-  '_VersionIncompatibility':          'The server and the client are not compatible.',
+  '_VersionIncompatibility':          'The server and the client versions are not compatible.',
   '_ServerNotFound':                  'The Multivio server is not accessible.',
   '_Default':                         'An error occured. Please contact support at %@',
   
@@ -79,13 +79,13 @@ SC.stringsFor('English', {
 
   // Strings for search and indexing functionality (MVO_SEIN)
   '_doSearch': 'Search',
-  '_goToNext': 'Next',
-  '_goToPrevious': 'Previous',
+  '_goToNext': 'Next occurence',
+  '_goToPrevious': 'Previous occurence',
   '_searchIn': 'Search in file: ',
   '_doClear' : 'Clear',
-  '_noSearchResultTitle': 'No search result',
+  '_noSearchResultTitle': 'No results found',
   '_noSearchResultDesc': 'No result was found for the given query',
-  '_typeQueryHere': 'type search query here',
+  '_typeQueryHere': 'Type search query here',
   '_tooManyResults': 'Search result limit reached',
   '_firstOccurrences': 'Only the first %@ occurences are displayed.',
   '_noResult': 'No result was found',
