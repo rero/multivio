@@ -259,16 +259,15 @@ Multivio.masterController = SC.ObjectController.create(
   /**
   */
   showNavigationPalette: function (isNewFile, toShow) {
-    var navView = Multivio.getPath('views.navigationView');
-    var label = navView.get('contentView').get('childViews')[0];
+    var valToSend = '';
     if (isNewFile) {
       if (SC.none(this.listOfFiles)) {
-        label.set('value', toShow);
+        valToSend = toShow;
       }
       else {
         for (var i = 0; i < this.listOfFiles.length; i++) {
           if (this.listOfFiles[i].url === toShow) {
-            label.set('value', this.listOfFiles[i].label);
+            valToSend = this.listOfFiles[i].label;
             break;
           }
         }
@@ -283,22 +282,10 @@ Multivio.masterController = SC.ObjectController.create(
         else {
           max = 1;
         }
-        
       }
-      label.set('value', toShow + '/' + max);
+      valToSend = toShow + '/' + max;
     }
-    
-    navView.append();
-    SC.Timer.schedule({
-      target: this, 
-      action: 'hidePalette',
-      interval: 1000
-    });
-  },
-  
-  hidePalette: function () {
-    this.valueTS = null;
-    Multivio.getPath('views.navigationView').remove();
+    Multivio.getPath('views.mainContentView.navigation').showView(valToSend);
   }
   
 });

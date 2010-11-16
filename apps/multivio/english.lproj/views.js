@@ -13,6 +13,7 @@ sc_require('views/tree');
 sc_require('views/file_button');
 sc_require('views/metadata');
 sc_require('views/search');
+sc_require('views/navigation');
 
 /**
 @class
@@ -31,7 +32,29 @@ Multivio.views = SC.Page.design(
     controllers: [ 'zoomController', 'navigationController', 'searchController',
         'imageController',  'treeController', 'thumbnailController'],
       
-    childViews: 'bottomButtons leftButtons innerMainContent'.w(),
+    childViews: 'navigation bottomButtons leftButtons innerMainContent'.w(),
+    
+    navigation: Multivio.navigationView.design({
+      layout: { height: 60, width: 400, centerX: 0, top: 55},
+      classNames: 'mvo-front-view',
+      
+      childViews: 'transparentView '.w(),
+      
+      transparentView: SC.View.design({
+        layout: { left: 16, right: 16, top: 16, bottom: 16 },
+        classNames: 'mvo-front-view-transparent',
+
+        childViews: 'currentView'.w(), 
+      
+        currentView: SC.LabelView.design({
+          layout: {width: 350, height: 20, centerX: 0, centerY: 0},
+          classNames: 'mvo-metadata-label',
+          textAlign: 'center',
+          escapeHTML: NO,
+          value: null
+        })
+      })
+    }),
       
     bottomButtons: Multivio.FileButtonView.design({
       layout: {bottom: 0, centerX: 24, width: 728, height: 80},
@@ -294,7 +317,7 @@ Multivio.views = SC.Page.design(
         }),
         */
         SC.ButtonView.design({
-          layout: { bottom: 24, centerX: 0, width: 32, height: 32 },
+          layout: { top: 210, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           name: 'show_toolbar',
@@ -454,11 +477,15 @@ Multivio.views = SC.Page.design(
     })
   }),
   
-  navigationView: SC.PalettePane.design({
+ /* navigationView: SC.View.design({
+    layout: { height: 60, width: 400, centerX: 0, top: 55},
+    classNames: 'mvo-front-view-transparent',*/
+  
+  /*SC.PalettePane.design({
     layout: { height: 60, width: 400, centerX: 0, top: 55},
     classNames: 'mvo-front-view-transparent',
-    contentView: SC.View.design({
-      childViews: [
+    contentView: SC.View.design({*/
+      /*childViews: [
         SC.LabelView.design({
           layout: {width: 350, height: 20, centerX: 0, centerY: 0},
           classNames: 'mvo-metadata-label',
@@ -467,8 +494,8 @@ Multivio.views = SC.Page.design(
           value: null
         })
       ]
-    })
-  }),
+   // })
+  }),*/
   
   /**
     Logo of e-lib & rero
