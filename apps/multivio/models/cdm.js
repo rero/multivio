@@ -52,12 +52,19 @@ Multivio.CDM = SC.Object.create(
       var jsonRes = response.get("body");
       var t2 = {};
       if (!SC.none(this.get('fileMetadata'))) {
-        var oldMeta = this.get('fileMetadata');
-        t2 = this.clone(oldMeta);
+        if (this.get('fileMetadata')[url] === undefined) {
+          var oldMeta = this.get('fileMetadata');
+          t2 = this.clone(oldMeta);
+          t2[url] = jsonRes;
+          this.set('fileMetadata', t2);
+          Multivio.logger.info('New metadata added for ' + url);
+        }
       }
-      t2[url] = jsonRes;
-      this.set('fileMetadata', t2);
-      Multivio.logger.info('New metadata added for ' + url);
+      else {
+        t2[url] = jsonRes;
+        this.set('fileMetadata', t2);
+        Multivio.logger.info('New metadata added for ' + url);
+      }
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
@@ -152,12 +159,20 @@ Multivio.CDM = SC.Object.create(
       var jsonRes = response.get("body");
       var t2 = {};
       if (!SC.none(this.get('logicalStructure'))) {
-        var oldLogic = this.get('logicalStructure');
-        t2 = this.clone(oldLogic);
+        //verify if value is not already in the CDM
+        if (this.get('logicalStructure')[url] === undefined) {
+          var oldLogic = this.get('logicalStructure');
+          t2 = this.clone(oldLogic);
+          t2[url] = jsonRes;
+          this.set('logicalStructure', t2);
+          Multivio.logger.info('New logicalStructure added for ' + url);
+        }
       }
-      t2[url] = jsonRes;
-      this.set('logicalStructure', t2);
-      Multivio.logger.info('New logicalStructure added for ' + url);
+      else {
+        t2[url] = jsonRes;
+        this.set('logicalStructure', t2);
+        Multivio.logger.info('New logicalStructure added for ' + url);
+      }
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
@@ -200,16 +215,24 @@ Multivio.CDM = SC.Object.create(
   setPhysicalStructure: function (response, url) {
     if (SC.ok(response)) {
       Multivio.logger.debug('physicalStructure received from the server: %@'.
-          fmt(response.get("body")));    
+          fmt(response.get("body")));
       var jsonRes = response.get("body");
       var t2 = {};
-      if (!SC.none(this.get('physicalStructure'))) {
-        var oldPhysic = this.get('physicalStructure');
-        t2 = this.clone(oldPhysic);
+      if (!SC.none(this.get('physicalStructure'))){
+        //verify if value is not already in the CDM
+        if (this.get('physicalStructure')[url] === undefined) {
+          var oldPhysic = this.get('physicalStructure');
+          t2 = this.clone(oldPhysic);
+          t2[url] = jsonRes;
+          this.set('physicalStructure', t2);
+          Multivio.logger.debug('New physicalStructure added for ' + url);
+        }
       }
-      t2[url] = jsonRes;
-      this.set('physicalStructure', t2);
-      Multivio.logger.debug('New physicalStructure added for ' + url);
+      else {
+        t2[url] = jsonRes;
+        this.set('physicalStructure', t2);
+        Multivio.logger.debug('create and add physicalStructure for ' + url);
+      }
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
@@ -281,12 +304,20 @@ Multivio.CDM = SC.Object.create(
       var jsonRes = response.get("body");
       var t2 = {};
       if (!SC.none(this.get('imageSize'))) {
-        var oldSize = this.get('imageSize');
-        t2 = this.clone(oldSize);
+        //verify if value is not already in the CDM
+        if (this.get('imageSize')[url] === undefined) {
+          var oldSize = this.get('imageSize');
+          t2 = this.clone(oldSize);
+          t2[url] = jsonRes;
+          this.set('imageSize', t2);
+          Multivio.logger.debug('New imageSize added for ' + url);
+        }
       }
-      t2[url] = jsonRes;
-      this.set('imageSize', t2);
-      Multivio.logger.debug('New imageSize added for ' + url);
+      else {
+        t2[url] = jsonRes;
+        this.set('imageSize', t2);
+        Multivio.logger.debug('New imageSize added for ' + url);
+      }
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
