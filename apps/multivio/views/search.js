@@ -77,7 +77,7 @@ Multivio.SearchView = SC.View.extend(
       contentBinding: 'Multivio.searchController.arrangedObjects',
       selectionBinding: 'Multivio.searchController.selection',
       contentValueKey: 'context'
-    }),
+    })/*,
     render: function (context, firstTime) {
       if (context.needsContent) {
         this.renderChildViews(context, firstTime);
@@ -87,7 +87,7 @@ Multivio.SearchView = SC.View.extend(
           "<div class='bottom-edge'></div>",
           "<div class='left-edge'></div>");
       }
-    }
+    }*/
   }),
   
   /**

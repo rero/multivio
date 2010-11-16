@@ -845,11 +845,36 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // if there are results, store them
     // TODO case for all results
-    if (!SC.none(res) && !SC.none(res[key])) {
+    if (!SC.none(res) && (!SC.none(res[key]) || key === ref_url)) {
+      
+      Multivio.logger.debug('_searchResultsDidChange, stuff to do...');
       
       SC.RunLoop.begin();
-      this._setSearchResults(res[key], query);
-
+      // TODO test concat all
+      if (key === ref_url) {
+        var file_list = this.get('currentFileList');
+        res[ref_url] = [];
+        
+        Multivio.logger.debug('_searchResultsDidChange, concat all results...');
+        
+        for (var i = 0; i < file_list.length; i++) {
+          
+          // skip referer url
+          if (file_list[i].url === ref_url) continue;
+          
+          this._setSearchResults(res[file_list[i].url], query);
+          // TODO test may need to update searchResults[ref_url] too...
+          res[ref_url].pushObject(res[file_list[i].url]);
+          
+        }
+        SC.RunLoop.begin();
+        Multivio.logger.debug('_searchResultsDidChange, setting all CDM results...');
+        Multivio.CDM.set('searchResults', res);
+        SC.RunLoop.end();
+      } else {
+        this._setSearchResults(res[key], query);
+      }
+      
       // get the latest stored selection (previous before reinit)
       var sel = this.get('selectedIndex');
 
@@ -885,6 +910,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @param {String} query -- the search query used
   */
   _setSearchResults: function (res, query) {
+   
+    Multivio.logger.debug("_setSearchResults, res: " + res);
    
     // if there are results                                         
     if (res !== -1 && !SC.none(res)) {
