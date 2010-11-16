@@ -89,12 +89,15 @@ body.mvo-white-theme     {
 }
 
 
+.mvo-dark-gray-theme .outer_content_view,
 .mvo-dark-gray-theme .inner_content_view {
   background-color: #666;
 }
+.mvo-blue-theme      .outer_content_view,
 .mvo-blue-theme      .inner_content_view {
   background-color: #aaa;
 }
+.mvo-white-theme     .outer_content_view,
 .mvo-white-theme     .inner_content_view {
   background-color: #ddd;
 }
@@ -246,6 +249,25 @@ body.mvo-white-theme     {
 .mvo-blue-theme      .sc-button-view .img.jump_forward_new,
 .mvo-white-theme     .sc-button-view .img.jump_forward_new {
    background-image: sc_static("images/icons/24x24/jump_forward_light_24x24.png");
+}
+
+/* Up */
+.mvo-dark-gray-theme .sc-button-view .img.up_new_16,
+.mvo-blue-theme      .sc-button-view .img.up_new_16,
+.mvo-white-theme     .sc-button-view .img.up_new_16 {
+   background-image: sc_static("images/icons/16x16/up_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
+}
+/* Down */
+.mvo-dark-gray-theme .sc-button-view .img.down_new_16,
+.mvo-blue-theme      .sc-button-view .img.down_new_16,
+.mvo-white-theme     .sc-button-view .img.down_new_16 {
+   background-image: sc_static("images/icons/16x16/down_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 4px auto;
 }
 
 /* Zoom out */

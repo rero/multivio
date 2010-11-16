@@ -32,22 +32,22 @@ Multivio.views = SC.Page.design(
     controllers: [ 'zoomController', 'navigationController', 'searchController',
         'imageController',  'treeController', 'thumbnailController'],
       
-    childViews: 'navigation bottomButtons leftButtons innerMainContent'.w(),
+    childViews: 'navigation bottomButtons leftButtons content'.w(),
     
     navigation: Multivio.NavigationView.design({
-      layout: { height: 80, width: 200, centerX: 0, top: 40},
+      layout: { width: 260, height: 48, centerX: 0, top: 16},
       classNames: 'mvo-front-view',
       
       childViews: 'transparentView '.w(),
       
       transparentView: SC.View.design({
-        layout: { left: 16, right: 16, top: 16, bottom: 16 },
+        layout: { left: 0, right: 0, top: 0, bottom: 0 },
         classNames: 'mvo-front-view-transparent',
 
         childViews: 'currentView'.w(), 
       
         currentView: SC.LabelView.design({
-          layout: {width: 160, height: 20, centerX: 0, centerY: 0},
+          layout: {width: 220, height: 20, centerX: 0, centerY: 0},
           //classNames: 'mvo-metadata-label',
           textAlign: 'center',
           escapeHTML: NO,
@@ -330,32 +330,38 @@ Multivio.views = SC.Page.design(
         })
       ]
     }),
+
+    content: SC.View.design({
+      layout: { top: 0, bottom: 0, left: 48, right: 0 },
+      classNames: 'outer_content_view',
+      childViews: 'innerMainContent'.w(),
+
+      innerMainContent: Multivio.ContentView.design({
+        layout: { top: 5, bottom: 5, left: 5, right: 5 },
+        isFirstResponder: YES,
+        acceptsFirstResponder: YES,
+        isKeyResponder: YES,
     
-    innerMainContent: Multivio.ContentView.design({
-      layout: { top: 5, bottom: 5, left: 53, right: 5 },
-      isFirstResponder: YES,
-      acceptsFirstResponder: YES,
-      isKeyResponder: YES,
+        borderStyle: SC.BORDER_NONE,
+        classNames: 'inner_content_view',
+
+        contentView: SC.View.design({
+          layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
+          useImageCache: NO,
       
-      borderStyle: SC.BORDER_NONE,
-      classNames: 'inner_content_view',
+          // note: draw highlight pane on top of the content image
+          childViews: 'innerContent highlightpane'.w(),
 
-      contentView: SC.View.design({
-        layout: { top: 0, bottom: 0, centerX: 0, minWidth: 1 },
-        useImageCache: NO,
-        
-        // note: draw highlight pane on top of the content image
-        childViews: 'innerContent highlightpane'.w(),
+          innerContent: Multivio.ImageContentView.design({
+            layout: { top: 0, left: 0, minWidth: 1 },
+            useImageCache: NO
+          }),
 
-        innerContent: Multivio.ImageContentView.design({
-          layout: { top: 0, left: 0, minWidth: 1 },
-          useImageCache: NO
-        }),
-
-        highlightpane: Multivio.HighlightContentView.design({
-          layout: { top: 0, left: 0, right: 0, minWidth: 1 }
-        }).classNames('highlight-pane'.w())
-      }).classNames('image-and-highlight-container'.w())
+          highlightpane: Multivio.HighlightContentView.design({
+            layout: { top: 0, left: 0, right: 0, minWidth: 1 }
+          }).classNames('highlight-pane'.w())
+        }).classNames('image-and-highlight-container'.w())
+      })
     }),
     
     render: function (context, firstTime) {

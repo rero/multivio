@@ -40,7 +40,7 @@ Multivio.NavigationView = SC.View.extend(
    */
   hideView: function () {
     this.removeAllChildren();
-    Multivio.getPath('views.mainContentView.innerMainContent').
+    Multivio.getPath('views.mainContentView.content.innerMainContent').
         becomeFirstResponder();
   },
 

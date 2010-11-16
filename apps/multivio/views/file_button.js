@@ -106,7 +106,7 @@ Multivio.FileButtonView = SC.View.extend(
   hideView: function () {
     this.hideTimer = undefined;
     this.removeAllChildren();
-    Multivio.getPath('views.mainContentView.innerMainContent').
+    Multivio.getPath('views.mainContentView.content.innerMainContent').
         becomeFirstResponder();
   },
   

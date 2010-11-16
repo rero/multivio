@@ -225,8 +225,12 @@ label.document-label-view {
 }
 
 .inner_content_view {
+  border: none;
+}
+.outer_content_view {
   border: 1px solid #666666;
 }
+
 
 .inner_view {
   border: 1px solid #666666;
@@ -433,7 +437,7 @@ label.document-label-view {
 
 .mvo-front-view-transparent {
   z-index: -10000;
-  background-image: sc_static("images/transparency_70.png");
+  background-image: sc_static("images/transparency_333_90.png");
   /*opacity : 1.0;
   moz-opacity : 1.0;
   ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
