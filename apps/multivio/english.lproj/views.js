@@ -309,7 +309,7 @@ Multivio.views = SC.Page.design(
     }),
     
     innerMainContent: Multivio.ContentView.design({
-      layout: { top: 0, bottom: 0, left: 48, right: 0 },
+      layout: { top: 5, bottom: 5, left: 53, right: 5 },
       isFirstResponder: YES,
       acceptsFirstResponder: YES,
       isKeyResponder: YES,
@@ -332,7 +332,7 @@ Multivio.views = SC.Page.design(
         highlightpane: Multivio.HighlightContentView.design({
           layout: { top: 0, left: 0, right: 0, minWidth: 1 }
         }).classNames('highlight-pane'.w())
-      }).classNames('image-and-highlight-container'.w())
+      }).classNames('image-and-highlight-container'.w()),
     }),
     
     render: function (context, firstTime) {
@@ -516,7 +516,7 @@ Multivio.views = SC.Page.design(
 
     isTextSelectable: YES,
     childViews: [
-      SC.View.design({
+      SC.ImageView.design({
         layout: { top: 0, left: 0, height: 44, width: 140 },
         classNames: 'multivio_logo',
         toolTip: 'Go to Multivio website. Client release: ' + 
