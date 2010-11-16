@@ -496,9 +496,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
             removeChild(childToRemove);
       }
       else {
-        this.set('currentFileList', phys[url]);
-        // select first file in list
-        var file_url = phys[url][0].url;
+        
+        // add 'All files' search option to file list
+        var fileList = Multivio.CDM.clone(phys[url]);
+        fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});
+        this.set('currentFileList', fileList);        
+        
+        //TODO? select first file in list
+        //var file_url = phys[url][0].url;
         // TODO test
         //this.set('currentSearchFile', file_url);
       
@@ -683,17 +688,47 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('searchStatus', '_searchInProgress'.loc());
     SC.RunLoop.end();
     
-    Multivio.logger.debug('SearchController.doSearch("%@")'.fmt(query));
+    Multivio.logger.debug('SearchController.doSearch("%@"), file: %@'.
+                                fmt(query, this.get('currentSearchFile')));
     
     // get rotation angle
     var angle = this.get('rotateValue');
     
     // get current file url for searching
     var url = this.get('currentSearchFile');
+    var ref_url = this.get('url');
+    var res = undefined;
     
-    // TODO: query multivio server: context size=15, max_results=50
-    // Note: this triggers _searchResultsDidChange(), only the first time the server response is received
-    var res = Multivio.CDM.getSearchResults(url, query, '', '', 15, 50, angle);
+    // TODO: if this is the referer url, 'search all files' option was
+    // selected. Send a request for each file, and store them all in 
+    // Multivio.CDM.searchResults[<referer_url>]
+    if (url === ref_url) {
+      Multivio.logger.debug('doSearch ALL: referer url: ' + url);
+      
+      // get list of all urls and send request
+      // TODO: how to handle that we receive results in different order etc.. ?
+      // idea: each time search results change, we rebuild the complete list in
+      // Multivio.CDM.searchResults[<referer_url>], in the order of the files
+      // as they appear in the list.
+      var file_list = this.get('currentFileList');
+      for (var i = 0; i < file_list.length; i++) {
+        
+        // don't send request for referer url
+        if (file_list[i].url === ref_url) continue;
+        
+        Multivio.logger.debug('ALL: sending request for url: ' +
+                                                     file_list[i].url);
+        res = Multivio.CDM.getSearchResults(file_list[i].url, query, 
+                                              '', '', 15, 50, angle);
+        
+      }
+    } else {
+      // TODO: query multivio server: context size=15, max_results=50
+      // Note: this triggers _searchResultsDidChange(), only the first time the server response is received
+      res = Multivio.CDM.getSearchResults(url, query, '', '', 15, 50, angle);
+    }
+    
+
         
     // store results
     // NOTE: artificially trigger _searchResultsDidChange() 
@@ -706,6 +741,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var nd = this.get('displayResults');
     nd[url] = YES;
     this.set('displayResults', nd);
+    // store url so we know which one to load later on
     this.set('_load_url', url);
     this.set('searchResults', new_res);
     SC.RunLoop.end();
@@ -721,11 +757,19 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     Multivio.logger.debug('SearchController.clearResults()');
 
     var cf = this.get('currentSearchFile');
+    var rf = this.get('url');
     var all_results = Multivio.CDM.get('searchResults');
     var new_results = {};
 
-    // clear search results stored in CDM
-    if (!SC.none(all_results) && !SC.none(all_results[cf])) {
+    // TODO test if referer url is selected, clear all results
+    if (rf === cf) {
+      new_results = undefined;
+      Multivio.logger.debug("clearing all...");
+      SC.RunLoop.begin();
+      Multivio.CDM.set('searchResults', new_results);
+      SC.RunLoop.end();
+    } else if (!SC.none(all_results) && !SC.none(all_results[cf])) {       
+      // clear search results stored in CDM for a specific url
       Multivio.logger.debug("clearing...");
       new_results = Multivio.CDM.clone(all_results);
       new_results[cf] = undefined;
@@ -787,6 +831,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // use the current url as key for storage    
     var key = current_url;
     
+    // TODO test
+    var ref_url = this.get('url');
+    if (key === ref_url) {
+      Multivio.logger.debug('_searchResultsDidChange: REF URL HERE');
+    }
+    
     // clear load_url 
     this.set('_load_url', undefined);
     
@@ -794,6 +844,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (!this.get('displayResults')[current_url]) return;
     
     // if there are results, store them
+    // TODO case for all results
     if (!SC.none(res) && !SC.none(res[key])) {
       
       SC.RunLoop.begin();

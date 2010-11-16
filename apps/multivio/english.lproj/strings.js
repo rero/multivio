@@ -94,6 +94,7 @@ SC.stringsFor('English', {
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
   '_resultSelection': 'Result %@/%@',
+  '_AllFiles':              'All files',
 
   // Strings for the help section
   '_helpTitle': "Help",
@@ -158,5 +159,4 @@ SC.stringsFor('English', {
         </tr>\
       <tbody/>\
     </table>"
-
 });
