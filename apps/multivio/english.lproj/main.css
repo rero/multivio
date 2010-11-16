@@ -45,6 +45,7 @@ body.sc-theme {
   color: white;
   */
   background-color: white;
+  background-image: none;
 }
 
 .sc-theme .sc-pane.sc-main {

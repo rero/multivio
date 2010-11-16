@@ -34,8 +34,8 @@ Multivio.views = SC.Page.design(
       
     childViews: 'navigation bottomButtons leftButtons innerMainContent'.w(),
     
-    navigation: Multivio.navigationView.design({
-      layout: { height: 60, width: 400, centerX: 0, top: 55},
+    navigation: Multivio.NavigationView.design({
+      layout: { height: 80, width: 200, centerX: 0, top: 40},
       classNames: 'mvo-front-view',
       
       childViews: 'transparentView '.w(),
@@ -47,8 +47,8 @@ Multivio.views = SC.Page.design(
         childViews: 'currentView'.w(), 
       
         currentView: SC.LabelView.design({
-          layout: {width: 350, height: 20, centerX: 0, centerY: 0},
-          classNames: 'mvo-metadata-label',
+          layout: {width: 160, height: 20, centerX: 0, centerY: 0},
+          //classNames: 'mvo-metadata-label',
           textAlign: 'center',
           escapeHTML: NO,
           value: null
@@ -355,7 +355,7 @@ Multivio.views = SC.Page.design(
         highlightpane: Multivio.HighlightContentView.design({
           layout: { top: 0, left: 0, right: 0, minWidth: 1 }
         }).classNames('highlight-pane'.w())
-      }).classNames('image-and-highlight-container'.w()),
+      }).classNames('image-and-highlight-container'.w())
     }),
     
     render: function (context, firstTime) {

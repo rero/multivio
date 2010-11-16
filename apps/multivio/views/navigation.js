@@ -15,8 +15,8 @@
   @extends View
   @since 0.3.0
 */
-Multivio.navigationView = SC.View.extend( 
-/** @scope Multivio.navigationView.prototype */ {
+Multivio.NavigationView = SC.View.extend( 
+/** @scope Multivio.NavigationView.prototype */ {
   
   /**
     Override render method to create a timer that hides the view after 3 sec.
