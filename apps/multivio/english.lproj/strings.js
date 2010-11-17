@@ -34,6 +34,9 @@ SC.stringsFor('English', {
   '_Change theme to white': 'Change theme to white',
   '_Change theme to dark gray': 'Change theme to dark gray',
   '_Change theme to blue': 'Change theme to blue',
+  '_Click to go to Multivio website.': 'Click to go to Multivio website.',
+  '_Current client version:': 'Current client version:',
+  '_Current server version:': 'Current server version:',
 
   // Strings for metadata
   '_creator': 'author',

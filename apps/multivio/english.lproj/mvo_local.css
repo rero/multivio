@@ -161,7 +161,7 @@ body.mvo-white-theme     {
    background-image: sc_static("images/icons/16x16/search_dark_16x16.png");
    width: 16px;
    height: 16px;
-   margin: 4px auto;
+   margin: 2px auto;
 }
 /* Show toolbar */
 .mvo-dark-gray-theme .sc-button-view .img.show_toolbar_new,
@@ -178,7 +178,16 @@ body.mvo-white-theme     {
    background-image: sc_static("images/icons/16x16/cancel_dark_16x16.png");
    width: 16px;
    height: 16px;
-   margin: 4px auto;
+   margin: 2px auto;
+}
+/* Recycle */
+.mvo-dark-gray-theme .sc-button-view .img.recycle_new_16,
+.mvo-blue-theme      .sc-button-view .img.recycle_new_16,
+.mvo-white-theme     .sc-button-view .img.recycle_new_16 {
+   background-image: sc_static("images/icons/16x16/recycle_dark_16x16.png");
+   width: 16px;
+   height: 16px;
+   margin: 2px auto;
 }
 /* Information */
 .mvo-dark-gray-theme .sc-button-view .img.info_new,
@@ -258,7 +267,7 @@ body.mvo-white-theme     {
    background-image: sc_static("images/icons/16x16/up_dark_16x16.png");
    width: 16px;
    height: 16px;
-   margin: 4px auto;
+   margin: 2px auto;
 }
 /* Down */
 .mvo-dark-gray-theme .sc-button-view .img.down_new_16,
@@ -267,7 +276,7 @@ body.mvo-white-theme     {
    background-image: sc_static("images/icons/16x16/down_dark_16x16.png");
    width: 16px;
    height: 16px;
-   margin: 4px auto;
+   margin: 2px auto;
 }
 
 /* Zoom out */

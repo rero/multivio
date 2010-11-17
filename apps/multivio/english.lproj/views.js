@@ -14,6 +14,8 @@ sc_require('views/file_button');
 sc_require('views/metadata');
 sc_require('views/search');
 sc_require('views/navigation');
+sc_require('mixins/interface');
+
 
 /**
 @class
@@ -25,7 +27,7 @@ Multivio.views = SC.Page.design(
   /**
     Main content view
   */
-  mainContentView: SC.View.design({
+  mainContentView: SC.View.design(Multivio.innerGradient, {
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     acceptsFirstResponder: YES,
     isKeyResponder: YES,
@@ -35,7 +37,7 @@ Multivio.views = SC.Page.design(
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     
     navigation: Multivio.NavigationView.design({
-      layout: { width: 260, height: 48, centerX: 0, top: 16},
+      layout: { width: 160, height: 48, centerX: 24, top: 16},
       classNames: 'mvo-front-view',
       
       childViews: 'transparentView '.w(),
@@ -55,15 +57,15 @@ Multivio.views = SC.Page.design(
         })
       })
     }),
-      
+
     bottomButtons: Multivio.FileButtonView.design({
-      layout: {bottom: 0, centerX: 24, width: 728, height: 80},
+      layout: {bottom: 20, centerX: 24, width: 728, height: 48},
       classNames: 'mvo-front-view',
       
       childViews: 'backgroundView '.w(),
       
       backgroundView: SC.View.design({
-        layout: { left: 16, right: 16, top: 16, bottom: 16 },
+        layout: { left: 0, right: 0, top: 0, bottom: 0 },
         classNames: 'mvo-front-view-transparent',
       
         childViews: 'navigationView zoomView rotateView'.w(),
@@ -362,18 +364,7 @@ Multivio.views = SC.Page.design(
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })
-    }),
-    
-    render: function (context, firstTime) {
-      if (context.needsContent) {
-        this.renderChildViews(context, firstTime);
-        context.push(
-          "<div class='top-edge'></div>",
-          "<div class='right-edge'></div>",
-          "<div class='bottom-edge'></div>",
-          "<div class='left-edge'></div>");
-      }
-    }
+    })
   }),
   
   // Thumbnails
@@ -483,26 +474,6 @@ Multivio.views = SC.Page.design(
     })
   }),
   
- /* navigationView: SC.View.design({
-    layout: { height: 60, width: 400, centerX: 0, top: 55},
-    classNames: 'mvo-front-view-transparent',*/
-  
-  /*SC.PalettePane.design({
-    layout: { height: 60, width: 400, centerX: 0, top: 55},
-    classNames: 'mvo-front-view-transparent',
-    contentView: SC.View.design({*/
-      /*childViews: [
-        SC.LabelView.design({
-          layout: {width: 350, height: 20, centerX: 0, centerY: 0},
-          classNames: 'mvo-metadata-label',
-          textAlign: 'center',
-          escapeHTML: NO,
-          value: null
-        })
-      ]
-   // })
-  }),*/
-  
   /**
     Logo of e-lib & rero
   */
@@ -552,8 +523,8 @@ Multivio.views = SC.Page.design(
       SC.ImageView.design({
         layout: { top: 0, left: 0, height: 44, width: 140 },
         classNames: 'multivio_logo',
-        toolTip: 'Go to Multivio website. Client release: ' + 
-            Multivio.VERSION
+        toolTip: '_Click to go to Multivio website.'.loc() + ' ' +
+            '_Current client version:'.loc() + ' ' + Multivio.VERSION
       })
     ],
     render: function (context, firstTime) {
@@ -561,8 +532,8 @@ Multivio.views = SC.Page.design(
       // add the version of the server in the tooltip
       var childView = this.get('childViews')[0];
       var toolTip = childView.get('toolTip');
-      var sererVersion = Multivio.configurator.get('serverVersion');
-      toolTip += ' & Server release: ' + sererVersion;
+      var serverVersion = Multivio.configurator.get('serverVersion');
+      toolTip += ' ' + '_Current server version:'.loc() + ' ' + serverVersion;
       childView.set('toolTip', toolTip);
       this.renderChildViews(context, firstTime);
       context.push("</a>");

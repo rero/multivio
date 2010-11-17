@@ -186,6 +186,7 @@ label.document-label-view {
   background-color: #eaeaea ;
   */
   background-color: #fff;
+  border: 1px solid #bbb;
 }
 
 .sc-alert .info p.description {
@@ -386,6 +387,7 @@ label.document-label-view {
 
 
 
+/* Inner edges */
 
 .top-edge {
   background: static_url('images/mvo-sprite-x.png') repeat-x 0px -10px;
@@ -427,6 +429,82 @@ label.document-label-view {
   z-index: 2;
 }
 
+/* Outer edges */
+
+.outer-top-left-edge {
+  background: static_url('images/mvo-round-transparency-333-90.png') 0px 0px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 4px;
+  height: 4px;
+  z-index: 2;
+}
+.outer-top-edge {
+  background: static_url('images/transparency_333_90.png');
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 0px;
+  height: 4px;
+  z-index: 2;
+}
+.outer-top-right-edge {
+  background: static_url('images/mvo-round-transparency-333-90.png') -4px 0px;
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  top: 0px;
+  right: 0px;
+  z-index: 2;
+}
+.outer-right-edge {
+  background: static_url('images/transparency_333_90.png');
+  position: absolute;
+  width: 4px;
+  top: 4px;
+  bottom: 4px;
+  right: 0px;
+  z-index: 2;
+}
+.outer-bottom-right-edge {
+  background: static_url('images/mvo-round-transparency-333-90.png') -4px -4px;
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  bottom: 0px;
+  right: 0px;
+  z-index: 2;
+}
+.outer-bottom-edge {
+  background: static_url('images/transparency_333_90.png');
+  position: absolute;
+  bottom: 0px;
+  right: 4px;
+  left: 4px;
+  height: 4px;
+  z-index: 2;
+}
+.outer-bottom-left-edge {
+  background: static_url('images/mvo-round-transparency-333-90.png') 0px -4px;
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  bottom: 0px;
+  left: 0px;
+  z-index: 2;
+}
+.outer-left-edge {
+  background: static_url('images/transparency_333_90.png');
+  position: absolute;
+  width: 4px;
+  top: 4px;
+  bottom: 4px;
+  left: 0px;
+  z-index: 2;
+}
+
+
 .mvo-front-view {
   z-index: 1;
   /*opacity : 1.0;
@@ -437,7 +515,7 @@ label.document-label-view {
 
 .mvo-front-view-transparent {
   z-index: -10000;
-  background-image: sc_static("images/transparency_333_90.png");
+  background: sc_static("images/transparency_333_90.png") repeat;
   /*opacity : 1.0;
   moz-opacity : 1.0;
   ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
