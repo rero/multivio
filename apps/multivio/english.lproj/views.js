@@ -407,7 +407,7 @@ Multivio.views = SC.Page.design(
     
       childViews: 'innerSearch'.w(),
       innerSearch: Multivio.SearchView.design({
-        layout: { top: 5, bottom: 5, left: 5, right: 5 },
+        layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE
       })
     })
@@ -461,7 +461,7 @@ Multivio.views = SC.Page.design(
           // update row position
           didCreateLayer: function () {
             var childs = this.get('childViews');
-            var newTopPosition = 0;
+            var newTopPosition = 13;
             for (var i = 0; i < childs.length; i++) {
               childs[i].set('layout', {'top': newTopPosition});
               newTopPosition += childs[i].get('customHeight');
@@ -481,7 +481,7 @@ Multivio.views = SC.Page.design(
     
       childViews: 'innerHelp'.w(),
       innerHelp: SC.ScrollView.design({
-        layout: { top: 5, bottom: 5, left: 5, right: 5 },
+        layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
 				hasHorizontalScroller: NO,
 				contentView: SC.StaticContentView.design({
