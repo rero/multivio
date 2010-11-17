@@ -506,7 +506,7 @@ label.document-label-view {
 
 
 .mvo-front-view {
-  z-index: 1;
+  z-index: 10000;
   /*opacity : 1.0;
   moz-opacity : 1.0;
   ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
