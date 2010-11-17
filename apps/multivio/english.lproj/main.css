@@ -616,7 +616,7 @@ label.document-label-view {
 
 .sc-theme .help-panel{
  font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
- padding: 5px 5px 5px 5px;
+ padding: 13px 5px 5px 13px;
 }
 .help-panel h1{
 	margin-bottom: 5px;
@@ -634,5 +634,3 @@ label.document-label-view {
 	height: 16px;
 }
 
-.sc-theme .help-panel br{
-}

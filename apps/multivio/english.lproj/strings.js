@@ -95,37 +95,34 @@ SC.stringsFor('English', {
   '_searchInProgress': 'Searching...',
   '_resultSelection': 'Result %@/%@',
   '_helpTitle': "Aide",
-	'_helpIntro': "Multivio permet d'accéder au contenu numérique, que ce soit\
-		sous forme de texte (comme les livres, articles et revues) ou d'autres\
-		types de médias, y compris audio et vidéo. Vous pouvez en savoir plus sur\
-		Multivio en consultant la page suivante : <a href='http://www.multivio.org'>\
-		www.multivio.org</a> Pour de plus amples renseignements, n'hésitez pas\
-		à vous adresser à : <a href='mailto:info@multivio.org'>info@multivio.org</a>.<br/>\
-		Une aide contextuelle vous explique la portée de chaque bouton lorsque vous\
-		les survolez.  Dans l'interface, deux ensemble d'icônes vous permettent de\
-		naviguer et de vous repérer dans le document : une barre latérale et une\
-		barre de navigation.",
-	'_helpVerticalBar': "La navigation latérale",
-	'_helpToc': "Affiche le plan du document et permet de naviguer.",
-	'_helpThum': "Affiche les vignettes des pages du document.",
-	'_helpSearch': "Lance une recherche dans le document courant. Les résultats\
-		apparaissent de façon contextualisés et les termes de la recherche sont\
-		surlignés dans le texte.",
-	'_helpMetadata': "Affiche les métadonnées du document courant : auteur, titre, etc.",
-	'_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
-	'_helpNavigationBar': "La barre de navigation",
-	'_helpNavigationBarDesc': "Cette barre apparaît lorsque vous glissez la\
-		souris en bas d'une page ou d'un document.",
-	'_helpRotation': "Pivote de 90 degrés la page courante dans le sens souhaité.",
-	'_helpNavigation': "Navigation dans le document : page suivante, page\
+	'_helpIntro': "Multivio permet de visualiser des contenus numériques, que ce soit\
+		sous forme de texte (comme les livres, des articles) ou des images comme\
+		des photos, des gravures. Vous pouvez en savoir plus sur\
+		Multivio en consultant la page: <a href='http://www.multivio.org'>\
+		www.multivio.org</a> ou par email à : <a href='mailto:info@multivio.org'>\
+		info@multivio.org</a>.<br/>\
+		Une aide contextuelle vous décrit l'utilité de chaque bouton lorsque vous\
+		les survolez. Dans l'interface, deux ensemble d'icônes vous permettent de\
+		naviguer dans le document : une barre d'outils latérale et une barre de navigation.",
+	'_helpVerticalBar': "Barre d'outils latérale",
+	'_helpToc': "affiche le plan du document et permet la navigation.",
+	'_helpThum': "affiche les imagettes des pages du document.",
+	'_helpSearch': "lance une recherche dans le document courant. Les résultats\
+		apparaissent de façon contextualisés et sont surlignés dans le texte.",
+	'_helpMetadata': "affiche les métadonnées du document courant : auteur, titre, etc.",
+	'_helpDisplayBar': "affiche la barre de navigation de façon permanente.",
+	'_helpNavigationBar': "Barre de navigation",
+	'_helpNavigationBarDesc': "Cette barre apparaît lorsque vous déplacez la\
+		souris en bas de la vue centrale.",
+	'_helpRotation': "pivote de 90 degrés la page courante dans le sens indiqué.",
+	'_helpNavigation': "permet la navigation dans le document : page suivante, page\
 		précédente, début et fin du document. Vous pouvez aussi spécifier le numéro\
 		de la page que vous souhaitez afficher en le mentionnant dans la partie\
 		centrale.",
-	'_helpZoom': "Agrandit ou diminue la taille du contenu du document (fonction de zoom).",
-	'_helpSize': "Ajustement de la taille du document: adapte la taille du\
-		document à la fenêtre active de votre navigateur, affiche le document dans\
-		la totalité de la largeur de votre fenêtre active du navigateur, affiche le\
-		document dans sa taille d'origine.",
+	'_helpZoom': "agrandit ou diminue la taille du contenu du document (zoom).",
+	'_helpSize': "ajuste de la taille du document: adapte la taille du document\
+		à la fenêtre de votre navigateur, affiche le document dans la totalité de\
+		la largeur de votre fenêtre ou affiche la page dans sa taille d'origine.",
 	'_keyShortcutsTitle': "Raccourcis",
 	'_keyShortcuts': "<table>\
 		  <thead>\
@@ -136,24 +133,24 @@ SC.stringsFor('English', {
 		  </thead>\
 		  <tbody>\
 		    <tr>\
-		      <td>+ et -</th>\
-		      <td>Zoom ou dé-zoom sur la page</th>\
+		      <td>+/-</th>\
+		      <td>agrandi/réduit la taille de la page courante</th>\
 		    </tr>\
 		    <tr>\
-		      <td>Défiler</td>\
-		      <td>La molette de la souris permet de passer d'une page à une autre</td>\
+		      <td>molette de la souris</td>\
+		      <td>fait défiler la page courante</td>\
 		    </tr>\
 		    <tr>\
-		      <td>Flèches haut/bas</td>\
-		      <td>Réalise la même action que le défilement</td>\
+		      <td>flèches haut/bas</td>\
+		      <td>réalise la même action que la molette de la souris</td>\
 		    </tr>\
 		    <tr>\
 		      <td>Page Préc./Suiv.</td>\
-		      <td>Fait défiler d'une page-écran vers le haut et vers le bas</td>\
+		      <td>fait défiler la page d'un écran vers le haut/vers le bas</td>\
 		    </tr>\
 		    <tr>\
 		      <td>Marj+Page Préc./Suiv.</td>\
-		      <td>Permet d'aller au début de la page suivante ou précédente</td>\
+		      <td>permet d'aller au début de la page suivante/précédente</td>\
 		    </tr>\
 		  <tbody/>\
 		</table>",
