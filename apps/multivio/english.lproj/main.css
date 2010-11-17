@@ -613,3 +613,26 @@ label.document-label-view {
   /*border: 3px groove blue; */
   outline: 2px solid blue;
 }
+
+.sc-theme .help-panel{
+ font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+ padding: 5px 5px 5px 5px;
+}
+.help-panel h1{
+	margin-bottom: 5px;
+}
+
+.sc-theme .help-panel h4{
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.sc-theme .help-panel img{
+	margin-right: 5px;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+}
+
+.sc-theme .help-panel br{
+}

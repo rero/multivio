@@ -171,6 +171,39 @@ Multivio.paletteController = SC.ObjectController.create(
     }
   },
   
+	/**
+    Help button has been pressed show the helpPalette or hide it
+    
+    @param {SC.Button} button the button pressed
+  */
+  showHelp: function (button) {
+    var helpView = Multivio.getPath('views.helpPalette');
+    // no activeButton => show this palette
+    if (SC.none(this.activeButton)) {
+      button.set('isActive', YES);
+      this.activeButton = button;
+      // retreive the view and set the content
+			/*
+      var textField = helpView.get('contentView').get('childViews')[0];
+      textField.set('content', Multivio.metadataController.getTranslatedMetadata());
+			*/
+      helpView.set('layout', this.paletteLayout(YES));
+      helpView.append();
+    }
+    else {
+      // if activeButton = button close the palette
+      // else replace the palette by an other one
+      if (this.activeButton !== button) {
+        this.hidePalette(this.activeButton.name);
+        this.showOtherPalette(button);
+      }
+      else {
+        this.activeButton = null;
+        helpView.remove();
+      }
+    }
+  },
+  
   /**
     Toolbar button has been pressed show the toolbar or hide it
 
@@ -206,6 +239,9 @@ Multivio.paletteController = SC.ObjectController.create(
     case 'search':
       this.showSearch(button);
       break;
+    case 'help':
+      this.showHelp(button);
+      break;
       
     default:
       Multivio.logger.info('unable to show the selected palette');
@@ -235,6 +271,9 @@ Multivio.paletteController = SC.ObjectController.create(
         break;
       case 'search':
         Multivio.getPath('views.searchPalette').remove();
+        break;
+      case 'help':
+        Multivio.getPath('views.helpPalette').remove();
         break;
       
       default:
