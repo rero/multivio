@@ -596,7 +596,7 @@ Multivio.views = SC.Page.design(
 
       childViews: [
         SC.LabelView.design({
-          layout: { top: 5, height: 23, left: 0, right: 120 },
+          layout: { top: 5, height: 20, left: 0, right: 120 },
           isTextSelectable: YES,
           tagName: 'span',
           classNames: 'metadata_primary',

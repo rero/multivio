@@ -112,20 +112,8 @@ Multivio.SearchView = SC.View.extend(
     }
   }.observes('Multivio.searchController.selection'),
   
-  previousResultButtonView: SC.ButtonView.design({
-    layout: { top: 70, height: 20, width: 20, right: 0 },
-    needsEllipsis: NO,
-    toolTip : '_goToPrevious'.loc(),
-    icon: 'up_new_16',
-    theme: 'mvo-button',
-    renderStyle: "renderImage",
-    titleMinWidth : 0,
-    target: 'Multivio.searchController', 
-    action: 'goToPreviousResult'
-  }),
-  
   nextResultButtonView: SC.ButtonView.design({
-    layout: { top: 70, height: 20, width: 20, right: 24 },
+    layout: { top: 70, height: 20, width: 20, right: 0 },
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
     icon: 'down_new_16',
@@ -134,6 +122,18 @@ Multivio.SearchView = SC.View.extend(
     titleMinWidth : 0,
     target: 'Multivio.searchController', 
     action: 'goToNextResult'
+  }),
+
+  previousResultButtonView: SC.ButtonView.design({
+    layout: { top: 70, height: 20, width: 20, right: 24 },
+    needsEllipsis: NO,
+    toolTip : '_goToPrevious'.loc(),
+    icon: 'up_new_16',
+    theme: 'mvo-button',
+    renderStyle: "renderImage",
+    titleMinWidth : 0,
+    target: 'Multivio.searchController', 
+    action: 'goToPreviousResult'
   }),
   
   searchScopeView : SC.SelectButtonView.design({
