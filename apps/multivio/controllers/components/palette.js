@@ -285,4 +285,5 @@ Multivio.paletteController = SC.ObjectController.create(
       this.activeButton = null;
     }
   }
+
 });

@@ -45,15 +45,18 @@ Multivio.TreeView = SC.ScrollView.extend(
           break;
         }
       }
+      var leftScroll = this.get('horizontalScrollOffset');
       if (needToScroll) {
         var arrayOfTree = Multivio.treeController.get('arrangedObjects');
         var selectionIndex = arrayOfTree.indexOf(treeS);
         // get the scroll offset before the move and set it after
-        var leftScroll = this.get('horizontalScrollOffset');
         this.get('contentView').scrollToContentIndex(selectionIndex);
-        this.set('horizontalScrollOffset', leftScroll);
         Multivio.logger.debug('update tree scroll'); 
       }
+      if (leftScroll === this.get('maximumHorizontalScrollOffset')) {
+        leftScroll = 0;
+      }
+      this.set('horizontalScrollOffset', leftScroll);
     }
   }.observes('treeSelection')
 });
