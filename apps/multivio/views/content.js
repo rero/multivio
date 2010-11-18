@@ -487,12 +487,14 @@ Multivio.HighlightContentView = SC.View.extend(
       sc_super();
     }
     
-    // update highlights only if the search results belong to the current
-    // file. TODO store this info in the zones themselves
     var current_search_file = Multivio.searchController.get('currentSearchFile');
     var current_master_file = Multivio.masterController.get('currentFile');
+    var ref_url             = Multivio.searchController.get('url');
     
-    if (current_search_file !== current_master_file) return;
+    // update highlights only if the search results belong to the current
+    // file, or 'All files' search scope is selected.
+    if (current_search_file !== current_master_file && 
+        current_search_file !== ref_url) return;
       
     this.removeAllChildren();
     
@@ -531,13 +533,16 @@ Multivio.HighlightContentView = SC.View.extend(
     @private
     @param {SC.Object} zone the highlight zone
     @param {String} classNames_ the class names for the styles of the highlight
-    @param {Number} index the page number
+    @param {Number} index index number of the highlight zone
   */
   _drawHighlightZone: function (zone, classNames_, index) {
     
     //Multivio.logger.debug('_drawHighlightZone, drawing position (%@x%@) at [%@,%@] with classnames: [%@]'.fmt(zone.current.width, zone.current.height, zone.current.top, zone.current.left, classNames_));
     
     //Multivio.logger.debug('## draw zone. current page: %@, zone page: %@'.fmt(this.get('currentPage'), zone.index));
+    
+    // check if the zone belongs to the current file
+    if (Multivio.masterController.get('currentFile') !== zone.url) return;
     
     // check if the zone belongs to the current page.
     if (this.get('currentPage') !== zone.page_number) return;
@@ -776,7 +781,7 @@ The next asked Url if user choose to proceed loading a bigg image
     this.isNewImage = NO;
     
     // flag highlight pane for a redraw
-    content.get('highlightpane').set('layerNeedsUpdate', YES);
+    content.get('highlightpane').set('highlightNeedsUpdate', YES);
     
     Multivio.logger.info('ContentView#_adjustSize');
   },

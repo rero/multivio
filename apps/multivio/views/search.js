@@ -62,8 +62,7 @@ Multivio.SearchView = SC.View.extend(
     action: 'doClear'
   }),
   
-  resultsScrollView: SC.ScrollView.design({
-
+  resultsScrollView: SC.View.design({
     layout: { top: 100, left: 0, right: 0, bottom: 0 },
 
     borderStyle: SC.BORDER_NONE,
@@ -101,7 +100,7 @@ Multivio.SearchView = SC.View.extend(
 
     if (!SC.none(selection)) {
       // retrieve the list of the results visible in the view
-      var listView = this.get('resultsScrollView')
+      var listView = this.get('resultsScrollView').get('childViews')[0]
                           .get('contentView').get('childViews');
       var needToScroll = YES;
       // don't verify the first and the last child to force to scroll
@@ -116,7 +115,7 @@ Multivio.SearchView = SC.View.extend(
       // if needed, scroll to the new position
       if (needToScroll) {
         var selectionIndex = Multivio.searchController.indexOf(selection);
-        this.get('resultsScrollView').get('contentView')
+        this.get('resultsScrollView').get('childViews')[0].get('contentView')
                                     .scrollToContentIndex(selectionIndex);
       }
     }
