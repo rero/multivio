@@ -19,6 +19,7 @@ SC.stringsFor('French', {
   '_Thumbnails': 'Afficher ou masquer les miniatures',
   '_Tree': 'Afficher ou masquer la structure du document',
   '_Search': 'Rechercher dans le document',
+  '_Help': 'Aide',
   '_ShowToolbar': 'Bloquer ou débloquer l\'affichage permanente de la barre d\'outils',
   '_RotateLeft': 'Pivoter à gauche',
   '_RotateRight': 'Pivoter à droite',
@@ -109,35 +110,38 @@ SC.stringsFor('French', {
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
   '_resultSelection': 'Result %@/%@',
+
+  // Strings for the help section
   '_helpTitle': "Aide",
-  '_helpIntro': "Multivio permet de visualiser des contenus numériques, que ce soit\
-    sous forme de texte (comme les livres, des articles) ou des images comme\
-    des photos, des gravures. Vous pouvez en savoir plus sur\
-    Multivio en consultant la page: <a href='http://www.multivio.org'>\
-    www.multivio.org</a> ou par email à : <a href='mailto:info@multivio.org'>\
-    info@multivio.org</a>.<br/>\
-    Une aide contextuelle vous décrit l'utilité de chaque bouton lorsque vous\
-    les survolez. Dans l'interface, deux ensemble d'icônes vous permettent de\
-    naviguer dans le document : une barre d'outils latérale et une barre de navigation.",
+  '_helpIntro': "Ce prototype Multivio permet de visualiser des contenus\
+      numériques, qu'il s'agisse de documents (par ex. livres, articles) ou\
+      d'images (par ex. photos, gravures). Pour en savoir plus sur Multivio,\
+      consulter le site <a href='http://www.multivio.org'>www.multivio.org</a>\
+      ou envoyer un courriel à\
+      <a href='mailto:info@multivio.org'>info@multivio.org</a>.<br/>\
+      Une aide contextuelle décrit l'utilité de chaque bouton lors du survol de\
+      celui-ci par la souris. Dans l'interface, deux ensembles d'icônes\
+      permettent de naviguer dans le document : une barre d'outils latérale et\
+      une barre de navigation.",
   '_helpVerticalBar': "Barre d'outils latérale",
-  '_helpToc': "affiche le plan du document et permet la navigation.",
-  '_helpThum': "affiche les imagettes des pages du document.",
-  '_helpSearch': "lance une recherche dans le document courant. Les résultats\
-    apparaissent de façon contextualisés et sont surlignés dans le texte.",
-  '_helpMetadata': "affiche les métadonnées du document courant : auteur, titre, etc.",
-  '_helpDisplayBar': "affiche la barre de navigation de façon permanente.",
+  '_helpToc': "Affiche le plan du document et permet la navigation.",
+  '_helpThum': "Affiche les imagettes des pages du document.",
+  '_helpSearch': "Lance une recherche dans le document. Les résultats\
+      apparaissent de façon contextualisée et sont surlignés dans le texte.",
+  '_helpMetadata': "Affiche les métadonnées du document: auteur, titre, etc.",
+  '_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
   '_helpNavigationBar': "Barre de navigation",
-  '_helpNavigationBarDesc': "Cette barre apparaît lorsque vous déplacez la\
-    souris en bas de la vue centrale.",
-  '_helpRotation': "pivote de 90 degrés la page courante dans le sens indiqué.",
-  '_helpNavigation': "permet la navigation dans le document : page suivante, page\
-    précédente, début et fin du document. Vous pouvez aussi spécifier le numéro\
-    de la page que vous souhaitez afficher en le mentionnant dans la partie\
-    centrale.",
-  '_helpZoom': "agrandit ou diminue la taille du contenu du document (zoom).",
-  '_helpSize': "ajuste de la taille du document: adapte la taille du document\
-    à la fenêtre de votre navigateur, affiche le document dans la totalité de\
-    la largeur de votre fenêtre ou affiche la page dans sa taille d'origine.",
+  '_helpNavigationBarDesc': "Cette barre apparaît lorsque la souris se\
+      déplace sur le bas du document.",
+  '_helpRotation': "Pivote de 90 degrés la page courante dans le sens indiqué.",
+  '_helpNavigation': "permet la navigation dans le document : page suivante,\
+      page précédente, début et fin du document. Il est possible de saisir dans\
+      la partie centrale le numéro de la page à afficher.",
+  '_helpZoom': "Agrandit ou diminue la taille du contenu du document (zoom).",
+  '_helpFullSize': "Adapte la taille du document à la fenêtre du navigateur.",
+  '_helpFullWidth': "Affiche le document dans la totalité de la largeur de la\
+      fenêtre.",
+  '_helpNativeSize': "Affiche la page dans sa taille d'origine.",
   '_keyShortcutsTitle': "Raccourcis",
   '_keyShortcuts': "<table>\
       <thead>\
@@ -149,25 +153,25 @@ SC.stringsFor('French', {
       <tbody>\
         <tr>\
           <td>+/-</th>\
-          <td>agrandi/réduit la taille de la page courante</th>\
+          <td>Agrandit/réduit la taille de la page courante.</th>\
         </tr>\
         <tr>\
-          <td>molette de la souris</td>\
-          <td>fait défiler la page courante</td>\
+          <td>Molette de la souris</td>\
+          <td>Fait défiler la page courante.</td>\
         </tr>\
         <tr>\
-          <td>flèches haut/bas</td>\
-          <td>réalise la même action que la molette de la souris</td>\
+          <td>Flèches haut/bas</td>\
+          <td>Réalise la même action que la molette de la souris.</td>\
         </tr>\
         <tr>\
           <td>Page Préc./Suiv.</td>\
-          <td>fait défiler la page d'un écran vers le haut/vers le bas</td>\
+          <td>Fait défiler la page d'un écran vers le haut/vers le bas.</td>\
         </tr>\
         <tr>\
-          <td>Marj+Page Préc./Suiv.</td>\
-          <td>permet d'aller au début de la page suivante/précédente</td>\
+          <td>Maj+Page Préc./Suiv.</td>\
+          <td>Permet d'aller au début de la page précédente/suivante.</td>\
         </tr>\
       <tbody/>\
-    </table>",
+    </table>"
 
 });

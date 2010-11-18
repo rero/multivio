@@ -19,6 +19,7 @@ SC.stringsFor('English', {
   '_Thumbnails': 'Show or hide page thumbnails',
   '_Tree': 'Show or hide the document structure',
   '_Search': 'Search in the document',
+  '_Help': 'Help',
   '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
@@ -94,63 +95,67 @@ SC.stringsFor('English', {
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
   '_resultSelection': 'Result %@/%@',
-  '_helpTitle': "Aide",
-  '_helpIntro': "Multivio permet de visualiser des contenus numériques, que ce soit\
-    sous forme de texte (comme les livres, des articles) ou des images comme\
-    des photos, des gravures. Vous pouvez en savoir plus sur\
-    Multivio en consultant la page: <a href='http://www.multivio.org'>\
-    www.multivio.org</a> ou par email à : <a href='mailto:info@multivio.org'>\
-    info@multivio.org</a>.<br/>\
-    Une aide contextuelle vous décrit l'utilité de chaque bouton lorsque vous\
-    les survolez. Dans l'interface, deux ensemble d'icônes vous permettent de\
-    naviguer dans le document : une barre d'outils latérale et une barre de navigation.",
-  '_helpVerticalBar': "Barre d'outils latérale",
-  '_helpToc': "affiche le plan du document et permet la navigation.",
-  '_helpThum': "affiche les imagettes des pages du document.",
-  '_helpSearch': "lance une recherche dans le document courant. Les résultats\
-    apparaissent de façon contextualisés et sont surlignés dans le texte.",
-  '_helpMetadata': "affiche les métadonnées du document courant : auteur, titre, etc.",
-  '_helpDisplayBar': "affiche la barre de navigation de façon permanente.",
-  '_helpNavigationBar': "Barre de navigation",
-  '_helpNavigationBarDesc': "Cette barre apparaît lorsque vous déplacez la\
-    souris en bas de la vue centrale.",
-  '_helpRotation': "pivote de 90 degrés la page courante dans le sens indiqué.",
-  '_helpNavigation': "permet la navigation dans le document : page suivante, page\
-    précédente, début et fin du document. Vous pouvez aussi spécifier le numéro\
-    de la page que vous souhaitez afficher en le mentionnant dans la partie\
-    centrale.",
-  '_helpZoom': "agrandit ou diminue la taille du contenu du document (zoom).",
-  '_helpSize': "ajuste de la taille du document: adapte la taille du document\
-    à la fenêtre de votre navigateur, affiche le document dans la totalité de\
-    la largeur de votre fenêtre ou affiche la page dans sa taille d'origine.",
-  '_keyShortcutsTitle': "Raccourcis",
+
+  // Strings for the help section
+  '_helpTitle': "Help",
+  '_helpIntro': "This prototype of Multivio diplays digital documents such as\
+      books, articles and images. In order to know more about Multivio go to\
+      the website <a href='http://www.multivio.org'>www.multivio.org</a>\
+      or contact the team by email at\
+      <a href='mailto:info@multivio.org'>info@multivio.org</a>.<br/>\
+      A tooltip associated with each button provides a description of its\
+      function. It can be accessed by passing the mouse pointer over the\
+      corresponding button. The application contains two different groups of\
+      buttons: one in the vertical sidebar on the left and the other in the\
+      navigation toolbar at the bottom.",
+  '_helpVerticalBar': "Side toolbar",
+  '_helpToc': "Displays the document structure and provides navigation capabilities.",
+  '_helpThum': "Displays page thumbnails of the document.",
+  '_helpSearch': "Allows searching inside the document. The results are shown\
+      in their context and highlighted in the page.",
+  '_helpMetadata': "Displays document metadata: author, title, etc.",
+  '_helpDisplayBar': "Makes the navigation toolbar remain visible.",
+  '_helpNavigationBar': "Navigation toolbar",
+  '_helpNavigationBarDesc': "This toolbar is shown when the mouse pointer\
+      goes over the lower part of the displayed document.",
+  '_helpRotation': "Rotates the current page by 90 degrees anticlockwise\
+      or clockwise.",
+  '_helpNavigation': "Allows to navigate along the document: next and previous\
+      page, beginning and end of document. It is also possible to access a\
+      given page number by using the box located in the central part of the\
+      toolbar.",
+  '_helpZoom': "Zooms the displayed content in or out.",
+  '_helpFullSize': "Adjusts the size of the document to the content window.",
+  '_helpFullWidth': "Displays the document using the full window width.",
+  '_helpNativeSize': "Displays the document using its native resolution.",
+  '_keyShortcutsTitle': "Keyboard shortcuts",
   '_keyShortcuts': "<table>\
       <thead>\
         <tr>\
           <th>ACTION</th>\
-          <th>RACCOURCI</th>\
+          <th>SHORTCUT</th>\
         </tr>\
       </thead>\
       <tbody>\
         <tr>\
           <td>+/-</th>\
-          <td>agrandi/réduit la taille de la page courante</th>\
+          <td>Zooms in and out.</th>\
         </tr>\
         <tr>\
-          <td>molette de la souris</td>\
-          <td>fait défiler la page courante</td>\
+          <td>Mouse wheel</td>\
+          <td>Scrolls through the document.</td>\
         </tr>\
         <tr>\
-          <td>flèches haut/bas</td>\
-          <td>réalise la même action que la molette de la souris</td>\
+          <td>Up/down arrows</td>\
+          <td>Produces the same effect as the mouse wheel.</td>\
         </tr>\
         <tr>\
-          <td>Page Préc./Suiv.</td>\
-          <td>fait défiler la page d'un écran vers le haut/vers le bas</td>\
+          <td>Page Up/Down</td>\
+          <td>Scrolls the displayed content up or down one screen at a time.</td>\
         </tr>\
         <tr>\
-          <td>Marj+Page Préc./Suiv.</td>\
-          <td>permet d'aller au début de la page suivante/précédente</td>\
+          <td>Shift + Page Up/Down</td>\
+          <td>Jumps to the beginning of the previous/next page.</td>\
         </tr>\
       <tbody/>\
     </table>"

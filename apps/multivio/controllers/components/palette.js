@@ -176,7 +176,7 @@ Multivio.paletteController = SC.ObjectController.create(
     
     @param {SC.Button} button the button pressed
   */
-  showHelp: function (button) {
+  showHelpPalette: function (button) {
     var helpView = Multivio.getPath('views.helpPalette');
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
@@ -240,7 +240,8 @@ Multivio.paletteController = SC.ObjectController.create(
       this.showSearch(button);
       break;
     case 'help':
-      this.showHelp(button);
+      /* CAUTION: Do not use the name showHelp() - it's a JavaScript reserved word */
+      this.showHelpPalette(button);
       break;
       
     default:

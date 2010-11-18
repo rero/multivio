@@ -515,7 +515,7 @@ label.document-label-view {
 
 .mvo-front-view-transparent {
   z-index: -10000;
-  background: sc_static("images/transparency_333_90.png") repeat;
+  background: sc_static("images/transparency_ddd_90.png") repeat;
   /*opacity : 1.0;
   moz-opacity : 1.0;
   ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
