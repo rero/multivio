@@ -105,7 +105,8 @@ Multivio.FileButtonView = SC.View.extend(
   */
   hideView: function () {
     this.hideTimer = undefined;
-    this.removeAllChildren();
+    this.set('classNames', ['sc-view', 'mvo-front-view-invisible']);
+    this.updateLayer();
     Multivio.getPath('views.mainContentView.content.innerMainContent').
         becomeFirstResponder();
   },
@@ -114,18 +115,8 @@ Multivio.FileButtonView = SC.View.extend(
     Show this view
   */
   showView: function () {
-    var globalView = Multivio.getPath(
-        'views.mainContentView.bottomButtons.backgroundView');
-    var navView = Multivio.getPath(
-        'views.mainContentView.bottomButtons.backgroundView.navigationView');
-    var zoomView = Multivio.getPath(
-        'views.mainContentView.bottomButtons.backgroundView.zoomView');
-    var rotView = Multivio.getPath(
-        'views.mainContentView.bottomButtons.backgroundView.rotateView');
-    this.appendChild(globalView);
-    this.appendChild(navView);
-    this.appendChild(zoomView);
-    this.appendChild(rotView);
+    this.set('classNames', ['sc-view', 'mvo-front-view']);
+    this.updateLayer();
   }
 
 });
