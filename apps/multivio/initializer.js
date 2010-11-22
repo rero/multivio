@@ -92,6 +92,7 @@ Multivio.initializer = SC.Object.create(
           case 'search':
             // store query, ctrl will execute it upon running initialize
             var s = params[key];
+            Multivio.logger.debug('initializer, store search query: ' + s);
             Multivio.searchController.set('initSearchTerm', s);
             break;
 

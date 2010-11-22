@@ -874,7 +874,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var current_url = (SC.none(url)? this.get('currentSearchFile') : url);
     var query = this.get('lastSearchQuery');
     
-    Multivio.logger.debug("_searchResultsDidChange: res:" + res);
+    Multivio.logger.debug("_searchResultsDidChange: (1) res:" + res);
+    Multivio.logger.debug("_searchResultsDidChange: (2) url:" + current_url);
     
     // use the current url as key for storage    
     var key = current_url;
@@ -882,7 +883,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // TODO test
     var ref_url = this.get('url');
     if (key === ref_url) {
-      Multivio.logger.debug('_searchResultsDidChange: REF URL HERE');
+      Multivio.logger.debug('_searchResultsDidChange: (3) REF URL HERE');
     }
     
     // clear load_url 
@@ -897,10 +898,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     }
     
     // if there are results, store them
-    // TODO case for all results
+    // first, handle case for all results
     if (!SC.none(res) && (!SC.none(res[key]) || key === ref_url)) {
       
-      Multivio.logger.debug('_searchResultsDidChange, stuff to do...');
+      Multivio.logger.debug('_searchResultsDidChange, (4) stuff to do...');
       
       SC.RunLoop.begin();
       // concat all results
@@ -908,9 +909,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         var file_list = this.get('currentFileList');
         var res_all = [];
         
-        Multivio.logger.debug('_searchResultsDidChange, concat all results...');
+        Multivio.logger.debug('_searchResultsDidChange, (5) concat all results...');
+        
+        // TODO test dwy clear all results before adding the whole again
+        this.set('content', []);
         
         for (var i = 0; i < file_list.length; i++) {
+          
+          Multivio.logger.debug('_searchResultsDidChange, (6) url: ' + file_list[i].url);
           
           // skip referer url
           if (file_list[i].url === ref_url) continue;
@@ -923,7 +929,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           
         }
         SC.RunLoop.begin();
-        Multivio.logger.debug('_searchResultsDidChange, setting all results');
+        Multivio.logger.debug('_searchResultsDidChange (7), setting all results');
         res[ref_url] = res_all;
         Multivio.CDM.set('searchResults', res);
         SC.RunLoop.end();
@@ -1175,9 +1181,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // if an input param was defined, run the search query
     var iq = this.get('initSearchTerm');
-    // replace escaped characters (such as %20)
-    iq = unescape(iq);
+    
     if (!SC.none(iq) && iq !== '') {
+      
+      // replace escaped characters (such as %20)
+      iq = unescape(iq);
 
       Multivio.logger.debug('search ctrl init, found input query: ' + iq);
       this.set('currentSearchTerm', iq);
