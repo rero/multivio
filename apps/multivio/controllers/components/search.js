@@ -449,10 +449,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (!SC.none(res) && !SC.none(res[this.get('currentSearchFile')])) {
       // keep selected item
       var selSet = this.get('selection');
-      this.set('selectedIndex', this.indexOf(selSet.firstObject()));
+      // TODO: test: store in masterController instead
+      //this.set('selectedIndex', this.indexOf(selSet.firstObject()));
+      Multivio.masterController.set('currentSearchResultSelectionIndex', 
+                                        this.indexOf(selSet.firstObject()));
 
       Multivio.logger.debug('currently selected object:' +
-                 selSet.firstObject() + ', #' + this.get('selectedIndex'));
+                 selSet.firstObject() + ', #' + 
+                this.indexOf(selSet.firstObject()));
 
       // send a new search request
       // TODO: in the future, compute new coordinates locally,
@@ -598,21 +602,31 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
+    var selIndex = this.indexOf(selectedObject);
+    
+    Multivio.logger.debug("_selectionDidChange: index: " + selIndex);
+    Multivio.logger.debug("_selectionDidChange: object: " + selectedObject);
     
     // store selection for later use. Storage must be done in master
     // controller, because if there is a file change, the search controller
     // will be reinitialised and the selection will be lost
-    Multivio.masterController.set('currentSearchResultSelectionIndex',
-                                            this.indexOf(selectedObject));
+    if (selIndex !== -1) {
+      Multivio.masterController.set('currentSearchResultSelectionIndex', 
+                                                                selIndex);
+    } 
+    
     // TODO test: store current search file in master controler, so
     // that we don't lose this information in case we need to switch
     // files and this controller is reinitialised
     // TODO bind search var to master var ?
-    Multivio.logger.debug("### selectionDidChange: store url in master: " + this.get('currentSearchFile'));
-    Multivio.masterController.set('currentSearchFile', this.get('currentSearchFile'));
+    Multivio.logger.debug("### selectionDidChange: store url in master: " +
+                                                this.get('currentSearchFile'));
+    Multivio.masterController.set('currentSearchFile', 
+                                  this.get('currentSearchFile'));
     
-    
-    if (SC.none(selectedObject)) return NO;
+    if (SC.none(selectedObject)) {
+      return NO;
+    }
     
     Multivio.logger.debug("### selectionDidChange: url: " + selectedObject.url);
     
@@ -628,14 +642,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     Multivio.logger.debug("selectionDidChange: master: " + 
                                               current_master_file);
     
-    // TODO test
     //if (current_master_file !== current_search_file) {
     if (current_master_file !== selectedObject.url) {
       SC.RunLoop.begin();
       Multivio.logger.debug("selectionDidChange: switching to file: " + 
                                                 selectedObject.url);
       Multivio.masterController.set('currentFile', selectedObject.url);
+      
       SC.RunLoop.end();
+
     }
         
     // change master's currentPosition so that we 'jump' to the place 
@@ -652,8 +667,25 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   }.observes('selection'),
 
   /**
+    Set the current selection to the object corresponding to the given index.
+    
+    @param {Number} index the number of the selected search result.
+                    First item of list has index 0.
+    
+  */
+  setSelectionIndex: function (index) {
+    
+    Multivio.logger.debug("setSelectionIndex " + index);
+    
+    var newSel = SC.SelectionSet.create();
+    newSel.addObject(this.objectAt(index));
+    this.set('selection', newSel);
+  },
+
+  /**
     Update the message status for search information.
-  
+    DEPRECATED
+    
     @private
   */
   _updateSearchStatus: function () {
@@ -777,7 +809,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var all_results = Multivio.CDM.get('searchResults');
     var new_results = {};
 
-    // TODO test if referer url is selected, clear all results
+    // if referer url is selected, clear all results
     if (rf === cf) {
       new_results = undefined;
       Multivio.logger.debug("clearing all...");
@@ -857,9 +889,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('_load_url', undefined);
     
     // do nothing if we don't have to display the results
-    // TODO test: take ref_url into account
+    // NOTE: take ref_url into account
     if (!this.get('displayResults')[current_url] && current_url !== ref_url) {
-      Multivio.logger.debug('_searchResultsDidChange, do not display current url: ' + current_url);
+      Multivio.logger.debug('_searchResultsDidChange, do not display url: ' +
+                                                                  current_url);
       return;
     }
     
@@ -869,11 +902,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       
       Multivio.logger.debug('_searchResultsDidChange, stuff to do...');
       
-      //SC.RunLoop.begin();
-      // TODO test concat all
+      SC.RunLoop.begin();
+      // concat all results
       if (key === ref_url) {
         var file_list = this.get('currentFileList');
-        res[ref_url] = [];
+        var res_all = [];
         
         Multivio.logger.debug('_searchResultsDidChange, concat all results...');
         
@@ -882,36 +915,55 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           // skip referer url
           if (file_list[i].url === ref_url) continue;
           
+          // store results separately for each file
           this._setSearchResults(res[file_list[i].url], query);
-          // TODO test may need to update searchResults[ref_url] too...
-          res[ref_url].pushObject(res[file_list[i].url]);
+          
+          // need to update global list in searchResults[ref_url] too
+          res_all.pushObject(res[file_list[i].url]);
           
         }
         SC.RunLoop.begin();
-        Multivio.logger.debug('_searchResultsDidChange, setting all CDM results...');
+        Multivio.logger.debug('_searchResultsDidChange, setting all results');
+        res[ref_url] = res_all;
         Multivio.CDM.set('searchResults', res);
         SC.RunLoop.end();
       } else {
+        // if for a specific file, store results as is
         this._setSearchResults(res[key], query);
       }
       
-      // get the latest stored selection (previous before reinit)
-      var sel = this.get('selectedIndex');
-
+      // get the latest stored selection (previous before reinit) from master
+      //var sel = this.get('selectedIndex');
+      var sel = Multivio.masterController.
+                                    get('currentSearchResultSelectionIndex');
+      
       Multivio.logger.debug("_searchResultsDidChange, selected index: " + sel);
       
       //if there previously was a selection, set it as selected again
       if (!SC.none(sel) && sel !== -1) {
-        SC.RunLoop.begin();
+        //SC.RunLoop.begin();
         var newSel = SC.SelectionSet.create();
-        newSel.addObject(this.objectAt(sel));
-        Multivio.logger.debug("restore previous selection after new results");
-        this.set('selection', newSel);
+        var selectedObject = this.objectAt(sel);
+
+        Multivio.logger.debug(
+          "_searchResultsDidChange restore previous selection after new results: " +
+           selectedObject);
+
+        newSel.addObject(selectedObject);
+        
+        if (!SC.none(selectedObject)) {
+          Multivio.logger.debug('_searchResultsDidChange restore selection, context: ' +
+           selectedObject.context);
+          SC.RunLoop.end();
+          this.set('selection', newSel);
+          SC.RunLoop.end();
+        }
+        
         // update master selection index
-        Multivio.masterController.set('currentSearchResultSelectionIndex', sel);
-        SC.RunLoop.end();
+        //Multivio.masterController.set('currentSearchResultSelectionIndex', sel);
+        //SC.RunLoop.end();
       }
-      //SC.RunLoop.end();
+      SC.RunLoop.end();
       
       // warn user if results truncated because limit was reached
       /*if (res[key].max_reached > 0) {
@@ -961,7 +1013,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
         // params: label, context, top_, left_, width_, height_, 
         //         file_url, page_, current_zoom_factor
-        // TODO test
         this.addSearchResult(query, a.preview,
                              c.y1, c.x1, 
                              Math.abs(c.x1 - c.x2),
@@ -1106,7 +1157,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // set referer url
     this.set('url', Multivio.CDM.getReferer());
 
-    // physical structure not yet initialised
+    // physical structure not yet initialised (do it only once)
     this.set('physicalStructureInitialised', NO);
 
     // get previously selected serach result
@@ -1123,9 +1174,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('content', []);
     
     // restore previous selection if there was one
-    if (mi !== -1) {
+    // TODO test
+    /*if (mi !== -1) {
       this.set('selectedIndex', mi);
-    }
+    }*/
 
     // if the selected search file was the referer, use this with
     // _loadExistingSearchResultsForFile to load results of all files at once.

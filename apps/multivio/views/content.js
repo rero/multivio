@@ -83,9 +83,11 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @binding {SC.Selection}
   */
-  searchResultSelection: null,
-  searchResultSelectionBinding: 
-                    SC.Binding.oneWay('Multivio.searchController.selection'),
+  searchResultSelectionIndex: null,
+  searchResultSelectionIndexBinding: 
+                SC.Binding.oneWay(
+                  'Multivio.masterController.currentSearchResultSelectionIndex'),
+//                    SC.Binding.oneWay('Multivio.searchController.selection'),
   
   /** 
     Determines whether the highlight view (this) needs to be redrawn or not.
@@ -185,13 +187,13 @@ Multivio.HighlightContentView = SC.View.extend(
     update the position of the scroll in the view, if needed.
 
     @private
-    @observes searchResultSelection
+    @observes searchResultSelectionIndex
   */
-  _searchResultSelectionDidChange: function () {
+  _searchResultSelectionIndexDidChange: function () {
 
     this._updateSearchResultScroll();
 
-  }.observes('searchResultSelection'),
+  }.observes('searchResultSelectionIndex'),
   
   /**
     Update the position of the scroll in the view if needed.
@@ -200,8 +202,9 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   _updateSearchResultScroll: function () {
     
-    var selection = this.get('searchResultSelection').firstObject();
-    var selectionIndex = Multivio.searchController.indexOf(selection);
+    //var selection = this.get('searchResultSelection').firstObject();
+    //var selectionIndex = Multivio.searchController.indexOf(selection);
+    var selectionIndex = this.get('searchResultSelectionIndex');
     
     // store selection index, will be used to apply 
     // a specific style for the selected highlight in this.render()
@@ -781,7 +784,7 @@ The next asked Url if user choose to proceed loading a bigg image
     this.isNewImage = NO;
     
     // flag highlight pane for a redraw
-    content.get('highlightpane').set('highlightNeedsUpdate', YES);
+    content.get('highlightpane').set('layerNeedsUpdate', YES);
     
     Multivio.logger.info('ContentView#_adjustSize');
   },
