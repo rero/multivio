@@ -88,6 +88,13 @@ Multivio.initializer = SC.Object.create(
             Multivio.layoutController.set('showThemeSelector', NO);
             break;
 
+          // init application with a search query
+          case 'search':
+            // store query, ctrl will execute it upon running initialize
+            var s = params[key];
+            Multivio.searchController.set('initSearchTerm', s);
+            break;
+
           default:
             // dump the other input parameters as-is in the table
             var value = params[key];

@@ -1173,29 +1173,56 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // initialise content                              
     this.set('content', []);
     
-    // restore previous selection if there was one
-    // TODO test
-    /*if (mi !== -1) {
-      this.set('selectedIndex', mi);
-    }*/
+    // if an input param was defined, run the search query
+    var iq = this.get('initSearchTerm');
+    // replace escaped characters (such as %20)
+    iq = unescape(iq);
+    if (!SC.none(iq) && iq !== '') {
 
-    // if the selected search file was the referer, use this with
-    // _loadExistingSearchResultsForFile to load results of all files at once.
-    if (msf === this.get('url')) {
-      url = msf;
+      Multivio.logger.debug('search ctrl init, found input query: ' + iq);
+      this.set('currentSearchTerm', iq);
+
+      // set file to search (default: all files, using referer url)
+      this.set('currentSearchFile', this.get('url'));
+
+      // clear init search term, avoid loops
+      this.set('initSearchTerm', undefined);
+
+      // show search palette
+      Multivio.logger.debug('search ctrl init, trying to display palette');
+      // get search button TODO button should be named in views.js
+      var sbt = Multivio.getPath('views.mainContentView.leftButtons').
+                                                      get('childViews')[2];
+      Multivio.paletteController.showSearch(sbt);
+
+      Multivio.logger.debug('search ctrl init, running search with url: ' + 
+                                              this.get('currentSearchFile'));
+      this.doSearch();
+    } else {
+    
+      // restore previous selection if there was one
+      // TODO test
+      /*if (mi !== -1) {
+        this.set('selectedIndex', mi);
+      }*/
+
+      // if the selected search file was the referer, use this with
+      // _loadExistingSearchResultsForFile to load results of all files at once.
+      if (msf === this.get('url')) {
+        url = msf;
+      }
+
+      // check for existing results in CDM
+      // NOTE: use 'url' arg of file, and not the referer 
+      // (as it can point to a document with multiple files), except in
+      // the case of results of all files was selected (see above)
+      this._loadExistingSearchResultsForFile(url);
+    
+      /*var newSel = SC.SelectionSet.create();
+      newSel.addObject(this.objectAt(mi));
+      Multivio.logger.debug("initialize: restore previous selection after new results");
+      this.set('selection', newSel);*/
     }
-
-    // check for existing results in CDM
-    // NOTE: use 'url' arg of file, and not the referer 
-    // (as it can point to a document with multiple files), except in
-    // the case of results of all files was selected (see above)
-    this._loadExistingSearchResultsForFile(url);
-    
-    /*var newSel = SC.SelectionSet.create();
-    newSel.addObject(this.objectAt(mi));
-    Multivio.logger.debug("initialize: restore previous selection after new results");
-    this.set('selection', newSel);*/
-    
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('searchController initialized with url:' + url);
   },
@@ -1211,7 +1238,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       oneBinding.disconnect();
     }
     this.set('bindings', []);
-    this._positionToThumbnail = {};
     this.position = null;
     this.set('content', null);
     this.set('selection', null);
