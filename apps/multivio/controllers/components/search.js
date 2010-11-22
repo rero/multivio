@@ -494,6 +494,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       if (phys[url].length < 2 && 
           Multivio.getPath('views.searchPalette.contentView.innerSearch').
           get('childViews').length === 8) {
+            
+        Multivio.logger.debug('_physicalStructureDidChange, removing scope');
+        Multivio.logger.debug('_physicalStructureDidChange, url: ' + 
+                                                            phys[url][0].url);
+        // TODO test wyd init search file
+        this.set('currentSearchFile', phys[url][0].url);
+            
         var childToRemove = Multivio.getPath(
             'views.searchPalette.contentView.innerSearch.searchScopeView');
         Multivio.getPath('views.searchPalette.contentView.innerSearch').
