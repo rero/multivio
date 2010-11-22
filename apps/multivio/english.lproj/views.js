@@ -197,7 +197,7 @@ Multivio.views = SC.Page.design(
             action: "setPredefinedZoom"
           }),
 
-          /*
+          
           zoomFullSizeView: SC.ButtonView.design({
             layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
             titleMinWidth : 0,
@@ -347,19 +347,6 @@ Multivio.views = SC.Page.design(
         }),
         SC.ButtonView.design({
           layout: { top: 210, centerX: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'show_toolbar',
-          toolTip: '_ShowToolbar'.loc(),
-          renderStyle: "renderImage",
-          icon: 'show_toolbar_new',
-          theme: 'mvo-button',
-          target: "Multivio.paletteController",
-          action: "showHorizontalToolbar"
-        })
-        /*,
-        SC.ButtonView.design({
-          layout: { bottom: 24, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           name: 'show_toolbar',
