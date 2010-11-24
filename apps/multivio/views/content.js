@@ -98,6 +98,15 @@ Multivio.HighlightContentView = SC.View.extend(
   highlightNeedsUpdate: NO,
   
   /** 
+    Determines whether the coordinates must be recomputed by the controller
+    after a change (new results, zoom or rotation).
+  
+    @property {Boolean}
+    @default NO
+  */
+  coordinatesNeedUpdate: NO,
+  
+  /** 
     Binds to the selectionController's content,
     an array of user selected zones.
 
@@ -192,6 +201,24 @@ Multivio.HighlightContentView = SC.View.extend(
     sc_super();
   },
   
+  coordinatesNeedUpdateDidChange: function () {
+
+    SC.RunLoop.begin();
+    if (this.get('coordinatesNeedUpdate')) {
+      
+      // update done by the controller
+      Multivio.searchController.updateCoordinates();
+      
+      // update done, reset flag 
+      this.set('coordinatesNeedUpdate', NO);
+      
+      // TODO??: flag view for a new render ?
+      
+    }
+    SC.RunLoop.end();
+    
+  }.observes('coordinatesNeedUpdate'),
+  
   /**
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
@@ -200,6 +227,10 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes searchResultSelectionIndex
   */
   _searchResultSelectionIndexDidChange: function () {
+
+    // TODO test dwy update coordinates for the current selection
+    // (if the page changes, the coordinates need to be updated anyway)
+    this.set('coordinatesNeedUpdate', YES);
 
     this._updateSearchResultScroll();
 
@@ -293,8 +324,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
-    // TODO test
-    //this.set('layerNeedsUpdate', YES);
+
     
   }.observes('zoomFactor'),
   
@@ -469,6 +499,10 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes Multivio.searchController.[]
   */
   searchResultsDidChange: function () {
+
+    // update coordinates to take rotation and zoom into account
+    //Multivio.searchController.updateCoordinates();
+    this.set('coordinatesNeedUpdate', YES);
 
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);

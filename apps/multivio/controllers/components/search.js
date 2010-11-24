@@ -110,8 +110,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
     // store original and compute coordinates according to current zoom
     if (is_original) {
-      // TODO test: take rotation into account
-      //new_zone = this.getRotationCoords(received_zone, angle, page_size);
       new_zone = this._getCurrentZone(received_zone, current_zoom_factor);
       
       new_obj = { 
@@ -125,8 +123,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
       // compute the dimensions and position according to 
       // original content size (zoom factor = 1)
       var original_zone = this._getOriginalZone(received_zone, current_zoom_factor);
-      // TODO test: take rotation into account for the current zone
-      //new_zone = this.getRotationCoords(original_zone, angle, page_size);
       
       new_obj = { 
         page_number: page_, 
@@ -355,6 +351,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
       c = this._getCurrentZone(c, zoom_factor);
                                                   
       z.current = c;
+      
+      //Multivio.logger.debug('updateCoordinates, %@,%@,%@,%@'.
+      //                    fmt(c.left, c.top, c.width, c.height));
+      
     }
   },
   
@@ -370,13 +370,13 @@ Multivio.HighlightController = SC.ArrayController.extend(
   */
   getRotationCoords: function (original_zone, angle, native_size) {
     
-    Multivio.logger.debug('getRotationCoords, angle: ' + angle);
+    //Multivio.logger.debug('getRotationCoords, angle: ' + angle);
     
     var page_width =  native_size.width;
     var page_height = native_size.height;
     
-    Multivio.logger.debug('getRotationCoords, width: ' + page_width + 
-                          ' height: ' + page_height);
+    //Multivio.logger.debug('getRotationCoords, width: ' + page_width + 
+    //                      ' height: ' + page_height);
 
     var out_x1, x1 = original_zone.left;
     var out_y1, y1 = original_zone.top;
@@ -669,11 +669,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         var fileList = Multivio.CDM.clone(phys[url]);
         fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});
         this.set('currentFileList', fileList);        
-        
-        //TODO? select first file in list
-        //var file_url = phys[url][0].url;
-        // TODO test
-        //this.set('currentSearchFile', file_url);
       
         var dr = {};
         // init display properties for each file
@@ -1047,7 +1042,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // use the current url as key for storage    
     var key = current_url;
     
-    // TODO test
+    // TODO debug info
     var ref_url = this.get('url');
     if (key === ref_url) {
       Multivio.logger.debug('_searchResultsDidChange: (3) REF URL HERE');
@@ -1136,6 +1131,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         //Multivio.masterController.set('currentSearchResultSelectionIndex', sel);
         //SC.RunLoop.end();
       }
+      
       SC.RunLoop.end();
       
       // warn user if results truncated because limit was reached
