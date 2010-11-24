@@ -126,6 +126,16 @@ Multivio.HighlightContentView = SC.View.extend(
   zoomFactorBinding:
       SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
   
+  /**
+    Binds to the currentValue in the rotate controller.
+    This binding is read only.
+
+    @binding {Number}
+  */
+  rotateValue: null,
+  rotateValueBinding:
+      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
+  
   /** 
     Rectangle of user selection during mouse drag.
     
@@ -248,6 +258,25 @@ Multivio.HighlightContentView = SC.View.extend(
   }.observes('currentPage'),
   
   /**
+    When the rotation angle changes,
+    flag the highlight view for a redraw to update display.
+
+    @observes currentPage
+  */
+  rotateValueDidChange: function () {
+
+    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' +
+                                                    this.get('rotateValue'));
+
+    // notify controller the rotation change
+    Multivio.searchController.set('rotateValue', this.get('rotateValue'));
+
+    // flag the view for a redraw, (causes render() function to be called)
+    this.set('highlightNeedsUpdate', YES);
+    
+  }.observes('rotateValue'),
+  
+  /**
     When the zoom changes, notify the highlight and search controllers
     and flag the view for a redraw.
 
@@ -255,7 +284,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   zoomFactorDidChange: function () {
     
-    Multivio.logger.debug('HighlightContentView#zoomFactorDidChange() %@'.
+    Multivio.logger.debug('HighlightContentView#zoomFactorDidChange(): %@'.
                                                 fmt(this.get('zoomFactor')));
 
     // notify controllers the zoom change
@@ -313,7 +342,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // hide a palette
     Multivio.paletteController.hidePalette(null);
-    // cancel selections on current page
+    // cancel selections
     Multivio.selectionController.removeAllHighlights();
     
     // get current rectangle and view layout

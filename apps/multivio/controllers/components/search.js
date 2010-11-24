@@ -59,6 +59,15 @@ Multivio.HighlightController = SC.ArrayController.extend(
   */
   minimalZoneDimension: 2, 
 
+  /**    
+    Note: this value is not bound, it is given by the view 
+    when the rotation changes.
+
+  */
+  rotateValue: undefined,      
+  //rotateValueBinding: 
+  //      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
+
   /**
     Create a new highlight zone with given coordinates and zoom factor.
     
@@ -77,7 +86,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
     @return {SC.Object} the created highlight zone
   */
   addHighlight: function (top_, left_, width_, height_, page_, type_,
-                                      current_zoom_factor, is_original) {
+                                      current_zoom_factor, is_original,
+                                      angle, page_size) {
 
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
@@ -98,8 +108,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var new_zone  = undefined;
     var new_obj   = undefined;
 
-    // store original and compute corrdinates according to current zoom
+    // store original and compute coordinates according to current zoom
     if (is_original) {
+      // TODO test: take rotation into account
+      //new_zone = this.getRotationCoords(received_zone, angle, page_size);
       new_zone = this._getCurrentZone(received_zone, current_zoom_factor);
       
       new_obj = { 
@@ -112,13 +124,15 @@ Multivio.HighlightController = SC.ArrayController.extend(
     } else {
       // compute the dimensions and position according to 
       // original content size (zoom factor = 1)
-      new_zone = this._getOriginalZone(received_zone, current_zoom_factor);
+      var original_zone = this._getOriginalZone(received_zone, current_zoom_factor);
+      // TODO test: take rotation into account for the current zone
+      //new_zone = this.getRotationCoords(original_zone, angle, page_size);
       
       new_obj = { 
         page_number: page_, 
         type: type_,
         current: received_zone, 
-        original: new_zone 
+        original: original_zone 
       };  
       
     }
@@ -200,12 +214,27 @@ Multivio.HighlightController = SC.ArrayController.extend(
   },
 
   /**
+    Update the coordinates of all highlight zones according to new angle.
+    
+    @observes rotateValue
+  */
+  rotateValueDidChange: function () {
+    
+    this.updateCoordinates(NO, YES);
+    
+  }.observes('rotateValue'),
+
+  /**
     Update the coordinates of all highlight zones according to new zoom factor.
     
     @observes zoomFactor
   */
   zoomFactorDidChange: function () {
     
+    
+    this.updateCoordinates(YES, NO);
+    
+    /*
     // update current position and dimensions for all zones for current zoom
     // TODO?: alternatively, each zone could have a function which can 
     // update itself with a new zoom factor,
@@ -221,7 +250,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
       c.left    = o.left    * zoom_factor;
       c.width   = o.width   * zoom_factor;
       c.height  = o.height  * zoom_factor;      
-    }
+    }*/
   }.observes('zoomFactor'),
 
   /**
@@ -267,6 +296,130 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _getCurrentZone: function (zone, zoom_factor) {
     return this._getOriginalZone(zone, 1 / zoom_factor);
   },
+  
+  /**
+    Update the coordinates of all highlight zones according to
+    the rotation angle.
+    
+    To update the zones' coordinates:
+    
+    (1) take coordinates on the page (native size, unzoomed and no rotation)
+    (2) compute rotated coordinates
+    (3) apply zoom factor
+
+    NOTE: only handling the highlight zones on the current page
+    of the current file, the other ones are not updated
+
+  */
+  updateCoordinates: function (zoom_update_needed, rotation_update_needed) {
+    
+    // get rotation angle for update
+    var angle = this.get('rotateValue');
+    
+    // get zoom factor for update
+    var zoom_factor = this.get('zoomFactor');
+    
+    Multivio.logger.debug('updateCoordinates, angle:' + angle);
+    Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
+    
+    // get page width and height
+    // NOTE: only handling the highlight zones on the current page
+    // of the current file, the other ones are not updated
+    var file_url = Multivio.masterController.get('currentFile');
+    var page_number = Multivio.masterController.get('currentPosition');
+                            
+    if (SC.none(file_url) || SC.none(page_number)) {
+      return;
+    }
+    
+    var url = 'page_nr=%@&url=%@'.fmt(page_number, file_url);
+    var native_size = Multivio.CDM.getImageSize(url);
+    
+    var l = this.get('length'), c, o, z;  
+    while (--l >= 0) {
+      // get a zone
+      z = this.getZone(l);
+      
+      // Only update the zone if it is located
+      // on the current page.
+      if (z.page_number !== page_number) continue;
+      
+      c = z.current;
+      o = z.original;
+      
+      // compute new coordinates according to current angle
+      // and original coordinates
+      c = this.getRotationCoords(o, angle, native_size);
+                                      
+      // apply zoom factor on rotated coordinates
+      c = this._getCurrentZone(c, zoom_factor);
+                                                  
+      z.current = c;
+    }
+  },
+  
+  /**
+    Compute rotation values according to angle.
+    Adapt coordinates according to given rotation angle and page size.
+              Only orthogonal rotations are supported:
+                                    0, +-90, +-180, +-270 degrees.
+    
+    NOTE: the input coordinates should always be given in a non-rotated
+          form (angle = 0).
+          
+  */
+  getRotationCoords: function (original_zone, angle, native_size) {
+    
+    Multivio.logger.debug('getRotationCoords, angle: ' + angle);
+    
+    var page_width =  native_size.width;
+    var page_height = native_size.height;
+    
+    Multivio.logger.debug('getRotationCoords, width: ' + page_width + 
+                          ' height: ' + page_height);
+
+    var out_x1, x1 = original_zone.left;
+    var out_y1, y1 = original_zone.top;
+    var out_x2, x2 = x1 + original_zone.width;
+    var out_y2, y2 = y1 + original_zone.height;
+    
+    // rotation to the right
+    if (angle === -90 || angle === 270) {
+      out_x1 = Math.max(0, page_height - y2);
+      out_y1 = x1;
+      out_x2 = Math.max(0, page_height - y1);
+      out_y2 = x2;
+      
+    } // rotation to the left
+    else if (angle === 90 || angle === -270) {
+      out_x1 = y1;
+      out_y1 = Math.max(0, page_width - x2);
+      out_x2 = y2;
+      out_y2 = Math.max(0, page_width - x1);
+      
+    } // rotation upside-down
+    else if (angle === -180 || angle === 180) { 
+      out_x1 = Math.max(0, page_width - x2);
+      out_y1 = Math.max(0, page_height - y2);
+      out_x2 = Math.max(0, page_width - x1);
+      out_y2 = Math.max(0, page_height - y1);  
+      
+      // no rotation
+    } else {
+      out_x1 = x1;
+      out_y1 = y1;
+      out_x2 = x2;
+      out_y2 = y2;
+    }
+    
+    return {
+      left:   out_x1,
+      top:    out_y1,
+      width:  Math.abs(out_x2 - out_x1),
+      height: Math.abs(out_y2 - out_y1)
+    };
+  },
+  
   
   /**
     Initialize the controller, and its content.
@@ -390,9 +543,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     @binding {Number}
   */
-  rotateValue: undefined,      
-  rotateValueBinding: 
-        SC.Binding.oneWay('Multivio.rotateController.currentValue'),
+  // TODO remove this, move to Highlight controller
+  //rotateValue: undefined,      
+  //rotateValueBinding: 
+  //      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
   
   /**
     Binds to the search results stored in the CDM.
@@ -436,10 +590,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     When the rotation angle changes, send a new search request to the server
     to obtain the new coordinates.
     
+    TODODODODO: compute coordinates locally
+    
     @private
     @observes rotateValue
   */
-  _rotateValueDidChange: function () {
+  /*_rotateValueDidChange: function () {
     
     Multivio.logger.debug("_rotateValueDidChange: " + this.get('rotateValue'));
     
@@ -467,8 +623,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // This will be done once we receive the results,
       // in this._searchResultsDidChange() 
     }
-  }.observes('rotateValue'),
+  }.observes('rotateValue'),*/
   
+
   /**
     When the physical structure changes, extract file list (labels + urls)
     from it, store as a flat list.
@@ -498,7 +655,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         Multivio.logger.debug('_physicalStructureDidChange, removing scope');
         Multivio.logger.debug('_physicalStructureDidChange, url: ' + 
                                                             phys[url][0].url);
-        // TODO test wyd init search file
+        // init search file to the single file
         this.set('currentSearchFile', phys[url][0].url);
             
         var childToRemove = Multivio.getPath(
@@ -618,6 +775,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // controller, because if there is a file change, the search controller
     // will be reinitialised and the selection will be lost
     if (selIndex !== -1) {
+      Multivio.logger.debug("_selectionDidChange: index not -1: " + selIndex);
       Multivio.masterController.set('currentSearchResultSelectionIndex', 
                                                                 selIndex);
     } 
@@ -747,7 +905,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                                 fmt(query, this.get('currentSearchFile')));
     
     // get rotation angle
-    var angle = this.get('rotateValue');
+    // NOTE: don't use current angle, we want to obtain the unzoomed,
+    // unrotated content and all computations are done on the client
+    var angle = 0; //this.get('rotateValue');
     
     // get current file url for searching
     var url = this.get('currentSearchFile');
@@ -918,7 +1078,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         
         Multivio.logger.debug('_searchResultsDidChange, (5) concat all results...');
         
-        // TODO test dwy clear all results before adding the whole again
+        // clear all results before adding the whole again
         this.set('content', []);
         
         for (var i = 0; i < file_list.length; i++) {
@@ -967,7 +1127,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         if (!SC.none(selectedObject)) {
           Multivio.logger.debug('_searchResultsDidChange restore selection, context: ' +
            selectedObject.context);
-          SC.RunLoop.end();
+          SC.RunLoop.begin();
           this.set('selection', newSel);
           SC.RunLoop.end();
         }
@@ -1024,8 +1184,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         b = a.index;
         c = b.bounding_box;
 
+        // get native page size
+        //var url = 'page_nr=%@&url=%@'.fmt(b.page, z.url);
+        //var page_size = Multivio.CDM.getImageSize(url);
+        
+        // get angle
+        //var angle = this.get('rotateValue');
+
         // params: label, context, top_, left_, width_, height_, 
         //         file_url, page_, current_zoom_factor
+        // TODO: add current angle and native page size
         this.addSearchResult(query, a.preview,
                              c.y1, c.x1, 
                              Math.abs(c.x1 - c.x2),
@@ -1173,7 +1341,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // physical structure not yet initialised (do it only once)
     this.set('physicalStructureInitialised', NO);
 
-    // get previously selected serach result
+    // get previously selected search result
     // (when the controller has been reinitialised after a file change)
     var mi = Multivio.masterController.
                                   get('currentSearchResultSelectionIndex');
