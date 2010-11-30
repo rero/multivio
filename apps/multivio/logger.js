@@ -48,56 +48,58 @@ Multivio.logger = SC.Object.create(
   initialize: function () {
     // force deactivation of console logging associated with Ajax loggging,
     // as done by Log4js (this overrides the last lines of code in log4js.js)
-    var log4jsLogger = Log4js.getLogger("Log4js");
-    log4jsLogger.setLevel(Log4js.Level.OFF);
+    if (SC.none (this.debugLogger)) {
+      var log4jsLogger = Log4js.getLogger("Log4js");
+      log4jsLogger.setLevel(Log4js.Level.OFF);
 
-    // initialize loggers by level
-    this.errorLogger = Log4js.getLogger("error");
-    this.errorLogger.setLevel(Log4js.Level.ERROR);
-    this.errorLogger.isUsed = NO;
-    this.loggers.push(this.errorLogger);
+      // initialize loggers by level
+      this.errorLogger = Log4js.getLogger("error");
+      this.errorLogger.setLevel(Log4js.Level.ERROR);
+      this.errorLogger.isUsed = NO;
+      this.loggers.push(this.errorLogger);
     
-    this.warningLogger = Log4js.getLogger("warning");
-    this.warningLogger.setLevel(Log4js.Level.WARN);
-    this.warningLogger.isUsed = NO;
-    this.loggers.push(this.warningLogger);
+      this.warningLogger = Log4js.getLogger("warning");
+      this.warningLogger.setLevel(Log4js.Level.WARN);
+      this.warningLogger.isUsed = NO;
+      this.loggers.push(this.warningLogger);
     
-    this.infoLogger = Log4js.getLogger("info");
-    this.infoLogger.setLevel(Log4js.Level.INFO);
-    this.infoLogger.isUsed = NO;
-    this.loggers.push(this.infoLogger);
+      this.infoLogger = Log4js.getLogger("info");
+      this.infoLogger.setLevel(Log4js.Level.INFO);
+      this.infoLogger.isUsed = NO;
+      this.loggers.push(this.infoLogger);
     
-    this.debugLogger = Log4js.getLogger("debug");
-    this.debugLogger.setLevel(Log4js.Level.DEBUG);
-    this.debugLogger.isUsed = NO;
-    this.loggers.push(this.debugLogger);
-    // create appenders according to the configuration in Multivio.CONFIG.log
-    // (see file core.js)
-    var appenders = Multivio.configurator.getPath('logParameters.log');
-    for (var appender in appenders) {
-      if (appenders.hasOwnProperty(appender)) {
-        var level = Multivio.get(appenders[appender]);
-        var appenderObject = undefined;
-        switch (appender) {
-        // TODO check if the ajax appender is removed in case a server is not available
-        case 'ajax':
-          appenderObject = new Log4js.AjaxAppender(
-              Multivio.configurator.get('serverName') +
-              Multivio.configurator.getPath('logParameters.logFile'));
-          appenderObject.setLayout(new Log4js.BasicLayout());
-          //appenderObject.setLayout(new Log4js.JSONLayout());
-          break;
-        case 'console' :
-          appenderObject = new Log4js.ConsoleAppender(false);
-          break;
-        case 'browserConsole':
-          appenderObject = new Log4js.BrowserConsoleAppender(true);
-          break;
+      this.debugLogger = Log4js.getLogger("debug");
+      this.debugLogger.setLevel(Log4js.Level.DEBUG);
+      this.debugLogger.isUsed = NO;
+      this.loggers.push(this.debugLogger);
+      // create appenders according to the configuration in Multivio.CONFIG.log
+      // (see file core.js)
+      var appenders = Multivio.configurator.getPath('logParameters.log');
+      for (var appender in appenders) {
+        if (appenders.hasOwnProperty(appender)) {
+          var level = Multivio.get(appenders[appender]);
+          var appenderObject = undefined;
+          switch (appender) {
+          // TODO check if the ajax appender is removed in case a server is not available
+          case 'ajax':
+            appenderObject = new Log4js.AjaxAppender(
+                Multivio.configurator.get('serverName') +
+            Multivio.configurator.getPath('logParameters.logFile'));
+            appenderObject.setLayout(new Log4js.BasicLayout());
+            //appenderObject.setLayout(new Log4js.JSONLayout());
+            break;
+          case 'console' :
+            appenderObject = new Log4js.ConsoleAppender(false);
+            break;
+          case 'browserConsole':
+            appenderObject = new Log4js.BrowserConsoleAppender(true);
+            break;
+          }
+          if (appenderObject) this._attachAppender(appenderObject, level);
         }
-        if (appenderObject) this._attachAppender(appenderObject, level);
       }
+      this.info('end of logger.init');
     }
-    this.info('end of logger.init');
   },
   
   /**
