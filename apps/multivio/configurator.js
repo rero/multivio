@@ -57,6 +57,9 @@ Multivio.configurator = SC.Object.create(
   */
   initialTheme: 'mvo-white-theme',
   
+  
+  initialDocNr: 1,
+  
   /**
     This object contains all parameters for logs
     

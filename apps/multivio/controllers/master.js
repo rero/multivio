@@ -173,6 +173,8 @@ Multivio.masterController = SC.ObjectController.create(
     Select the first file of the Document and set currentfile with this value
   */ 
   selectFirstFile: function () {
+    var initDoc = Multivio.configurator.get('initialDocNr');
+    if (initDoc === 1) {
     // get logical structure of the document
     var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
     if (!SC.none(logSt)) {
@@ -195,6 +197,19 @@ Multivio.masterController = SC.ObjectController.create(
       // get physical structure
       var phSt = Multivio.CDM.getPhysicalstructure(this.get('currentFile'));
       this.set('currentFile', phSt[0].url);
+    }
+  }
+  else {
+    var listOfDoc = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+    // if initialDocNr is too small or too big select the first document
+    if (initDoc < 1 || initDoc > listOfDoc.length) {
+      initDoc = 0;
+    }
+    else {
+      initDoc--;
+    }
+    var newDoc = listOfDoc[initDoc].url;
+    this.set('currentFile', newDoc);  
     }
   },
   
