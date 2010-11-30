@@ -87,7 +87,6 @@ Multivio.treeController = SC.TreeController.create(
 
     // Create the first time the rootNode and referer
     if (SC.none(this.treeStructure)) {
-      console.info('treeStruct null');
       var metadata = Multivio.CDM.getFileMetadata(url);
       if (metadata !== -1) {
         var ref = Multivio.CDM.getReferer();

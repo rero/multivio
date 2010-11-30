@@ -182,11 +182,6 @@ Multivio.paletteController = SC.ObjectController.create(
     if (SC.none(this.activeButton)) {
       button.set('isActive', YES);
       this.activeButton = button;
-      // retreive the view and set the content
-			/*
-      var textField = helpView.get('contentView').get('childViews')[0];
-      textField.set('content', Multivio.metadataController.getTranslatedMetadata());
-			*/
       helpView.set('layout', this.paletteLayout(YES));
       helpView.append();
     }
