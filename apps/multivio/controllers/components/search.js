@@ -637,7 +637,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     var phys = this.get('physicalStructure');
     
-    // we already have a physical structure, no need for something else
+    // we already have a physical structure, no need for anything else
     if (this.get('physicalStructureInitialised')) return;
     
     var url = Multivio.CDM.getReferer();
@@ -657,7 +657,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                                                             phys[url][0].url);
         // init search file to the single file
         this.set('currentSearchFile', phys[url][0].url);
-            
+        
+        // TODO test dwy
+        this.set('currentFileList', [phys[url][0]]);
+        
         var childToRemove = Multivio.getPath(
             'views.searchPalette.contentView.innerSearch.searchScopeView');
         Multivio.getPath('views.searchPalette.contentView.innerSearch').
@@ -773,6 +776,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       Multivio.logger.debug("_selectionDidChange: index not -1: " + selIndex);
       Multivio.masterController.set('currentSearchResultSelectionIndex', 
                                                                 selIndex);
+      // TODO test dwy
+      Multivio.getPath('views.mainContentView.content.innerMainContent.contentView.highlightpane').searchResultSelectionIndexDidChange();                                                          
     } 
     
     // TODO test: store current search file in master controler, so
@@ -1158,10 +1163,25 @@ Multivio.SearchController = Multivio.HighlightController.extend(
    
     // if there are results                                         
     if (res !== -1 && !SC.none(res)) {
-      var num_res = res.file_position.results.length;
+      
+      // TODO: get total number of search results, not for this file only
+      Multivio.logger.debug('counting all search results');
+      var num_all_res, num_res = res.file_position.results.length;
+      var all_res = this.get('searchResults')[this.get('url')];
+      num_all_res = num_res;
+      // NOTE: don't take 'All Files' into account
+      var num_files = this.get('currentFileList').length -1;
+      for (var j = 0; j < num_files; j++) {
+        
+        if (SC.none(all_res) || SC.none(all_res[j])) continue;
+        
+        num_all_res += all_res[j].file_position.results.length;
+      }
+      Multivio.logger.debug('number of search results: ' + num_res);
+      
       
       // warn user if no result found
-      if (num_res === 0) {
+      if (num_all_res === 0) {
         /*Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
           '_noSearchResultDesc'.loc(), 'OK');*/
         SC.RunLoop.begin();  

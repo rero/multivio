@@ -223,16 +223,21 @@ Multivio.HighlightContentView = SC.View.extend(
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
 
-    @private
     @observes searchResultSelectionIndex
   */
-  _searchResultSelectionIndexDidChange: function () {
-
-    // TODO test dwy update coordinates for the current selection
-    // (if the page changes, the coordinates need to be updated anyway)
-    this.set('coordinatesNeedUpdate', YES);
+  searchResultSelectionIndexDidChange: function () {
 
     this._updateSearchResultScroll();
+
+    // update coordinates for the current selection
+    // (after the page changes, the coordinates need to be updated anyway)
+    //this.set('coordinatesNeedUpdate', YES);
+    SC.RunLoop.begin();
+    Multivio.searchController.updateCoordinates();
+
+    // TODO test dwy
+    this.set('layerNeedsUpdate', YES);
+    SC.RunLoop.end();
 
   }.observes('searchResultSelectionIndex'),
   
