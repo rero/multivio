@@ -18,6 +18,8 @@
 Multivio.READY = SC.Responder.create(
 /** @scope Multivio.READY.prototype */ {
   
+  showLastPosition : NO,
+  
   /**
     First responder did change.
   */
@@ -28,10 +30,16 @@ Multivio.READY = SC.Responder.create(
   },
   
   /**
-    Select the first position of the current file
+    Select the first or the last position of the current file
   */
   firstPosition: function () {
-    Multivio.masterController.selectFirstPosition();
+    if (this.showLastPosition) {
+      Multivio.masterController.selectLastPosition();
+      this.showLastPosition = NO;
+    }
+    else {
+      Multivio.masterController.selectFirstPosition();
+    }
   },
   
   /**

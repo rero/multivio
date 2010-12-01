@@ -51,6 +51,7 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   _numberOfPages: null,
   
+  
   /**
     Binds to the masterController isLoadingContent property.
     
@@ -273,6 +274,12 @@ Multivio.navigationController = SC.ObjectController.create(
           if (currentFileP !== 0) {
             this.set('isFirstEnabled', YES);
           }
+          else {
+            // currentFileP = 0 and current != 1 go to the first page
+            if (current !== 1) {
+              this.set('isFirstEnabled', YES);
+            }
+          }
           if (current !== this.get('_numberOfPages')) {
             this.set('isNextEnabled', YES);
           }
@@ -295,7 +302,7 @@ Multivio.navigationController = SC.ObjectController.create(
           }
         }
       }
-    }  
+    }
   }.observes('isLoadingContent'),
   
   /**
@@ -303,7 +310,7 @@ Multivio.navigationController = SC.ObjectController.create(
   */ 
   goToNextPage: function () {
     this.set('isPreviousEnabled', YES);
-    var np = parseInt(this.get('currentPage')) + 1;
+    var np = parseInt(this.get('currentPage'), 10) + 1;
     if (np <= this.get('_numberOfPages')) {
       SC.RunLoop.begin();
       this.set('isLoadingContent', YES);
@@ -333,18 +340,24 @@ Multivio.navigationController = SC.ObjectController.create(
     SC.RunLoop.begin();
     this.set('isLoadingContent', YES);
     SC.RunLoop.end();
-    if (!SC.none(this.get('currentFile')) && this.get('currentFile') !== 0 &&
-        !Multivio.masterController.isGrouped) {
-      var current = this.get('currentFile');
-      current--; 
-      Multivio.makeFirstResponder(Multivio.INIT);
-      Multivio.sendAction('notAllowSelection');
-      Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
-      this.currentPage = null;
-      this.set('currentFile', current); 
+    //only one document
+    if (SC.none(this.get('currentFile'))) {
+      this.set('currentPage', 1);
     }
     else {
-      this.set('currentPage', 1);
+      if (this.get('currentPage') !== 1) {
+        this.set('currentPage', 1);
+      }
+      else {
+        var current = this.get('currentFile');
+        current--;
+        this.currentPage = null;
+        this.set('currentFile', current);
+        Multivio.makeFirstResponder(Multivio.INIT);
+        Multivio.READY.showLastPosition = YES;
+        Multivio.sendAction('notAllowSelection');
+        Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
+      }
     }
   },
   
@@ -355,19 +368,23 @@ Multivio.navigationController = SC.ObjectController.create(
     SC.RunLoop.begin();
     this.set('isLoadingContent', YES);
     SC.RunLoop.end();
-    if (!SC.none(this.get('currentFile')) && (this.get('currentFile') !== 
-        Multivio.masterController.listOfFiles.length - 1) && 
-        !Multivio.masterController.isGrouped) {
-      var current = this.get('currentFile');   
-      current++; 
-      Multivio.makeFirstResponder(Multivio.INIT);
-      Multivio.sendAction('notAllowSelection');
-      Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
-      this.set('currentFile', current);   
-    }
-    else {
+    //only one document
+    if (SC.none(this.get('currentFile'))) {
       var nbp = this.get('_numberOfPages');
       this.set('currentPage', nbp);
+    }
+    else {
+      if (this.get('currentPage') !== this.get('_numberOfPages')) {
+        this.set('currentPage', this.get('_numberOfPages'));
+      }
+      else {
+        var current = this.get('currentFile');   
+        current++;
+        Multivio.makeFirstResponder(Multivio.INIT);    
+        Multivio.sendAction('notAllowSelection');
+        Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
+        this.set('currentFile', current);
+      }
     }
   },
   

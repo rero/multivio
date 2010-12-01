@@ -170,46 +170,59 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   /**
+     Set current position to the max
+   */
+  selectLastPosition: function () {
+    var cur = this.get('currentFile');
+    var curM = this.get('metadata')[cur];
+    if (!SC.none(curM.nPages)) {
+      this.set('currentPosition', curM.nPages);
+    }
+    else {
+      this.set('currentPosition', this.get('physicalStructure')[cur].length);
+    }
+  },
+  
+  /**
     Select the first file of the Document and set currentfile with this value
   */ 
   selectFirstFile: function () {
     var initDoc = Multivio.configurator.get('initialDocNr');
     if (initDoc === 1) {
-    // get logical structure of the document
-    var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
-    if (!SC.none(logSt)) {
-      var validUrl = logSt[0].file_position.url;
-      // if a file_position has no url we need to get the next file_position 
-      if (SC.none(validUrl)) {
-        var childs = logSt[0].childs;
-        for (var i = 0; i < childs.length; i++) {
-          var temp = childs[i];  
-          if (!SC.none(temp.file_position.url)) {
-            validUrl = temp.file_position.url;
-            break;
+      // get logical structure of the document
+      var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
+      if (!SC.none(logSt)) {
+        var validUrl = logSt[0].file_position.url;
+        // if a file_position has no url we need to get the next file_position 
+        if (SC.none(validUrl)) {
+          var childs = logSt[0].childs;
+          for (var i = 0; i < childs.length; i++) {
+            var temp = childs[i];  
+            if (!SC.none(temp.file_position.url)) {
+              validUrl = temp.file_position.url;
+              break;
+            }
           }
         }
+        this.set('currentFile', validUrl);
       }
-      
-      this.set('currentFile', validUrl);
+      else {
+        // get physical structure
+        var phSt = Multivio.CDM.getPhysicalstructure(this.get('currentFile'));
+        this.set('currentFile', phSt[0].url);
+      }
     }
     else {
-      // get physical structure
-      var phSt = Multivio.CDM.getPhysicalstructure(this.get('currentFile'));
-      this.set('currentFile', phSt[0].url);
-    }
-  }
-  else {
-    var listOfDoc = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
-    // if initialDocNr is too small or too big select the first document
-    if (initDoc < 1 || initDoc > listOfDoc.length) {
-      initDoc = 0;
-    }
-    else {
-      initDoc--;
-    }
-    var newDoc = listOfDoc[initDoc].url;
-    this.set('currentFile', newDoc);  
+      var listOfDoc = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+      // if initialDocNr is too small or too big select the first document
+      if (initDoc < 1 || initDoc > listOfDoc.length) {
+        initDoc = 0;
+      }
+      else {
+        initDoc--;
+      }
+      var newDoc = listOfDoc[initDoc].url;
+      this.set('currentFile', newDoc);  
     }
   },
   
@@ -244,8 +257,6 @@ Multivio.masterController = SC.ObjectController.create(
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;
       this.set('currentPosition', null);
-      // TODO WYD:debug message
-      console.info("currentFileDidChange: " + this.get('currentFile'));
       var cf = this.get('currentFile');
       this.setCurrentFilePosition(cf);
       var meta = Multivio.CDM.getFileMetadata(cf);

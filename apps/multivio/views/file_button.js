@@ -92,7 +92,6 @@ Multivio.FileButtonView = SC.View.extend(
     var isActive = this.get('isHorizontalToolbarActive');
     if (!SC.none(isActive)) {
       if (isActive) {
-        console.info('showView '+this.hideTimer);
         if (!SC.none(this.hideTimer)) {
           this.hideTimer.invalidate();
         }

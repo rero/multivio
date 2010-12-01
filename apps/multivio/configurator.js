@@ -57,6 +57,9 @@ Multivio.configurator = SC.Object.create(
   */
   initialTheme: 'mvo-white-theme',
   
+  /**
+    The file to show first
+  */
   initialDocNr: 1,
   
   /**
