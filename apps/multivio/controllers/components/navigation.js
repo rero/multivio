@@ -271,6 +271,12 @@ Multivio.navigationController = SC.ObjectController.create(
           if (current !== 1) {
             this.set('isPreviousEnabled', YES);
           }
+          else {
+            //current = 1 but we are no at the first doc
+            if (currentFileP !== 0) {
+              this.set('isPreviousEnabled', YES);
+            }
+          }
           if (currentFileP !== 0) {
             this.set('isFirstEnabled', YES);
           }
@@ -282,6 +288,12 @@ Multivio.navigationController = SC.ObjectController.create(
           }
           if (current !== this.get('_numberOfPages')) {
             this.set('isNextEnabled', YES);
+          }
+          else {
+            // last page but not last document
+            if (currentFileP < Multivio.masterController.listOfFiles.length - 1) {
+              this.set('isNextEnabled', YES);
+            }
           }
           if (currentFileP < Multivio.masterController.listOfFiles.length - 
               1 || (currentFileP === 
@@ -389,6 +401,54 @@ Multivio.navigationController = SC.ObjectController.create(
   },
   
   /**
+    Select if we have to go to the next page or to the next document
+  */  
+  goToNext: function () {
+    //only one document
+    if (SC.none(this.get('currentFile'))) {
+      if (this.get('currentPage') !== this.get('_numberOfPages')) {
+        this.goToNextPage();
+      }
+    }
+    else {
+      // last page
+      if (this.get('currentPage') === this.get('_numberOfPages')) {
+        if (this.get('currentFile') !== 
+            Multivio.masterController.listOfFiles.length - 1  &&
+            !Multivio.masterController.isGrouped) {
+          this.goToLastPage();
+        }
+      }
+      else {
+        this.goToNextPage();
+      }
+    }
+  },
+  
+  /**
+    Select if we have to go to the previous page or to the previous document
+  */
+  goToPrevious: function () {
+    // only one document
+    if (SC.none(this.get('currentFile'))) {
+      if (this.get('currentPage') !== 1) {
+        this.goToPreviousPage();
+      }
+    }
+    else {
+      // first page
+      if (this.get('currentPage') === 1) {
+        if (this.get('currentFile') !== 0) {
+          this.goToFirstPage();
+        }
+      }
+      else {
+        this.goToPreviousPage();
+      }
+    }
+  },
+  
+  /**
     Method that is called when an event occured
   
     @param {SC.Event} evt the event that trigged this action
@@ -397,11 +457,11 @@ Multivio.navigationController = SC.ObjectController.create(
     switch (evt.which) {
     // page_up
     case 33:
-      this.goToPreviousPage();
+      this.goToPrevious();
       return YES;
     // page_down
     case 34:
-      this.goToNextPage();
+      this.goToNext();
       return YES;
     default:
       return NO;

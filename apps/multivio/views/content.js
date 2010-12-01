@@ -1023,7 +1023,7 @@ The next asked Url if user choose to proceed loading a bigg image
         else {
           if (this.get('verticalScrollOffset') === 0) {
             this.needToScrollUp = NO;
-            Multivio.navigationController.goToPreviousPage();
+            Multivio.navigationController.goToPrevious();
           }
           else {
             this.scrollBy(null, -this.scrollValueScreen());
@@ -1041,7 +1041,7 @@ The next asked Url if user choose to proceed loading a bigg image
         else {
           var vertical = this.get('verticalScrollOffset');
           if (vertical >= this.get('maximumVerticalScrollOffset')) {
-            Multivio.navigationController.goToNextPage();
+            Multivio.navigationController.goToNext();
           }
           else {
             this.scrollBy(null, +this.scrollValueScreen());
@@ -1069,14 +1069,14 @@ The next asked Url if user choose to proceed loading a bigg image
           else {
             if (Multivio.masterController.get('currentPosition') !== 1) {
               this.needToScrollUp = NO;
-              Multivio.navigationController.goToPreviousPage();
+              Multivio.navigationController.goToPrevious();
             }
           }
         }
         else {
           // move to the previous page
           this.needToScrollUp = YES;
-          Multivio.navigationController.goToPreviousPage();
+          Multivio.navigationController.goToPrevious();
         }
         return YES;
       // right
@@ -1098,12 +1098,12 @@ The next asked Url if user choose to proceed loading a bigg image
             this.scrollBy(null, 40);
           }
           else {
-            Multivio.navigationController.goToNextPage();
+            Multivio.navigationController.goToNext();
           } 
         }
         else {
-          // move to the next page
-          Multivio.navigationController.goToNextPage();
+          // move to the next page or document
+          Multivio.navigationController.goToNext();
         }
         return YES;
       default:
@@ -1125,13 +1125,13 @@ The next asked Url if user choose to proceed loading a bigg image
         if (this.get('maximumVerticalScrollOffset') === 
           this.get('verticalScrollOffset')) {
           // move to the next page
-          Multivio.navigationController.goToNextPage();
+          Multivio.navigationController.goToNext();
         }
       }
       if (evt.wheelDeltaY < 0) {
         if (this.get('verticalScrollOffset') === 0) {
           this.needToScrollUp = NO;
-          Multivio.navigationController.goToPreviousPage();
+          Multivio.navigationController.goToPrevious();
         }
       } 
       sc_super();
