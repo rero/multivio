@@ -108,6 +108,9 @@ body.sc-theme {
 .sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled .sc-button-label {
   background: none;
   opacity: 0.4;
+  moz-opacity : 0.4;
+  ms-filter: "alpha(opacity=4)"; /* IE 8 */
+  filter : alpha(opacity=4);
 }
 
 .sc-theme .sc-button-view.sc-regular-size.mvo-button.def.active,
