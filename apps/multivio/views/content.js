@@ -227,7 +227,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultSelectionIndexDidChange: function () {
 
-    this._updateSearchResultScroll();
+    
 
     // update coordinates for the current selection
     // (after the page changes, the coordinates need to be updated anyway)
@@ -236,6 +236,8 @@ Multivio.HighlightContentView = SC.View.extend(
     Multivio.searchController.updateCoordinates();
 
     // TODO test dwy
+    this.updateSearchResultScroll();
+
     this.set('layerNeedsUpdate', YES);
     SC.RunLoop.end();
 
@@ -246,7 +248,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @private
   */
-  _updateSearchResultScroll: function () {
+  updateSearchResultScroll: function () {
     
     //var selection = this.get('searchResultSelection').firstObject();
     //var selectionIndex = Multivio.searchController.indexOf(selection);
@@ -258,7 +260,7 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('_selectionIndex', selectionIndex);
     SC.RunLoop.end();
     
-    Multivio.logger.debug("_searchResultSelectionDidChange selectionIndex: " +
+    Multivio.logger.debug("updateSearchResultScroll selectionIndex: " +
                                                              selectionIndex);
     if (selectionIndex !== -1) {
       // retrieve the list of the search results visible in the view
@@ -275,7 +277,9 @@ Multivio.HighlightContentView = SC.View.extend(
         }
       }
       // need to redraw the highlight zones to show current selection
-      this.set('layerNeedsUpdate', YES);
+      // TODO test dwy
+      //this.set('layerNeedsUpdate', YES);
+      this.set('coordinatesNeedUpdate', YES);
     }
     
   },
@@ -349,8 +353,9 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // finished loading, update scroll
     if (!loading) {
-      Multivio.logger.debug("isLoadingContentDidChange: updating scroll");
-      this._updateSearchResultScroll();
+      //Multivio.logger.debug("isLoadingContentDidChange: updating scroll");
+      //TODO test dwy
+      //this.updateSearchResultScroll();
     }
     
     // if the highlight pane needs an update, 
@@ -596,6 +601,12 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // highlight pane just redrawn, no need for update anymore
     this.set('highlightNeedsUpdate', NO);
+    
+    // update scroll position
+    // TODO don't automatically rescroll every time?
+    //Multivio.logger.debug('RENDER: updating scroll');
+    this.updateSearchResultScroll();
+    
   },
   
   /**
