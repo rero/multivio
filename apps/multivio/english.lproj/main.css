@@ -399,10 +399,32 @@ Rules for Multivio's usage page
   z-index: 2;
 }
 
+/* thin top edge for search result list */
+.top-edge-thin {
+  background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px -5px;
+  position: absolute;
+  height: 4px;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
 .bottom-edge {
   background: static_url('images/mvo-sprite-x.png') repeat-x 0px 0px;
   position: absolute;
   height: 10px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
+/* thin bottom edge for search result list */
+.bottom-edge-thin {
+  background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px -1px;
+  position: absolute;
+  height: 4px;
   bottom: 0px;
   right: 0px;
   left: 0px;

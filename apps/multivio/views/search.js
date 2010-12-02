@@ -70,7 +70,7 @@ Multivio.SearchView = SC.View.extend(
     hasHorizontalScroller: YES,
     hasVerticalScroller: YES,
     
-    contentView: SC.ListView.design(Multivio.innerGradient, {
+    contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
       layout: { top: 0, left: 0, right: 0, bottom: 0 },
       insertionOrientation: SC.VERTICAL_ORIENTATION,
       rowHeight: 15,
