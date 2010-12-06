@@ -658,13 +658,35 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   _currentFileDidChange: function () {
     // TODO test
-    /*
+
     var current_file = Multivio.masterController.get('currentFile');
-    SC.RunLoop.begin();
-    this.set('currentSearchFile', current_file);
-    SC.RunLoop.end();
+    var page_nr = Multivio.masterController.get('currentPosition') || 1;
+
+    var file_list = this.get('currentFileList');
+    
+    if (SC.none(file_list)) {
+      Multivio.logger.debug('_currentFileDidChange: no file list, skipping');
+      return;
+    }
+    
+    var num_files = file_list.length;
+    var ref_url = this.get('url');
+    
+    Multivio.logger.debug('_currentFileDidChange: ' + current_file);
+
+    // test that it's not the referer url, in case of several files
+    if (num_files > 1 && current_file === ref_url) {
+      Multivio.logger.debug('_currentFileDidChange: ref_url, skipping');
+      return;
+    }
+    
+
+    if (!SC.none(current_file) && !SC.none(page_nr)) {
+      Multivio.CDM.getPageIndexing(current_file, page_nr, undefined, undefined);
+    }
+    
     Multivio.logger.debug('Multivio.masterController.currentFile did change: ' + current_file);
-    */
+    
   }.observes('Multivio.masterController.currentFile'), 
 
   
@@ -885,6 +907,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                                                      file_list[i].url);
         res = Multivio.CDM.getSearchResults(file_list[i].url, query, 
                                               '', '', 15, 50, angle);
+                                              
         
       }
     } else {
@@ -893,6 +916,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       res = Multivio.CDM.getSearchResults(url, query, '', '', 15, 50, angle);
     }
     
+    // TODO test dwy page indexing
+    var page_nr = Multivio.masterController.et('currentPosition');
+    var from_ = undefined, to_ = undefined;
+    Multivio.logger.debug('### TODO test page indexing');
+    var pi = Multivio.CDM.getPageIndexing(url, page_nr, from_, to_);
 
         
     // store results
@@ -1120,7 +1148,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       var all_res = this.get('searchResults')[this.get('url')];
       num_all_res = num_res;
       // NOTE: don't take 'All Files' into account
-      var num_files = this.get('currentFileList').length -1;
+      var num_files = this.get('currentFileList').length - 1;
       for (var j = 0; j < num_files; j++) {
         
         if (SC.none(all_res) || SC.none(all_res[j])) continue;

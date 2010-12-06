@@ -31,6 +31,7 @@ Multivio.CDM = SC.Object.create(
     logicalStructure {Object}: the logical structure of the file (can be null)
     physicalStructure {Object}: the physical structure of the file 
     searchResults {Object}: the current search results
+    pageIndexing {Object}: the page indexing used for text selection
   */
   referer: undefined,
   fileMetadata: undefined,
@@ -38,14 +39,16 @@ Multivio.CDM = SC.Object.create(
   physicalStructure: undefined,
   imageSize: undefined,
   searchResults: undefined,
-  
-  clear: function(){
+  pageIndexing: undefined,
+
+  clear: function () {
       this.referer = undefined;
       this.fileMetadata = undefined;
       this.logicalStructure = undefined;
       this.physicalStructure = undefined;
       this.imageSize = undefined;
       this.searchResults = undefined;
+      this.pageIndexing = undefined;
   },
 
   /**
@@ -227,7 +230,7 @@ Multivio.CDM = SC.Object.create(
           fmt(response.get("body")));
       var jsonRes = response.get("body");
       var t2 = {};
-      if (!SC.none(this.get('physicalStructure'))){
+      if (!SC.none(this.get('physicalStructure'))) {
         //verify if value is not already in the CDM
         if (this.get('physicalStructure')[url] === undefined) {
           var oldPhysic = this.get('physicalStructure');
@@ -394,6 +397,76 @@ Multivio.CDM = SC.Object.create(
       t2[url] = jsonRes;
       this.set('searchResults', t2);
       Multivio.logger.debug('New search results added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
+    }
+  },
+  
+  /**
+    Return the page indexing (for text selection) or send the request
+    to the server and return -1.
+
+    If a range of pages is defined using 'from' and 'to', 'page_nr'
+    is ignored.
+  
+    @param {String} url document url
+    @param {String} page_nr page to get indexing of
+    @param {Number} from page number start
+    @param {Number} to page number stop
+    
+    @return {Object}
+  */
+  getPageIndexing: function (url, page_nr, from, to) {
+    
+    Multivio.logger.debug('getPageIndexing getPageIndexing getPageIndexing');
+          
+    // TODO storage in page_nr=X&from=Y&to=Z&url=<doc url>
+    var serverAddress = Multivio.configurator.
+        getPath('baseUrlParameters.getPageIndexing');
+    serverAddress = serverAddress.
+              fmt(page_nr, from, to) + url;
+    
+    if (SC.none(this.get('pageIndexing')) || 
+        this.get('pageIndexing')[serverAddress] === undefined) {    
+          
+      // ask the server    
+      Multivio.requestHandler.
+          sendGetRequest(serverAddress, this, 'setPageIndexing', serverAddress);
+      Multivio.logger.debug('page indexing: request sent to server: ' + serverAddress);
+          
+      return -1;
+    }
+    else {
+      var res = this.get('pageIndexing')[serverAddress];
+      Multivio.logger.debug('page indexing returned by cdm ' + res);
+      return res;
+    }
+
+  },
+  
+  /**
+    Store the page indexing.
+
+    @param {String} response the response received from the server
+    @param {url} url the corresponding url
+  */
+  setPageIndexing: function (response, url) {
+    
+    if (SC.ok(response)) {
+      Multivio.logger.debug('page indexing received from the server: %@'.
+          fmt(response.get("body")));    
+      var jsonRes = response.get("body");
+      var t2 = {};
+      if (!SC.none(this.get('pageIndexing'))) {
+        var oldRes = this.get('pageIndexing');
+        t2 = this.clone(oldRes);
+      }
+      //t2[{'url': url.url, 'query': url.query}] = jsonRes;
+      t2[url] = jsonRes;
+      this.set('pageIndexing', t2);
+      Multivio.logger.debug('New page indexing added for ' + url);
     }
     else {
       Multivio.errorController.initialize(response.get('body'));
