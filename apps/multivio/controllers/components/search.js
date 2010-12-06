@@ -648,47 +648,62 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
   }.observes('currentSearchFile'),
  
+  /**
+    When the master file position (page) changes,
+    get the corresponding indexing. This is used for the text selection.
+    
+    @private
+    @observes Multivio.masterController.currentPosition
+  */
+  _currentPositionDidChange: function () {
   
+    Multivio.logger.debug('_currentPositionDidChange');
+    this._getPageIndexing();
+  
+  }.observes('Multivio.masterController.currentPosition'),
   /**
     When the master file selection changes,
-    change the current search file accordingly.
+    get the corresponding indexing. This is used for the text selection.
     
     @private
     @observes Multivio.masterController.currentFile
   */
   _currentFileDidChange: function () {
-    // TODO test
 
+    Multivio.logger.debug('_currentFileDidChange');
+    this._getPageIndexing();
+    
+  }.observes('Multivio.masterController.currentFile'), 
+
+  _getPageIndexing: function () {
+    
     var current_file = Multivio.masterController.get('currentFile');
     var page_nr = Multivio.masterController.get('currentPosition') || 1;
 
     var file_list = this.get('currentFileList');
     
     if (SC.none(file_list)) {
-      Multivio.logger.debug('_currentFileDidChange: no file list, skipping');
+      Multivio.logger.debug('_getPageIndexing: no file list, skipping: ' + file_list);
       return;
     }
     
     var num_files = file_list.length;
     var ref_url = this.get('url');
     
-    Multivio.logger.debug('_currentFileDidChange: ' + current_file);
+    Multivio.logger.debug('_getPageIndexing: ' + current_file);
 
     // test that it's not the referer url, in case of several files
     if (num_files > 1 && current_file === ref_url) {
-      Multivio.logger.debug('_currentFileDidChange: ref_url, skipping');
+      Multivio.logger.debug('_getPageIndexing: ref_url, skipping');
       return;
     }
-    
 
+    // query the server
     if (!SC.none(current_file) && !SC.none(page_nr)) {
       Multivio.CDM.getPageIndexing(current_file, page_nr, undefined, undefined);
     }
     
-    Multivio.logger.debug('Multivio.masterController.currentFile did change: ' + current_file);
-    
-  }.observes('Multivio.masterController.currentFile'), 
-
+  },
   
   /**
     If results already exist for this file in the CDM, load them.
