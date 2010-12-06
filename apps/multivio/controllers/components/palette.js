@@ -216,22 +216,6 @@ Multivio.paletteController = SC.ObjectController.create(
   },
   
   /**
-    Toolbar button has been pressed show the toolbar or hide it
-
-    @param {SC.Button} button the button pressed
-  */
-  showHorizontalToolbar: function (button) {
-    if (this.isHorizontalToolbarActive) {
-      button.set('isActive', NO);
-      this.set('isHorizontalToolbarActive', NO);
-    }
-    else {
-      button.set('isActive', YES);
-      this.set('isHorizontalToolbarActive', YES);
-    } 
-  },
-  
-  /**
     Call the method to show the good palette
     
     @param {SC.Button} the button pressed

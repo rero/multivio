@@ -538,17 +538,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   displayResults: {},
   
   /**
-    Binds to the currentValue in the rotate controller.
-    This binding is read only.
-    
-    @binding {Number}
-  */
-  // TODO remove this, move to Highlight controller
-  //rotateValue: undefined,      
-  //rotateValueBinding: 
-  //      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
-  
-  /**
     Binds to the search results stored in the CDM.
     This binding is read only.
     
@@ -585,46 +574,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @default ''
   */  
   searchStatus: '', 
-  
-  /**
-    When the rotation angle changes, send a new search request to the server
-    to obtain the new coordinates.
     
-    TODODODODO: compute coordinates locally
-    
-    @private
-    @observes rotateValue
-  */
-  /*_rotateValueDidChange: function () {
-    
-    Multivio.logger.debug("_rotateValueDidChange: " + this.get('rotateValue'));
-    
-    // if there are already search results, send a new request 
-    // to get new coordinates according to new rotation angle
-    var res = this.get('searchResults');
-    if (!SC.none(res) && !SC.none(res[this.get('currentSearchFile')])) {
-      // keep selected item
-      var selSet = this.get('selection');
-      // TODO: test: store in masterController instead
-      //this.set('selectedIndex', this.indexOf(selSet.firstObject()));
-      Multivio.masterController.set('currentSearchResultSelectionIndex', 
-                                        this.indexOf(selSet.firstObject()));
-
-      Multivio.logger.debug('currently selected object:' +
-                 selSet.firstObject() + ', #' + 
-                this.indexOf(selSet.firstObject()));
-
-      // send a new search request
-      // TODO: in the future, compute new coordinates locally,
-      // without querying the server again
-      this.doSearch();
-      
-      // NOTE: restore selection after we receive results
-      // This will be done once we receive the results,
-      // in this._searchResultsDidChange() 
-    }
-  }.observes('rotateValue'),*/
-  
 
   /**
     When the physical structure changes, extract file list (labels + urls)

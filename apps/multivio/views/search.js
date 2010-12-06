@@ -1,8 +1,8 @@
 /**
 ==============================================================================
-Project: Multivio - https://www.multivio.org/
-Copyright: (c) 2009-2010 RERO
-License: See file license.js
+  Project:    Multivio - https://www.multivio.org/
+  Copyright:  (c) 2009-2010 RERO
+  License:    See file license.js
 ==============================================================================
 */
 
@@ -166,4 +166,3 @@ value: '_searchIn'.loc()
     valueBinding: 'Multivio.searchController.searchStatus'
   })
 });
-

@@ -59,7 +59,7 @@ Multivio.views = SC.Page.design(
     }),
 
     bottomButtons: Multivio.FileButtonView.design({
-      layout: {bottom: -40, centerX: 24, width: 728, height: 150},
+      layout: {bottom: 20, centerX: 24, width: 728, height: 48},
       classNames: 'mvo-front-view',
       
       childViews: 'backgroundView '.w(),
@@ -168,35 +168,6 @@ Multivio.views = SC.Page.design(
             target: "Multivio.zoomController", 
             action: "doZoomIn"
           }),
-          
-          zoomFullSizeView: SC.ButtonView.design({
-            layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            name: 'Full',
-            toolTip: '_FullSize'.loc(),
-            renderStyle: "renderImage",
-            icon: 'full_size_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController",
-            action: "setPredefinedZoom"
-          }),
-
-          zoomFullWidthView: SC.ButtonView.design({
-            layout: { centerX: 48, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            name: 'Width',
-            toolTip: '_FullWidth'.loc(),
-            renderStyle: "renderImage",
-            icon: 'full_width_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController", 
-            action: "setPredefinedZoom"
-          }),
-
           
           zoomFullSizeView: SC.ButtonView.design({
             layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
@@ -436,7 +407,7 @@ Multivio.views = SC.Page.design(
     
       childViews: 'innerSearch'.w(),
       innerSearch: Multivio.SearchView.design({
-        layout: { top: 5, bottom: 5, left: 5, right: 5 },
+        layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE
       })
     })

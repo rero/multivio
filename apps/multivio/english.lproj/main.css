@@ -1,8 +1,8 @@
 /*
 ==============================================================================
-Project: Multivio - https://www.multivio.org/
-Copyright: (c) 2009-2010 RERO
-License: See file license.js
+  Project:    Multivio - https://www.multivio.org/
+  Copyright:  (c) 2009-2010 RERO
+  License:    See file license.js
 ==============================================================================
 */
 
@@ -125,7 +125,7 @@ color: white;
 .sc-theme .sc-segment img.icon {
 position: relative;
 vertical-align: middle;
-/* top: -2px; */
+	/* top: -2px;	*/
 top: -1px;
 /* margin-right: 2px; */
 margin-right: 0px;
@@ -665,3 +665,4 @@ vertical-align: middle;
 width: 16px;
 height: 16px;
 }
+
