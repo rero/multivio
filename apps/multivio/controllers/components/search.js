@@ -917,7 +917,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     }
     
     // TODO test dwy page indexing
-    var page_nr = Multivio.masterController.et('currentPosition');
+    var page_nr = Multivio.masterController.get('currentPosition');
     var from_ = undefined, to_ = undefined;
     Multivio.logger.debug('### TODO test page indexing');
     var pi = Multivio.CDM.getPageIndexing(url, page_nr, from_, to_);
