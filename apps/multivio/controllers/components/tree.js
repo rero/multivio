@@ -249,6 +249,16 @@ Multivio.treeController = SC.TreeController.create(
     this.bindings =  [];
   },
   
+  clear: function () {
+    this.position = null;
+    this.logicalStructure = null;
+    this.physicalStructure = null;    
+    this.treeExist = NO;
+    this.globalStructure = null;
+    this.treeStructure = null;
+    this._treeLabelByPosition = undefined;
+  },
+  
   /**
     Create the index for a logical structure. 
     To do it we compare urls of the logical and the physical structures

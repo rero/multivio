@@ -35,16 +35,23 @@ Multivio.Metadata = SC.View.extend(SC.ContentDisplay,
     // retreive key and data of the content
     var content = this.get('content');
     var key = content.key.capitalize();
+    // calculate the height of the key and the data 
+    // to set the height of the parentView
+    var keyHeight = SC.heightForString(key, 110, 'font-weight: bold', 
+        ['mvo-metadata-label']);
     var data = content.data;
-    // calculate the height of the data and set the height of the parentView
-    var dataHeight = SC.heightForString(data, 
-        220, '1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;');
-        
+    
+    var dataHeight = SC.heightForString(data, 220, ['mvo-metadata-data']);
+
     // if no data, skip this line
     if (dataHeight !== 0) {
-      context.addStyle('height', dataHeight);
-    
-      this.set('customHeight', dataHeight);
+      // keep the bigger height
+      if (keyHeight < dataHeight) {
+        keyHeight = dataHeight;
+      }
+      
+      context.addStyle('height', keyHeight);
+      this.set('customHeight', keyHeight);
     
       context = context.begin('span').addClass('mvo-metadata-label').push(key).end();
       context = context.begin('p').addClass('mvo-metadata-data').push(data).end();

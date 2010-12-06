@@ -108,6 +108,9 @@ color: white;
 .sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled .sc-button-label {
   background: none;
   opacity: 0.4;
+  moz-opacity : 0.4;
+  ms-filter: "alpha(opacity=4)"; /* IE 8 */
+  filter : alpha(opacity=4);
 }
 
 .sc-theme .sc-button-view.sc-regular-size.mvo-button.def.active,
@@ -535,6 +538,14 @@ ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   /*filter : alpha(opacity=10);*/
 }
 
+.mvo-front-view-invisible {
+  z-index: 10000;
+  opacity : 0.0;
+  moz-opacity : 0.0;
+  ms-filter: "alpha(opacity=0)"; /* IE 8 */
+  filter : alpha(opacity=0);
+}
+
 .mvo-front-view-transparent {
   z-index: -10000;
   background: sc_static("images/transparency_ddd_90.png") repeat;
@@ -563,7 +574,6 @@ ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   font: 1.1em "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
   position: absolute;
   width: 110px;
-  height: 30px;
   left: 13px;
   font-weight: bold;
   color: black;
@@ -577,7 +587,7 @@ ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   width: 220px;
   top: 0px;
   bottom: 0px;
-  left: 120px;
+  left: 130px;
   white-space: normal;
   
 }

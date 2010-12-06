@@ -38,6 +38,15 @@ Multivio.CDM = SC.Object.create(
   physicalStructure: undefined,
   imageSize: undefined,
   searchResults: undefined,
+  
+  clear: function(){
+      this.referer = undefined;
+      this.fileMetadata = undefined;
+      this.logicalStructure = undefined;
+      this.physicalStructure = undefined;
+      this.imageSize = undefined;
+      this.searchResults = undefined;
+  },
 
   /**
     Store the fileMetadata for a specific url

@@ -96,21 +96,6 @@ SC.stringsFor('French', {
   '_searchInProgress': 'Recherche est en cours...',
   '_resultSelection': 'Occurrence %@ sur %@',
 
-  // Strings for search and indexing functionality (MVO_SEIN)
-  '_doSearch': 'Search',
-  '_goToNext': 'Next occurence',
-  '_goToPrevious': 'Previous occurence',
-  '_searchIn': 'Search in file: ',
-  '_doClear' : 'Clear',
-  '_noSearchResultTitle': 'No results found',
-  '_noSearchResultDesc': 'No result was found for the given query',
-  '_typeQueryHere': 'Type search query here',
-  '_tooManyResults': 'Search result limit reached',
-  '_firstOccurrences': 'Only the first %@ occurences are displayed.',
-  '_noResult': 'No result was found',
-  '_searchInProgress': 'Searching...',
-  '_resultSelection': 'Result %@/%@',
-
   // Strings for the help section
   '_helpTitle': "Aide",
   '_helpIntro': "Ce prototype Multivio permet de visualiser des contenus\

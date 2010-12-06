@@ -99,7 +99,7 @@ Multivio.views = SC.Page.design(
             theme: 'mvo-button',
             isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
             target: "Multivio.navigationController", 
-            action: "goToPreviousPage"
+            action: "goToPrevious"
           }),    
 
           textPageView: SC.TextFieldView.design({ 
@@ -120,7 +120,7 @@ Multivio.views = SC.Page.design(
             theme: 'mvo-button',
             isEnabledBinding: "Multivio.navigationController.isNextEnabled",
             target: "Multivio.navigationController", 
-            action: "goToNextPage"
+            action: "goToNext"
           }),
 
           lastPageView: SC.ButtonView.design({

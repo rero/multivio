@@ -33,6 +33,9 @@ Multivio.initializer = SC.Object.create(
     @param {String} params 
   */
   readInputParameters: function () {
+    Multivio.CDM.clear();
+    // if new document clear treeController
+    Multivio.treeController.clear();
     // first split url and get parameters
     var inputUrl = !SC.none(location.hash) ? location.hash : undefined;
     if (inputUrl !== undefined) {
@@ -74,6 +77,10 @@ Multivio.initializer = SC.Object.create(
               prop.url = url;
               Multivio.CDM.setReferer(url);
             }
+            break;
+          
+          case 'doc_nr':
+            Multivio.configurator.set('initialDocNr', params[key]);
             break;
 
           case 'server':
