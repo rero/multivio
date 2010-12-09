@@ -83,17 +83,19 @@ Multivio.HighlightController = SC.ArrayController.extend(
     @param {String} type type: search or highlight
     @param {Number} current_zoom_factor
     @param {Boolean} is_original 
+    @param {String} url url of the file the highlight belongs to
     @return {SC.Object} the created highlight zone
   */
   addHighlight: function (top_, left_, width_, height_, page_, type_,
                                       current_zoom_factor, is_original,
-                                      angle, page_size) {
+                                      url) {
 
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
        height_ <= this.minimalZoneDimension) return null;
     
-    // dimensions and position of zone according to the current zoom factor
+    // dimensions and position of zone according to 
+    //the current zoom factor
     var received_zone;
 
     received_zone = SC.Object.create(
@@ -132,6 +134,9 @@ Multivio.HighlightController = SC.ArrayController.extend(
       };  
       
     }
+
+    // add url information
+    new_obj.url = url;
 
     // add highlight to the array
     this.addObject(new_obj);
@@ -351,10 +356,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
       c = this._getCurrentZone(c, zoom_factor);
                                                   
       z.current = c;
-      
-      //Multivio.logger.debug('updateCoordinates, %@,%@,%@,%@'.
-      //                    fmt(c.left, c.top, c.width, c.height));
-      
+            
     }
   },
   
@@ -369,15 +371,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
           
   */
   getRotationCoords: function (original_zone, angle, native_size) {
-    
-    //Multivio.logger.debug('getRotationCoords, angle: ' + angle);
-    
+        
     var page_width =  native_size.width;
     var page_height = native_size.height;
     
-    //Multivio.logger.debug('getRotationCoords, width: ' + page_width + 
-    //                      ' height: ' + page_height);
-
     var out_x1, x1 = original_zone.left;
     var out_y1, y1 = original_zone.top;
     var out_x2, x2 = x1 + original_zone.width;
@@ -608,7 +605,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         // init search file to the single file
         this.set('currentSearchFile', phys[url][0].url);
         
-        // TODO test dwy
+        // init file list with one element
         this.set('currentFileList', [phys[url][0]]);
         
         var childToRemove = Multivio.getPath(
@@ -763,14 +760,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       Multivio.logger.debug("_selectionDidChange: index not -1: " + selIndex);
       Multivio.masterController.set('currentSearchResultSelectionIndex', 
                                                                 selIndex);
-      // TODO test dwy
-      Multivio.getPath('views.mainContentView.content.innerMainContent.contentView.highlightpane').searchResultSelectionIndexDidChange();                                                          
+      // notify view of change
+      Multivio.getPath('views.mainContentView.content.innerMainContent' + 
+          '.contentView.highlightpane').searchResultSelectionIndexDidChange();
     } 
     
-    // TODO test: store current search file in master controler, so
+    // store current search file in master controler, so
     // that we don't lose this information in case we need to switch
     // files and this controller is reinitialised
-    // TODO bind search var to master var ?
     Multivio.logger.debug("### selectionDidChange: store url in master: " +
                                                 this.get('currentSearchFile'));
     Multivio.masterController.set('currentSearchFile', 
@@ -930,13 +927,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // Note: this triggers _searchResultsDidChange(), only the first time the server response is received
       res = Multivio.CDM.getSearchResults(url, query, '', '', 15, 50, angle);
     }
-    
-    // TODO test dwy page indexing
-    var page_nr = Multivio.masterController.get('currentPosition');
-    var from_ = undefined, to_ = undefined;
-    Multivio.logger.debug('### TODO test page indexing');
-    var pi = Multivio.CDM.getPageIndexing(url, page_nr, from_, to_);
-
         
     // store results
     // NOTE: artificially trigger _searchResultsDidChange() 
@@ -1157,7 +1147,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // if there are results                                         
     if (res !== -1 && !SC.none(res)) {
       
-      // TODO: get total number of search results, not for this file only
+      // get total number of search results, not for this file only
       Multivio.logger.debug('counting all search results');
       var num_all_res, num_res = res.file_position.results.length;
       var all_res = this.get('searchResults')[this.get('url')];
@@ -1321,15 +1311,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     SC.RunLoop.begin();
 
     // first, add a highlight zone
+    // note: add url to addHighlight call
     var new_hl = this.addHighlight(top_, left_, width_, height_,
-                                  page_, 'search', current_zoom_factor, YES);
+                                  page_, 'search', current_zoom_factor, YES, file_url);
 
     // then insert additional search information 
     // (assuming the addHighlight above was successful...)
     if (!SC.none(new_hl)) {
       new_hl.label = label;
       new_hl.context = context;
-      new_hl.url = file_url;
     } else {
       Multivio.logger.debug("Warning: cannot retrieve label and context ...");
     }

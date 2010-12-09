@@ -169,7 +169,7 @@ Multivio.HighlightContentView = SC.View.extend(
     @property {Boolean}     
     @default NO
   */  
-  persistentSelection: NO,
+  persistentSelection: YES,
   
   /** 
     Index of currently selected search result
@@ -227,15 +227,12 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultSelectionIndexDidChange: function () {
 
-    
-
     // update coordinates for the current selection
     // (after the page changes, the coordinates need to be updated anyway)
     //this.set('coordinatesNeedUpdate', YES);
     SC.RunLoop.begin();
     Multivio.searchController.updateCoordinates();
 
-    // TODO test dwy
     this.updateSearchResultScroll();
 
     this.set('layerNeedsUpdate', YES);
@@ -277,8 +274,6 @@ Multivio.HighlightContentView = SC.View.extend(
         }
       }
       // need to redraw the highlight zones to show current selection
-      // TODO test dwy
-      //this.set('layerNeedsUpdate', YES);
       this.set('coordinatesNeedUpdate', YES);
     }
     
@@ -382,6 +377,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // hide a palette
     Multivio.paletteController.hidePalette(null);
+    
     // cancel selections
     Multivio.selectionController.removeAllHighlights();
     
@@ -469,19 +465,21 @@ Multivio.HighlightContentView = SC.View.extend(
     // if persistent, create a highlight zone from this user selection 
     if (this.persistentSelection) {
       var l = this.userSelection.get('layout'), top, left;
-      
+            
       // compute top and left values, if absent ("reverse" selection)
       top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
       left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
       // send to controller
       Multivio.selectionController.
                       addHighlight(top, left, l.width, l.height, 
-                        this.get('currentPage'), 'selection', this.get('zoomFactor'), NO);
+                        this.get('currentPage'), 'selection', 
+                        this.get('zoomFactor'), NO,
+                        Multivio.masterController.get('currentFile'));
     }
     
     // hide user selection rectangle
     this.userSelection.set('isVisible', NO);
-
+    
     // clean up initial info
     this._mouseDownInfo = null;
         
@@ -495,11 +493,10 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes Multivio.selectionController.[]
   */
   selectionsDidChange: function () {
-    
+        
     // flag the view for a redraw, causes render() function to be called
-    //this.set('layerNeedsUpdate', YES);
-    this.set('highlightNeedsUpdate', YES);
-
+    this.set('layerNeedsUpdate', YES);
+    
   }.observes('Multivio.selectionController.[]'),
   
   /**
@@ -572,13 +569,17 @@ Multivio.HighlightContentView = SC.View.extend(
     if (current_search_file !== current_master_file && 
         current_search_file !== ref_url) return;
       
+    // clear view
     this.removeAllChildren();
+    
+    // add user selection rectangle
+    this.appendChild(this.userSelection);
     
     // get selections' highlights
     var zones = this.get('selections');
     var len   = zones.get('length');
     var i;
-    
+        
     // redraw all selection zones
     // NOTE: 'selections' is an array of zones
     for (i = 0; i < len; i++) {
@@ -604,7 +605,6 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // update scroll position
     // TODO don't automatically rescroll every time?
-    //Multivio.logger.debug('RENDER: updating scroll');
     this.updateSearchResultScroll();
     
   },
@@ -619,10 +619,6 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   _drawHighlightZone: function (zone, classNames_, index) {
     
-    //Multivio.logger.debug('_drawHighlightZone, drawing position (%@x%@) at [%@,%@] with classnames: [%@]'.fmt(zone.current.width, zone.current.height, zone.current.top, zone.current.left, classNames_));
-    
-    //Multivio.logger.debug('## draw zone. current page: %@, zone page: %@'.fmt(this.get('currentPage'), zone.index));
-    
     // check if the zone belongs to the current file
     if (Multivio.masterController.get('currentFile') !== zone.url) return;
     
@@ -631,6 +627,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // NOTE: not applying zoom factor, we expect adapted data in zone.current
     var cz = zone.current;
+        
     this.appendChild(this.createChildView(
       SC.View.design({
         layout:  { 
