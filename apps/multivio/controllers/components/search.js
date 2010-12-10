@@ -68,6 +68,90 @@ Multivio.HighlightController = SC.ArrayController.extend(
   //rotateValueBinding: 
   //      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
 
+
+  /**
+    Read selected text from CDM, only for non-empty 
+    (not null, undefined or empty string).
+  */
+  selectedText: undefined,
+  selectedTextBinding: SC.Binding.
+                          oneWay('Multivio.CDM.selectedText').
+                          notNull().notEmpty(),
+
+  /**
+    When the content changes, get the text located inside the selection.
+  */
+  contentDidChange: function () {
+      
+    if (this.get('length') === 0) return;
+    
+    Multivio.selectionController.getSelectedText();
+    
+  }.observes('Multivio.selectionController.[]'),
+  
+
+  /**
+    Receive the selected text from the CDM and
+    store it in the highlight object.
+
+    NOTE: as of now, only using the first object, ignoring any additional
+    objects.
+    
+  */
+  selectedTextDidChange: function () {
+    
+    var url = Multivio.masterController.get('currentFile');
+    var t = this.get('selectedText')[url];
+    
+    if (SC.none(t)) return;
+    
+    Multivio.logger.debug('selectedTextDidChange: [' + t.text + ']');
+    
+    if (Multivio.selectionController.get('length') === 0) {
+      Multivio.logger.debug('selectedTextDidChange: no object to store text');
+      return;
+    }
+    
+    // store text
+    Multivio.selectionController.objectAt(0).text = t.text;
+    
+    // clear value in CDM so a new request will be sent to the server
+    // for the next selection
+    Multivio.CDM.set('selectedText', undefined);
+    
+    // TODO debug
+    //Multivio.usco.showAlertPaneInfo('Selected text', t.text, 'OK');
+    
+  }.observes('selectedText'),
+
+  /**
+    Returns the text located inside all the highlight zones.
+    For each zone, the corresponding text is stored in the highlight object
+    in the 'text' field.
+    
+    NOTE: for now, only considering the first zone, if there are several
+    
+    @returns {String} the selected text
+    
+  */
+  getSelectedText: function () {
+    
+    if (this.get('length') === 0) return '';
+    
+    var t = '', z = this.objectAt(0);
+        
+    // get original coordinates of zone (unzoomed)    
+    var o = z.original;
+    var x1 = o.left, y1 = o.top, x2 = x1 + o.width, y2 = y1 + o.height;
+    
+    // send request to server to get text    
+    t = Multivio.CDM.getSelectedText(z.url, z.page_number, x1, y1, x2, y2);
+    
+    return t;
+    
+  },
+
+
   /**
     Create a new highlight zone with given coordinates and zoom factor.
     

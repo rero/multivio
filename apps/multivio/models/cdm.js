@@ -40,6 +40,7 @@ Multivio.CDM = SC.Object.create(
   imageSize: undefined,
   searchResults: undefined,
   pageIndexing: undefined,
+  selectedText: undefined,
 
   clear: function () {
       this.referer = undefined;
@@ -49,6 +50,7 @@ Multivio.CDM = SC.Object.create(
       this.imageSize = undefined;
       this.searchResults = undefined;
       this.pageIndexing = undefined;
+      this.selectedText = undefined;
   },
 
   /**
@@ -412,7 +414,7 @@ Multivio.CDM = SC.Object.create(
     is ignored.
   
     @param {String} url document url
-    @param {String} page_nr page to get indexing of
+    @param {Number} page_nr page to get indexing of
     @param {Number} from page number start
     @param {Number} to page number stop
     
@@ -420,9 +422,7 @@ Multivio.CDM = SC.Object.create(
   */
   getPageIndexing: function (url, page_nr, from, to) {
     
-    Multivio.logger.debug('getPageIndexing getPageIndexing getPageIndexing');
-          
-    // TODO storage in page_nr=X&from=Y&to=Z&url=<doc url>
+    // storage in page_nr=X&from=Y&to=Z&url=<doc_url>
     var serverAddress = Multivio.configurator.
         getPath('baseUrlParameters.getPageIndexing');
     serverAddress = serverAddress.
@@ -472,6 +472,68 @@ Multivio.CDM = SC.Object.create(
       Multivio.errorController.initialize(response.get('body'));
       Multivio.makeFirstResponder(Multivio.ERROR);
     }
-  }
+  },
   
+  /**
+    Return the text located in the given box on the specified page 
+    of the document.
+
+  
+    @param {String} url document url
+    @param {Number} page_nr page number
+    @param {Number} x1 upper left point, x
+    @param {Number} y1 upper left point, y
+    @param {Number} x2 bottom right point, x
+    @param {Number} y2 bottom right point, y
+    
+    @return {Object}
+  */
+  getSelectedText: function (url, page_nr, x1, y1, x2, y2) {
+    
+    if (SC.none(this.get('selectedText')) || 
+        this.get('selectedText')[url] === undefined) {
+      // ask the server    
+      var serverAdress = Multivio.configurator.
+          getPath('baseUrlParameters.getText');
+          
+      serverAdress = serverAdress.fmt(page_nr, x1, y1, x2, y2) + url;
+      
+      Multivio.requestHandler.
+          sendGetRequest(serverAdress, this, 'setSelectedText', url, NO);
+      return -1;
+    }
+    else {
+      var t = this.get('selectedText')[url];
+      Multivio.logger.debug('selectedText returned by cdm ' + t);
+      return t;
+    }
+
+  },
+
+  /**
+    Store the currently selected text.
+
+    @param {String} response the response received from the server
+    @param {url} url the corresponding url
+  */
+  setSelectedText: function (response, url) {
+    
+    if (SC.ok(response)) {
+      Multivio.logger.debug('selected text received from the server: %@'.
+          fmt(response.get("body")));    
+      var jsonRes = response.get("body");
+      var t2 = {};
+      if (!SC.none(this.get('selectedText'))) {
+        var oldRes = this.get('selectedText');
+        t2 = this.clone(oldRes);
+      }
+      t2[url] = jsonRes;
+      this.set('selectedText', t2);
+      Multivio.logger.debug('New selected text added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
+    }
+  }
 });
