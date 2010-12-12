@@ -129,7 +129,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     For each zone, the corresponding text is stored in the highlight object
     in the 'text' field.
     
-    NOTE: for now, only considering the first zone, if there are several
+    NOTE: for now, only considering the first zone, if there are several.
     
     @returns {String} the selected text
     
@@ -144,8 +144,11 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var o = z.original;
     var x1 = o.left, y1 = o.top, x2 = x1 + o.width, y2 = y1 + o.height;
     
+    var angle = Multivio.rotateController.get('currentValue');
+    
     // send request to server to get text    
-    t = Multivio.CDM.getSelectedText(z.url, z.page_number, x1, y1, x2, y2);
+    t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
+                                     x1, y1, x2, y2, angle);
     
     return t;
     

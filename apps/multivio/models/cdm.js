@@ -485,10 +485,11 @@ Multivio.CDM = SC.Object.create(
     @param {Number} y1 upper left point, y
     @param {Number} x2 bottom right point, x
     @param {Number} y2 bottom right point, y
+    @param {Number} angle rotation angle of content
     
     @return {Object}
   */
-  getSelectedText: function (url, page_nr, x1, y1, x2, y2) {
+  getSelectedText: function (url, page_nr, x1, y1, x2, y2, angle) {
     
     if (SC.none(this.get('selectedText')) || 
         this.get('selectedText')[url] === undefined) {
@@ -496,7 +497,7 @@ Multivio.CDM = SC.Object.create(
       var serverAdress = Multivio.configurator.
           getPath('baseUrlParameters.getText');
           
-      serverAdress = serverAdress.fmt(page_nr, x1, y1, x2, y2) + url;
+      serverAdress = serverAdress.fmt(page_nr, x1, y1, x2, y2, angle) + url;
       
       Multivio.requestHandler.
           sendGetRequest(serverAdress, this, 'setSelectedText', url, NO);
