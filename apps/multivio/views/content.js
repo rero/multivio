@@ -206,13 +206,12 @@ Multivio.HighlightContentView = SC.View.extend(
     SC.RunLoop.begin();
     if (this.get('coordinatesNeedUpdate')) {
       
-      // update done by the controller
+      // update done by the controllers
       Multivio.searchController.updateCoordinates();
+      Multivio.selectionController.updateCoordinates();
       
       // update done, reset flag 
       this.set('coordinatesNeedUpdate', NO);
-      
-      // TODO??: flag view for a new render ?
       
     }
     SC.RunLoop.end();
@@ -303,8 +302,9 @@ Multivio.HighlightContentView = SC.View.extend(
     Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' +
                                                     this.get('rotateValue'));
 
-    // notify controller the rotation change
+    // notify controllers the rotation change
     Multivio.searchController.set('rotateValue', this.get('rotateValue'));
+    Multivio.selectionController.set('rotateValue', this.get('rotateValue'));
 
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
@@ -488,12 +488,15 @@ Multivio.HighlightContentView = SC.View.extend(
   
   /**
     When the selection highlights change,
-    flag the view for a redraw.
+    flag the coordinates for a recomputation and the view for a redraw.
   
     @observes Multivio.selectionController.[]
   */
   selectionsDidChange: function () {
         
+    // set flag for updating coordinates to take rotation and zoom into account
+    this.set('coordinatesNeedUpdate', YES);
+
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
     
@@ -501,14 +504,13 @@ Multivio.HighlightContentView = SC.View.extend(
   
   /**
     When the search results change,
-    flag the view for a redraw.
+    flag the coordinates for a recomputation and the view for a redraw.
   
     @observes Multivio.searchController.[]
   */
   searchResultsDidChange: function () {
 
-    // update coordinates to take rotation and zoom into account
-    //Multivio.searchController.updateCoordinates();
+    // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
 
     // flag the view for a redraw, causes render() function to be called
@@ -579,6 +581,8 @@ Multivio.HighlightContentView = SC.View.extend(
     var zones = this.get('selections');
     var len   = zones.get('length');
     var i;
+    
+    //Multivio.logger.debug('rendering ' + len + ' selections');
         
     // redraw all selection zones
     // NOTE: 'selections' is an array of zones

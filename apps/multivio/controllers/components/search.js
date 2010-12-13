@@ -70,7 +70,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
 
   /**
-    Read selected text from CDM, only for non-empty 
+    Read selected text from CDM, only for non-empty values
     (not null, undefined or empty string).
   */
   selectedText: undefined,
@@ -80,6 +80,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
   /**
     When the content changes, get the text located inside the selection.
+    
+    @observes Multivio.selectionController.[]
   */
   contentDidChange: function () {
       
@@ -105,7 +107,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     if (SC.none(t)) return;
     
-    Multivio.logger.debug('selectedTextDidChange: [' + t.text + ']');
+    Multivio.logger.debug('selectedTextDidChange: "' + t.text + '"');
     
     if (Multivio.selectionController.get('length') === 0) {
       Multivio.logger.debug('selectedTextDidChange: no object to store text');
@@ -144,9 +146,11 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var o = z.original;
     var x1 = o.left, y1 = o.top, x2 = x1 + o.width, y2 = y1 + o.height;
     
-    var angle = Multivio.rotateController.get('currentValue');
+    // NOTE: always call getText on unzoomed, unrotated content (normalisation)
+    var angle = 0; //this.get('rotateValue');
     
-    // send request to server to get text    
+    // send request to server to get text
+    // NOTE: coordinates are original, unrotated
     t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
                                      x1, y1, x2, y2, angle);
     
@@ -212,6 +216,9 @@ Multivio.HighlightController = SC.ArrayController.extend(
       // compute the dimensions and position according to 
       // original content size (zoom factor = 1)
       var original_zone = this._getOriginalZone(received_zone, current_zoom_factor);
+      // compute unrotated coordinates here before storing
+      var angle = this.get('rotateValue');
+      original_zone = this.getUnrotatedCoords(original_zone, angle);
       
       new_obj = { 
         page_number: page_, 
@@ -344,7 +351,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
   /**
     Compute the position and dimension of a zone as it is on the
     unzoomed content, based on its current data and the zoom factor
-    at which said data was recorded
+    at which said data was recorded.
     
     @private
     
@@ -455,6 +462,11 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     NOTE: the input coordinates should always be given in a non-rotated
           form (angle = 0).
+  
+    @param {SC.Object} zone original coordinates (native size), unrotated
+    @param {Number} angle rotation angle
+    @param {SC.Object} native_size page width and height
+    @return {SC.Object} zone coordinates rotated
           
   */
   getRotationCoords: function (original_zone, angle, native_size) {
@@ -504,6 +516,43 @@ Multivio.HighlightController = SC.ArrayController.extend(
     };
   },
   
+  /**
+    Given coordinates on a rotated content (angle !== 0),
+    this function returns the coordinates unrotated (angle = 0).
+    
+    @param {SC.Object} zone coordinates (native size), rotated
+    @param {Number} angle rotation angle
+    @return {SC.Object} zone coordinates unrotated
+  */
+  getUnrotatedCoords: function (zone, angle) {
+    
+    var new_zone = zone;
+    
+    if (angle === 0) return new_zone;
+
+    var file_url = Multivio.masterController.get('currentFile');
+    var page_number = Multivio.masterController.get('currentPosition');
+                            
+    if (SC.none(file_url) || SC.none(page_number)) {
+      return;
+    }
+    
+    var url = 'page_nr=%@&url=%@'.fmt(page_number, file_url);
+    var native_size = Multivio.CDM.getImageSize(url);
+    var ns = native_size;
+    
+    // switch height and width for "horizontal" case
+    if (Math.abs(angle) === 90 || Math.abs(angle) === 270) {
+      ns = {width: native_size.height, height: native_size.width};
+    }
+    new_zone = this.getRotationCoords(new_zone, -angle, ns);
+    
+    Multivio.logger.debug('getUnrotatedCoords, unrotated tlwh: %@,%@,%@,%@'.
+        fmt(new_zone.top, new_zone.left, new_zone.width, new_zone.height));
+        
+    return new_zone;
+    
+  },
   
   /**
     Initialize the controller, and its content.
