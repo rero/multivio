@@ -120,10 +120,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // clear value in CDM so a new request will be sent to the server
     // for the next selection
     Multivio.CDM.set('selectedText', undefined);
-    
-    // TODO debug
-    //Multivio.usco.showAlertPaneInfo('Selected text', t.text, 'OK');
-    
+        
   }.observes('selectedText'),
 
   /**
@@ -288,13 +285,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     Remove all highlight zones.
   */
   removeAllHighlights: function () {
-    /*var l = this.get('length');
-    while (--l >= 0) {
-      this.removeHighlight(l);
-    }*/
-    // TODO?: this is faster, but individual objects are not destroyed,
-    // waiting of garbage collector. If memory consumption is a problem
-    // then using removeHighlight() is advised.
+    
     this.set('content', []);
   },
 
@@ -325,27 +316,9 @@ Multivio.HighlightController = SC.ArrayController.extend(
     @observes zoomFactor
   */
   zoomFactorDidChange: function () {
-    
-    
+        
     this.updateCoordinates(YES, NO);
     
-    /*
-    // update current position and dimensions for all zones for current zoom
-    // TODO?: alternatively, each zone could have a function which can 
-    // update itself with a new zoom factor,
-    // i.e. zone.updateZoom(new_zoom_factor);
-    var zoom_factor = this.get('zoomFactor');
-    var l = this.get('length'), c, o, z;  
-    while (--l >= 0) {
-      z = this.getZone(l);
-      c = z.current;
-      o = z.original;
-      
-      c.top     = o.top     * zoom_factor;
-      c.left    = o.left    * zoom_factor;
-      c.width   = o.width   * zoom_factor;
-      c.height  = o.height  * zoom_factor;      
-    }*/
   }.observes('zoomFactor'),
 
   /**
@@ -878,10 +851,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @observes selection
   */
   _selectionDidChange: function () {
-    
-    // TODO: is it possible to detect the case when we come here from initialize()
-    // and thus avoid jumping back to the current ?
-    
+        
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     var selIndex = this.indexOf(selectedObject);
@@ -1034,14 +1004,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var ref_url = this.get('url');
     var res = undefined;
     
-    // TODO: if this is the referer url, 'search all files' option was
+    // If this is the referer url, 'search all files' option was
     // selected. Send a request for each file, and store them all in 
     // Multivio.CDM.searchResults[<referer_url>]
     if (url === ref_url) {
       Multivio.logger.debug('doSearch ALL: referer url: ' + url);
       
       // get list of all urls and send request
-      // TODO: how to handle that we receive results in different order etc.. ?
       // idea: each time search results change, we rebuild the complete list in
       // Multivio.CDM.searchResults[<referer_url>], in the order of the files
       // as they appear in the list.
@@ -1059,8 +1028,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         
       }
     } else {
-      // TODO: query multivio server: context size=15, max_results=50
-      // Note: this triggers _searchResultsDidChange(), only the first time the server response is received
+      // query multivio server: context size=15, max_results=50
+      // Note: this triggers _searchResultsDidChange(), 
+      // only the first time the server response is received
       res = Multivio.CDM.getSearchResults(url, query, '', '', 15, 50, angle);
     }
         
@@ -1150,10 +1120,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @observes searchResults
   */
   _searchResultsDidChange: function () {
-    
-    // TODO: check if there is a difference in the results to
-    // avoid calling _setSearchResults() for nothing ?
-    
+        
     // get search results and url to store them for
     var res = this.get('searchResults');
     var url = this.get('_load_url');
@@ -1166,7 +1133,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // use the current url as key for storage    
     var key = current_url;
     
-    // TODO debug info
+    // debug info
     var ref_url = this.get('url');
     if (key === ref_url) {
       Multivio.logger.debug('_searchResultsDidChange: (3) REF URL HERE');
@@ -1328,7 +1295,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
         // params: label, context, top_, left_, width_, height_, 
         //         file_url, page_, current_zoom_factor
-        // TODO: add current angle and native page size
         this.addSearchResult(query, a.preview,
                              c.y1, c.x1, 
                              Math.abs(c.x1 - c.x2),
@@ -1337,28 +1303,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              b.page,
                              this.get('zoomFactor'));
                              
-      }
-      
-      // update search status
-      //this._updateSearchStatus();
-      
-      // TODO: add number of search results to some nodes:
-      //      (which ones? all ? ...)
-      //var treeItems = Multivio.treeController.get('arrangedObjects');
-      //Multivio.logger.debug("treeItems: " + treeItems);
-    
-      // TODO: test, set number for first tree element 
-      // --> OK, works
-      //if (!SC.none(treeItems) && treeItems.length > 0) {
-        //Multivio.logger.debug("setting number of search results on page " +
-        //   treeItems.objectAt(0).file_position.index);
-        //treeItems.objectAt(0).setSearchResultsNumber(num_res);
-      //}
-      
-      // select first result
-      // TODO: note: this will trigger a selectionDidChange, which in turn will change
-      // back to the current searched document, which makes it impossible to switch files from the treeview...
-      //this.goToFirstResult();
+      }      
     }
   },
 
@@ -1518,12 +1463,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.doSearch();
     } else {
     
-      // restore previous selection if there was one
-      // TODO test
-      /*if (mi !== -1) {
-        this.set('selectedIndex', mi);
-      }*/
-
       // if the selected search file was the referer, use this with
       // _loadExistingSearchResultsForFile to load results of all files at once.
       if (msf === this.get('url')) {

@@ -349,7 +349,6 @@ Multivio.HighlightContentView = SC.View.extend(
     // finished loading, update scroll
     if (!loading) {
       //Multivio.logger.debug("isLoadingContentDidChange: updating scroll");
-      //TODO test dwy
       //this.updateSearchResultScroll();
     }
     
@@ -493,6 +492,8 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes Multivio.selectionController.[]
   */
   selectionsDidChange: function () {
+    
+    Multivio.logger.debug('selectionsDidChange');
         
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
@@ -562,14 +563,13 @@ Multivio.HighlightContentView = SC.View.extend(
       sc_super();
     }
     
-    var current_search_file = Multivio.searchController.get('currentSearchFile');
     var current_master_file = Multivio.masterController.get('currentFile');
     var ref_url             = Multivio.searchController.get('url');
+    var csf = Multivio.searchController.get('currentSearchFile') || ref_url;
     
     // update highlights only if the search results belong to the current
     // file, or 'All files' search scope is selected.
-    if (current_search_file !== current_master_file && 
-        current_search_file !== ref_url) return;
+    if (csf !== current_master_file && csf !== ref_url) return;
       
     // clear view
     this.removeAllChildren();
@@ -582,7 +582,7 @@ Multivio.HighlightContentView = SC.View.extend(
     var len   = zones.get('length');
     var i;
     
-    //Multivio.logger.debug('rendering ' + len + ' selections');
+    Multivio.logger.debug('rendering ' + len + ' selections');
         
     // redraw all selection zones
     // NOTE: 'selections' is an array of zones
@@ -608,7 +608,6 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('highlightNeedsUpdate', NO);
     
     // update scroll position
-    // TODO don't automatically rescroll every time?
     this.updateSearchResultScroll();
     
   },
