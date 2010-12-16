@@ -79,6 +79,14 @@ Multivio.HighlightController = SC.ArrayController.extend(
                           notNull().notEmpty(),
 
   /**
+    Selected text, string only
+   
+    @property {SC.String}
+    @default undefined
+  */
+  selectedTextString:  undefined,
+
+  /**
     When the content changes, get the text located inside the selection.
     
     @observes Multivio.selectionController.[]
@@ -116,6 +124,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // store text
     Multivio.selectionController.objectAt(0).text = t.text;
+    Multivio.selectionController.set('selectedTextString', t.text);
     
     // clear value in CDM so a new request will be sent to the server
     // for the next selection
@@ -519,9 +528,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
       ns = {width: native_size.height, height: native_size.width};
     }
     new_zone = this.getRotationCoords(new_zone, -angle, ns);
-    
-    Multivio.logger.debug('getUnrotatedCoords, unrotated tlwh: %@,%@,%@,%@'.
-        fmt(new_zone.top, new_zone.left, new_zone.width, new_zone.height));
         
     return new_zone;
     

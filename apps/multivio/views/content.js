@@ -57,6 +57,24 @@ Multivio.ImageContentView = SC.ImageView.extend(
 Multivio.HighlightContentView = SC.View.extend(
 /** @scope Multivio.HighlightContentView.prototype */ {
   
+  /** 
+    div which contains the selected text.
+    
+    @property {SC.TextFieldView}
+    @default null
+  */
+  selectedTextDiv: null,
+  
+  /**
+    Binds to the selectionController's selectedTextString.
+    This binding is read only.
+    
+    @binding {SC.String}
+  */
+  selectedTextString: null,
+  selectedTextStringBinding: 
+      SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
+  
   /**
     Binds to the masterController's currentPosition.
     This binding is read only.
@@ -187,7 +205,8 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   init: function () {
     
-    // create userSelection view for selection, with 0x0 dimensions for a start
+    // create userSelection view for the display of the selection
+    // highlight zone, with 0x0 dimensions for a start
     this.userSelection = this.createChildView(
       SC.View.design({
         layout:  { top: 0, left: 0, width: 0, height: 0 },
@@ -198,9 +217,52 @@ Multivio.HighlightContentView = SC.View.extend(
     this.appendChild(this.userSelection);
     this.userSelection.set('isVisible', NO);
   
+    
+    // create invisible div which will contain the selected text,
+    // and will be used to copy it to clipboard
+    this.selectedTextDiv = this.createChildView(
+      SC.TextFieldView.design({
+        layout:  { top: -10, left: -10, width: 1, height: 1 },
+        layerId: 'selected_text'
+      })
+    );
+     
+    // add the label to the view NOTE: set it as visible,
+    // with 1x1 dimensions outside the view so it's not actually visible
+    // but still takes new text values
+    this.appendChild(this.selectedTextDiv);
+    this.selectedTextDiv.set('isVisible', YES);
+    this.selectedTextDiv.set('isEnabled', YES);
+
     sc_super();
+
   },
   
+  /**
+    When the selected text in selectionController changes, insert it
+    in a label view, which will be used for the copy to clipboard.
+
+    @observes selectedTextString
+  */
+  selectedTextStringDidChange: function () {
+    
+    var t = this.get('selectedTextString');
+    
+    Multivio.logger.debug('HighlightContentView: selectedTextStringDidChange: ' + t);
+    
+    // set text in the div (SC.TextFieldView)
+    SC.RunLoop.begin();
+    this.selectedTextDiv.set('value', t);
+    SC.RunLoop.end();
+
+  }.observes('selectedTextString'),
+  
+  
+  /**
+    When the coordinate update flag is set, update them in both controllers.
+
+    @observes coordinatesNeedUpdate
+  */
   coordinatesNeedUpdateDidChange: function () {
 
     SC.RunLoop.begin();
@@ -492,9 +554,7 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes Multivio.selectionController.[]
   */
   selectionsDidChange: function () {
-    
-    Multivio.logger.debug('selectionsDidChange');
-        
+           
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
 
@@ -574,16 +634,15 @@ Multivio.HighlightContentView = SC.View.extend(
     // clear view
     this.removeAllChildren();
     
-    // add user selection rectangle
+    // add user selection rectangle and text div
     this.appendChild(this.userSelection);
+    this.appendChild(this.selectedTextDiv);
     
     // get selections' highlights
     var zones = this.get('selections');
     var len   = zones.get('length');
     var i;
-    
-    Multivio.logger.debug('rendering ' + len + ' selections');
-        
+          
     // redraw all selection zones
     // NOTE: 'selections' is an array of zones
     for (i = 0; i < len; i++) {
@@ -1088,6 +1147,8 @@ The next asked Url if user choose to proceed loading a bigg image
   */
   mouseDown: function (evt) {
     Multivio.paletteController.hidePalette(null);
+    // declare the event as not handled to allow browser context menu
+    return NO;
   },
   
   /**
@@ -1193,6 +1254,26 @@ The next asked Url if user choose to proceed loading a bigg image
           Multivio.navigationController.goToNext();
         }
         return YES;
+      // ctrl + c (or 'apple' + c for mac)
+      case 67:
+        var cmd = evt.commandCodes();
+              
+        if (cmd.indexOf('ctrl_c') !== -1) {
+          
+          // get input field of the SC.TExtFieldView used for selection
+          var selected_text_field = SC.$('label#selected_text')[0]
+            .childNodes[1].childNodes[0];
+           
+          // focus and select text field, so that it cn be copied by the browser
+          // when pressing ctrl/apple + c  
+          selected_text_field.focus();
+          selected_text_field.select();
+          
+        }
+        
+        // declare the event as not handled so the browser still
+        // does his job on ctrl + c
+        return NO;
       default:
         return NO;
       }
