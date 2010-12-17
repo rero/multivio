@@ -164,6 +164,25 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
   },
 
+  /**
+    Select the text field on the view that contains the text selection,
+    so it can be copied by the browser on ctrl + c.
+  */
+  selectTextField: function () {
+    
+    var t = this.get('selectedTextString');
+    
+    // TODO test ignore empty text selections
+    if (SC.none(t) || t === '') return;
+    
+    var selected_text_field = SC.$('label#selected_text')[0]
+      .childNodes[1].childNodes[0];
+     
+    // focus and select text field, so that it can be copied by the browser
+    // when pressing ctrl/apple + c  
+    selected_text_field.focus();
+    selected_text_field.select();
+  },
 
   /**
     Create a new highlight zone with given coordinates and zoom factor.

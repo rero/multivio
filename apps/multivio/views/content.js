@@ -250,13 +250,16 @@ Multivio.HighlightContentView = SC.View.extend(
     
     Multivio.logger.debug('HighlightContentView: selectedTextStringDidChange: ' + t);
     
-    // set text in the div (SC.TextFieldView)
     SC.RunLoop.begin();
+    // set text in the div (SC.TextFieldView)
     this.selectedTextDiv.set('value', t);
+    
+    // get input field of the SC.TextFieldView used for selection
+    Multivio.selectionController.selectTextField();
+    
     SC.RunLoop.end();
 
   }.observes('selectedTextString'),
-  
   
   /**
     When the coordinate update flag is set, update them in both controllers.
@@ -1260,19 +1263,20 @@ The next asked Url if user choose to proceed loading a bigg image
               
         if (cmd.indexOf('ctrl_c') !== -1) {
           
-          // get input field of the SC.TExtFieldView used for selection
-          var selected_text_field = SC.$('label#selected_text')[0]
-            .childNodes[1].childNodes[0];
-           
-          // focus and select text field, so that it cn be copied by the browser
-          // when pressing ctrl/apple + c  
-          selected_text_field.focus();
-          selected_text_field.select();
+          // get input field of the SC.TextFieldView used for selection
+          // NOTE: this is done a second time (was done already in 
+          // selectedTextStringDidChange()) to select the text,
+          // as seemingly Safari needs it done twice so the text field
+          // is correctly selected
+          Multivio.selectionController.selectTextField();
           
+          // put focus back on main content
+          var main = SC.$('div.sc-view .image-and-highlight-container')[0];
+          main.focus();
         }
         
         // declare the event as not handled so the browser still
-        // does his job on ctrl + c
+        // does his job (copy text) on ctrl + c
         return NO;
       default:
         return NO;
