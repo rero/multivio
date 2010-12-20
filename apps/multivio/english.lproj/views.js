@@ -327,7 +327,20 @@ Multivio.views = SC.Page.design(
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showHorizontalToolbar"
-        })
+        }),
+        SC.ButtonView.design({
+          layout: { top: 250, centerX: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'pan',
+          toolTip: '_Pan'.loc(),
+          renderStyle: "renderImage",
+          icon: 'tree_new',
+          theme: 'mvo-button',
+          isEnabledBinding: 'Multivio.paletteController.isPanButtonEnabled',
+          target: "Multivio.paletteController",
+          action: "activePan"
+        }),
       ]
     }),
 

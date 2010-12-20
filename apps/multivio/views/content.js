@@ -310,6 +310,8 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // hide a palette
     Multivio.paletteController.hidePalette(null);
+    // send mouseDown event to the Multivio.ContentView (pan widget)
+    this.get('parentView').get('parentView').get('parentView').mouseDown(evt);
     // cancel selections on current page
     Multivio.selectionController.removeAllHighlights();
     
@@ -346,6 +348,9 @@ Multivio.HighlightContentView = SC.View.extend(
     @return {Boolean} true if everything OK
   */
   mouseDragged: function (evt) {
+    // send mouseDragged event to the Multivio.ContentView (pan widget)
+    this.get('parentView').get('parentView').get('parentView').mouseDragged(evt);
+    
     var info = this._mouseDownInfo, dim;
     
     // handle width difference
@@ -393,6 +398,8 @@ Multivio.HighlightContentView = SC.View.extend(
     @return {Boolean} true if everything OK
   */
   mouseUp: function (evt) {
+    // send mouseUp event to the Multivio.ContentView (pan widget)
+    this.get('parentView').get('parentView').get('parentView').mouseUp(evt);
         
     // if persistent, create a highlight zone from this user selection 
     if (this.persistentSelection) {
@@ -622,6 +629,21 @@ Multivio.ContentView = SC.ScrollView.extend(
   */
   imageSize: null,
   imageSizeBinding: 'Multivio.CDM.imageSize',
+  
+  /**
+    Binds to the isPanButtonEnabled of the paletteController
+    
+    @binding {Boolean}
+  */
+  panButton: NO,
+  panButtonBinding:'Multivio.paletteController.isPanButtonEnabled',
+  
+  /**  
+    Variable that contains mouse pointer position. Information used by pan
+    
+    @ private 
+  */ 
+  _mouseDownInfo: null, 
 
   /**
     The native image size
@@ -636,6 +658,7 @@ The next asked Url if user choose to proceed loading a bigg image
   
   needToScrollUp: YES,
   isNewImage: NO,
+  
 
 
   /**
@@ -711,6 +734,23 @@ The next asked Url if user choose to proceed loading a bigg image
       }
     }
   }.observes('imageSize'),
+  
+  /**
+    ScrollerVisible property has changed, see if we can enabled (disabled) pan
+    button
+    
+    @observes isHorizontalScrollerVisible and isVerticalScrollerVisible
+  */
+  scrollStateDidChange: function () {
+    if(this.get('isHorizontalScrollerVisible') || 
+        this.get('isVerticalScrollerVisible')) {
+          this.set('panButton', YES);    
+    }
+    else {
+      this.set('panButton', NO);
+    }
+    
+  }.observes('isHorizontalScrollerVisible', 'isVerticalScrollerVisible'),
   
 
   /**
@@ -993,14 +1033,65 @@ The next asked Url if user choose to proceed loading a bigg image
     toScroll += this.get('verticalScrollerView').thumbLength();
     return toScroll;
   },
-  
+   
   /**
-    On mouse down hide the current palette
+    On mouse down hide the current palette or save mouse pointer position
     
     @param {SC.Event} Event fired
   */
   mouseDown: function (evt) {
-    Multivio.paletteController.hidePalette(null);
+    if (Multivio.paletteController.get('isPanActive')) {
+      // indicate dragging - rerenders view
+      this.set('isDraggin', YES);
+      this._mouseDownInfo = {
+        pageX: evt.pageX, // save mouse pointer loc for later use
+        pageY: evt.pageY,
+      };
+      return YES;
+    }
+    else {
+      Multivio.paletteController.hidePalette(null);
+    }
+  },
+  
+  /**
+    On mouse up reset mouseDownInfo variable
+    
+    @param {SC.Event} Event fired
+  */  
+  mouseUp: function(evt) {
+    if (Multivio.paletteController.get('isPanActive')) {
+      // no longer dragging - will rerender
+      this.set('isDragging', NO);
+
+      // apply one more time to set final position
+      this.mouseDragged(evt); 
+      this._mouseDownInfo = null; // cleanup info
+      return YES; // handled!
+    }
+  },
+  
+  /**
+    On mouse dragged set scrollHoffset
+    
+    @param {SC.Event} Event fired
+  */  
+  mouseDragged: function(evt) {
+    if (Multivio.paletteController.get('isPanActive')) {
+      if (this.get('isVerticalScrollerVisible'))  {
+        var currentVerticalOffset = this.get('verticalScrollOffset');
+        var newVerticalOffset = currentVerticalOffset + 
+            (evt.pageY - this._mouseDownInfo.pageY);
+        this.set('verticalScrollOffset', newVerticalOffset);
+      }
+      if (this.get('isHorizontalScrollerVisible')) {
+        var currentHorizontalOffset = this.get('horizontalScrollOffset');
+        var newHorizontalOffset = currentHorizontalOffset + 
+            (evt.pageX - this._mouseDownInfo.pageX);    
+        this.set('horizontalScrollOffset', newHorizontalOffset);
+      }
+      return YES;
+    }
   },
   
   /**

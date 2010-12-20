@@ -31,6 +31,8 @@ Multivio.paletteController = SC.ObjectController.create(
     If the button is active the toolbar is permanently visible
   */
   isHorizontalToolbarActive: null,
+  isPanActive: NO,
+  isPanButtonEnabled: NO,
   
   /**
     Return the layout position of the palette
@@ -213,6 +215,17 @@ Multivio.paletteController = SC.ObjectController.create(
       button.set('isActive', YES);
       this.set('isHorizontalToolbarActive', YES);
     } 
+  },
+  
+  activePan: function (button) {
+    if (this.isPanActive) {
+      button.set('isActive', NO);
+      this.set('isPanActive', NO);
+    }
+    else {
+      button.set('isActive', YES);
+      this.set('isPanActive', YES);
+    }
   },
   
   /**
