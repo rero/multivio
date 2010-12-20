@@ -32,8 +32,10 @@ Multivio.views = SC.Page.design(
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     acceptsFirstResponder: YES,
     isKeyResponder: YES,
-    controllers: [ 'zoomController', 'navigationController', 'searchController',
-        'imageController',  'treeController', 'thumbnailController'],
+
+    controllers: ['zoomController', 'navigationController', 
+                  'searchController', 'selectionController', 
+                  'imageController',  'treeController', 'thumbnailController'],
       
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     
