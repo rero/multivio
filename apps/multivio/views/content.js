@@ -636,7 +636,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     @binding {Boolean}
   */
   panButton: NO,
-  panButtonBinding:'Multivio.paletteController.isPanButtonEnabled',
+  panButtonBinding: 'Multivio.paletteController.isPanButtonEnabled',
   
   /**  
     Variable that contains mouse pointer position. Information used by pan
@@ -652,14 +652,12 @@ Multivio.ContentView = SC.ScrollView.extend(
   nativeHeight: undefined,
   
   /**
-The next asked Url if user choose to proceed loading a bigg image
-*/
+   The next asked Url if user choose to proceed loading a bigg image
+  */
   _nextUrl: null,
   
   needToScrollUp: YES,
   isNewImage: NO,
-  
-
 
   /**
     Whether the user has already authorized or not loading images of large
@@ -742,9 +740,9 @@ The next asked Url if user choose to proceed loading a bigg image
     @observes isHorizontalScrollerVisible and isVerticalScrollerVisible
   */
   scrollStateDidChange: function () {
-    if(this.get('isHorizontalScrollerVisible') || 
+    if (this.get('isHorizontalScrollerVisible') || 
         this.get('isVerticalScrollerVisible')) {
-          this.set('panButton', YES);    
+      this.set('panButton', YES);    
     }
     else {
       this.set('panButton', NO);
@@ -1045,7 +1043,7 @@ The next asked Url if user choose to proceed loading a bigg image
       this.set('isDraggin', YES);
       this._mouseDownInfo = {
         pageX: evt.pageX, // save mouse pointer loc for later use
-        pageY: evt.pageY,
+        pageY: evt.pageY
       };
       return YES;
     }
@@ -1059,7 +1057,7 @@ The next asked Url if user choose to proceed loading a bigg image
     
     @param {SC.Event} Event fired
   */  
-  mouseUp: function(evt) {
+  mouseUp: function (evt) {
     if (Multivio.paletteController.get('isPanActive')) {
       // no longer dragging - will rerender
       this.set('isDragging', NO);
@@ -1076,7 +1074,7 @@ The next asked Url if user choose to proceed loading a bigg image
     
     @param {SC.Event} Event fired
   */  
-  mouseDragged: function(evt) {
+  mouseDragged: function (evt) {
     if (Multivio.paletteController.get('isPanActive')) {
       if (this.get('isVerticalScrollerVisible'))  {
         var currentVerticalOffset = this.get('verticalScrollOffset');
@@ -1091,6 +1089,29 @@ The next asked Url if user choose to proceed loading a bigg image
         this.set('horizontalScrollOffset', newHorizontalOffset);
       }
       return YES;
+    }
+  },
+  
+  /**
+    Move vertical and(or) horizontal scrollbars
+    
+    @param {Number} vertical  
+    @param {Number} horizontal  
+  */
+  moveScroll: function (vertical, horizontal) {
+    if (this.get('isVerticalScrollerVisible') && vertical !== 0)  {
+      var currentVerticalOffset = this.get('verticalScrollOffset');
+      var newVerticalOffset = currentVerticalOffset + vertical;
+      if (newVerticalOffset > 0 || newVerticalOffset < this.get('maximumVerticalScrollOffset')) {
+        this.set('verticalScrollOffset', newVerticalOffset);
+      }
+    }
+    if (this.get('isHorizontalScrollerVisible') && horizontal !== 0) {
+      var currentHorizontalOffset = this.get('horizontalScrollOffset');
+      var newHorizontalOffset = currentHorizontalOffset + horizontal; 
+      if (newHorizontalOffset > 0 || newHorizontalOffset < this.get('maximumHorizontalScrollOffset')) {    
+        this.set('horizontalScrollOffset', newHorizontalOffset);
+      }
     }
   },
   

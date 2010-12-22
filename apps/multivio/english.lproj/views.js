@@ -14,6 +14,7 @@ sc_require('views/file_button');
 sc_require('views/metadata');
 sc_require('views/search');
 sc_require('views/navigation');
+sc_require('views/magnifying_glass');
 sc_require('mixins/interface');
 
 
@@ -341,6 +342,18 @@ Multivio.views = SC.Page.design(
           target: "Multivio.paletteController",
           action: "activePan"
         }),
+        SC.ButtonView.design({
+          layout: { top: 290, centerX: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'magnifyingGlass',
+          toolTip: '_MagnifyingGlass'.loc(),
+          renderStyle: "renderImage",
+          icon: 'search_new',
+          theme: 'mvo-button',
+          target: "Multivio.paletteController",
+          action: "showMagnifyingGlass"
+        })
       ]
     }),
 
@@ -482,6 +495,15 @@ Multivio.views = SC.Page.design(
           }
         })
       ]
+    })
+  }),
+  
+  // magnifying glass
+  magnifyingPalette: SC.PalettePane.design({
+    isAnchored: YES,
+    classNames: 'mvo-transparent',
+    contentView: Multivio.MagnifyingGlassView.design({
+      layout: { top: 0, bottom: 0, left: 0, right: 0 }
     })
   }),
   

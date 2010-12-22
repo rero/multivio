@@ -388,7 +388,10 @@ label.document-label-view {
   color: #808080;
 }
 
-
+.mvo-red-zone {
+  background-color: red;
+  z-index:100;
+}
 
 /* Inner edges */
 

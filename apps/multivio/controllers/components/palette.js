@@ -25,6 +25,7 @@ Multivio.paletteController = SC.ObjectController.create(
   */
   defaultWidth: 360,
   activeButton: null,
+  thumbnailSize: null,
   
   /**
     variable used to say if the toolbar has been actived by the user.
@@ -217,6 +218,39 @@ Multivio.paletteController = SC.ObjectController.create(
     } 
   },
   
+  /**
+    MagnifyingGlass button has been pressed show the palette or hide it
+
+    @param {SC.Button} button the button pressed
+  */
+  showMagnifyingGlass: function (button) {
+    var mgView = Multivio.getPath('views.magnifyingPalette');
+    // no activeButton => show this palette
+    if (SC.none(this.activeButton)) {
+      button.set('isActive', YES);
+      this.activeButton = button;
+      mgView.set('layout', this.paletteLayout(NO));
+      mgView.append();
+    }
+    else {
+      // if activeButton = button close the palette
+      // else replace the palette by an other one
+      if (this.activeButton !== button) {
+        this.hidePalette(this.activeButton.name);
+        this.showOtherPalette(button);
+      }
+      else {
+        this.activeButton = null;
+        mgView.remove();
+      }
+    }
+  },
+  
+  /**
+    Pan button has been pressed active or disable it
+
+    @param {SC.Button} button the button pressed
+  */
   activePan: function (button) {
     if (this.isPanActive) {
       button.set('isActive', NO);
@@ -251,6 +285,9 @@ Multivio.paletteController = SC.ObjectController.create(
       /* CAUTION: Do not use the name showHelp() - it's a JavaScript reserved word */
       this.showHelpPalette(button);
       break;
+    case 'magnifyingGlass':
+      this.showMagnifyingGlass(button);
+      break;
       
     default:
       Multivio.logger.info('unable to show the selected palette');
@@ -284,6 +321,9 @@ Multivio.paletteController = SC.ObjectController.create(
       case 'help':
         Multivio.getPath('views.helpPalette').remove();
         break;
+      case 'magnifyingGlass':
+        Multivio.getPath('views.magnifyingPalette').remove();
+        break;  
       
       default:
         Multivio.logger.info('unable to hide the selected palette');
