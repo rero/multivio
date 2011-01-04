@@ -671,6 +671,7 @@ Multivio.treeController = SC.TreeController.create(
     return ret;
   },
   
+  lastAdded: [],
   /**
     Add new labels to the tree
   
@@ -697,21 +698,46 @@ Multivio.treeController = SC.TreeController.create(
     if (lgs.length === 1) {
       lgs[0].file_position.index = 1;
     }
+    // remove children
+    if (this.lastAdded.length !== 0) {
+      var reverseArray = this.lastAdded.reverse();
+      var newArray = [];
+      for (var k = 0; k < reverseArray.length; k++) {
+        if (!SC.none(reverseArray[k].childs)) {
+          var listOfChild = reverseArray[k].childs;
+          var removeChild = YES;
+          for (var t = 0; t < listOfChild.length; t++) {
+            if (listOfChild[t].file_position.url === selected) {
+              removeChild = NO;
+              break;
+            }
+          }
+          if (removeChild) {
+            reverseArray[k].childs = undefined;
+          }
+          else {
+            newArray.push(reverseArray[k]);
+          }
+        }
+      }
+      this.lastAdded = newArray;
+    }
+    
     for (var i = 0; i < globs.length; i++) {
       var temp = globs[i];
-      // remove old children
-      if (!SC.none(temp.file_position.url) && 
-          temp.file_position.url !== Multivio.CDM.getReferer() &&
-          !SC.none(temp.childs)) {
-        temp.childs = undefined;
-      }
       // add new children
       if (temp.file_position.url === selected) {
         temp.childs = lgs;
+        this.lastAdded.push(temp);
+        
+        for (var j = 0; j < lgs.length; j++) {
+          newStruct.push(lgs[j]);
+          this.lastAdded.push(lgs[j]);
+        }
       }
       newStruct.push(temp);
     }
-    
+    this.globalStructure = newStruct;
     this._treeLabelByPosition = [];
     var treeContent = Multivio.TreeContent.create(newStruct[0]);
     this.set('content', treeContent);

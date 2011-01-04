@@ -923,6 +923,7 @@ Multivio.ContentView = SC.ScrollView.extend(
             this);
       }
       else {
+        Multivio.logger.debug('load new image ' + newUrl);
         SC.imageCache.loadImage(newUrl, this, this._adjustSize);
       }
     }
@@ -979,7 +980,8 @@ Multivio.ContentView = SC.ScrollView.extend(
     }
     var zoomSt = this.get('zoomState');
     if (zoomSt === Multivio.zoomController.PAGEWIDTH ||
-        zoomSt === Multivio.zoomController.FULLPAGE) {
+        zoomSt === Multivio.zoomController.FULLPAGE && 
+        this.get('frame').width !== 0) {
       this._loadNewImage();
     }
   },
