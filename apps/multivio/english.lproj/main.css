@@ -587,6 +587,10 @@ label.document-label-view {
   border-style: none;
 }
 
+.highlight-pane-pan {
+  cursor: move;
+}
+
 .selection-highlight {
   opacity: 0.20;
   -moz-opacity: 0.20;

@@ -32,8 +32,7 @@ Multivio.paletteController = SC.ObjectController.create(
     If the button is active the toolbar is permanently visible
   */
   isHorizontalToolbarActive: null,
-  isPanActive: NO,
-  isPanButtonEnabled: NO,
+
   
   /**
     Return the layout position of the palette
@@ -243,22 +242,6 @@ Multivio.paletteController = SC.ObjectController.create(
         this.activeButton = null;
         mgView.remove();
       }
-    }
-  },
-  
-  /**
-    Pan button has been pressed active or disable it
-
-    @param {SC.Button} button the button pressed
-  */
-  activePan: function (button) {
-    if (this.isPanActive) {
-      button.set('isActive', NO);
-      this.set('isPanActive', NO);
-    }
-    else {
-      button.set('isActive', YES);
-      this.set('isPanActive', YES);
     }
   },
   

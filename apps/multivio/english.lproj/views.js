@@ -69,7 +69,22 @@ Multivio.views = SC.Page.design(
         layout: { left: 0, right: 0, top: 0, bottom: 0 },
         classNames: 'mvo-front-view-transparent',
       
-        childViews: 'navigationView zoomView rotateView'.w(),
+        childViews: 'panButton navigationView zoomView rotateView'.w(),
+        
+        //pan    
+        panButton: SC.ButtonView.design({
+          layout: { centerX: -220, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'pan',
+          toolTip: '_Pan'.loc(),
+          renderStyle: "renderImage",
+          icon: 'tree_new',
+          theme: 'mvo-button',
+          isEnabledBinding: 'Multivio.panController.isPanButtonEnabled',
+          target: "Multivio.panController",
+          action: "activePan"
+        }),
         
         //navigation
         navigationView: SC.View.design({
@@ -328,19 +343,6 @@ Multivio.views = SC.Page.design(
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "showHorizontalToolbar"
-        }),
-        SC.ButtonView.design({
-          layout: { top: 250, centerX: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'pan',
-          toolTip: '_Pan'.loc(),
-          renderStyle: "renderImage",
-          icon: 'tree_new',
-          theme: 'mvo-button',
-          isEnabledBinding: 'Multivio.paletteController.isPanButtonEnabled',
-          target: "Multivio.paletteController",
-          action: "activePan"
         }),
         SC.ButtonView.design({
           layout: { top: 290, centerX: 0, width: 32, height: 32 },

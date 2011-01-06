@@ -312,6 +312,7 @@ Multivio.HighlightContentView = SC.View.extend(
     Multivio.paletteController.hidePalette(null);
     // send mouseDown event to the Multivio.ContentView (pan widget)
     this.get('parentView').get('parentView').get('parentView').mouseDown(evt);
+    
     // cancel selections on current page
     Multivio.selectionController.removeAllHighlights();
     
@@ -631,12 +632,12 @@ Multivio.ContentView = SC.ScrollView.extend(
   imageSizeBinding: 'Multivio.CDM.imageSize',
   
   /**
-    Binds to the isPanButtonEnabled of the paletteController
+    Binds to the isPanButtonEnabled of the panController
     
     @binding {Boolean}
   */
   panButton: NO,
-  panButtonBinding: 'Multivio.paletteController.isPanButtonEnabled',
+  panButtonBinding: 'Multivio.panController.isPanButtonEnabled',
   
   /**  
     Variable that contains mouse pointer position. Information used by pan
@@ -1040,7 +1041,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     @param {SC.Event} Event fired
   */
   mouseDown: function (evt) {
-    if (Multivio.paletteController.get('isPanActive')) {
+    if (Multivio.panController.get('isPanActive')) {
       // indicate dragging - rerenders view
       this.set('isDraggin', YES);
       this._mouseDownInfo = {
@@ -1060,7 +1061,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     @param {SC.Event} Event fired
   */  
   mouseUp: function (evt) {
-    if (Multivio.paletteController.get('isPanActive')) {
+    if (Multivio.panController.get('isPanActive')) {
       // no longer dragging - will rerender
       this.set('isDragging', NO);
 
@@ -1077,19 +1078,24 @@ Multivio.ContentView = SC.ScrollView.extend(
     @param {SC.Event} Event fired
   */  
   mouseDragged: function (evt) {
-    if (Multivio.paletteController.get('isPanActive')) {
+    if (Multivio.panController.get('isPanActive')) {
       if (this.get('isVerticalScrollerVisible'))  {
         var currentVerticalOffset = this.get('verticalScrollOffset');
         var newVerticalOffset = currentVerticalOffset + 
-            (evt.pageY - this._mouseDownInfo.pageY);
+            (this._mouseDownInfo.pageY - evt.pageY);
         this.set('verticalScrollOffset', newVerticalOffset);
       }
       if (this.get('isHorizontalScrollerVisible')) {
         var currentHorizontalOffset = this.get('horizontalScrollOffset');
         var newHorizontalOffset = currentHorizontalOffset + 
-            (evt.pageX - this._mouseDownInfo.pageX);    
+            (this._mouseDownInfo.pageX - evt.pageX);
         this.set('horizontalScrollOffset', newHorizontalOffset);
       }
+      // save new values
+      this._mouseDownInfo = {
+        pageX: evt.pageX,
+        pageY: evt.pageY
+      };
       return YES;
     }
   },
