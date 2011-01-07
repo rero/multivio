@@ -21,6 +21,7 @@ SC.stringsFor('English', {
   '_Search': 'Search in the document',
   '_Help': 'Help',
   '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
+  '_Download': 'Download',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',
@@ -73,6 +74,8 @@ SC.stringsFor('English', {
       'Loading the requested resolution may take a long time',
   '_Would you like to proceed?':
       'Would you like to proceed?',
+  '_Download of file': 'Download of file',
+  '_unknown size': 'unknown size',
   '_Proceed': 'Proceed',
   '_Use lower resolution': 'Use lower resolution',
   '_Incorrect page number': 'Incorrect page number',
@@ -80,6 +83,7 @@ SC.stringsFor('English', {
   '_Yes': 'Yes',
   '_Ok': 'Ok',
   '_No': 'No',
+  '_Cancel': 'Cancel',
 
   // Strings for search and indexing functionality (MVO_SEIN)
   '_doSearch': 'Search',

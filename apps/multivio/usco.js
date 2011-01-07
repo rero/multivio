@@ -62,6 +62,30 @@ Multivio.usco = SC.Object.create(
         this);
     pane.append();
   },
+  
+  /**
+    Displays an info panel with 2 buttons.
+
+    @param {String} message panel main message
+    @param {String} description panel secondary message
+    @param {String} button1 text inside button1 
+        (tipically in the "OK" position)
+    @param {String} button2 text inside button2 
+        (tipically in the "Cancel" position)
+    @param {String} controller reference to the controller used to 
+        manage the click event
+  */
+  showAlertPaneInfoWithController: function (message, description, button1, button2, controller) {
+    var pane = SC.AlertPane.info(
+        '%@'.loc(message),
+        '%@'.loc(description),
+        '',
+        '%@'.loc(button1),
+        '%@'.loc(button2),
+        '',
+        controller);
+    pane.append();
+  },
 
   /**
     Displays a warning panel.

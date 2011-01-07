@@ -21,6 +21,7 @@ SC.stringsFor('French', {
   '_Search': 'Rechercher dans le document',
   '_Help': 'Aide',
   '_ShowToolbar': 'Bloquer ou débloquer l\'affichage permanente de la barre d\'outils',
+  '_Download': 'Téléchargement',
   '_RotateLeft': 'Pivoter à gauche',
   '_RotateRight': 'Pivoter à droite',
   '_FirstPage': 'Aller à la première page ou au fichier précédent',
@@ -73,13 +74,16 @@ SC.stringsFor('French', {
       'Le chargement du contenu dans la résolution demandée peut prendre longtemps',
   '_Would you like to proceed?':
       'Aimeriez-vous continuer?',
-  '_Proceed': 'Accepter',
+  '_Download of file': 'Téléchargement du fichier',
+  '_unknown size': 'taille non disponible',
+  '_Proceed': 'Poursuivre',
   '_Use lower resolution': 'Utiliser une résolution plus basse',
   '_Incorrect page number': 'Numéro de page incorrect',
   '_Please enter a number between 1 and %@': 'Veuillez introduire un nombre entre 1 et %@',
   '_Yes': 'Oui',
   '_Ok': 'Ok',
   '_No': 'Non',
+  '_Cancel': 'Annuler',
 
   // Strings for search and indexing functionality (MVO_SEIN)
   '_doSearch': 'Rechercher',

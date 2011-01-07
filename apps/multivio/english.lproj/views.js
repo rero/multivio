@@ -345,6 +345,18 @@ Multivio.views = SC.Page.design(
           action: "showHorizontalToolbar"
         }),
         SC.ButtonView.design({
+          layout: { top: 250, centerX: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'download',
+          toolTip: '_Download'.loc(),
+          renderStyle: "renderImage",
+          icon: 'tree_new',
+          theme: 'mvo-button',
+          target: "Multivio.paletteController",
+          action: "downloadFile"
+        }),
+        SC.ButtonView.design({
           layout: { top: 290, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,

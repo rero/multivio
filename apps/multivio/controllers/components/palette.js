@@ -218,6 +218,48 @@ Multivio.paletteController = SC.ObjectController.create(
   },
   
   /**
+    Download button has been pressed retreive currentFile url and open
+    a new tab with this url
+
+    @param {SC.Button} button the button pressed
+  */
+  downloadFile: function (button) {
+    var fileName =  Multivio.masterController.get('currentFile');
+    var fileMeta = Multivio.CDM.getFileMetadata(fileName);
+    var fileSize = SC.none(fileMeta.file_size) ? '_unknown size'.loc() : (fileMeta.file_size + 'KB');
+    if (Multivio.masterController.isGrouped) {
+      var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+      var pos = Multivio.masterController.get('currentPosition');
+      fileName = phys[pos - 1].url;
+    }
+    Multivio.usco.showAlertPaneInfoWithController(
+        '_Download of file'.loc(),
+        fileName + ' (' + fileSize + ')',
+        '_Proceed'.loc(),
+        '_Cancel'.loc(),
+        this);
+  },
+  
+  /**
+    Delegate method of the Multivio.usco.showAlertPaneInfoWithController
+    
+    @param {String} pane the pane instance
+    @param {} status
+  */
+  alertPaneDidDismiss: function (pane, status) {
+    switch (status) {
+    case SC.BUTTON1_STATUS:
+      var file = pane.description;
+      file = file.split('(');
+      window.open(file[0]);
+      break;
+        
+    case SC.BUTTON2_STATUS:
+      break;
+    }
+  },
+  
+  /**
     MagnifyingGlass button has been pressed show the palette or hide it
 
     @param {SC.Button} button the button pressed
