@@ -28,9 +28,6 @@ Multivio.MagnifyingGlassView = SC.View.extend(
   selection: null,
   selectionBinding: 'Multivio.imageController.selection',
   
-  /*size: null,
-  sizeBinding: 'Multivio.zoomController.zoomRatio',*/
-  
   /**
     Binds to the masterController isLoadingContent property.
     
@@ -40,6 +37,10 @@ Multivio.MagnifyingGlassView = SC.View.extend(
   */
   isLoadingContent: null,
   isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
+  
+  rotate: 0,
+  rotateBinding: 'Multivio.rotateController.currentValue',
+  
   
   /** 
     @property {Object}
@@ -85,7 +86,7 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     if (firstTime) {
       // first child is an image
       var thumbnail = this.createChildView(SC.ImageView.design({
-        layout: { top: 10, left: 10, right: 10 },
+        layout: { top: 10, bottom: 10, left: 10, right: 10},
         useImageCache: NO,
         value: '',
         borderStyle: SC.BORDER_NONE 
@@ -93,21 +94,25 @@ Multivio.MagnifyingGlassView = SC.View.extend(
       this.appendChild(thumbnail);
       // second child is the highlighted zone
       var zone = this.createChildView(SC.View.design({
-        layout: {top: 10, left: 10,  width: 30, height: 30},
-        classNames: 'mvo-red-zone' 
+        layout: {top: 5, left: 5,  width: 30, height: 30},
+        classNames: 'mvo-glass-zone'
       }));
       this.appendChild(zone);
     }
     else {
       this.get('childViews')[0].set('value', this.imageUrl);
       this.get('childViews')[1].set('layout', {
-          'top': this.zoneToDraw.y, 
-          'left': this.zoneToDraw.x, 
-          'width': this.zoneToDraw.width, 
-          'height': this.zoneToDraw.height
-        });
+        'top': this.zoneToDraw.y, 
+        'left': this.zoneToDraw.x, 
+        'width': this.zoneToDraw.width, 
+        'height': this.zoneToDraw.height
+      });
     }
     sc_super();
+  },
+  
+  reset: function () {
+    this.removeAllChildren();
   },
   
   /**
@@ -131,11 +136,11 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     this.zoneToDraw.width = Math.round(this.zoneToDraw.width);
     this.zoneToDraw.height = Math.round(this.zoneToDraw.height);
     relPosX = -1 * relPosX;
-    this.zoneToDraw.x = relPosX === 0 ? 10 : 
-        10  + Math.round(this.imageSize.width / relPosX);
+    this.zoneToDraw.x = relPosX === 0 ? 5 : 
+        5  + Math.round(this.imageSize.width / relPosX);
     relPosY = -1 * relPosY;
-    this.zoneToDraw.y = relPosY === 0 ? 10 : 
-        10 + Math.round(this.imageSize.height / relPosY);
+    this.zoneToDraw.y = relPosY === 0 ? 5 : 
+        5 + Math.round(this.imageSize.height / relPosY);
     this.updateLayer();
   },
   
@@ -162,18 +167,22 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     var currentSelection = this.get('selection');
     if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
       var imageUrl = currentSelection.firstObject().url;
-      imageUrl = imageUrl.replace('?', '?max_width=130&');
+      var rot = this.get('rotate');
+      imageUrl = imageUrl.replace('?', '?max_width=130&max_height=130&angle=' + 
+          rot + '&');
       SC.imageCache.loadImage(imageUrl, this, this.load);
     }
   }.observes('selection'),
   
- /* sizeDidChange: function () {
-    console.info('size change.... '+this.imageUrl);
-    console.info('val '+this.get('size'));
-    if (!SC.none(this.imageUrl)) {
-      this.drawZone();
-    }
-  }.observes('size'),*/
+  /**
+    Load a new image by observing changes of the value of the rotation
+    
+    @observes rotate
+  */
+  rotateDidChange: function () {
+    this.selectionDidChange();
+  }.observes('rotate'),
+  
   
   /**
     Draw the new highlighted zone by observing changes of the isLoadingContent
@@ -186,10 +195,6 @@ Multivio.MagnifyingGlassView = SC.View.extend(
       this.drawZone();
     }
   }.observes('isLoadingContent'),
-  
-  scrollDidChange: function () {
-    
-  },
   
   /**
     On mouse down save mouse pointer position
@@ -220,7 +225,6 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     this.get('childViews')[1].set('isDragging', NO);
     // apply one more time to set final position
     this.mouseDragged(evt); 
-    //this._mouseDownInfo = null; // cleanup info
     return YES; // handled!
   },
 
@@ -240,17 +244,17 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     var newL = 0;
     
     // define border : left, rigth, top, bottom
-    if (newLeft < 10) {
-      newLeft = 10;
+    if (newLeft < 5) {
+      newLeft = 5;
     }
-    if (newLeft > 10 + this.imageSize.width - this.zoneToDraw.width) {
-      newLeft = 10 + this.imageSize.width - this.zoneToDraw.width;
+    if (newLeft > 5 + this.imageSize.width - this.zoneToDraw.width) {
+      newLeft = 5 + this.imageSize.width - this.zoneToDraw.width;
     }
-    if (newTop < 10) {
-      newTop = 10;
+    if (newTop < 5) {
+      newTop = 5;
     }
-    if (newTop > 10 + this.imageSize.height - this.zoneToDraw.height) {
-      newTop = 10 + this.imageSize.height - this.zoneToDraw.height;
+    if (newTop > 5 + this.imageSize.height - this.zoneToDraw.height) {
+      newTop = 5 + this.imageSize.height - this.zoneToDraw.height;
     }
     // move zone 
     this.get('childViews')[1].set('layout', {
@@ -272,7 +276,7 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     this.oldL = newL;
     
     centralV.moveScroll(Math.round(diff * ratioH), Math.round(diffL * ratioH));
-    return YES;   
+    return YES;
   }
 
 });

@@ -69,8 +69,21 @@ Multivio.views = SC.Page.design(
         layout: { left: 0, right: 0, top: 0, bottom: 0 },
         classNames: 'mvo-front-view-transparent',
       
-        childViews: 'panButton navigationView zoomView rotateView'.w(),
+        childViews: 'magnifyingGlassButton panButton navigationView zoomView rotateView'.w(),
         
+        //magnifyingGlass
+        magnifyingGlassButton: SC.ButtonView.design({
+          layout: { centerX: -260, centerY: 0,  width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'magnifyingGlass',
+          toolTip: '_MagnifyingGlass'.loc(),
+          renderStyle: "renderImage",
+          icon: 'search_new',
+          theme: 'mvo-button',
+          target: "Multivio.paletteController",
+          action: "showMagnifyingGlass"
+        }),
         //pan    
         panButton: SC.ButtonView.design({
           layout: { centerX: -220, centerY: 0, width: 32, height: 32 },
@@ -355,18 +368,6 @@ Multivio.views = SC.Page.design(
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "downloadFile"
-        }),
-        SC.ButtonView.design({
-          layout: { top: 290, centerX: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'magnifyingGlass',
-          toolTip: '_MagnifyingGlass'.loc(),
-          renderStyle: "renderImage",
-          icon: 'search_new',
-          theme: 'mvo-button',
-          target: "Multivio.paletteController",
-          action: "showMagnifyingGlass"
         })
       ]
     }),

@@ -32,6 +32,7 @@ Multivio.paletteController = SC.ObjectController.create(
     If the button is active the toolbar is permanently visible
   */
   isHorizontalToolbarActive: null,
+  isMagnigyingGlassActive: null,
 
   
   /**
@@ -269,11 +270,22 @@ Multivio.paletteController = SC.ObjectController.create(
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
       button.set('isActive', YES);
+      this.set('isMagnigyingGlassActive', YES);
       this.activeButton = button;
-      mgView.set('layout', this.paletteLayout(NO));
+      // create a custom layout
+      var layout = [];
+      layout.width = 150;
+      layout.height = 150;
+      layout.left = Multivio.getPath('views.mainContentView.content').get('frame').x + 15;
+      layout.bottom = 150;
+      mgView.set('layout', layout);
       mgView.append();
+      //mgView.updateLayer();
+      mgView.get('contentView').drawZone();
     }
     else {
+      this.set('isMagnigyingGlassActive', NO);
+      //mgView.removeAllChildren();
       // if activeButton = button close the palette
       // else replace the palette by an other one
       if (this.activeButton !== button) {

@@ -388,8 +388,14 @@ label.document-label-view {
   color: #808080;
 }
 
-.mvo-red-zone {
-  background-color: red;
+.mvo-glass-zone {
+  border-style: solid;
+  border-width: 5px;
+  border-color: #FFFF66;
+  opacity : 0.95;
+  moz-opacity : 0.95;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; /* IE 8 */
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95); /* IE < 8 */
   z-index:100;
 }
 

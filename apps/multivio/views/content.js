@@ -979,11 +979,25 @@ Multivio.ContentView = SC.ScrollView.extend(
       var oneChild = this.get('childViews')[i];
       oneChild.layoutDidChange();
     }
+    this.updateLayer();
     var zoomSt = this.get('zoomState');
     if (zoomSt === Multivio.zoomController.PAGEWIDTH ||
         zoomSt === Multivio.zoomController.FULLPAGE && 
         this.get('frame').width !== 0) {
+      
+      SC.RunLoop.begin();
+      this.set('isLoadingContent', YES);
+      SC.RunLoop.end();
       this._loadNewImage();
+    }
+    else {
+      if (!this.get('isHorizontalScrollerVisible')) {
+        this.get('contentView').adjust('left', undefined);
+      }
+    }
+    // if magnifying palette is active, refresh draw zone
+    if (Multivio.paletteController.get('isMagnigyingGlassActive')) {
+      Multivio.getPath('views.magnifyingPalette').get('contentView').drawZone();
     }
   },
   
@@ -1034,7 +1048,19 @@ Multivio.ContentView = SC.ScrollView.extend(
     toScroll += this.get('verticalScrollerView').thumbLength();
     return toScroll;
   },
-   
+  
+  /**
+    Refresh draw zone of the magnifying glass palette observing offsets of scrolls
+    
+    
+    @observes verticalScrollOffset, horizontalScrollOffset 
+  */
+  scrollOffsetDidChange: function () {
+    if (Multivio.paletteController.get('isMagnigyingGlassActive')) {
+      Multivio.getPath('views.magnifyingPalette').get('contentView').drawZone();
+    }
+  }.observes('verticalScrollOffset', 'horizontalScrollOffset'),
+  
   /**
     On mouse down hide the current palette or save mouse pointer position
     
