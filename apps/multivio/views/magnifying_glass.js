@@ -86,7 +86,8 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     if (firstTime) {
       // first child is an image
       var thumbnail = this.createChildView(SC.ImageView.design({
-        layout: { top: 10, bottom: 10, left: 10, right: 10},
+        //layout: { top: 10, bottom: 10, left: 10, right: 10},
+        layout: {centerX: 0, centerY: 0},
         useImageCache: NO,
         value: '',
         borderStyle: SC.BORDER_NONE 
@@ -94,16 +95,24 @@ Multivio.MagnifyingGlassView = SC.View.extend(
       this.appendChild(thumbnail);
       // second child is the highlighted zone
       var zone = this.createChildView(SC.View.design({
-        layout: {top: 5, left: 5,  width: 30, height: 30},
+        //layout: {top: 5, left: 5,  width: 30, height: 30},
+        layout: {width: 30, height: 30},
         classNames: 'mvo-glass-zone'
       }));
       this.appendChild(zone);
     }
     else {
+      this.get('childViews')[0].set('layout', {
+        'centerX': 0,
+        'centerY': 0,
+        'width': this.imageSize.width,
+        'height': this.imageSize.height
+      });
       this.get('childViews')[0].set('value', this.imageUrl);
+      
       this.get('childViews')[1].set('layout', {
-        'top': this.zoneToDraw.y, 
-        'left': this.zoneToDraw.x, 
+        'top': this.zoneToDraw.y + this.get('childViews')[0].get('frame').y - 5, 
+        'left': this.zoneToDraw.x + this.get('childViews')[0].get('frame').x - 5, 
         'width': this.zoneToDraw.width, 
         'height': this.zoneToDraw.height
       });
@@ -135,12 +144,13 @@ Multivio.MagnifyingGlassView = SC.View.extend(
         (this.imageSize.height * heightRatio) / 100;
     this.zoneToDraw.width = Math.round(this.zoneToDraw.width);
     this.zoneToDraw.height = Math.round(this.zoneToDraw.height);
+    
     relPosX = -1 * relPosX;
-    this.zoneToDraw.x = relPosX === 0 ? 5 : 
-        5  + Math.round(this.imageSize.width / relPosX);
+    this.zoneToDraw.x = relPosX === 0 ? 0 : 
+        Math.round(this.imageSize.width / relPosX);
     relPosY = -1 * relPosY;
-    this.zoneToDraw.y = relPosY === 0 ? 5 : 
-        5 + Math.round(this.imageSize.height / relPosY);
+    this.zoneToDraw.y = relPosY === 0 ? 0 : 
+        Math.round(this.imageSize.height / relPosY);    
     this.updateLayer();
   },
   
@@ -244,18 +254,21 @@ Multivio.MagnifyingGlassView = SC.View.extend(
     var newL = 0;
     
     // define border : left, rigth, top, bottom
-    if (newLeft < 5) {
-      newLeft = 5;
+    var borderLeft = this.get('childViews')[0].get('frame').x - 5;
+    var borderTop = this.get('childViews')[0].get('frame').y - 5;
+    if (newLeft < borderLeft) {
+      newLeft = borderLeft;
     }
-    if (newLeft > 5 + this.imageSize.width - this.zoneToDraw.width) {
-      newLeft = 5 + this.imageSize.width - this.zoneToDraw.width;
+    if (newLeft > borderLeft + this.imageSize.width - this.zoneToDraw.width) {
+      newLeft = borderLeft + this.imageSize.width - this.zoneToDraw.width;
     }
-    if (newTop < 5) {
-      newTop = 5;
+    if (newTop < borderTop) {
+      newTop = borderTop;
     }
-    if (newTop > 5 + this.imageSize.height - this.zoneToDraw.height) {
-      newTop = 5 + this.imageSize.height - this.zoneToDraw.height;
+    if (newTop > borderTop + this.imageSize.height - this.zoneToDraw.height) {
+      newTop = borderTop + this.imageSize.height - this.zoneToDraw.height;
     }
+    
     // move zone 
     this.get('childViews')[1].set('layout', {
         'top': newTop,
