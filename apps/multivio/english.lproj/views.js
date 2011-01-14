@@ -568,44 +568,6 @@ Multivio.views = SC.Page.design(
       })
     })
   }), //.classNames('shadow_light inner_view'.w()),
-
-  /**
-    Logo of e-lib & rero
-  */
-  logosREROandElib: SC.View.design({
-    layout: { top: 0, height: 24, left: 6, width: 200 },
-
-    childViews: [
-      SC.View.design({
-        layout: { top: 0, height: 32, right: 100, width: 100 },
-        childViews: [
-          SC.View.design({
-            layout: { top: 0, bottom: 0, left: 0, right: 0 },
-            classNames: 'rero_logo'
-          })
-        ],
-        render: function (context, firstTime) {
-          context.push("<a href='http://www.rero.ch/'>");
-          this.renderChildViews(context, firstTime);
-          context.push("</a>");
-        }
-      }),
-      SC.View.design({
-        layout: { top: 0, height: 32, right: 0, width: 80 },
-        childViews: [
-          SC.View.design({
-            layout: { top: 4, bottom: 0, left: 0, right: 0 },
-            classNames: 'e-lib_ch_logo'
-          })
-        ],
-        render: function (context, firstTime) {
-          context.push("<a href='http://www.e-lib.ch/'>");
-          this.renderChildViews(context, firstTime);
-          context.push("</a>");
-        }
-      })
-    ]
-  }),
   
   /** 
     Logo of Multivio
@@ -615,30 +577,73 @@ Multivio.views = SC.Page.design(
 
     isTextSelectable: YES,
     childViews: [
-      SC.ImageView.design({
-        layout: { top: 0, left: 0, height: 44, width: 140 },
-        classNames: 'multivio_logo',
-        toolTip: '_Click to go to Multivio website.'.loc() + ' ' +
-            '_Current client version:'.loc() + ' ' + Multivio.VERSION
-      })
-    ],
-    render: function (context, firstTime) {
-      context.push("<a href='https://www.multivio.org/'>");
-      // add the version of the server in the tooltip
-      var childView = this.get('childViews')[0];
-      var toolTip = childView.get('toolTip');
-      var serverVersion = Multivio.configurator.get('serverVersion');
-      toolTip += ' ' + '_Current server version:'.loc() + ' ' + serverVersion;
-      childView.set('toolTip', toolTip);
-      this.renderChildViews(context, firstTime);
-      context.push("</a>");
-    }
-  }),
+      SC.View.design({
+        layout:  {top: 0, right: 0, height:20, width: 100},
+        childViews: [
+          SC.ImageView.design({
+            layout: { top: 0, left: 0, height: 20, width: 100 },
+            classNames: 'multivio_logo',
+            toolTip: '_Click to go to Multivio website.'.loc() + ' ' +
+              '_Current client version:'.loc() + ' ' + Multivio.VERSION
+          }),
+        ],
+        render: function (context, firstTime) {
+          context.push("<a href='https://www.multivio.org/'>");
+          // add the version of the server in the tooltip
+          var childView = this.get('childViews')[0];
+          var toolTip = childView.get('toolTip');
+          var serverVersion = Multivio.configurator.get('serverVersion');
+          toolTip += ' ' + '_Current server version:'.loc() + ' ' + serverVersion;
+          childView.set('toolTip', toolTip);
+          this.renderChildViews(context, firstTime);
+          context.push("</a>");
+        },
+      }),
+      
+      SC.View.design({
+        layout: { top: 2, height: 24, width: 72, left: 0 },
+        isVisibleBinding: 'Multivio.layoutController.showThemeSelector',
 
+        childViews: [
+          SC.ButtonView.design({
+            layout: { top: 0, bottom: 0, right: 48, width: 24 },
+            toolTip: '_Change theme to white'.loc(),
+            renderStyle: 'renderImage',
+            icon: 'theme-button-white',
+            theme: 'mvo-button',
+            target: "Multivio.layoutController",
+            action: "changeTheme",
+            newTheme: 'mvo-white-theme'
+          }),
+          SC.ButtonView.design({
+            layout: { top: 0, bottom: 0, right: 24, width: 24 },
+            toolTip: '_Change theme to dark gray'.loc(),
+            renderStyle: 'renderImage',
+            icon: 'theme-button-dark-gray',
+            theme: 'mvo-button',
+            target: "Multivio.layoutController",
+            action: "changeTheme",
+            newTheme: 'mvo-dark-gray-theme'
+          }),
+          SC.ButtonView.design({
+            layout: { top: 0, bottom: 0, right: 0, width: 24 },
+            toolTip: '_Change theme to blue'.loc(),
+            renderStyle: 'renderImage',
+            icon: 'theme-button-blue',
+            theme: 'mvo-button',
+            target: "Multivio.layoutController",
+            action: "changeTheme",
+            newTheme: 'mvo-blue-theme'
+          })
+        ]
+      })
+    ]
+  }),
+  
   /**
-    Header view
+    Footer view
   */
-  headerView: SC.View.design({
+  footerView: SC.View.design({
     childViews: 'metadataView'.w(),
 
     metadataView: SC.View.design({
@@ -646,50 +651,13 @@ Multivio.views = SC.Page.design(
 
       childViews: [
         SC.LabelView.design({
-          layout: { top: 5, height: 20, left: 0, right: 120 },
+          layout: { top: 5, height: 20, left: 0 },
           isTextSelectable: YES,
           tagName: 'span',
           classNames: 'metadata_primary',
           contentBinding: 'Multivio.metadataController.descriptiveMetadataDictionary',
           contentValueKey: 'title'
         }),
-        SC.View.design({
-          layout: { top: 2, height: 24, width: 72, right: 0 },
-          isVisibleBinding: 'Multivio.layoutController.showThemeSelector',
-
-          childViews: [
-            SC.ButtonView.design({
-              layout: { top: 0, bottom: 0, right: 48, width: 24 },
-              toolTip: '_Change theme to white'.loc(),
-              renderStyle: 'renderImage',
-              icon: 'theme-button-white',
-              theme: 'mvo-button',
-              target: "Multivio.layoutController",
-              action: "changeTheme",
-              newTheme: 'mvo-white-theme'
-            }),
-            SC.ButtonView.design({
-              layout: { top: 0, bottom: 0, right: 24, width: 24 },
-              toolTip: '_Change theme to dark gray'.loc(),
-              renderStyle: 'renderImage',
-              icon: 'theme-button-dark-gray',
-              theme: 'mvo-button',
-              target: "Multivio.layoutController",
-              action: "changeTheme",
-              newTheme: 'mvo-dark-gray-theme'
-            }),
-            SC.ButtonView.design({
-              layout: { top: 0, bottom: 0, right: 0, width: 24 },
-              toolTip: '_Change theme to blue'.loc(),
-              renderStyle: 'renderImage',
-              icon: 'theme-button-blue',
-              theme: 'mvo-button',
-              target: "Multivio.layoutController",
-              action: "changeTheme",
-              newTheme: 'mvo-blue-theme'
-            })
-          ]
-        })
       ]
     }).classNames(''.w())
   }),

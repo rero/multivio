@@ -126,7 +126,7 @@ Multivio.configurator = SC.Object.create(
         'leftStripWidth':  200,
         'rightStripWidth': 200,
         'headerHeight':     40,
-        'footerHeight':     70,
+        'footerHeight':     40,
         'marginTop':        5,
         'marginRight':      10,
         'marginBottom':     5,
@@ -146,9 +146,8 @@ Multivio.configurator = SC.Object.create(
     'init': {
       baseLayout: 'default',
       components: [
-        {name: 'views.headerView',       coord: 'A1:C1'},
-        {name: 'views.logoMvoView',      coord: 'A3:A3'},
-        {name: 'views.logosREROandElib', coord: 'C3:C3'}
+        {name: 'views.footerView',       coord: 'A3:B3'},
+        {name: 'views.logoMvoView',      coord: 'C3:C3'}
       ]
     },
     'usage': {
@@ -182,13 +181,13 @@ Multivio.configurator = SC.Object.create(
     },
     pdf: {
       components: [
-        {name: 'views.mainContentView', coord: 'A2:C2'}
+        {name: 'views.mainContentView', coord: 'A1:C2'}
       ],
       zoomScale: 'scaleForVectorGraphics'
     },
     image : {
       components: [
-        {name: 'views.mainContentView', coord: 'A2:C2'}
+        {name: 'views.mainContentView', coord: 'A1:C2'}
       ],
       zoomScale: 'scaleForBitmapGraphics'
     }
