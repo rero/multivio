@@ -1042,8 +1042,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       var file_list = this.get('currentFileList');
       for (var i = 0; i < file_list.length; i++) {
         
-        // don't send request for referer url
-        if (file_list[i].url === ref_url) continue;
+        // don't send request for referer url,
+        // except if there's only one file
+        if (file_list.length > 1 && file_list[i].url === ref_url) continue;
         
         Multivio.logger.debug('ALL: sending request for url: ' +
                                                      file_list[i].url);
@@ -1196,8 +1197,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           
           Multivio.logger.debug('_searchResultsDidChange, (6) url: ' + file_list[i].url);
           
-          // skip referer url
-          if (file_list[i].url === ref_url) continue;
+          // skip referer url, except if there's only one file
+          if (file_list.length > 1 && file_list[i].url === ref_url) continue;
           
           // store results separately for each file
           this._setSearchResults(res[file_list[i].url], query);
