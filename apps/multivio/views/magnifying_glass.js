@@ -213,7 +213,7 @@ Multivio.MagnifyingGlassView = SC.View.extend(
   */
   mouseDown: function (evt) {
     // indicate dragging - rerenders view
-    this.get('childViews')[1].set('isDraggin', YES);
+    this.get('childViews')[1].set('isDragging', YES);
     // save mouse pointer loc for later use
     this._mouseDownInfo = {
       pageX: evt.pageX,
