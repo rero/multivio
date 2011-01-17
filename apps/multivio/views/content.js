@@ -563,6 +563,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
       // clean up initial info
       this._mouseDownInfo = null;
+
     }
         
     return YES;

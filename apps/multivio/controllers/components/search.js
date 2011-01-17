@@ -195,6 +195,13 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // ignore empty text selections
     if (SC.none(t) || t === '') return;
     
+    // TODO test store current scroll position on the view
+    var w = Multivio.getPath('views.mainContentView.content.innerMainContent'),
+        h = w.get('horizontalScrollOffset'),
+        v = w.get('verticalScrollOffset');
+    
+    Multivio.logger.debug('selectTextField, store scroll position: v: %@, h: %@'.fmt(v, h));
+    
     var selected_text_field = SC.$('label#selected_text')[0]
       .childNodes[1].childNodes[0];
      
@@ -202,14 +209,25 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // when pressing ctrl/apple + c  
     selected_text_field.focus();
     selected_text_field.select();
+    
+    // TODO test update scroll position back (firefox scrolls up to textfield)
+    w = Multivio.getPath('views.mainContentView.content.innerMainContent');
+    //h = w.get('horizontalScrollOffset');
+    //v = w.get('verticalScrollOffset');
+    //Multivio.logger.debug('selectTextField, before restore: v: %@, h: %@'.fmt(v, h));
+    w.set('horizontalScrollOffset', h);
+    w.set('verticalScrollOffset', v);
+
+    w.set('layerNeedsUpdate', YES);
+
   },
 
   /**
     Returns the line to which the point belongs, according to the
-    page indexing. If page indexing does not exist, return -1.
+    page indexing. If page indexing does not exist, returns -1.
+    
     NOTE: the given coordinates must be on the unzoomed, unrotated content.
     
-  
     @param x x-coordinate of the point
     @param y y-coordinate of the point
     @returns {SC.Object} the indexed line
@@ -223,27 +241,100 @@ Multivio.HighlightController = SC.ArrayController.extend(
     if (SC.none(pi) || pi === -1) return -1;
     
     // select the lines of the current page
-    var lines = undefined, i;
     var current_page = Multivio.masterController.get('currentPosition');
-    for (i = 0; i < pi.pages.length; i++) {
-      if (pi.pages[i].page_number === current_page) {
-        lines = pi.pages[i].lines;
-        break;
-      }
-    }
+    var lines = pi.pages[current_page].lines;
     
     var l;
-    for (i = 0; i < lines.length; i++) {
+    for (var i = 0; i < lines.length; i++) {
       l = lines[i];
       if (y >= l.t && y <= (l.t + l.h)) {
         
-        Multivio.logger.debug('getLine: found "%@" at line %@ (tlwh:%@,%@,%@,%@) for given point (%@,%@)'.
-            fmt(l.text, i, l.t, l.h, l.w, l.h, x, y));
+        Multivio.logger.debug('getSelectionLineAtPoint: "%@" at line %@ ' +
+            '(tlwh:%@,%@,%@,%@) for given point (%@,%@)'.
+            fmt(l.text, i, l.t, l.l, l.w, l.h, x, y));
         
         return l;
       }
       
     }
+    
+  },
+
+  /**
+    Returns the zones of the words encased in the given points, with respect
+    to the lines defined in the page indexing.
+    If page indexing does not exist, returns -1.
+    
+    The result is given as a list of zones which contains words:
+    
+      [{top, left, width, height, page_nr, file_url},{idem}, ...]
+    
+    Each line is represented by a single zone, with the words contained in
+    the selection. 
+    
+    NOTE: the given coordinates must be on the unzoomed, unrotated content.
+    
+    @param x1 upper-left point of the selection, x-coordinate
+    @param y1 upper-left point of the selection, y-coordinate
+    @param x2 lower-right point of the selection, x-coordinate
+    @param y2 lower-right point of the selection, y-coordinate
+    @returns {SC.Array} the list of words
+  */
+  getSelectionsOnLinesBetweenPoints: function (x1, y1, x2, y2) {
+    
+    Multivio.logger.debug('getSelectionsOnLinesBetweenPoints(%@,%@,%@,%@)'.fmt(x1, y1, x2, y2));
+    
+    // discard too small selections
+    if (Math.abs(x2 - x1) < 3 || Math.abs(y2 - y1) < 3) return;
+    
+    var pi = this._getPageIndexing();
+    
+    // no page indexing available :/
+    if (SC.none(pi) || pi === -1) return -1;
+    
+    // build result structure
+    var result = [];
+    
+    // select the lines of the current page
+    var current_page = Multivio.masterController.get('currentPosition');
+    var lines = pi.pages[current_page].lines;
+
+    // parse lines, search for the first selected one
+    var l, start = -1, stop = -1;
+    for (var i = 0; i < lines.length; i++) {
+      l = lines[i];
+      
+      Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
+      
+      // found the first line
+      if (start === -1 && y1 <= l.t && y2 >= l.t) {
+        start = i;
+        Multivio.logger.debug('line selection start');
+      } 
+      
+      // found the last line
+      if (start !== -1 && stop === -1 && y2 <= (l.t + l.h)) {
+        
+        stop = i;
+        Multivio.logger.debug('line selection stop');
+        result.addObject(l);
+        // TODO parse words
+        /*while (YES) {
+          
+        }*/
+        break;
+      
+      }
+
+      // a line between start and stop of selection        
+      if (start !== -1 && stop === -1) {
+        Multivio.logger.debug('line selection continue');
+        result.addObject(l);
+      }
+      
+    }
+    
+    return result;
     
   },
 
