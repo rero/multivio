@@ -11,11 +11,11 @@ sc_require('mixins/interface');
 
 /** @class
 
-  View for the search functionality.
+View for the search functionality.
 
-  @author dwy
-  @extends SC.View
-  @since 0.2.0
+@author dwy
+@extends SC.View
+@since 0.2.0
 */
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
@@ -24,7 +24,7 @@ Multivio.SearchView = SC.View.extend(
                'searchButtonView', 'previousResultButtonView',
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
   
-  searchQueryView: SC.TextFieldView.design({ 
+  searchQueryView: SC.TextFieldView.design({
     layout: { top: 0, left: 0, right: 54, height: 24 },
     classNames: 'search',
     hint: '_typeQueryHere'.loc(),
@@ -36,13 +36,13 @@ Multivio.SearchView = SC.View.extend(
     icon: 'search_new_16',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    // trigger action when pressing enter. 
+    // trigger action when pressing enter.
     // Note: can interfere with other components
-    keyEquivalent: 'return', 
+    keyEquivalent: 'return',
     //needsEllipsis: NO,
     theme: 'mvo-button',
     toolTip: '_doSearch'.loc(),
-    target: 'Multivio.searchController', 
+    target: 'Multivio.searchController',
     action: 'doSearch'
   }),
   
@@ -52,13 +52,13 @@ Multivio.SearchView = SC.View.extend(
     renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
     theme: 'mvo-button',
-    // trigger action when pressing escape. 
+    // trigger action when pressing escape.
     // Note: can interfere with other components
-    //isCancel: YES, 
-    //keyEquivalent: 'escape', 
+    //isCancel: YES,
+    //keyEquivalent: 'escape',
 
     titleMinWidth : 0,
-    target: 'Multivio.searchController', 
+    target: 'Multivio.searchController',
     action: 'doClear'
   }),
   
@@ -68,9 +68,9 @@ Multivio.SearchView = SC.View.extend(
 
     borderStyle: SC.BORDER_NONE,
     hasHorizontalScroller: YES,
-    hasVerticalScroller: YES,    
+    hasVerticalScroller: YES,
     
-    contentView: SC.ListView.design(Multivio.innerGradient, {
+    contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
       layout: { top: 0, left: 0, right: 0, bottom: 0 },
       insertionOrientation: SC.VERTICAL_ORIENTATION,
       rowHeight: 15,
@@ -81,11 +81,11 @@ Multivio.SearchView = SC.View.extend(
   }),
   
   /**
-    Update the position of the scroll in the view if needed.
+Update the position of the scroll in the view if needed.
 
-    @private
-    @observes Multivio.searchController.selection
-  */
+@private
+@observes Multivio.searchController.selection
+*/
   _searchResultSelectionDidChange: function () {
     var selection = Multivio.searchController.get('selection').firstObject();
 
@@ -120,7 +120,7 @@ Multivio.SearchView = SC.View.extend(
     theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    target: 'Multivio.searchController', 
+    target: 'Multivio.searchController',
     action: 'goToNextResult'
   }),
 
@@ -132,7 +132,7 @@ Multivio.SearchView = SC.View.extend(
     theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    target: 'Multivio.searchController', 
+    target: 'Multivio.searchController',
     action: 'goToPreviousResult'
   }),
   
@@ -143,7 +143,7 @@ Multivio.SearchView = SC.View.extend(
 
     toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
-    objectsBinding: 'Multivio.searchController.currentFileList',       
+    objectsBinding: 'Multivio.searchController.currentFileList',
     nameKey: 'label',
     theme: 'square',
     valueKey: 'url',
@@ -154,10 +154,10 @@ Multivio.SearchView = SC.View.extend(
   }),
   
   /*scopeLabelView: SC.LabelView.design({
-    layout: { top: 30, left: 0, height: 50, width: 80 },
-    textAlign: SC.ALIGN_LEFT,
-    value: '_searchIn'.loc()
-  })*/
+layout: { top: 30, left: 0, height: 50, width: 80 },
+textAlign: SC.ALIGN_LEFT,
+value: '_searchIn'.loc()
+})*/
   
   messageLabelView: SC.LabelView.design({
     layout: { top: 72, left: 0, right: 0, height: 22 },

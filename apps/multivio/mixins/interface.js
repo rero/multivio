@@ -39,6 +39,31 @@ Multivio.innerGradient = {
   @namespace
   @mixin
 
+  TODO test dwy
+
+  Adds an inner gradient to a view, with thin top and bottom edges.
+
+  @author dwy
+  @extends SC.Object
+  @since 0.3.0
+*/
+Multivio.innerGradientThinTopBottom = {
+  render: function (context, firstTime) {
+    if (context.needsContent) {
+      this.renderChildViews(context, firstTime);
+      context.push(
+        "<div class='top-edge-thin'></div>",
+        "<div class='right-edge'></div>",
+        "<div class='bottom-edge-thin'></div>",
+        "<div class='left-edge'></div>");
+    }
+  }
+};
+
+/**
+  @namespace
+  @mixin
+
   Applies an outer frame composed of segments to a view. It can be used for a
   gradient outer border or to make rounded boxes.
   

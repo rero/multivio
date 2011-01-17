@@ -10,8 +10,8 @@
 
 /*
 ==========================================================================
-  Overridden base SproutCore theme style rules
-    => keep original declarations, for reference, but commented out
+Overridden base SproutCore theme style rules
+=> keep original declarations, for reference, but commented out
 ==========================================================================
 */
 
@@ -19,10 +19,10 @@
 
 body.sc-theme {
   /*
-  font: 12px/18px "Lucida Grande", "Lucida Sans", Verdana, Arial, sans-serif;
-  background-color: #57647f ;
-  padding: 0px;
-  */
+font: 12px/18px "Lucida Grande", "Lucida Sans", Verdana, Arial, sans-serif;
+background-color: #57647f ;
+padding: 0px;
+*/
   font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
   min-height: 300px;
   min-width: 300px;
@@ -30,41 +30,41 @@ body.sc-theme {
 
 .sc-theme .sc-list-view {
   /*
-  background-color: white ;
-  */
+background-color: white ;
+*/
 }
 
 .sc-theme #loading {
   /*
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
-  color: white;
-  */
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
+color: white;
+*/
   background-color: white;
   background-image: none;
 }
 
 .sc-theme .sc-pane.sc-main {
   /*
-  background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
-  color: white;
-  */
+background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
+color: white;
+*/
 }
 
 .sc-theme #loading {
   /*
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
-  color: white;
-  */
+position: absolute;
+top: 0;
+left: 0;
+bottom: 0;
+right: 0;
+background: -webkit-gradient(linear, left top, left bottom, from(#57647f), to(#848ea2));
+color: white;
+*/
 }
 
 /* for button icon positioning */
@@ -123,14 +123,14 @@ body.sc-theme {
 }
 
 .sc-theme .sc-segment img.icon {
-	position: relative;
-	vertical-align: middle;
+position: relative;
+vertical-align: middle;
 	/* top: -2px;	*/
-	top: -1px;
-	/* margin-right: 2px; */
-	margin-right: 0px;
-	height: 16px;
-	width: 16px;
+top: -1px;
+/* margin-right: 2px; */
+margin-right: 0px;
+height: 16px;
+width: 16px;
 }
 
 .sc-text-field-view input {
@@ -153,7 +153,7 @@ body.sc-theme {
 }
 
 label.document-label-view {
-  font-weight: bold;  
+  font-weight: bold;
 }
 
 .sc-theme.focus .sc-collection-view.focus .sc-label-view.selected {
@@ -163,31 +163,31 @@ label.document-label-view {
 
 .sc-split-divider-view {
   /*
-  background-color: #ddd;
-  border-left: 1px #999 solid;
-  border-right: 1px #999 solid;
-  z-index: 1;
-  */
+background-color: #ddd;
+border-left: 1px #999 solid;
+border-right: 1px #999 solid;
+z-index: 1;
+*/
   border: none;
   background-color: #444;
 }
 
 .sc-label-view.sc-regular-size {
   /*
-  font-size: 12px;
-  line-height: 19px;
-  */
+font-size: 12px;
+line-height: 19px;
+*/
   /*
-  font-size: 2.2em;
-  color: #808080;
-  */
+font-size: 2.2em;
+color: #808080;
+*/
 }
 
 .sc-pane.sc-panel > .sc-view {
   /*
-  border: 0px #444 solid;
-  background-color: #eaeaea ;
-  */
+border: 0px #444 solid;
+background-color: #eaeaea ;
+*/
   background-color: #fff;
   border: 1px solid #bbb;
 }
@@ -211,7 +211,7 @@ label.document-label-view {
 
 /*
 ==========================================================================
- Rules for the general Multivio layout
+Rules for the general Multivio layout
 ==========================================================================
 */
 
@@ -249,8 +249,8 @@ label.document-label-view {
 
 /*
 .mvo_transparent {
-  background: 'transparent';
-  background-color: 'none';
+background: 'transparent';
+background-color: 'none';
 }
 */
 
@@ -311,7 +311,7 @@ label.document-label-view {
 
 /*
 ==========================================================================
- Rules for Multivio's usage page
+Rules for Multivio's usage page
 ==========================================================================
 */
 
@@ -411,10 +411,32 @@ label.document-label-view {
   z-index: 2;
 }
 
+/* thin top edge for search result list */
+.top-edge-thin {
+  background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px -5px;
+  position: absolute;
+  height: 4px;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
 .bottom-edge {
   background: static_url('images/mvo-sprite-x.png') repeat-x 0px 0px;
   position: absolute;
   height: 10px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
+/* thin bottom edge for search result list */
+.bottom-edge-thin {
+  background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px -1px;
+  position: absolute;
+  height: 4px;
   bottom: 0px;
   right: 0px;
   left: 0px;
@@ -520,8 +542,8 @@ label.document-label-view {
 .mvo-front-view {
   z-index: 10000;
   /*opacity : 1.0;
-  moz-opacity : 1.0;
-  ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
+moz-opacity : 1.0;
+ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   /*filter : alpha(opacity=10);*/
 }
 
@@ -537,16 +559,16 @@ label.document-label-view {
   z-index: -10000;
   background: sc_static("images/transparency_ddd_90.png") repeat;
   /*opacity : 1.0;
-  moz-opacity : 1.0;
-  ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
+moz-opacity : 1.0;
+ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   /*filter : alpha(opacity=10);*/
 }
 
 /*.mvo-backend-view {
-  z-index: 1;
-  opacity : 0.0;
-  moz-opacity : 0.0;
-  ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
+z-index: 1;
+opacity : 0.0;
+moz-opacity : 0.0;
+ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   /*filter : alpha(opacity=10);
 }*/
 
@@ -580,8 +602,8 @@ label.document-label-view {
 }
 /*
 ==========================================================================
- Tests for text selection and search results highlight.
- For now, styles "borrowed" from Google Quick View
+Tests for text selection and search results highlight.
+For now, styles "borrowed" from Google Quick View
 ==========================================================================
 */
 
@@ -642,18 +664,18 @@ label.document-label-view {
  padding: 13px 5px 5px 13px;
 }
 .help-panel h1{
-	margin-bottom: 5px;
+margin-bottom: 5px;
 }
 
 .sc-theme .help-panel h4{
-	margin-top: 10px;
-	margin-bottom: 5px;
+margin-top: 10px;
+margin-bottom: 5px;
 }
 
 .sc-theme .help-panel img{
-	margin-right: 5px;
-	vertical-align: middle;
-	width: 16px;
-	height: 16px;
+margin-right: 5px;
+vertical-align: middle;
+width: 16px;
+height: 16px;
 }
 

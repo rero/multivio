@@ -31,6 +31,7 @@ Multivio.CDM = SC.Object.create(
     logicalStructure {Object}: the logical structure of the file (can be null)
     physicalStructure {Object}: the physical structure of the file 
     searchResults {Object}: the current search results
+    pageIndexing {Object}: the page indexing used for text selection
   */
   referer: undefined,
   fileMetadata: undefined,
@@ -38,14 +39,18 @@ Multivio.CDM = SC.Object.create(
   physicalStructure: undefined,
   imageSize: undefined,
   searchResults: undefined,
-  
-  clear: function(){
+  pageIndexing: undefined,
+  selectedText: undefined,
+
+  clear: function () {
       this.referer = undefined;
       this.fileMetadata = undefined;
       this.logicalStructure = undefined;
       this.physicalStructure = undefined;
       this.imageSize = undefined;
       this.searchResults = undefined;
+      this.pageIndexing = undefined;
+      this.selectedText = undefined;
   },
 
   /**
@@ -227,7 +232,7 @@ Multivio.CDM = SC.Object.create(
           fmt(response.get("body")));
       var jsonRes = response.get("body");
       var t2 = {};
-      if (!SC.none(this.get('physicalStructure'))){
+      if (!SC.none(this.get('physicalStructure'))) {
         //verify if value is not already in the CDM
         if (this.get('physicalStructure')[url] === undefined) {
           var oldPhysic = this.get('physicalStructure');
@@ -399,6 +404,137 @@ Multivio.CDM = SC.Object.create(
       Multivio.errorController.initialize(response.get('body'));
       Multivio.makeFirstResponder(Multivio.ERROR);
     }
-  }
+  },
   
+  /**
+    Return the page indexing (for text selection) or send the request
+    to the server and return -1.
+
+    If a range of pages is defined using 'from' and 'to', 'page_nr'
+    is ignored.
+  
+    @param {String} url document url
+    @param {Number} page_nr page to get indexing of
+    @param {Number} from page number start
+    @param {Number} to page number stop
+    
+    @return {Object}
+  */
+  getPageIndexing: function (url, page_nr, from, to) {
+    
+    // storage in page_nr=X&from=Y&to=Z&url=<doc_url>
+    var serverAddress = Multivio.configurator.
+        getPath('baseUrlParameters.getPageIndexing');
+    serverAddress = serverAddress.
+              fmt(page_nr, from, to) + url;
+    
+    if (SC.none(this.get('pageIndexing')) || 
+        this.get('pageIndexing')[serverAddress] === undefined) {    
+          
+      // ask the server    
+      Multivio.requestHandler.
+          sendGetRequest(serverAddress, this, 'setPageIndexing', serverAddress);
+      Multivio.logger.debug('page indexing: request sent to server: ' + serverAddress);
+          
+      return -1;
+    }
+    else {
+      var res = this.get('pageIndexing')[serverAddress];
+      Multivio.logger.debug('page indexing returned by cdm ' + res);
+      return res;
+    }
+
+  },
+  
+  /**
+    Store the page indexing.
+
+    @param {String} response the response received from the server
+    @param {url} url the corresponding url
+  */
+  setPageIndexing: function (response, url) {
+    
+    if (SC.ok(response)) {
+      Multivio.logger.debug('page indexing received from the server: %@'.
+          fmt(response.get("body")));    
+      var jsonRes = response.get("body");
+      var t2 = {};
+      if (!SC.none(this.get('pageIndexing'))) {
+        var oldRes = this.get('pageIndexing');
+        t2 = this.clone(oldRes);
+      }
+      //t2[{'url': url.url, 'query': url.query}] = jsonRes;
+      t2[url] = jsonRes;
+      this.set('pageIndexing', t2);
+      Multivio.logger.debug('New page indexing added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
+    }
+  },
+  
+  /**
+    Return the text located in the given box on the specified page 
+    of the document.
+
+  
+    @param {String} url document url
+    @param {Number} page_nr page number
+    @param {Number} x1 upper left point, x
+    @param {Number} y1 upper left point, y
+    @param {Number} x2 bottom right point, x
+    @param {Number} y2 bottom right point, y
+    @param {Number} angle rotation angle of content
+    
+    @return {Object}
+  */
+  getSelectedText: function (url, page_nr, x1, y1, x2, y2, angle) {
+    
+    if (SC.none(this.get('selectedText')) || 
+        this.get('selectedText')[url] === undefined) {
+      // ask the server    
+      var serverAdress = Multivio.configurator.
+          getPath('baseUrlParameters.getText');
+          
+      serverAdress = serverAdress.fmt(page_nr, x1, y1, x2, y2, angle) + url;
+      
+      Multivio.requestHandler.
+          sendGetRequest(serverAdress, this, 'setSelectedText', url, NO);
+      return -1;
+    }
+    else {
+      var t = this.get('selectedText')[url];
+      Multivio.logger.debug('selectedText returned by cdm ' + t);
+      return t;
+    }
+
+  },
+
+  /**
+    Store the currently selected text.
+
+    @param {String} response the response received from the server
+    @param {url} url the corresponding url
+  */
+  setSelectedText: function (response, url) {
+    
+    if (SC.ok(response)) {
+      Multivio.logger.debug('selected text received from the server: %@'.
+          fmt(response.get("body")));    
+      var jsonRes = response.get("body");
+      var t2 = {};
+      if (!SC.none(this.get('selectedText'))) {
+        var oldRes = this.get('selectedText');
+        t2 = this.clone(oldRes);
+      }
+      t2[url] = jsonRes;
+      this.set('selectedText', t2);
+      Multivio.logger.debug('New selected text added for ' + url);
+    }
+    else {
+      Multivio.errorController.initialize(response.get('body'));
+      Multivio.makeFirstResponder(Multivio.ERROR);
+    }
+  }
 });

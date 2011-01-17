@@ -81,6 +81,19 @@ Multivio.masterController = SC.ObjectController.create(
     @property {currentSearchResultSelectionIndex}
   */
   currentSearchResultSelectionIndex: -1,
+  
+  /**
+    The url of the file selected for the search scope. 
+    
+    This value is stored here to keep track of the 
+    scope when navigating search results on all files
+    and we need to switch files (this information would
+    be lost when the search controller is reinitialised
+    after a change of the current file).
+  
+    @property {currentSearchFile}
+  */
+  currentSearchFile: null,
    
   /**
     Initialize masterController. Get the referer (the url given to multivio) 
