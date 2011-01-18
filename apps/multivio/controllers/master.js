@@ -57,6 +57,7 @@ Multivio.masterController = SC.ObjectController.create(
     @default NO
   */
   isLoadingContent: NO,
+  isNew: NO,
 
   zoomState: null,
   
@@ -266,7 +267,7 @@ Multivio.masterController = SC.ObjectController.create(
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
-      this.showNavigationPalette(YES, this.get('currentFile'));
+      this.set('isNew', YES);
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;
       this.set('currentPosition', null);
@@ -282,37 +283,33 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentFile'),
   
   /**
-    CurrentPosition has changed. This method is only used to verify 
-    that synchronisation works fine.
+    isLoadingContent has changed, if it's a new file, show the navigation view
   
-    @observe currentPosition
+    @observes isLoadingContent
   */
-  currentPositionDidChange: function () {
-    if (!SC.none(this.get('currentPosition'))) {
-      this.showNavigationPalette(NO, this.get('currentPosition'));
-    }
-    console.info('currentPosition did Change....');
-    console.info('new Val = ' + this.get('currentPosition'));
-  }.observes('currentPosition'),
-  
-  /**
-  */
-  showNavigationPalette: function (isNewFile, toShow) {
-    var valToSend = '';
-    if (isNewFile) {
-      if (SC.none(this.listOfFiles)) {
-        valToSend = toShow;
+  isLoadingContentDidChange: function () {
+    var prop = this.get('isLoadingContent');
+
+    if (!this.get('isLoadingContent') && this.get('isNew')) {
+      var fileName = 'unknown';
+      if (this.get('isGrouped')) {
+        var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+        var pos = this.get('currentPosition');
+        fileName = phys[pos - 1].label;
       }
       else {
-        for (var i = 0; i < this.listOfFiles.length; i++) {
-          if (this.listOfFiles[i].url === toShow) {
-            valToSend = this.listOfFiles[i].label;
-            break;
+        if (SC.none(this.listOfFiles)) {
+          fileName = this.get('currentFile');
+        }
+        else {
+          for (var i = 0; i < this.listOfFiles.length; i++) {
+            if (this.listOfFiles[i].url === this.get('currentFile')) {
+              fileName = this.listOfFiles[i].label;
+              break;
+            }
           }
         }
       }
-    }
-    else {
       var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
       if (SC.none(max)) {
         if (!SC.none(this.listOfFiles)) {
@@ -322,9 +319,26 @@ Multivio.masterController = SC.ObjectController.create(
           max = 1;
         }
       }
-      valToSend = toShow + '/' + max;
+      if (!SC.none(this.get('currentPosition'))) {
+        var page = this.get('currentPosition') + '/' + max;
+        Multivio.getPath('views.mainContentView.navigation').showView(fileName, page);
+        this.set('isNew', NO);
+      }
     }
-    Multivio.getPath('views.mainContentView.navigation').showView(valToSend);
-  }
+  }.observes('isLoadingContent'),
+  
+  /**
+    CurrentPosition has changed. This method is only used to verify 
+    that synchronisation works fine.
+  
+    @observe currentPosition
+  */
+  currentPositionDidChange: function () {
+    if (!SC.none(this.get('currentPosition'))) {
+      this.set('isNew', YES);
+    }
+    console.info('currentPosition did Change....');
+    console.info('new Val = ' + this.get('currentPosition'));
+  }.observes('currentPosition')
   
 });

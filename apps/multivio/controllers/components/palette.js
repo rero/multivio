@@ -290,7 +290,7 @@ Multivio.paletteController = SC.ObjectController.create(
           break;
         
         default:
-          console.info('bigger than GB');
+          Multivio.logger.info('bigger than GB');
           break;
         }
       }

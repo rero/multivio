@@ -19,23 +19,6 @@ Multivio.NavigationView = SC.View.extend(
 /** @scope Multivio.NavigationView.prototype */ {
   
   /**
-    Override render method to create a timer that hides the view after 3 sec.
-    
-    @param {Object} context
-    @param {Boolean} firstTime 
-  */  
-  render: function (context, firstTime) {
-    if (firstTime) {
-      SC.Timer.schedule({
-        target: this, 
-        action: 'hideView', 
-        interval: 3000
-      });
-    }
-    sc_super();
-  },
-  
-  /**
      Hide this view
    */
   hideView: function () {
@@ -47,19 +30,24 @@ Multivio.NavigationView = SC.View.extend(
   /**
     Show this view
   */
-  showView: function (val) {
+  showView: function (file, page) {
     var trans = Multivio.getPath(
         'views.mainContentView.navigation.transparentView');
-
-    var navView = Multivio.getPath(
-        'views.mainContentView.navigation.transparentView.currentView');
-    navView.set('value', val);
+    var fileLabel = Multivio.getPath(
+        'views.mainContentView.navigation.transparentView.currentFile');
+    fileLabel.set('value', 'File : ' + file);
+    var pageLabel = Multivio.getPath(
+        'views.mainContentView.navigation.transparentView.currentPage');
+    pageLabel.set('value', 'Page : ' + page);
+      
     this.appendChild(trans);
-    this.appendChild(navView);
+    this.appendChild(fileLabel);
+    this.appendChild(pageLabel);
+    
     SC.Timer.schedule({
       target: this, 
       action: 'hideView', 
-      interval: 1000
+      interval: 2000
     });
   }
   

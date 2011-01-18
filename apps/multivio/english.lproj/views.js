@@ -38,7 +38,7 @@ Multivio.views = SC.Page.design(
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     
     navigation: Multivio.NavigationView.design({
-      layout: { width: 160, height: 48, centerX: 24, top: 16},
+      layout: { width: 220, height: 50, centerX: 24, top: 16},
       classNames: 'mvo-front-view',
       
       childViews: 'transparentView '.w(),
@@ -47,12 +47,19 @@ Multivio.views = SC.Page.design(
         layout: { left: 0, right: 0, top: 0, bottom: 0 },
         classNames: 'mvo-front-view-transparent',
 
-        childViews: 'currentView'.w(), 
+        childViews: 'currentFile currentPage'.w(), 
       
-        currentView: SC.LabelView.design({
-          layout: {width: 220, height: 20, centerX: 0, centerY: 0},
+        currentFile: SC.LabelView.design({
+          layout: {width: 220, height: 20, left: 5, top:5},
           classNames: 'mvo-metadata-label',
-          textAlign: 'center',
+          //textAlign: 'center',
+          escapeHTML: YES,
+          value: null
+        }),
+        currentPage: SC.LabelView.design({
+          layout: {width: 220, height: 20, left: 5, top: 25},
+          classNames: 'mvo-metadata-label',
+          //textAlign: 'center',
           escapeHTML: NO,
           value: null
         })
