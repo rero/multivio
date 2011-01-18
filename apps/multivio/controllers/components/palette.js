@@ -26,6 +26,7 @@ Multivio.paletteController = SC.ObjectController.create(
   defaultWidth: 360,
   activeButton: null,
   thumbnailSize: null,
+  metadata: null,
   
   /**
     variable used to say if the toolbar has been actived by the user.
@@ -219,30 +220,93 @@ Multivio.paletteController = SC.ObjectController.create(
   },
   
   /**
-    Download button has been pressed retreive currentFile url and open
-    a new tab with this url
+    Download button has been pressed retreive currentFile url and is size
 
     @param {SC.Button} button the button pressed
   */
   downloadFile: function (button) {
     var fileName =  Multivio.masterController.get('currentFile');
-    var fileMeta = Multivio.CDM.getFileMetadata(fileName);
-    var fileSize = SC.none(fileMeta.file_size) ? '_unknown size'.loc() : (fileMeta.file_size + 'KB');
     if (Multivio.masterController.isGrouped) {
       var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
       var pos = Multivio.masterController.get('currentPosition');
       fileName = phys[pos - 1].url;
     }
-    Multivio.usco.showAlertPaneInfoWithController(
-        '_Download of file'.loc(),
-        fileName + ' (' + fileSize + ')',
-        '_Proceed'.loc(),
-        '_Cancel'.loc(),
-        this);
+    
+    var fileMeta = Multivio.CDM.getFileMetadata(fileName);
+    // if metadata is already in the CDM show the paneInfo
+    if (fileMeta !== -1) {
+      this.showPaneInfo(fileName, fileMeta);
+    }
+    // else create a binding
+    else {
+      this.bind('metadata', SC.Binding.from('Multivio.CDM.fileMetadata').oneWay());
+    }
   },
   
   /**
+    Show a paneInfo with the size of the file and ask the user if he want
+    to download the file.
+  */
+  showPaneInfo: function () {
+    var fileName =  Multivio.masterController.get('currentFile');
+    if (Multivio.masterController.isGrouped) {
+      var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+      var pos = Multivio.masterController.get('currentPosition');
+      fileName = phys[pos - 1].url;
+    }
+
+    var fileMeta = SC.none(this.get('metadata')) ? 
+        Multivio.CDM.getFileMetadata(fileName) :this.get('metadata')[fileName];
+        
+    if (!SC.none(fileMeta) && fileMeta !== -1) {
+      var fileSize = SC.none(fileMeta.fileSize) ? -1 : fileMeta.fileSize;
+  
+      if (fileSize === -1) {
+        fileSize = '_unknown size'.loc();
+      }
+      else {
+        // convert file size
+        switch (true) {
+        case fileSize <= 1024:
+          fileSize = fileSize + ' Bytes';
+          break;
+        
+        case fileSize <= Math.pow(1024, 2):
+          fileSize = (fileSize / 1024);
+          fileSize = Math.round(fileSize * 100) / 100;
+          fileSize = fileSize + ' KB';
+          break;
+          
+        case fileSize <= Math.pow(1024, 3):
+          fileSize = (fileSize / Math.pow(1024, 2));
+          fileSize = Math.round(fileSize * 100) / 100;
+          fileSize = fileSize + ' MB';
+          break;
+        
+        case fileSize <= Math.pow(1024, 4):
+          fileSize = (fileSize / Math.pow(1024, 3));
+          fileSize = Math.round(fileSize * 100) / 100;
+          fileSize = fileSize + ' GB';
+          break;
+        
+        default:
+          console.info('bigger than GB');
+          break;
+        }
+      }
+    
+      Multivio.usco.showAlertPaneInfoWithController(
+          '_Download of file'.loc(),
+          fileName + ' (' + fileSize + ')',
+          '_Proceed'.loc(),
+          '_Cancel'.loc(),
+          this);
+    }
+  }.observes('metadata'),
+  
+  /**
     Delegate method of the Multivio.usco.showAlertPaneInfoWithController
+    Open a new tab with the file to download or do nothing.
     
     @param {String} pane the pane instance
     @param {} status
