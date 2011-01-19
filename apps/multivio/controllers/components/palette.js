@@ -235,7 +235,7 @@ Multivio.paletteController = SC.ObjectController.create(
     var fileMeta = Multivio.CDM.getFileMetadata(fileName);
     // if metadata is already in the CDM show the paneInfo
     if (fileMeta !== -1) {
-      this.showPaneInfo(fileName, fileMeta);
+      this.showPaneInfo();
     }
     // else create a binding
     else {
@@ -256,11 +256,10 @@ Multivio.paletteController = SC.ObjectController.create(
     }
 
     var fileMeta = SC.none(this.get('metadata')) ? 
-        Multivio.CDM.getFileMetadata(fileName) :this.get('metadata')[fileName];
+        Multivio.CDM.getFileMetadata(fileName) : this.get('metadata')[fileName];
         
     if (!SC.none(fileMeta) && fileMeta !== -1) {
       var fileSize = SC.none(fileMeta.fileSize) ? -1 : fileMeta.fileSize;
-  
       if (fileSize === -1) {
         fileSize = '_unknown size'.loc();
       }

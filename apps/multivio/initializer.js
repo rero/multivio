@@ -34,6 +34,10 @@ Multivio.initializer = SC.Object.create(
   */
   readInputParameters: function () {
     Multivio.CDM.clear();
+    //reset configurator
+    Multivio.configurator.set('initialFile', 1);
+    Multivio.configurator.set('initialPosition', 1);
+    Multivio.configurator.set('serverName', '/server');
     // if new document clear treeController
     Multivio.treeController.clear();
     // first split url and get parameters
@@ -79,8 +83,12 @@ Multivio.initializer = SC.Object.create(
             }
             break;
           
-          case 'doc_nr':
-            Multivio.configurator.set('initialDocNr', params[key]);
+          case 'file':
+            Multivio.configurator.set('initialFile', params[key]);
+            break;
+          
+          case 'position':
+            Multivio.configurator.set('initialPosition', params[key]);
             break;
 
           case 'server':

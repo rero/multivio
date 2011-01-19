@@ -103,6 +103,8 @@ Multivio.masterController = SC.ObjectController.create(
   initialize: function () {
     // change application state
     Multivio.makeFirstResponder(Multivio.WAITING);
+    this.listOfFiles = null;
+    this.isGrouped = NO;
     var reference = Multivio.CDM.getReferer();
     this.set('currentFile', reference);
     Multivio.CDM.getPhysicalstructure(reference);
@@ -176,10 +178,22 @@ Multivio.masterController = SC.ObjectController.create(
   },
   
   /**
-    Set current position to 1
+    Set current position to 1 or to the initial position
   */
   selectFirstPosition: function () {
-    this.set('currentPosition', 1);
+    var newPos = Multivio.configurator.get('initialPosition');
+    if (this.get('isGrouped')) {
+      if (newPos < 1 || newPos > this.listOfFiles.length) {
+        newPos = 1;
+      }
+      this.set('currentPosition', newPos);
+    }
+    else {
+      this.set('currentPosition', newPos);
+      if (newPos !== 1) {
+        Multivio.configurator.set('initialPosition', 1);
+      }
+    }
     Multivio.logger.debug('MasterController set currentPosition 1');
   },
   
@@ -201,7 +215,7 @@ Multivio.masterController = SC.ObjectController.create(
     Select the first file of the Document and set currentfile with this value
   */ 
   selectFirstFile: function () {
-    var initDoc = Multivio.configurator.get('initialDocNr');
+    var initDoc = Multivio.configurator.get('initialFile');
     if (initDoc === 1) {
       // get logical structure of the document
       var logSt = Multivio.CDM.getLogicalStructure(this.get('currentFile'));
@@ -289,16 +303,19 @@ Multivio.masterController = SC.ObjectController.create(
   */
   isLoadingContentDidChange: function () {
     var prop = this.get('isLoadingContent');
-
     if (!this.get('isLoadingContent') && this.get('isNew')) {
       var fileName = 'unknown';
       if (this.get('isGrouped')) {
         var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
         var pos = this.get('currentPosition');
-        fileName = phys[pos - 1].label;
+        if (!SC.none(pos)) {
+          Multivio.getPath('views.mainContentView.navigation').
+              showView(phys[pos - 1].label, pos + '/' + phys.length);
+          this.set('isNew', NO);
+        }
       }
       else {
-        if (SC.none(this.listOfFiles)) {
+        if (SC.none(this.listOfFiles) || this.listOfFiles.length === 0) {
           fileName = this.get('currentFile');
         }
         else {
@@ -309,20 +326,21 @@ Multivio.masterController = SC.ObjectController.create(
             }
           }
         }
-      }
-      var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
-      if (SC.none(max)) {
-        if (!SC.none(this.listOfFiles)) {
-          max = this.listOfFiles.length;
+        var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
+        if (SC.none(max)) {
+          if (!SC.none(this.listOfFiles)) {
+            max = this.listOfFiles.length;
+          }
+          else {
+            max = 1;
+          }
         }
-        else {
-          max = 1;
+        if (!SC.none(this.get('currentPosition'))) {
+          var page = this.get('currentPosition') + '/' + max;
+          Multivio.getPath('views.mainContentView.navigation').
+              showView(fileName, page);
+          this.set('isNew', NO);
         }
-      }
-      if (!SC.none(this.get('currentPosition'))) {
-        var page = this.get('currentPosition') + '/' + max;
-        Multivio.getPath('views.mainContentView.navigation').showView(fileName, page);
-        this.set('isNew', NO);
       }
     }
   }.observes('isLoadingContent'),
