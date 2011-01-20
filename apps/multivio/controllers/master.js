@@ -297,50 +297,60 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentFile'),
   
   /**
-    isLoadingContent has changed, if it's a new file, show the navigation view
+    isLoadingContent has changed, show the navigation view
   
     @observes isLoadingContent
   */
   isLoadingContentDidChange: function () {
     var prop = this.get('isLoadingContent');
-    if (!this.get('isLoadingContent') && this.get('isNew')) {
-      var fileName = 'unknown';
-      if (this.get('isGrouped')) {
-        var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
-        var pos = this.get('currentPosition');
-        if (!SC.none(pos)) {
-          Multivio.getPath('views.mainContentView.navigation').
-              showView(phys[pos - 1].label, pos + '/' + phys.length);
-          this.set('isNew', NO);
+    // if isLoading, show waiting
+    if (prop) {
+      Multivio.getPath('views.mainContentView.navigation').showWaiting();
+    }
+    //else remove waiting or replace it with the name of the file and the position
+    else {
+      if (this.get('isNew')) {
+        var fileName = 'unknown';
+        if (this.get('isGrouped')) {
+          var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
+          var pos = this.get('currentPosition');
+          if (!SC.none(pos)) {
+            Multivio.getPath('views.mainContentView.navigation').
+                showView(phys[pos - 1].label, pos + '/' + phys.length);
+            this.set('isNew', NO);
+          }
+        }
+        else {
+          if (SC.none(this.listOfFiles) || this.listOfFiles.length === 0) {
+            fileName = this.get('currentFile');
+          }
+          else {
+            for (var i = 0; i < this.listOfFiles.length; i++) {
+              if (this.listOfFiles[i].url === this.get('currentFile')) {
+                fileName = this.listOfFiles[i].label;
+                break;
+              }
+            }
+          }
+          var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
+          if (SC.none(max)) {
+            if (!SC.none(this.listOfFiles)) {
+              max = this.listOfFiles.length;
+            }
+            else {
+              max = 1;
+            }
+          }
+          if (!SC.none(this.get('currentPosition'))) {
+            var page = this.get('currentPosition') + '/' + max;
+            Multivio.getPath('views.mainContentView.navigation').
+                showView(fileName, page);
+            this.set('isNew', NO);
+          }
         }
       }
       else {
-        if (SC.none(this.listOfFiles) || this.listOfFiles.length === 0) {
-          fileName = this.get('currentFile');
-        }
-        else {
-          for (var i = 0; i < this.listOfFiles.length; i++) {
-            if (this.listOfFiles[i].url === this.get('currentFile')) {
-              fileName = this.listOfFiles[i].label;
-              break;
-            }
-          }
-        }
-        var max = Multivio.CDM.getFileMetadata(this.get('currentFile')).nPages;
-        if (SC.none(max)) {
-          if (!SC.none(this.listOfFiles)) {
-            max = this.listOfFiles.length;
-          }
-          else {
-            max = 1;
-          }
-        }
-        if (!SC.none(this.get('currentPosition'))) {
-          var page = this.get('currentPosition') + '/' + max;
-          Multivio.getPath('views.mainContentView.navigation').
-              showView(fileName, page);
-          this.set('isNew', NO);
-        }
+        Multivio.getPath('views.mainContentView.navigation').hideView();
       }
     }
   }.observes('isLoadingContent'),

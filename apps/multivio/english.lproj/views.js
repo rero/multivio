@@ -50,16 +50,14 @@ Multivio.views = SC.Page.design(
         childViews: 'currentFile currentPage'.w(), 
       
         currentFile: SC.LabelView.design({
-          layout: {width: 220, height: 20, left: 5, top:5},
+          layout: {width: 220, height: 20, left: 5, top: 5},
           classNames: 'mvo-metadata-label',
-          //textAlign: 'center',
           escapeHTML: YES,
           value: null
         }),
         currentPage: SC.LabelView.design({
           layout: {width: 220, height: 20, left: 5, top: 25},
           classNames: 'mvo-metadata-label',
-          //textAlign: 'center',
           escapeHTML: NO,
           value: null
         })
@@ -527,6 +525,12 @@ Multivio.views = SC.Page.design(
     contentView: Multivio.MagnifyingGlassView.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 }
     })
+  }),
+  
+  // waiting image
+  waitingImg: SC.ImageView.design({
+    layout: { centerX: 0, centerY: 0, width: 36, height: 36 },
+    value: static_url('images/progress_wheel_medium.gif'),
   }),
   
   // help

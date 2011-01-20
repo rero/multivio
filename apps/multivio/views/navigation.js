@@ -18,6 +18,7 @@
 Multivio.NavigationView = SC.View.extend( 
 /** @scope Multivio.NavigationView.prototype */ {
   
+  
   /**
      Hide this view
    */
@@ -28,9 +29,25 @@ Multivio.NavigationView = SC.View.extend(
   },
 
   /**
+    Show a waiting image
+  */
+  showWaiting: function () {
+    var trans = Multivio.getPath(
+        'views.mainContentView.navigation.transparentView');
+    var waitingIm = Multivio.getPath(
+          'views.waitingImg');
+    this.appendChild(trans);
+    this.appendChild(waitingIm);
+  },
+  
+  /**
     Show this view
+    
+    @param {String} file the current file
+    @param {String} the current position / the nomber of pages
   */
   showView: function (file, page) {
+    this.removeAllChildren();
     var trans = Multivio.getPath(
         'views.mainContentView.navigation.transparentView');
     var fileLabel = Multivio.getPath(
@@ -39,10 +56,10 @@ Multivio.NavigationView = SC.View.extend(
     var pageLabel = Multivio.getPath(
         'views.mainContentView.navigation.transparentView.currentPage');
     pageLabel.set('value', 'Page : ' + page);
-      
+    
     this.appendChild(trans);
     this.appendChild(fileLabel);
-    this.appendChild(pageLabel);
+    this.appendChild(pageLabel); 
     
     SC.Timer.schedule({
       target: this, 
