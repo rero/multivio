@@ -140,7 +140,16 @@ Multivio.views = SC.Page.design(
             layout: { centerX: 0, centerY: -1, width: 50, height: 24 },
             textAlign: SC.ALIGN_CENTER,
             valueBinding: 'Multivio.navigationController.currentPage',
-            isEnabledBinding: 'Multivio.navigtionController.isCurrentPageEnabled'
+            isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
+            keyDown: function(evt) {
+              //if press enter set the value
+              if (evt.keyCode === 13) {
+                this.set('value', this.$input()[0].value);
+                return YES;
+              } else {
+                return NO;
+              }
+            }
           }),
 
           nextPageView: SC.ButtonView.design({

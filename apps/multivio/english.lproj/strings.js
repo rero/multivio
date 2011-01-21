@@ -76,6 +76,8 @@ SC.stringsFor('English', {
       'Would you like to proceed?',
   '_Download of file': 'Download of file',
   '_unknown size': 'unknown size',
+  '_File': 'File',
+  '_Page': 'Page',
   '_Proceed': 'Proceed',
   '_Use lower resolution': 'Use lower resolution',
   '_Incorrect page number': 'Incorrect page number',

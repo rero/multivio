@@ -52,10 +52,10 @@ Multivio.NavigationView = SC.View.extend(
         'views.mainContentView.navigation.transparentView');
     var fileLabel = Multivio.getPath(
         'views.mainContentView.navigation.transparentView.currentFile');
-    fileLabel.set('value', 'File : ' + file);
+    fileLabel.set('value', '_File'.loc() + ' : ' + file);
     var pageLabel = Multivio.getPath(
         'views.mainContentView.navigation.transparentView.currentPage');
-    pageLabel.set('value', 'Page : ' + page);
+    pageLabel.set('value', '_Page'.loc() + ' : ' + page);
     
     this.appendChild(trans);
     this.appendChild(fileLabel);

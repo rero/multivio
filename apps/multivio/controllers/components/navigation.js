@@ -195,34 +195,19 @@ Multivio.navigationController = SC.ObjectController.create(
     @observes currentPage
   */  
   _currentPageDidChange: function () {
-    try {
-      var newCurrentPage = this.get('currentPage'); 
-      if (SC.typeOf(newCurrentPage) === SC.T_STRING &&
-          !isNaN(newCurrentPage)) {
-        newCurrentPage = parseFloat(newCurrentPage);
-        // there is nothing
-        if (isNaN(newCurrentPage)) {
-          newCurrentPage = this.get('position');
-        }
-      }
-      if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
-          isNaN(newCurrentPage)) {
-        Multivio.usco.showAlertPaneWarn(
-            '_Incorrect page number'.loc(),
-            '_Please enter a number between 1 and %@'.loc() +
-            this.get('_numberOfPages'), '_Ok'.loc(), '', this);
-      }
-      else {
-        var currentPosition = this.get('position');
-        if (currentPosition !== newCurrentPage) {
-          this.set('position', newCurrentPage);
-        }
-      }
+    var newCurrentPage = this.get('currentPage');
+    if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
+        isNaN(newCurrentPage)) {
+      Multivio.usco.showAlertPaneWarn(
+          '_Incorrect page number'.loc(),
+          '_Please enter a number between 1 and %@'.loc() +
+          this.get('_numberOfPages'), '_Ok'.loc(), '', this);
     }
-    catch (err) {
-      Multivio.usco.showAlertPaneInfo('Problem', err);
+    else {
+      this.set('position', newCurrentPage);
     }
   }.observes('currentPage'),
+  
   
   /**
     Delegate method of the Multivio.usco.showAlertPaneWarn
@@ -251,9 +236,11 @@ Multivio.navigationController = SC.ObjectController.create(
       this.set('isNextEnabled', NO);
       this.set('isFirstEnabled', NO);
       this.set('isLastEnabled', NO);
+      this.set('isCurrentPageEnabled', NO);
     }
     else {
       // enabled buttons after checking conditions
+      this.set('isCurrentPageEnabled', YES);
       var current = this.get('currentPage');
       var currentFileP = this.get('currentFile');
       if (Multivio.masterController.isGrouped) {

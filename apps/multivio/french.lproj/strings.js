@@ -76,6 +76,8 @@ SC.stringsFor('French', {
       'Aimeriez-vous continuer?',
   '_Download of file': 'Téléchargement du fichier',
   '_unknown size': 'taille non disponible',
+  '_File': 'Fichier',
+  '_Page': 'Page',
   '_Proceed': 'Poursuivre',
   '_Use lower resolution': 'Utiliser une résolution plus basse',
   '_Incorrect page number': 'Numéro de page incorrect',
