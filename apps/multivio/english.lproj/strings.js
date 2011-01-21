@@ -21,7 +21,7 @@ SC.stringsFor('English', {
   '_Search': 'Search in the document',
   '_Help': 'Help',
   '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
-  '_Download': 'Download',
+  '_Download': 'Download the current file',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',
@@ -121,10 +121,13 @@ SC.stringsFor('English', {
   '_helpSearch': "Allows searching inside the document. The results are shown\
       in their context and highlighted in the page.",
   '_helpMetadata': "Displays document metadata: author, title, etc.",
+  '_helpDownload': "Downloads the current file",
   '_helpDisplayBar': "Makes the navigation toolbar remain visible.",
   '_helpNavigationBar': "Navigation toolbar",
   '_helpNavigationBarDesc': "This toolbar is shown when the mouse pointer\
       goes over the lower part of the displayed document.",
+  '_helpLoupe': "[... help text for loupe...]",
+  '_helpPan': "[... help text for pan...]",
   '_helpRotation': "Rotates the current page by 90 degrees anticlockwise\
       or clockwise.",
   '_helpNavigation': "Allows to navigate along the document: next and previous\

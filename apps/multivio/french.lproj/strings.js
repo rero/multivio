@@ -21,7 +21,7 @@ SC.stringsFor('French', {
   '_Search': 'Rechercher dans le document',
   '_Help': 'Aide',
   '_ShowToolbar': 'Bloquer ou débloquer l\'affichage permanente de la barre d\'outils',
-  '_Download': 'Téléchargement',
+  '_Download': 'Télécharger le fichier courant',
   '_RotateLeft': 'Pivoter à gauche',
   '_RotateRight': 'Pivoter à droite',
   '_FirstPage': 'Aller à la première page ou au fichier précédent',
@@ -120,10 +120,13 @@ SC.stringsFor('French', {
   '_helpSearch': "Lance une recherche dans le document. Les résultats\
       apparaissent de façon contextualisée et sont surlignés dans le texte.",
   '_helpMetadata': "Affiche les métadonnées du document: auteur, titre, etc.",
+  '_helpDownload': "Télécharge le fichier courant",
   '_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
   '_helpNavigationBar': "Barre de navigation",
   '_helpNavigationBarDesc': "Cette barre apparaît lorsque la souris se\
       déplace sur le bas du document.",
+  '_helpLoupe': "[... help text for loupe...]",
+  '_helpPan': "[... help text for pan...]",
   '_helpRotation': "Pivote de 90 degrés la page courante dans le sens indiqué.",
   '_helpNavigation': "permet la navigation dans le document : page suivante,\
       page précédente, début et fin du document. Il est possible de saisir dans\

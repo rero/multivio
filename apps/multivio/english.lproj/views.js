@@ -357,18 +357,6 @@ Multivio.views = SC.Page.design(
           layout: { top: 210, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
-          name: 'show_toolbar',
-          toolTip: '_ShowToolbar'.loc(),
-          renderStyle: "renderImage",
-          icon: 'show_toolbar_new',
-          theme: 'mvo-button',
-          target: "Multivio.paletteController",
-          action: "showHorizontalToolbar"
-        }),
-        SC.ButtonView.design({
-          layout: { top: 250, centerX: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
           name: 'download',
           toolTip: '_Download'.loc(),
           renderStyle: "renderImage",
@@ -376,6 +364,18 @@ Multivio.views = SC.Page.design(
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "downloadFile"
+        }),
+        SC.ButtonView.design({
+          layout: { top: 250, centerX: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'show_toolbar',
+          toolTip: '_ShowToolbar'.loc(),
+          renderStyle: "renderImage",
+          icon: 'show_toolbar_new',
+          theme: 'mvo-button',
+          target: "Multivio.paletteController",
+          action: "showHorizontalToolbar"
         })
       ]
     }),
@@ -561,9 +561,12 @@ Multivio.views = SC.Page.design(
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/thumbnails_dark_24x24.png") + '"/>' + '_helpThum'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/search_dark_24x24.png") + '"/>' + '_helpSearch'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/information_dark_24x24.png") + '"/>' + '_helpMetadata'.loc() + '</p>'
+                  + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/download_dark_24x24.png") + '"/>' + '_helpDownload'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/show_toolbar_dark_24x24.png") + '"/>' + '_helpDisplayBar'.loc() + '</p>'
                   + '<h4>' + '_helpNavigationBar'.loc() + '</h4>'
                   + '<p>' + '_helpNavigationBarDesc'.loc() + '<p/>'
+                  + '<p><img class="" style= "" src="' + sc_static("images/icons/24x24/loupe_dark_24x24.png") + '"/>' + '_helpLoupe'.loc() + '</p>'
+                  + '<p><img class="" style= "" src="' + sc_static("images/icons/24x24/pan_dark_24x24.png") + '"/>' + '_helpPan'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/rotate_left_dark_24x24.png") + '"/>'
                   + '<img class="" style= "" src="' + sc_static("images/icons/24x24/rotate_right_dark_24x24.png") + '"/>' + '_helpRotation'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/jump_backwards_dark_24x24.png") + '"/>'
