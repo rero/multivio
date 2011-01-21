@@ -797,6 +797,8 @@ Multivio.ContentView = SC.ScrollView.extend(
   */
   panButton: NO,
   panButtonBinding: 'Multivio.panController.isPanButtonEnabled',
+  glassButton: NO,
+  glassButtonBinding: 'Multivio.paletteController.isGlassButtonEnabled',
   
   /**  
     Variable that contains mouse pointer position. Information used by pan
@@ -902,10 +904,12 @@ Multivio.ContentView = SC.ScrollView.extend(
   scrollStateDidChange: function () {
     if (this.get('isHorizontalScrollerVisible') || 
         this.get('isVerticalScrollerVisible')) {
-      this.set('panButton', YES);    
+      this.set('panButton', YES);
+      this.set('glassButton', YES);
     }
     else {
       this.set('panButton', NO);
+      this.set('glassButton', NO);
     }
     
   }.observes('isHorizontalScrollerVisible', 'isVerticalScrollerVisible'),

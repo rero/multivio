@@ -86,6 +86,7 @@ Multivio.views = SC.Page.design(
           renderStyle: "renderImage",
           icon: 'search_new',
           theme: 'mvo-button',
+          isEnabledBinding: 'Multivio.paletteController.isGlassButtonEnabled',
           target: "Multivio.paletteController",
           action: "showMagnifyingGlass"
         }),

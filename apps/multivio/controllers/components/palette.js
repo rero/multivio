@@ -34,6 +34,7 @@ Multivio.paletteController = SC.ObjectController.create(
   */
   isHorizontalToolbarActive: null,
   isMagnifyingGlassActive: null,
+  isGlassButtonEnabled: NO,
 
   
   /**
