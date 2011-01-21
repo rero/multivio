@@ -74,7 +74,7 @@ SC.stringsFor('English', {
       'Loading the requested resolution may take a long time',
   '_Would you like to proceed?':
       'Would you like to proceed?',
-  '_Download of file': 'Download of file',
+  '_File download': 'File download',
   '_unknown size': 'unknown size',
   '_File': 'File',
   '_Page': 'Page',

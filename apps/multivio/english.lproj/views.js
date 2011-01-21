@@ -74,222 +74,215 @@ Multivio.views = SC.Page.design(
         layout: { left: 0, right: 0, top: 0, bottom: 0 },
         classNames: 'mvo-front-view-transparent',
       
-        childViews: 'magnifyingGlassButton panButton navigationView zoomView rotateView'.w(),
+        childViews: [
+          'loupeButton',
+          'panButton',
+          'rotateLeftButton',
+          'rotateRightButton',
+          'firstPageButton',
+          'previousPageButton',
+          'textPageView',
+          'nextPageButton',
+          'lastPageButton',
+          'zoomOutButton',
+          'zoomInButton',
+          'zoomFullSizeButton',
+          'zoomFullWidthButton',
+          'zoomNativeSizeButton'
+        ],
         
-        //magnifyingGlass
-        magnifyingGlassButton: SC.ButtonView.design({
-          layout: { centerX: -260, centerY: 0,  width: 32, height: 32 },
+        loupeButton: SC.ButtonView.design({
+          layout: { centerX: -272, centerY: 0,  width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           name: 'magnifyingGlass',
           toolTip: '_MagnifyingGlass'.loc(),
           renderStyle: "renderImage",
-          icon: 'search_new',
+          icon: 'loupe_new',
           theme: 'mvo-button',
           isEnabledBinding: 'Multivio.paletteController.isGlassButtonEnabled',
           target: "Multivio.paletteController",
           action: "showMagnifyingGlass"
         }),
-        //pan    
+
         panButton: SC.ButtonView.design({
-          layout: { centerX: -220, centerY: 0, width: 32, height: 32 },
+          layout: { centerX: -240, centerY: 0, width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
           name: 'pan',
           toolTip: '_Pan'.loc(),
           renderStyle: "renderImage",
-          icon: 'tree_new',
+          icon: 'pan_new',
           theme: 'mvo-button',
           isEnabledBinding: 'Multivio.panController.isPanButtonEnabled',
           target: "Multivio.panController",
           action: "activePan"
         }),
-        
-        //navigation
-        navigationView: SC.View.design({
-          layout: { centerX: 0, centerY: 0, width: 192, height: 32 },
 
-          childViews: 'firstPageView previousPageView textPageView nextPageView lastPageView'.w(),
-
-          firstPageView: SC.ButtonView.design({
-            layout: { centerX: -80, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_FirstPage'.loc(),
-            renderStyle: "renderImage",
-            icon: 'jump_backwards_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.navigationController.isFirstEnabled",
-            target: "Multivio.navigationController", 
-            action: "goToFirstPage"
-          }),
-
-          previousPageView: SC.ButtonView.design({
-            layout: { centerX: -48, centerY: 0,  width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_PreviousPage'.loc(),
-            renderStyle: "renderImage",
-            icon: 'go_backwards_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
-            target: "Multivio.navigationController", 
-            action: "goToPrevious"
-          }),    
-
-          textPageView: SC.TextFieldView.design({ 
-            layout: { centerX: 0, centerY: -1, width: 50, height: 24 },
-            textAlign: SC.ALIGN_CENTER,
-            valueBinding: 'Multivio.navigationController.currentPage',
-            isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
-            keyDown: function (evt) {
-              //if press enter set the value
-              if (evt.keyCode === 13) {
-                this.set('value', this.$input()[0].value);
-                return YES;
-              } else {
-                return NO;
-              }
-            }
-          }),
-
-          nextPageView: SC.ButtonView.design({
-            layout: { centerX: 48, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_NextPage'.loc(),
-            acceptsFirstResponder: YES,
-            renderStyle: "renderImage",
-            icon: 'go_forward_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.navigationController.isNextEnabled",
-            target: "Multivio.navigationController", 
-            action: "goToNext"
-          }),
-
-          lastPageView: SC.ButtonView.design({
-            layout: { centerX: 80, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_LastPage'.loc(),
-            renderStyle: "renderImage",
-            icon: 'jump_forward_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.navigationController.isLastEnabled",
-            target: "Multivio.navigationController", 
-            action: "goToLastPage"
-          })
-        }),    
-
-        //zoom
-        zoomView: SC.View.design({
-          layout: { centerX: 240, centerY: 0, width: 224, height: 32 },
-          
-          childViews: 'zoomOutView zoomInView zoomFullSizeView zoomFullWidthView zoomNativeSizeView'.w(),
-
-          zoomOutView: SC.ButtonView.design({
-            layout: { centerX: -80, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_Zoom-'.loc(),
-            renderStyle: "renderImage",
-            icon: 'zoom_minus_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isZoomOutAllowed",
-            target: "Multivio.zoomController", 
-            action: "doZoomOut"
-          }),
-
-          zoomInView: SC.ButtonView.design({
-            layout: { centerX: -48, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_Zoom+'.loc(),
-            renderStyle: "renderImage",
-            icon: 'zoom_plus_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isZoomInAllowed",
-            target: "Multivio.zoomController", 
-            action: "doZoomIn"
-          }),
-          
-          zoomFullSizeView: SC.ButtonView.design({
-            layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            name: 'Full',
-            toolTip: '_FullSize'.loc(),
-            renderStyle: "renderImage",
-            icon: 'full_size_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController",
-            action: "setPredefinedZoom"
-          }),
-
-          zoomFullWidthView: SC.ButtonView.design({
-            layout: { centerX: 48, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            name: 'Width',
-            toolTip: '_FullWidth'.loc(),
-            renderStyle: "renderImage",
-            icon: 'full_width_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController", 
-            action: "setPredefinedZoom"
-          }),
-
-          zoomNativeSizeView: SC.ButtonView.design({
-            layout: { centerX: 80, centerY: 0, width: 32, height: 32 },
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            name: 'Native',
-            toolTip: '_NativeSize'.loc(),
-            renderStyle: "renderImage",
-            icon: 'native_size_new',
-            theme: 'mvo-button',
-            isEnabledBinding: "Multivio.zoomController.isStateEnabled",
-            target: "Multivio.zoomController",
-            action: "setPredefinedZoom"
-          })
+        rotateLeftButton: SC.ButtonView.design({
+          layout: { centerX: -176, centerY: 0, width: 32, height: 32 },
+          layerId: "rotateLeftPageId",
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_RotateLeft'.loc(),
+          renderStyle: "renderImage",
+          icon: 'rotate_left_new',
+          theme: 'mvo-button',
+          target: "Multivio.rotateController",
+          isEnabledBinding: 'Multivio.rotateController.isLeftAllow', 
+          action: "rotateLeft"
         }),
 
-        //rotate
-        rotateView: SC.View.design({
-          layout: { centerX: -160, centerY: 0, width: 64, height: 32 },
-          layerId: "rotatePageId",
+        rotateRightButton: SC.ButtonView.design({
+          layout: { centerX: -144, centerY: 0, width: 32, height: 32 },
+          layerId: "rotateRightPageId",
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_RotateRight'.loc(),
+          renderStyle: "renderImage",
+          icon: 'rotate_right_new',
+          theme: 'mvo-button',
+          target: "Multivio.rotateController",
+          isEnabledBinding: 'Multivio.rotateController.isRigthAllow',
+          action: "rotateRight"
+        }),
+        
+        firstPageButton: SC.ButtonView.design({
+          layout: { centerX: -80, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_FirstPage'.loc(),
+          renderStyle: "renderImage",
+          icon: 'jump_backwards_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.navigationController.isFirstEnabled",
+          target: "Multivio.navigationController", 
+          action: "goToFirstPage"
+        }),
 
-          childViews: 'rotateLeftView rotateRightView'.w(),
+        previousPageButton: SC.ButtonView.design({
+          layout: { centerX: -48, centerY: 0,  width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_PreviousPage'.loc(),
+          renderStyle: "renderImage",
+          icon: 'go_backwards_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.navigationController.isPreviousEnabled",
+          target: "Multivio.navigationController", 
+          action: "goToPrevious"
+        }),    
 
-          rotateLeftView: SC.ButtonView.design({
-            layout: { centerX: -16, centerY: 0, width: 32, height: 32 },
-            layerId: "rotateLeftPageId",
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_RotateLeft'.loc(),
-            renderStyle: "renderImage",
-            icon: 'rotate_left_new',
-            theme: 'mvo-button',
-            target: "Multivio.rotateController",
-            isEnabledBinding: 'Multivio.rotateController.isLeftAllow', 
-            action: "rotateLeft"
-          }),
+        textPageView: SC.TextFieldView.design({ 
+          layout: { centerX: 0, centerY: -1, width: 50, height: 24 },
+          // Note: the total width of this in the toolbar is 64
+          textAlign: SC.ALIGN_CENTER,
+          valueBinding: 'Multivio.navigationController.currentPage',
+          isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
+          keyDown: function (evt) {
+            //if press enter set the value
+            if (evt.keyCode === 13) {
+              this.set('value', this.$input()[0].value);
+              return YES;
+            } else {
+              return NO;
+            }
+          }
+        }),
 
-          rotateRightView: SC.ButtonView.design({
-            layout: { centerX: 16, centerY: 0, width: 32, height: 32 },
-            layerId: "rotateRightPageId",
-            titleMinWidth : 0,
-            needsEllipsis: NO,
-            toolTip: '_RotateRight'.loc(),
-            renderStyle: "renderImage",
-            icon: 'rotate_right_new',
-            theme: 'mvo-button',
-            target: "Multivio.rotateController",
-            isEnabledBinding: 'Multivio.rotateController.isRigthAllow',
-            action: "rotateRight"
-          })
+        nextPageButton: SC.ButtonView.design({
+          layout: { centerX: 48, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_NextPage'.loc(),
+          acceptsFirstResponder: YES,
+          renderStyle: "renderImage",
+          icon: 'go_forward_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.navigationController.isNextEnabled",
+          target: "Multivio.navigationController", 
+          action: "goToNext"
+        }),
+
+        lastPageButton: SC.ButtonView.design({
+          layout: { centerX: 80, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_LastPage'.loc(),
+          renderStyle: "renderImage",
+          icon: 'jump_forward_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.navigationController.isLastEnabled",
+          target: "Multivio.navigationController", 
+          action: "goToLastPage"
+        }),
+
+        zoomOutButton: SC.ButtonView.design({
+          layout: { centerX: 144, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_Zoom-'.loc(),
+          renderStyle: "renderImage",
+          icon: 'zoom_minus_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.zoomController.isZoomOutAllowed",
+          target: "Multivio.zoomController", 
+          action: "doZoomOut"
+        }),
+
+        zoomInButton: SC.ButtonView.design({
+          layout: { centerX: 176, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          toolTip: '_Zoom+'.loc(),
+          renderStyle: "renderImage",
+          icon: 'zoom_plus_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.zoomController.isZoomInAllowed",
+          target: "Multivio.zoomController", 
+          action: "doZoomIn"
+        }),
+      
+        zoomFullSizeButton: SC.ButtonView.design({
+          layout: { centerX: 240, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'Full',
+          toolTip: '_FullSize'.loc(),
+          renderStyle: "renderImage",
+          icon: 'full_size_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+          target: "Multivio.zoomController",
+          action: "setPredefinedZoom"
+        }),
+
+        zoomFullWidthButton: SC.ButtonView.design({
+          layout: { centerX: 272, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'Width',
+          toolTip: '_FullWidth'.loc(),
+          renderStyle: "renderImage",
+          icon: 'full_width_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+          target: "Multivio.zoomController", 
+          action: "setPredefinedZoom"
+        }),
+
+        zoomNativeSizeButton: SC.ButtonView.design({
+          layout: { centerX: 304, centerY: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'Native',
+          toolTip: '_NativeSize'.loc(),
+          renderStyle: "renderImage",
+          icon: 'native_size_new',
+          theme: 'mvo-button',
+          isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+          target: "Multivio.zoomController",
+          action: "setPredefinedZoom"
         })
       })
     }),
@@ -379,7 +372,7 @@ Multivio.views = SC.Page.design(
           name: 'download',
           toolTip: '_Download'.loc(),
           renderStyle: "renderImage",
-          icon: 'tree_new',
+          icon: 'download_new',
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "downloadFile"

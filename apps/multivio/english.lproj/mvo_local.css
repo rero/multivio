@@ -205,7 +205,27 @@ body.mvo-white-theme     {
 .mvo-white-theme     .sc-button-view .img.help_new {
    background-image: sc_static("images/icons/24x24/help_dark_24x24.png");
 }
+/* Download */
+.mvo-dark-gray-theme .sc-button-view .img.download_new,
+.mvo-blue-theme      .sc-button-view .img.download_new {
+   background-image: sc_static("images/icons/24x24/download_light_24x24.png");
+}
+.mvo-white-theme     .sc-button-view .img.download_new {
+   background-image: sc_static("images/icons/24x24/download_dark_24x24.png");
+}
 
+/* Loupe */
+.mvo-dark-gray-theme .sc-button-view .img.loupe_new,
+.mvo-blue-theme      .sc-button-view .img.loupe_new,
+.mvo-white-theme     .sc-button-view .img.loupe_new {
+   background-image: sc_static("images/icons/24x24/loupe_dark_24x24.png");
+}
+/* Pan */
+.mvo-dark-gray-theme .sc-button-view .img.pan_new,
+.mvo-blue-theme      .sc-button-view .img.pan_new,
+.mvo-white-theme     .sc-button-view .img.pan_new {
+   background-image: sc_static("images/icons/24x24/pan_dark_24x24.png");
+}
 /* Rotate left */
 .mvo-dark-gray-theme .sc-button-view .img.rotate_left_new,
 .mvo-blue-theme      .sc-button-view .img.rotate_left_new,

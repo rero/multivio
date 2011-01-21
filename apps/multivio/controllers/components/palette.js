@@ -296,7 +296,7 @@ Multivio.paletteController = SC.ObjectController.create(
       }
     
       Multivio.usco.showAlertPaneInfoWithController(
-          '_Download of file'.loc(),
+          '_File download'.loc(),
           fileName + ' (' + fileSize + ')',
           '_Proceed'.loc(),
           '_Cancel'.loc(),

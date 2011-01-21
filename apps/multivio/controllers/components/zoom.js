@@ -335,10 +335,10 @@ Multivio.zoomController = SC.ObjectController.create(
   */
   currentZoomStateDidChange: function () {
     var zoomSt = this.get('currentZoomState');
-    var fullB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomView.zoomFullSizeView');
-    var widthB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomView.zoomFullWidthView');
-    var nativeB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomView.zoomNativeSizeView');
-      
+    var fullB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomFullSizeButton');
+    var widthB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomFullWidthButton');
+    var nativeB = Multivio.getPath('views.mainContentView.bottomButtons.backgroundView.zoomNativeSizeButton');
+
     switch (zoomSt) {
     case 'Full':
       fullB.set('isActive', YES);
