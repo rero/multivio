@@ -361,11 +361,17 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _currentFileDidChange: function () {
 
     Multivio.logger.debug('_currentFileDidChange');
-    this._getPageIndexing();
-    
+    this._getPageIndexing();      
+
   }.observes('Multivio.masterController.currentFile'), 
 
   _getPageIndexing: function () {
+    
+    // do not send request if the application is not ready
+    // TODO better solution?
+    if (Multivio.firstResponder !== Multivio.READY) {
+      return;
+    }
     
     Multivio.logger.debug('_getPageIndexing from: ' + this);
     
@@ -382,7 +388,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var num_files = file_list.length;
     var ref_url = this.get('url');
     
-    Multivio.logger.debug('_getPageIndexing: ' + current_file);
+    Multivio.logger.debug('_getPageIndexing, url: ' + current_file);
 
     // test that it's not the referer url, in case of several files
     if (num_files > 1 && current_file === ref_url) {
