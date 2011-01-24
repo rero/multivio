@@ -50,15 +50,24 @@ Multivio.NavigationView = SC.View.extend(
     this.removeAllChildren();
     var trans = Multivio.getPath(
         'views.mainContentView.navigation.transparentView');
-    var fileLabel = Multivio.getPath(
-        'views.mainContentView.navigation.transparentView.currentFile');
-    fileLabel.set('value', '_File'.loc() + ' : ' + file);
+    this.appendChild(trans);
+    
     var pageLabel = Multivio.getPath(
         'views.mainContentView.navigation.transparentView.currentPage');
     pageLabel.set('value', '_Page'.loc() + ' : ' + page);
     
-    this.appendChild(trans);
-    this.appendChild(fileLabel);
+    // if only one file => no file Label & replace page number in the center
+    if (!SC.none(file)) {    
+      var fileLabel = Multivio.getPath(
+          'views.mainContentView.navigation.transparentView.currentFile');
+      fileLabel.set('value', '_File'.loc() + ' : ' + file);
+      this.appendChild(fileLabel);
+    }
+    else {
+      pageLabel.set('layout', {width: 220, height: 20, centerY: 0});
+      pageLabel.set('textAlign', SC.ALIGN_CENTER);
+    }
+    
     this.appendChild(pageLabel); 
     
     SC.Timer.schedule({

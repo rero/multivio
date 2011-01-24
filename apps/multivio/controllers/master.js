@@ -322,7 +322,7 @@ Multivio.masterController = SC.ObjectController.create(
         }
         else {
           if (SC.none(this.listOfFiles) || this.listOfFiles.length === 0) {
-            fileName = this.get('currentFile');
+            fileName = undefined;
           }
           else {
             for (var i = 0; i < this.listOfFiles.length; i++) {
