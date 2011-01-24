@@ -142,7 +142,7 @@ Multivio.views = SC.Page.design(
             textAlign: SC.ALIGN_CENTER,
             valueBinding: 'Multivio.navigationController.currentPage',
             isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
-            keyDown: function(evt) {
+            keyDown: function (evt) {
               //if press enter set the value
               if (evt.keyCode === 13) {
                 this.set('value', this.$input()[0].value);
@@ -540,7 +540,7 @@ Multivio.views = SC.Page.design(
   // waiting image
   waitingImg: SC.ImageView.design({
     layout: { centerX: 0, centerY: 0, width: 36, height: 36 },
-    value: static_url('images/progress_wheel_medium.gif'),
+    value: static_url('images/progress_wheel_medium.gif')
   }),
   
   // help
@@ -583,9 +583,8 @@ Multivio.views = SC.Page.design(
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/full_width_dark_24x24.png") + '"/>' + '_helpFullWidth'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/100_percent_dark_24x24.png") + '"/>' + '_helpNativeSize'.loc() + '</p>'
                   + '<h4>' + '_keyShortcutsTitle'.loc() + '</h4>'
-                  + '<p>' + '_keyShortcuts'.loc() + '</p>',
-        }),
-
+                  + '<p>' + '_keyShortcuts'.loc() + '</p>'
+        })
       })
     })
   }), //.classNames('shadow_light inner_view'.w()),
@@ -608,7 +607,7 @@ Multivio.views = SC.Page.design(
           classNames: 'metadata_primary',
           contentBinding: 'Multivio.metadataController.descriptiveMetadataDictionary',
           contentValueKey: 'title'
-        }),
+        })
       ]
     }).classNames(''.w()),
 
@@ -666,7 +665,7 @@ Multivio.views = SC.Page.design(
               classNames: 'multivio_logo',
               toolTip: '_Click to go to Multivio website.'.loc() + ' ' +
                 '_Current client version:'.loc() + ' ' + Multivio.VERSION
-            }),
+            })
           ],
           render: function (context, firstTime) {
             context.push("<a href='https://www.multivio.org/'>");
@@ -678,7 +677,7 @@ Multivio.views = SC.Page.design(
             childView.set('toolTip', toolTip);
             this.renderChildViews(context, firstTime);
             context.push("</a>");
-          },
+          }
         })
       ]
     })
