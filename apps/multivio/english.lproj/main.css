@@ -654,7 +654,7 @@ For now, styles "borrowed" from Google Quick View
 .selected-highlight {
   /* background-color:#FF9632 !important;*/
   /*border: 3px groove blue; */
-  outline: 3px solid #0040D0; /* Note: this color is affected by the semi-transparency of the highlight box */
+  outline: 4px solid #0040D0; /* Note: this color is affected by the semi-transparency of the highlight box */
 }
 
 .sc-theme .help-panel{

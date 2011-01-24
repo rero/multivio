@@ -22,6 +22,8 @@ SC.stringsFor('French', {
   '_Help': 'Aide',
   '_ShowToolbar': 'Bloquer ou débloquer l\'affichage permanente de la barre d\'outils',
   '_Download': 'Télécharger le fichier courant',
+  '_MagnifyingGlass': 'Afficher ou masquer la vue d\'ensemble',
+  '_Pan': 'Activer ou désactiver le mode \'déplacement\'',
   '_RotateLeft': 'Pivoter à gauche',
   '_RotateRight': 'Pivoter à droite',
   '_FirstPage': 'Aller à la première page ou au fichier précédent',
@@ -125,8 +127,19 @@ SC.stringsFor('French', {
   '_helpNavigationBar': "Barre de navigation",
   '_helpNavigationBarDesc': "Cette barre apparaît lorsque la souris se\
       déplace sur le bas du document.",
-  '_helpLoupe': "[... help text for loupe...]",
-  '_helpPan': "[... help text for pan...]",
+  '_helpLoupe': "Affiche la miniature de la vue d'ensemble (en bas à gauche) qui\
+      indique la partie visible du contenu actuel dans le contexte de l'ensemble.\
+      Elle permet aussi de déplacer la partie visible avec la souris. Cet outil\
+      n'est disponible que lorsque le contenu est trop grand pour pouvoir\
+      s'afficher entièrement à l'écran.",
+  '_helpPan': "Active ou désactive le mode \"déplacement\", qui permet de\
+      saisir le contenu avec la souris et le déplacer. Cet outil n'est\
+      disponible que lorsque le contenu est trop grand pour pouvoir s'afficher\
+      entièrement à l'écran.<br>\
+      Quand le mode déplacement est désactivé, il est possible de sélectionner\
+      du texte avec la souris (seulement si le document courant est muni de\
+      contenu textuel, ce qui n'est pas toujours le cas), pour ensuite le\
+      placer dans le presse-papiers.",
   '_helpRotation': "Pivote de 90 degrés la page courante dans le sens indiqué.",
   '_helpNavigation': "permet la navigation dans le document : page suivante,\
       page précédente, début et fin du document. Il est possible de saisir dans\

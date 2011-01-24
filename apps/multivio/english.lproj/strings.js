@@ -22,6 +22,8 @@ SC.stringsFor('English', {
   '_Help': 'Help',
   '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
   '_Download': 'Download the current file',
+  '_MagnifyingGlass': 'Show or hide the overview',
+  '_Pan': 'Activate or deactivate the \'pan\' mode',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
   '_FirstPage': 'Jump to the first page or to the previous file',
@@ -126,8 +128,18 @@ SC.stringsFor('English', {
   '_helpNavigationBar': "Navigation toolbar",
   '_helpNavigationBarDesc': "This toolbar is shown when the mouse pointer\
       goes over the lower part of the displayed document.",
-  '_helpLoupe': "[... help text for loupe...]",
-  '_helpPan': "[... help text for pan...]",
+  '_helpLoupe': "Shows or hides the overview miniature (bottom left) that\
+      indicates the currently visible portion of the content wihtin the context\
+      of the complete content. It also allows to move around the visible portion\
+      using the mouse. This tool is available only when the content does not\
+      fit entirely on the screen.",
+  '_helpPan': "Activates or deactivates the \"pan\" mode, which allows the\
+      mouse pointer to grab and move the visible content. This tool is available\
+      only when the content does not fit entirely in the screen.<br>\
+      When the \"pan\" mode is inactive it is possible to use the mouse pointer\
+      to select a portion of the text (only if the current document contains\
+      textual content, which is not always the case), for placing it in the\
+      clipboard.",
   '_helpRotation': "Rotates the current page by 90 degrees anticlockwise\
       or clockwise.",
   '_helpNavigation': "Allows to navigate along the document: next and previous\
