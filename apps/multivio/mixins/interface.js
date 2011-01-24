@@ -39,8 +39,6 @@ Multivio.innerGradient = {
   @namespace
   @mixin
 
-  TODO test dwy
-
   Adds an inner gradient to a view, with thin top and bottom edges.
 
   @author dwy
