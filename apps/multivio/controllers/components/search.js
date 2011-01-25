@@ -459,7 +459,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
         // add 'All files' search option to file list
         var fileList = Multivio.CDM.clone(phys[url]);
         fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});
-        this.set('currentFileList', fileList);        
+        //testthis.set('currentFileList', fileList);
+        // NOTE: set specifically in both controllers TODO find better solution
+        Multivio.selectionController.set('currentFileList', fileList);
+        Multivio.searchController.set('currentFileList', fileList);
       
         var dr = {};
         // init display properties for each file
@@ -1589,15 +1592,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   
     // NOTE: manually binding to avoid conflicts with selectionController
     // which is a parent class
-    // NOTE2: do not bind here, it was already bound in superclass
-    // this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    // NOTE2??: do not bind here, it was already bound in superclass
+    //this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
   
     // set referer url
     this.set('url', Multivio.CDM.getReferer());
 
     // physical structure not yet initialised (do it only once)
-    // NOTE: do not init this here, it is done in superclass
-    // this.set('physicalStructureInitialised', NO);
+    this.set('physicalStructureInitialised', NO);
 
     // get previously selected search result
     // (when the controller has been reinitialised after a file change)
