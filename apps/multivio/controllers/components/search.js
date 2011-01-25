@@ -439,10 +439,15 @@ Multivio.HighlightController = SC.ArrayController.extend(
         Multivio.logger.debug('_physicalStructureDidChange, url: ' + 
                                                             phys[url][0].url);
         // init search file to the single file
-        this.set('currentSearchFile', phys[url][0].url);
+        // this.set('currentSearchFile', phys[url][0].url);
+        // TODO NOTE: set specifically in search controller (not this class)
+        Multivio.searchController.set('currentSearchFile', phys[url][0].url);
         
         // init file list with one element
-        this.set('currentFileList', [phys[url][0]]);
+        //this.set('currentFileList', [phys[url][0]]);
+        // NOTE: set specifically in both controllers TODO find better solution
+        Multivio.searchController.set('currentFileList', [phys[url][0]]);
+        Multivio.selectionController.set('currentFileList', [phys[url][0]]);
         
         var childToRemove = Multivio.getPath(
             'views.searchPalette.contentView.innerSearch.searchScopeView');
@@ -1584,13 +1589,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   
     // NOTE: manually binding to avoid conflicts with selectionController
     // which is a parent class
-    this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    // NOTE2: do not bind here, it was already bound in superclass
+    // this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
   
     // set referer url
     this.set('url', Multivio.CDM.getReferer());
 
     // physical structure not yet initialised (do it only once)
-    this.set('physicalStructureInitialised', NO);
+    // NOTE: do not init this here, it is done in superclass
+    // this.set('physicalStructureInitialised', NO);
 
     // get previously selected search result
     // (when the controller has been reinitialised after a file change)
