@@ -316,7 +316,8 @@ Multivio.paletteController = SC.ObjectController.create(
     case SC.BUTTON1_STATUS:
       var file = pane.description;
       file = file.split('(');
-      window.open(file[0]);
+      // don't use window.open because ther is a bug with IE
+      window.location.href = file[0];
       break;
         
     case SC.BUTTON2_STATUS:
@@ -349,6 +350,7 @@ Multivio.paletteController = SC.ObjectController.create(
     }
     else {
       this.set('isMagnifyingGlassActive', NO);
+      button.set('isActive', NO);
       //mgView.removeAllChildren();
       // if activeButton = button close the palette
       // else replace the palette by an other one
@@ -362,6 +364,19 @@ Multivio.paletteController = SC.ObjectController.create(
       }
     }
   },
+  /**
+    isGlassButtonEnabled status did change. Verify if we must hide the palette.
+    
+    @observes isGlassButtonEnabled {Boolean}
+  */
+  glassButtonDidChange: function () {
+    if (!this.get('isGlassButtonEnabled') && !SC.none(this.activeButton)) {
+      this.activeButton.set('isActive', NO);
+      this.set('isMagnifyingGlassActive', NO);
+      this.activeButton = null;
+      Multivio.getPath('views.magnifyingPalette').remove();
+    }
+  }.observes('isGlassButtonEnabled'),
   
   /**
     Call the method to show the good palette

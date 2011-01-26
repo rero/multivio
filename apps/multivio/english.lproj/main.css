@@ -392,8 +392,8 @@ Rules for Multivio's usage page
   border: 3px solid #3477d4;
   opacity : 0.95;
   moz-opacity : 0.95;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; /* IE 8 */
-  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95); /* IE < 8 */
+  /*-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)";*/ /* IE 8 */
+  /*filter: progid:DXImageTransform.Microsoft.Alpha(opacity=95);*/ /* IE < 8 */
   z-index:100;
 }
 

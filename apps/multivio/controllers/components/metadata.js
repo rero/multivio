@@ -40,13 +40,16 @@ Multivio.metadataController = SC.ObjectController.create(
     
     @return {Array}
   */
-  getTranslatedMetadata: function() {
+  getTranslatedMetadata: function () {
     var cont = this.get('content');
     var toReturn = [];
-    for (var key in cont) {
-      if (cont.hasOwnProperty(key)) {
+    var listOfKey = Multivio.configurator.get('metadataKey');
+    for (var i = 0; i < listOfKey.length; i++) {
+      var key = listOfKey[i];
+      // verify if the key exist
+      if (!SC.none(cont[key])) {
         var newObject = [];
-        var translatedKey = ('_'+key).loc();
+        var translatedKey = ('_' + key).loc();
         newObject.key = translatedKey;
         newObject.data = cont[key];
         toReturn.push(newObject);

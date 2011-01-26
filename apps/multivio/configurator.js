@@ -53,6 +53,15 @@ Multivio.configurator = SC.Object.create(
   ],
   
   /**
+    List ordered of metadata 
+  */
+  metadataKey: [
+    'title',
+    'creator',
+    'language'
+  ],
+  
+  /**
     The theme to be used
   */
   initialTheme: 'mvo-white-theme',

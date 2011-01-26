@@ -183,7 +183,8 @@ Multivio.masterController = SC.ObjectController.create(
   selectFirstPosition: function () {
     var newPos = Multivio.configurator.get('initialPosition');
     if (this.get('isGrouped')) {
-      if (newPos < 1 || newPos > this.listOfFiles.length) {
+      if (newPos < 1 || (!SC.none(this.listOfFiles) && 
+          newPos > this.listOfFiles.length)) {
         newPos = 1;
       }
       this.set('currentPosition', newPos);

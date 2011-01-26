@@ -181,12 +181,13 @@ Multivio.views = SC.Page.design(
           textAlign: SC.ALIGN_CENTER,
           valueBinding: 'Multivio.navigationController.currentPage',
           isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
-          keyDown: function(evt) {
-            //if press enter set the value
-            if (evt.keyCode === 13) {
+          keyDown: function (evt) {
+            //if press tab or enter set the value
+            if (evt.which === 9 || evt.wich === 13) {
               this.set('value', this.$input()[0].value);
               return YES;
-            } else {
+            } 
+            else {
               return NO;
             }
           }
@@ -552,7 +553,7 @@ Multivio.views = SC.Page.design(
         hasHorizontalScroller: NO,
         //contentView: SC.StaticContentView.design({
         contentView: SC.LabelView.design({
-          layout: {top: 2, height: 1280},
+          layout: {top: 2, height: 1600},
           classNames: "help-panel",
           escapeHTML: NO,
           isTextSelectable: YES,
