@@ -348,18 +348,6 @@ Multivio.views = SC.Page.design(
           layout: { top: 170, centerX: 0, width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
-          name: 'help',
-          toolTip: '_Help'.loc(),
-          renderStyle: "renderImage",
-          icon: 'help_new',
-          theme: 'mvo-button',
-          target: "Multivio.paletteController",
-          action: "showHelpPalette"
-        }),
-        SC.ButtonView.design({
-          layout: { top: 210, centerX: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
           name: 'download',
           toolTip: '_Download'.loc(),
           renderStyle: "renderImage",
@@ -367,6 +355,18 @@ Multivio.views = SC.Page.design(
           theme: 'mvo-button',
           target: "Multivio.paletteController",
           action: "downloadFile"
+        }),
+        SC.ButtonView.design({
+          layout: { top: 210, centerX: 0, width: 32, height: 32 },
+          titleMinWidth : 0,
+          needsEllipsis: NO,
+          name: 'help',
+          toolTip: '_Help'.loc(),
+          renderStyle: "renderImage",
+          icon: 'help_new',
+          theme: 'mvo-button',
+          target: "Multivio.paletteController",
+          action: "showHelpPalette"
         }),
         SC.ButtonView.design({
           layout: { top: 250, centerX: 0, width: 32, height: 32 },
@@ -553,7 +553,7 @@ Multivio.views = SC.Page.design(
         hasHorizontalScroller: NO,
         //contentView: SC.StaticContentView.design({
         contentView: SC.LabelView.design({
-          layout: {top: 2, height: 1600},
+          layout: {top: 2, height: 2560, width:320},
           classNames: "help-panel",
           escapeHTML: NO,
           isTextSelectable: YES,
@@ -581,8 +581,11 @@ Multivio.views = SC.Page.design(
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/full_size_dark_24x24.png") + '"/>' + '_helpFullSize'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/full_width_dark_24x24.png") + '"/>' + '_helpFullWidth'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/100_percent_dark_24x24.png") + '"/>' + '_helpNativeSize'.loc() + '</p>'
+                  + '<h4>' + '_mouseActionsTitle'.loc() + '</h4>'
+                  + '<p>' + '_mouseActions'.loc() + '</p>'
                   + '<h4>' + '_keyShortcutsTitle'.loc() + '</h4>'
                   + '<p>' + '_keyShortcuts'.loc() + '</p>'
+
         })
       })
     })

@@ -103,7 +103,7 @@ SC.stringsFor('English', {
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
   '_resultSelection': 'Result %@/%@',
-  '_AllFiles':              'All files',
+  '_AllFiles': 'All files',
 
   // Strings for the help section
   '_helpTitle': "Help",
@@ -121,7 +121,18 @@ SC.stringsFor('English', {
   '_helpToc': "Displays the document structure and provides navigation capabilities.",
   '_helpThum': "Displays page thumbnails of the document.",
   '_helpSearch': "Allows searching inside the document. The results are shown\
-      in their context and highlighted in the page.",
+      in their context and highlighted in the page.<br>\
+      It is possible to perform a Boolean search by separating the different search\
+      words by \"and\", for instance:<br>\
+      <tt>&nbsp;history and europe</tt><br>\
+      When performing a Boolean search, Multivio finds a combination of the given\
+      words within the same page.\
+      If the current document is composed of several files, it is possible to\
+      select the file in which to perform the search, or to search in all\
+      files at once.<br>\
+      The search process is case-insensitive (searching for \"europe\" or \"Europe\"\
+      produces the same result). Besides, only the first 50 occurrences in each\
+      file are shown.",
   '_helpMetadata': "Displays document metadata: author, title, etc.",
   '_helpDownload': "Downloads the current file",
   '_helpDisplayBar': "Makes the navigation toolbar remain visible.",
@@ -129,17 +140,18 @@ SC.stringsFor('English', {
   '_helpNavigationBarDesc': "This toolbar is shown when the mouse pointer\
       goes over the lower part of the displayed document.",
   '_helpLoupe': "Shows or hides the overview miniature (bottom left) that\
-      indicates the currently visible portion of the content wihtin the context\
+      indicates the currently visible portion of the content within the context\
       of the complete content. It also allows to move around the visible portion\
-      using the mouse. This tool is available only when the content does not\
-      fit entirely on the screen.",
+      using the mouse. This tool is available only when the content is too large\
+      to fit entirely in the screen.",
   '_helpPan': "Activates or deactivates the \"pan\" mode, which allows the\
       mouse pointer to grab and move the visible content. This tool is available\
-      only when the content does not fit entirely in the screen.<br>\
-      When the \"pan\" mode is inactive it is possible to use the mouse pointer\
-      to select a portion of the text (only if the current document contains\
-      textual content, which is not always the case), for placing it in the\
-      clipboard.",
+      only when the content is too large to fit entirely in the screen.<br>\
+      NB: When the \"pan\" mode is inactive it is possible to use the mouse\
+      pointer to select a portion of the text and place it in the clipboard.\
+      This can only be done if the current document contains textual\
+      information, which is not always the case.<br>\
+      (See section concerning the \"Mouse actions\" below.)",
   '_helpRotation': "Rotates the current page by 90 degrees anticlockwise\
       or clockwise.",
   '_helpNavigation': "Allows to navigate along the document: next and previous\
@@ -150,22 +162,49 @@ SC.stringsFor('English', {
   '_helpFullSize': "Adjusts the size of the document to the content window.",
   '_helpFullWidth': "Displays the document using the full window width.",
   '_helpNativeSize': "Displays the document using its native resolution.",
-  '_keyShortcutsTitle': "Keyboard shortcuts",
-  '_keyShortcuts': "<table>\
+  '_mouseActionsTitle': "Mouse actions",
+  '_mouseActions': "<table>\
       <thead>\
         <tr>\
           <th>ACTION</th>\
-          <th>SHORTCUT</th>\
+          <th>EFFECT</th>\
         </tr>\
       </thead>\
       <tbody>\
         <tr>\
-          <td>+/-</th>\
-          <td>Zooms in and out.</th>\
-        </tr>\
-        <tr>\
           <td>Mouse wheel</td>\
           <td>Scrolls through the document.</td>\
+        </tr>\
+        <tr>\
+          <td>Mouse pointer</td>\
+          <td>\
+            <b>When the \"pan\" mode is active</b>:<br>\
+            Clicking and dragging over the document moves the visible portion\
+            of the content in the screen.<br>\
+            (See the description of the \"pan\" tool above.)<br>\
+            <b>In normal mode:</b><br>\
+            Clicking and dragging over the document creates an area of text\
+            selection, which can be copied to the clipboard using the\
+            browser\'s standard \"Copy\" command.<br>\
+            NB: certain documents do not contain textual content, which is\
+            usually the case with paper documents scanned in image mode only,\
+            with no character recognition process done afterwards.\
+          </td>\
+        </tr>\
+      <tbody/>\
+    </table>",
+  '_keyShortcutsTitle': "Keyboard shortcuts",
+  '_keyShortcuts': "<table>\
+      <thead>\
+        <tr>\
+          <th>SHORTCUT</th>\
+          <th>EFFECT</th>\
+        </tr>\
+      </thead>\
+      <tbody>\
+        <tr>\
+          <td>+/-</td>\
+          <td>Zooms in and out.</td>\
         </tr>\
         <tr>\
           <td>Up/down arrows</td>\

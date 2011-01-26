@@ -103,6 +103,7 @@ SC.stringsFor('French', {
   '_noResult': 'Texte introuvable',
   '_searchInProgress': 'Recherche est en cours...',
   '_resultSelection': 'Occurrence %@ sur %@',
+  '_AllFiles': 'Tous les fichiers',
 
   // Strings for the help section
   '_helpTitle': "Aide",
@@ -119,27 +120,41 @@ SC.stringsFor('French', {
   '_helpVerticalBar': "Barre d'outils latérale",
   '_helpToc': "Affiche le plan du document et permet la navigation.",
   '_helpThum': "Affiche les imagettes des pages du document.",
-  '_helpSearch': "Lance une recherche dans le document. Les résultats\
-      apparaissent de façon contextualisée et sont surlignés dans le texte.",
+  '_helpSearch': "Permet de lancer des recherches dans le document. Les résultats\
+      apparaissent de façon contextualisée et sont surlignés dans le texte.<br>\
+      Il est possible de lancer des recherches booléennes en séparant les mots à\
+      chercher par \"and\", par exemple:<br>\
+      <tt>&nbsp;histoire and europe</tt><br>\
+      Lors d'une recherche booléenne, Multivio retient les occurrences où\
+      l'ensemble des mots recherchés se retrouvent à l'intérieur d'une même\
+      page.<br>\
+      Si le document actuel est composé de plusieurs fichiers, il est possible\
+      de lancer la recherche sur l'un d'entre eux en particulier ou alors sur\
+      l'ensemble.<br>\
+      La recherche ne tient pas compte de la casse (rechercher \"europe\" et\
+      \"Europe\" est équivalent). Par ailleurs, seules les 50 premières\
+      occurrences dans chaque fichier sont montrées.",
   '_helpMetadata': "Affiche les métadonnées du document: auteur, titre, etc.",
   '_helpDownload': "Télécharge le fichier courant",
   '_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
   '_helpNavigationBar': "Barre de navigation",
   '_helpNavigationBarDesc': "Cette barre apparaît lorsque la souris se\
       déplace sur le bas du document.",
-  '_helpLoupe': "Affiche la miniature de la vue d'ensemble (en bas à gauche) qui\
-      indique la partie visible du contenu actuel dans le contexte de l'ensemble.\
+  '_helpLoupe': "Affiche en bas à gauche une miniature de la page ou de l'image\
+      actuelle avec indication de la partie du contenu qui est actuellement.\
       Elle permet aussi de déplacer la partie visible avec la souris. Cet outil\
-      n'est disponible que lorsque le contenu est trop grand pour pouvoir\
-      s'afficher entièrement à l'écran.",
+      n'est disponible que lorsque la taille du contenu est trop grande pour\
+      pouvoir s'afficher entièrement à l'écran.",
   '_helpPan': "Active ou désactive le mode \"déplacement\", qui permet de\
       saisir le contenu avec la souris et le déplacer. Cet outil n'est\
-      disponible que lorsque le contenu est trop grand pour pouvoir s'afficher\
-      entièrement à l'écran.<br>\
-      Quand le mode déplacement est désactivé, il est possible de sélectionner\
-      du texte avec la souris (seulement si le document courant est muni de\
-      contenu textuel, ce qui n'est pas toujours le cas), pour ensuite le\
-      placer dans le presse-papiers.",
+      disponible que lorsque la taille du contenu dépasse la zone d'affichage\
+      disponible à l'écran.<br>\
+      NB: Quand le mode déplacement est désactivé, il est possible de\
+      sélectionner une zone de texte avec la souris, pour ensuite la copier\
+      dans le presse-papiers. Cette action est possible uniquement si le\
+      document courant est muni de contenu textuel, ce qui n'est pas toujours\
+      le cas.\
+      (Voir la section \"Actions de la souris\" plus bas.)",
   '_helpRotation': "Pivote de 90 degrés la page courante dans le sens indiqué.",
   '_helpNavigation': "permet la navigation dans le document : page suivante,\
       page précédente, début et fin du document. Il est possible de saisir dans\
@@ -149,22 +164,50 @@ SC.stringsFor('French', {
   '_helpFullWidth': "Affiche le document dans la totalité de la largeur de la\
       fenêtre.",
   '_helpNativeSize': "Affiche la page dans sa taille d'origine.",
-  '_keyShortcutsTitle': "Raccourcis",
-  '_keyShortcuts': "<table>\
+  '_mouseActionsTitle': "Actions de la souris",
+  '_mouseActions': "<table>\
       <thead>\
         <tr>\
           <th>ACTION</th>\
-          <th>RACCOURCI</th>\
+          <th>EFFECT</th>\
         </tr>\
       </thead>\
       <tbody>\
         <tr>\
-          <td>+/-</th>\
-          <td>Agrandit/réduit la taille de la page courante.</th>\
-        </tr>\
-        <tr>\
           <td>Molette de la souris</td>\
           <td>Fait défiler la page courante.</td>\
+        </tr>\
+        <tr>\
+          <td>Pointeur de la souris</td>\
+          <td>\
+            <b>Quand le mode \"déplacement\" est actif</b>:<br>\
+            L'action de cliquer et glisser le contenu déplace la partie\
+            visible du contenu à l'écran.<br>\
+            (Voir information sur l'outil \"déplacement\" ci-dessus.)<br>\
+            <b>En mode normal:</b><br>\
+            L'action de cliquer et glisser sur le document crée une zone de\
+            sélection de texte, qui peut être copiée dans le presse-papiers\
+            avec la fonction \"copier\" standard du navigateur.<br>\
+            NB: certains documents ne sont pas munis de contenu textuel;\
+            c'est typiquement le cas de documents papier qui ont été numérisés\
+            uniquement en mode image, sans reconnaissance automatique des\
+            caractères.\
+          </td>\
+        </tr>\
+      <tbody/>\
+    </table>",
+  '_keyShortcutsTitle': "Raccourcis clavier",
+  '_keyShortcuts': "<table>\
+      <thead>\
+        <tr>\
+          <th>RACCOURCI</th>\
+          <th>EFFET</th>\
+        </tr>\
+      </thead>\
+      <tbody>\
+        <tr>\
+          <td>+/-</td>\
+          <td>Agrandit/réduit la taille de la page courante.</td>\
         </tr>\
         <tr>\
           <td>Flèches haut/bas</td>\

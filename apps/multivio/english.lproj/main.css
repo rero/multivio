@@ -189,7 +189,7 @@ border: 0px #444 solid;
 background-color: #eaeaea ;
 */
   background-color: #fff;
-  border: 1px solid #bbb;
+  border: 1px solid #ccc;
 }
 
 .sc-alert .info p.description {
@@ -598,6 +598,12 @@ ms-filter: "alpha(opacity=10)";*/ /* IE 8 */
   white-space: normal;
   
 }
+
+a {
+  text-decoration: none;
+  color: #1111cc;
+}
+
 /*
 ==========================================================================
 Tests for text selection and search results highlight.
