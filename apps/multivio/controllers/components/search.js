@@ -439,10 +439,15 @@ Multivio.HighlightController = SC.ArrayController.extend(
         Multivio.logger.debug('_physicalStructureDidChange, url: ' + 
                                                             phys[url][0].url);
         // init search file to the single file
-        this.set('currentSearchFile', phys[url][0].url);
+        // this.set('currentSearchFile', phys[url][0].url);
+        // TODO NOTE: set specifically in search controller (not this class)
+        Multivio.searchController.set('currentSearchFile', phys[url][0].url);
         
         // init file list with one element
-        this.set('currentFileList', [phys[url][0]]);
+        //this.set('currentFileList', [phys[url][0]]);
+        // NOTE: set specifically in both controllers TODO find better solution
+        Multivio.searchController.set('currentFileList', [phys[url][0]]);
+        Multivio.selectionController.set('currentFileList', [phys[url][0]]);
         
         var childToRemove = Multivio.getPath(
             'views.searchPalette.contentView.innerSearch.searchScopeView');
@@ -454,7 +459,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
         // add 'All files' search option to file list
         var fileList = Multivio.CDM.clone(phys[url]);
         fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});
-        this.set('currentFileList', fileList);        
+        //testthis.set('currentFileList', fileList);
+        // NOTE: set specifically in both controllers TODO find better solution
+        Multivio.selectionController.set('currentFileList', fileList);
+        Multivio.searchController.set('currentFileList', fileList);
       
         var dr = {};
         // init display properties for each file
@@ -1422,6 +1430,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       num_all_res = num_res;
       // NOTE: don't take 'All Files' into account
       var num_files = this.get('currentFileList').length - 1;
+      // TODO #searching
+      // TODO in this loop we can detect if we received a response
+      // for every file in the list
       for (var j = 0; j < num_files; j++) {
         
         if (SC.none(all_res) || SC.none(all_res[j])) continue;
@@ -1439,7 +1450,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         this.set('searchStatus', '_noResult'.loc());  
         SC.RunLoop.end();
       } else {
-        SC.RunLoop.begin();  
+        SC.RunLoop.begin(); 
+        // TODO #searching
+        // TODO here we shouldn't remove search status if we didn't 
+        // get a response for every file
         this.set('searchStatus', '');  
         SC.RunLoop.end();
       }
@@ -1584,7 +1598,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   
     // NOTE: manually binding to avoid conflicts with selectionController
     // which is a parent class
-    this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
+    // NOTE2: do not bind here, it was already bound in superclass
+    //this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
   
     // set referer url
     this.set('url', Multivio.CDM.getReferer());
