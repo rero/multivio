@@ -16,6 +16,24 @@ License: See file license.js
 */
 Multivio.ImageContentView = SC.ImageView.extend(
 /** @scope Multivio.ImageContentView.prototype */ {
+  
+  /**
+    Catch mouse Event and send it to the HighlightContentView
+    
+    #CHE  
+    Note: Add this 3 functions because selection doesn't work on IE
+  */
+  mouseDown: function (evt) {
+    this.get('parentView').get('childViews')[1].mouseDown(evt);
+  },
+  
+  mouseDragged: function (evt) {
+    this.get('parentView').get('childViews')[1].mouseDragged(evt);
+  },
+  
+  mouseUp: function (evt) {
+    this.get('parentView').get('childViews')[1].mouseUp(evt);
+  },
 
   /**
     @method
