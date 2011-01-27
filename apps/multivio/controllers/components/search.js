@@ -1160,7 +1160,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (SC.none(query) || SC.empty(query.trim())) return NO;
     
     SC.RunLoop.begin();
+    console.info('set search status');
     this.set('searchStatus', '_searchInProgress'.loc());
+    // #CHE
+    // deny selection
+    Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', NO);
     SC.RunLoop.end();
     
     Multivio.logger.debug('SearchController.doSearch("%@"), file: %@'.
@@ -1409,6 +1413,74 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   }.observes('searchResults'),
   
   /**
+    CDM received new values see if we have all needed information
+    
+    #CHE
+    NOTE: Need to merge this function an d the previous one because the 
+    two functions observes the same value
+    
+    @observes Multivio.CDM.searchResults
+  */
+  CDMsearchResultsDidChange: function () {
+    var ref = this.get('url');
+    var searchFile = this.get('currentSearchFile');
+    
+    if (!SC.none(Multivio.CDM.searchResults)) {
+      var listOfUrls = Multivio.masterController.listOfFiles;
+      var isFinish = YES;
+      var nbOfRes = 0;
+    
+      // ref === searchFile => search all files
+      if (ref === searchFile) {
+        if (!SC.none(listOfUrls)) {
+          for (var i = 0; i < listOfUrls.length; i++) {
+            var oneFile = listOfUrls[i].url;
+            var result = Multivio.CDM.searchResults[oneFile];
+            if (SC.none(result) || result[0] === -1) {
+              isFinish = NO;
+              break;
+            }
+            else {
+              nbOfRes += result.file_position.results.length;
+            }
+          }
+        }
+        // only one file
+        else {
+          if (SC.none(Multivio.CDM.searchResults[ref]) || 
+              Multivio.CDM.searchResults[ref][0] === -1) {
+            isFinish = NO;
+          }
+          else {
+            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;
+          }
+        }
+      }
+      else {
+        if (SC.none(Multivio.CDM.searchResults[searchFile]) || 
+            Multivio.CDM.searchResults[searchFile][0] === -1) {
+          isFinish = NO;
+        }
+        else {
+          nbOfRes += Multivio.CDM.searchResults[searchFile].file_position.results.length;
+        }
+      }
+      
+      // if the search is finished set the search status.
+      if (isFinish) {
+        if (nbOfRes === 0) {
+          this.set('searchStatus', '_noResult'.loc());
+        }
+        else {
+          this.set('searchStatus', 'list of results');
+        }
+        Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', YES);
+        Multivio.logger.debug('End of the search');
+      }
+    }
+  }.observes('Multivio.CDM.searchResults'),
+  
+  /**
     Store the search results (if any) by creating new highlight zones
     and computing coordinates according to the current zoom.
 
@@ -1441,22 +1513,22 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       }
       Multivio.logger.debug('number of search results: ' + num_res);
       
-      
+      //#CHE
       // warn user if no result found
-      if (num_all_res === 0) {
+      //if (num_all_res === 0) {
         /*Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
           '_noSearchResultDesc'.loc(), 'OK');*/
-        SC.RunLoop.begin();  
+        /*SC.RunLoop.begin();  
         this.set('searchStatus', '_noResult'.loc());  
         SC.RunLoop.end();
       } else {
-        SC.RunLoop.begin(); 
+        SC.RunLoop.begin();*/ 
         // TODO #searching
         // TODO here we shouldn't remove search status if we didn't 
         // get a response for every file
-        this.set('searchStatus', '');  
-        SC.RunLoop.end();
-      }
+        //this.set('searchStatus', '');  
+        //SC.RunLoop.end();
+      //}
       
       var a = null, b  = null, c = null, z = null;
       for (var i = 0; i < num_res; i++) {
