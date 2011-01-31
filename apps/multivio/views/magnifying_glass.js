@@ -102,20 +102,22 @@ Multivio.MagnifyingGlassView = SC.View.extend(
       this.appendChild(zone);
     }
     else {
-      this.get('childViews')[0].set('layout', {
-        'centerX': 0,
-        'centerY': 0,
-        'width': this.imageSize.width,
-        'height': this.imageSize.height
-      });
-      this.get('childViews')[0].set('value', this.imageUrl);
+      if (this.get('childViews').length !== 0) {
+        this.get('childViews')[0].set('layout', {
+          'centerX': 0,
+          'centerY': 0,
+          'width': this.imageSize.width,
+          'height': this.imageSize.height
+        });
+        this.get('childViews')[0].set('value', this.imageUrl);
       
-      this.get('childViews')[1].set('layout', {
-        'top': this.zoneToDraw.y + this.get('childViews')[0].get('frame').y - 5, 
-        'left': this.zoneToDraw.x + this.get('childViews')[0].get('frame').x - 5, 
-        'width': this.zoneToDraw.width, 
-        'height': this.zoneToDraw.height
-      });
+        this.get('childViews')[1].set('layout', {
+          'top': this.zoneToDraw.y + this.get('childViews')[0].get('frame').y - 5, 
+          'left': this.zoneToDraw.x + this.get('childViews')[0].get('frame').x - 5, 
+          'width': this.zoneToDraw.width, 
+          'height': this.zoneToDraw.height
+        });
+      }
     }
     sc_super();
   },
