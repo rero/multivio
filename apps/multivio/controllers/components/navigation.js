@@ -196,8 +196,6 @@ Multivio.navigationController = SC.ObjectController.create(
   */  
   _currentPageDidChange: function () {
     var newCurrentPage = this.get('currentPage');
-    //var bob = newCurrentPage.toString().replace('/^0+/','');
-    console.info('bob '+newCurrentPage);
     if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
         isNaN(newCurrentPage)) {
       Multivio.usco.showAlertPaneWarn(

@@ -188,10 +188,8 @@ Multivio.views = SC.Page.design(
           keyDown: function (evt) {
             //if enter set the value
             if (evt.which === 13) {
-              console.info('VAL '+this.$input()[0].value);
-              var test = this.$input()[0].value.replace(/^[0]*/,'');
-              console.info('test '+ test);
-              this.set('value', test);
+              var temp = this.$input()[0].value.replace(/^[0]*/, '');
+              this.set('value', temp);
               // don't propagate the event
               evt.stop();
               return YES;

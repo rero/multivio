@@ -97,7 +97,8 @@ Multivio.MagnifyingGlassView = SC.View.extend(
       var zone = this.createChildView(SC.View.design({
         //layout: {top: 5, left: 5,  width: 30, height: 30},
         layout: {width: 30, height: 30},
-        classNames: 'mvo-glass-zone'
+        classNames: 'mvo-glass-zone highlight-pane-pan'
+        
       }));
       this.appendChild(zone);
     }
