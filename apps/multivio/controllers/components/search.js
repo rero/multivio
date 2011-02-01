@@ -469,7 +469,11 @@ Multivio.HighlightController = SC.ArrayController.extend(
         for (var i = 0; i < phys[url].length; i++) {
           dr[phys[url][i].url] = YES;
         }
-        this.set('displayResults', dr);
+
+        // NOTE: set specifically in both controllers TODO find better solution
+        //this.set('displayResults', dr);
+        Multivio.selectionController.set('displayResults', dr);
+        Multivio.searchController.set('displayResults', dr);
       }
     }
   }.observes('physicalStructure'),
