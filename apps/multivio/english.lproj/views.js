@@ -582,7 +582,7 @@ Multivio.views = SC.Page.design(
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/full_width_dark_24x24.png") + '"/>' + '_helpFullWidth'.loc() + '</p>'
                   + '<p>' + '<img class="" style= "" src="' + sc_static("images/icons/24x24/100_percent_dark_24x24.png") + '"/>' + '_helpNativeSize'.loc() + '</p>'
                   + '<h4>' + '_mouseActionsTitle'.loc() + '</h4>'
-                  + '<p>' + '_mouseActions'.loc() + '</p>'
+                  + '<p>' + '_mouseActions'.loc('<img class="" style= "" src="' + sc_static("images/icons/24x24/pan_dark_24x24.png") + '"/>') + '</p>'
                   + '<h4>' + '_keyShortcutsTitle'.loc() + '</h4>'
                   + '<p>' + '_keyShortcuts'.loc() + '</p>'
 

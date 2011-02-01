@@ -32,9 +32,11 @@ body.mvo-white-theme     {
 .mvo-dark-gray-theme .multivio_logo,
 .mvo-blue-theme      .multivio_logo {
   background: transparent static_url('images/multivio_logo_beta_100x31_bw.png');
+  cursor: pointer;
 }
 .mvo-white-theme     .multivio_logo {
   background: transparent static_url('images/multivio_logo_beta_100x31.png');
+  cursor: pointer;
 }
 
 
@@ -128,6 +130,7 @@ body.mvo-white-theme     {
   width: 24px;
   height: 24px;
   margin: 4px;
+  cursor: pointer;
 }
 
 

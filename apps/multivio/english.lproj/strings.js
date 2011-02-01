@@ -81,6 +81,7 @@ SC.stringsFor('English', {
   '_File': 'File',
   '_Page': 'Page',
   '_Proceed': 'Proceed',
+  '_Continue': 'Continue',
   '_Use lower resolution': 'Use lower resolution',
   '_Incorrect page number': 'Incorrect page number',
   '_Please enter a number between 1 and %@': 'Please enter a number between 1 and %@',
@@ -102,6 +103,7 @@ SC.stringsFor('English', {
   '_firstOccurrences': 'Only the first %@ occurences are displayed.',
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
+  '_listOfResults': 'List of results',
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
 
@@ -113,7 +115,7 @@ SC.stringsFor('English', {
       or contact the team by email at\
       <a href='mailto:info@multivio.org'>info@multivio.org</a>.<br/>\
       A tooltip associated with each button provides a description of its\
-      function. It can be accessed by passing the mouse pointer over the\
+      function. It can be accessed by hovering the mouse over the\
       corresponding button. The application contains two different groups of\
       buttons: one in the vertical sidebar on the left and the other in the\
       navigation toolbar at the bottom.",
@@ -131,19 +133,19 @@ SC.stringsFor('English', {
       select the file in which to perform the search, or to search in all\
       files at once.<br>\
       The search process is case-insensitive (searching for \"europe\" or \"Europe\"\
-      produces the same result). Besides, only the first 50 occurrences in each\
+      produces the same result). Only the first 50 occurrences in each\
       file are shown.",
   '_helpMetadata': "Displays document metadata: author, title, etc.",
-  '_helpDownload': "Downloads the current file",
+  '_helpDownload': "Downloads the current file.",
   '_helpDisplayBar': "Makes the navigation toolbar remain visible.",
   '_helpNavigationBar': "Navigation toolbar",
   '_helpNavigationBarDesc': "This toolbar is shown when the mouse pointer\
       goes over the lower part of the displayed document.",
   '_helpLoupe': "Shows or hides the overview miniature (bottom left) that\
-      indicates the currently visible portion of the content within the context\
-      of the complete content. It also allows to move around the visible portion\
-      using the mouse. This tool is available only when the content is too large\
-      to fit entirely in the screen.",
+      indicates which portion of the content is currently visible. It also\
+      allows to move the visible portion around using the mouse. This tool\
+      is available only when the content is too large to fit entirely in the\
+      screen.",
   '_helpPan': "Activates or deactivates the \"pan\" mode, which allows the\
       mouse pointer to grab and move the visible content. This tool is available\
       only when the content is too large to fit entirely in the screen.<br>\
@@ -151,7 +153,7 @@ SC.stringsFor('English', {
       pointer to select a portion of the text and place it in the clipboard.\
       This can only be done if the current document contains textual\
       information, which is not always the case.<br>\
-      (See section concerning the \"Mouse actions\" below.)",
+      (See section \"Mouse actions\" below.)",
   '_helpRotation': "Rotates the current page by 90 degrees anticlockwise\
       or clockwise.",
   '_helpNavigation': "Allows to navigate along the document: next and previous\
@@ -181,7 +183,7 @@ SC.stringsFor('English', {
             <b>When the \"pan\" mode is active</b>:<br>\
             Clicking and dragging over the document moves the visible portion\
             of the content in the screen.<br>\
-            (See the description of the \"pan\" tool above.)<br>\
+            (See the description of the \"pan\" tool %@ above.)<br>\
             <b>In normal mode:</b><br>\
             Clicking and dragging over the document creates an area of text\
             selection, which can be copied to the clipboard using the\

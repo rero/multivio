@@ -139,7 +139,7 @@ Multivio.configurator = SC.Object.create(
         'footerHeight':     50,
         'marginTop':        10,
         'marginRight':      10,
-        'marginBottom':     5,
+        'marginBottom':     0,
         'marginLeft':       10
       }
     }

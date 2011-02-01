@@ -81,6 +81,7 @@ SC.stringsFor('French', {
   '_File': 'Fichier',
   '_Page': 'Page',
   '_Proceed': 'Poursuivre',
+  '_Continue': 'Continuer',
   '_Use lower resolution': 'Utiliser une résolution plus basse',
   '_Incorrect page number': 'Numéro de page incorrect',
   '_Please enter a number between 1 and %@': 'Veuillez introduire un nombre entre 1 et %@',
@@ -101,7 +102,8 @@ SC.stringsFor('French', {
   '_tooManyResults': 'La limite de résultats de recherche a été atteinte',
   '_firstOccurrences': 'Seules les %@ premières occurrences sont affichées.',
   '_noResult': 'Texte introuvable',
-  '_searchInProgress': 'Recherche est en cours...',
+  '_searchInProgress': 'La recherche est en cours...',
+  '_listOfResults': 'Liste de résultats',
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
 
@@ -123,32 +125,32 @@ SC.stringsFor('French', {
   '_helpSearch': "Permet de lancer des recherches dans le document. Les résultats\
       apparaissent de façon contextualisée et sont surlignés dans le texte.<br>\
       Il est possible de lancer des recherches booléennes en séparant les mots à\
-      chercher par \"and\", par exemple:<br>\
-      <tt>&nbsp;histoire and europe</tt><br>\
+      chercher par \"AND\", par exemple:<br>\
+      <tt>&nbsp;histoire AND europe</tt><br>\
       Lors d'une recherche booléenne, Multivio retient les occurrences où\
       l'ensemble des mots recherchés se retrouvent à l'intérieur d'une même\
       page.<br>\
       Si le document actuel est composé de plusieurs fichiers, il est possible\
       de lancer la recherche sur l'un d'entre eux en particulier ou alors sur\
       l'ensemble.<br>\
-      La recherche ne tient pas compte de la casse (rechercher \"europe\" et\
-      \"Europe\" est équivalent). Par ailleurs, seules les 50 premières\
-      occurrences dans chaque fichier sont montrées.",
+      La recherche ne tient pas compte de la casse (rechercher \"europe\" ou\
+      \"Europe\" est équivalent). Seules les 50 premières occurrences de\
+      chaque fichier sont montrées.",
   '_helpMetadata': "Affiche les métadonnées du document: auteur, titre, etc.",
-  '_helpDownload': "Télécharge le fichier courant",
+  '_helpDownload': "Télécharge le fichier courant.",
   '_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
   '_helpNavigationBar': "Barre de navigation",
   '_helpNavigationBarDesc': "Cette barre apparaît lorsque la souris se\
       déplace sur le bas du document.",
   '_helpLoupe': "Affiche en bas à gauche une miniature de la page ou de l'image\
-      actuelle avec indication de la partie du contenu qui est actuellement.\
-      Elle permet aussi de déplacer la partie visible avec la souris. Cet outil\
-      n'est disponible que lorsque la taille du contenu est trop grande pour\
-      pouvoir s'afficher entièrement à l'écran.",
+      actuelle avec indication de la partie du contenu qui est actuellement\
+      visible. Elle permet aussi de déplacer la zone visible avec la souris.\
+      Cet outil n'est disponible que lorsque le contenu dépasse la taille\
+      de la fenêtre du navigateur.",
   '_helpPan': "Active ou désactive le mode \"déplacement\", qui permet de\
-      saisir le contenu avec la souris et le déplacer. Cet outil n'est\
-      disponible que lorsque la taille du contenu dépasse la zone d'affichage\
-      disponible à l'écran.<br>\
+      saisir le contenu avec la souris et de le déplacer.\
+      Cet outil n'est disponible que lorsque le contenu dépasse la taille\
+      de la fenêtre du navigateur.<br>\
       NB: Quand le mode déplacement est désactivé, il est possible de\
       sélectionner une zone de texte avec la souris, pour ensuite la copier\
       dans le presse-papiers. Cette action est possible uniquement si le\
@@ -156,7 +158,7 @@ SC.stringsFor('French', {
       le cas.\
       (Voir la section \"Actions de la souris\" plus bas.)",
   '_helpRotation': "Pivote de 90 degrés la page courante dans le sens indiqué.",
-  '_helpNavigation': "permet la navigation dans le document : page suivante,\
+  '_helpNavigation': "Permet la navigation dans le document : page suivante,\
       page précédente, début et fin du document. Il est possible de saisir dans\
       la partie centrale le numéro de la page à afficher.",
   '_helpZoom': "Agrandit ou diminue la taille du contenu du document (zoom).",
@@ -169,7 +171,7 @@ SC.stringsFor('French', {
       <thead>\
         <tr>\
           <th>ACTION</th>\
-          <th>EFFECT</th>\
+          <th>EFFET</th>\
         </tr>\
       </thead>\
       <tbody>\
@@ -183,14 +185,14 @@ SC.stringsFor('French', {
             <b>Quand le mode \"déplacement\" est actif</b>:<br>\
             L'action de cliquer et glisser le contenu déplace la partie\
             visible du contenu à l'écran.<br>\
-            (Voir information sur l'outil \"déplacement\" ci-dessus.)<br>\
+            (Voir information sur l'outil \"déplacement\" %@ ci-dessus.)<br>\
             <b>En mode normal:</b><br>\
             L'action de cliquer et glisser sur le document crée une zone de\
             sélection de texte, qui peut être copiée dans le presse-papiers\
             avec la fonction \"copier\" standard du navigateur.<br>\
             NB: certains documents ne sont pas munis de contenu textuel;\
             c'est typiquement le cas de documents papier qui ont été numérisés\
-            uniquement en mode image, sans reconnaissance automatique des\
+            uniquement en mode image, sans reconnaissance automatique de\
             caractères.\
           </td>\
         </tr>\

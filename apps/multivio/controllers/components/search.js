@@ -1472,7 +1472,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           this.set('searchStatus', '_noResult'.loc());
         }
         else {
-          this.set('searchStatus', 'list of results');
+          this.set('searchStatus', '_listOfResults'.loc());
         }
         Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', YES);
         Multivio.logger.debug('End of the search');
