@@ -181,10 +181,19 @@ Multivio.views = SC.Page.design(
           textAlign: SC.ALIGN_CENTER,
           valueBinding: 'Multivio.navigationController.currentPage',
           isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
+          mouseDown: function () {
+            this.becomeFirstResponder();
+            return NO;
+          },
           keyDown: function (evt) {
-            //if press tab or enter set the value
-            if (evt.which === 9 || evt.wich === 13) {
-              this.set('value', this.$input()[0].value);
+            //if enter set the value
+            if (evt.which === 13) {
+              console.info('VAL '+this.$input()[0].value);
+              var test = this.$input()[0].value.replace(/^[0]*/,'');
+              console.info('test '+ test);
+              this.set('value', test);
+              // don't propagate the event
+              evt.stop();
               return YES;
             } 
             else {

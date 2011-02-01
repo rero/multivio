@@ -37,6 +37,7 @@ Multivio.mainPage = SC.Page.design({
       @returns {Boolean} Return value if executed or not 
     */  
     keyDown: function (evt) {
+      console.info('keyDown mainPage');
       switch (evt.which) {
         
       // page_up

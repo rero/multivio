@@ -28,7 +28,20 @@ Multivio.SearchView = SC.View.extend(
     layout: { top: 0, left: 0, right: 54, height: 24 },
     classNames: 'search',
     hint: '_typeQueryHere'.loc(),
-    valueBinding: 'Multivio.searchController.currentSearchTerm'
+    valueBinding: 'Multivio.searchController.currentSearchTerm',
+    //#CHE change this because problem with key event
+    keyDown: function (evt) {
+      //if press tab or enter set the value
+      if (evt.which === 13) {
+        Multivio.searchController.set('currentSearchTerm', this.$input()[0].value);
+        Multivio.searchController.doSearch();
+        evt.stop();
+        return YES;
+      } 
+      else {
+        return NO;
+      }
+    }
   }),
 
   searchButtonView: SC.ButtonView.design({
@@ -38,12 +51,13 @@ Multivio.SearchView = SC.View.extend(
     titleMinWidth : 0,
     // trigger action when pressing enter.
     // Note: can interfere with other components
-    keyEquivalent: 'return',
+    //#CHE remove this because interfere with navigation enter key event
+    //keyEquivalent: 'return',
     //needsEllipsis: NO,
     theme: 'mvo-button',
     toolTip: '_doSearch'.loc(),
     target: 'Multivio.searchController',
-    action: 'doSearch'
+    action: 'doSearch',
   }),
   
   clearButtonView: SC.ButtonView.design({

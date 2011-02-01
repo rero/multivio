@@ -1148,11 +1148,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @return {Boolean} true if search successful
   */
   doSearch: function () {
-    
+    var term = Multivio.getPath('views.searchPalette.contentView.'+
+        'innerSearch.searchQueryView').$input()[0].value;
     // store last search query for later use
     var query = this.get('currentSearchTerm');
+    if (term !== query && !SC.none(term)) {
+      this.set('currentSearchTerm', term);
+      query = term;
+    }
     this.set('lastSearchQuery', query);
-    
     // clear previous results
     this.clearResults();
     
@@ -1160,7 +1164,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (SC.none(query) || SC.empty(query.trim())) return NO;
     
     SC.RunLoop.begin();
-    console.info('set search status');
     this.set('searchStatus', '_searchInProgress'.loc());
     // #CHE
     // deny selection
