@@ -193,10 +193,12 @@ Multivio.views = SC.Page.design(
               // don't propagate the event
               evt.stop();
               return YES;
-            } 
-            else {
-              return NO;
             }
+            // intercept - and + and do nothing
+            if (evt.which === 43 || evt.which === 45) {
+              return YES;
+            }
+            return NO;
           }
         }),
 
