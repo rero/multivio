@@ -178,7 +178,7 @@ body.mvo-white-theme     {
 .mvo-dark-gray-theme .sc-button-view .img.cancel_new_16,
 .mvo-blue-theme      .sc-button-view .img.cancel_new_16,
 .mvo-white-theme     .sc-button-view .img.cancel_new_16 {
-   background-image: sc_static("images/icons/16x16/cancel_dark_16x16.png");
+   background-image: sc_static("images/icons/16x16/search_clear_16x16.png");
    width: 16px;
    height: 16px;
    margin: 2px auto;

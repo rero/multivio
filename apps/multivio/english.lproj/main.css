@@ -615,7 +615,6 @@ For now, styles "borrowed" from Google Quick View
   position: absolute;
   font-size: 0;
   line-height: 0;
-  cursor: text;
   border-style: none;
 }
 
@@ -644,7 +643,7 @@ For now, styles "borrowed" from Google Quick View
   -moz-opacity: 0.50;
   -khtml-opacity: 0.50;
   filter: alpha(opacity=50);
-  background-color: #b5d5ff;
+  background-color: #999;
 }
 
 .thumb-highlight {
@@ -657,10 +656,10 @@ For now, styles "borrowed" from Google Quick View
   padding: 3px;
 }
 
-.selected-highlight {
-  /* background-color:#FF9632 !important;*/
+.search-selected-highlight {
+  background-color:#2770d2 !important;
   /*border: 3px groove blue; */
-  outline: 4px solid #0040D0; /* Note: this color is affected by the semi-transparency of the highlight box */
+  /*outline: 4px solid #2452C0;*/ /* Note: this color is affected by the semi-transparency of the highlight box */
 }
 
 .sc-theme .help-panel{

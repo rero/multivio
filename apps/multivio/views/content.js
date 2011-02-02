@@ -699,7 +699,7 @@ Multivio.HighlightContentView = SC.View.extend(
     var index = this.get('_selectionIndex');
     // Note: apply a specific class name for the selected result highlight
     for (i = 0; i < len; i++) {
-      cn = (i === index? cl + ' selected-highlight' : cl);
+      cn = (i === index? cl + ' search-selected-highlight' : cl);
       this._drawHighlightZone(zones.objectAt(i), cn, i);
     }
     
