@@ -38,6 +38,10 @@ Multivio.initializer = SC.Object.create(
     Multivio.configurator.set('initialFile', 1);
     Multivio.configurator.set('initialPosition', 1);
     Multivio.configurator.set('serverName', '/server');
+    // reset layoutController 
+    Multivio.layoutController.changeTheme(SC.Object.create({
+        newTheme: 'mvo-dark-gray-theme'}));
+    Multivio.layoutController.set('showThemeSelector', YES);
     // if new document clear treeController
     Multivio.treeController.clear();
     // first split url and get parameters
