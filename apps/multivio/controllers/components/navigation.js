@@ -278,13 +278,15 @@ Multivio.navigationController = SC.ObjectController.create(
           }
           else {
             // last page but not last document
-            if (currentFileP < Multivio.masterController.listOfFiles.length - 1) {
+            if (!SC.none(Multivio.masterController.listOfFiles) &&
+                currentFileP < Multivio.masterController.listOfFiles.length - 1) {
               this.set('isNextEnabled', YES);
             }
           }
-          if (currentFileP < Multivio.masterController.listOfFiles.length - 
+          if (!SC.none(Multivio.masterController.listOfFiles) && (
+              currentFileP < Multivio.masterController.listOfFiles.length - 
               1 || (currentFileP === 
-              (Multivio.masterController.listOfFiles.length - 1) && current !== 
+              (Multivio.masterController.listOfFiles.length - 1) )&& current !== 
               this.get('_numberOfPages'))) {
             this.set('isLastEnabled', YES);
           }

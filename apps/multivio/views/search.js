@@ -57,7 +57,7 @@ Multivio.SearchView = SC.View.extend(
     theme: 'mvo-button',
     toolTip: '_doSearch'.loc(),
     target: 'Multivio.searchController',
-    action: 'doSearch',
+    action: 'doSearch'
   }),
   
   clearButtonView: SC.ButtonView.design({
