@@ -562,7 +562,7 @@ Multivio.views = SC.Page.design(
         hasHorizontalScroller: NO,
         //contentView: SC.StaticContentView.design({
         contentView: SC.LabelView.design({
-          layout: {top: 2, height: 2560, width:320},
+          layout: {top: 2, height: 2500, width:320},
           classNames: "help-panel",
           escapeHTML: NO,
           isTextSelectable: YES,

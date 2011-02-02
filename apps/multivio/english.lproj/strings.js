@@ -125,8 +125,8 @@ SC.stringsFor('English', {
   '_helpSearch': "Allows searching inside the document. The results are shown\
       in their context and highlighted in the page.<br>\
       It is possible to perform a Boolean search by separating the different search\
-      words by \"and\", for instance:<br>\
-      <tt>&nbsp;history and europe</tt><br>\
+      words by \"AND\", for instance:<br>\
+      <tt>&nbsp;history AND europe</tt><br>\
       When performing a Boolean search, Multivio finds a combination of the given\
       words within the same page.\
       If the current document is composed of several files, it is possible to\
