@@ -94,7 +94,7 @@ SC.stringsFor('French', {
   '_doSearch': 'Rechercher',
   '_goToNext': 'Occurrence suivante',
   '_goToPrevious': 'Occurrence précédente',
-  '_searchIn': 'Rechercher dans le fichier: ',
+  '_searchIn': 'Sélectionner le fichier où rechercher',
   '_doClear' : 'Réinitialiser',
   '_noSearchResultTitle': 'Texte introuvable',
   '_noSearchResultDesc': 'Le texte recherché n\'a pas été retrouvé',

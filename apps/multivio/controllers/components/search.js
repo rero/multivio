@@ -1160,6 +1160,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.set('currentSearchTerm', term);
       query = term;
     }
+    // force UTF8 enconding of the query in order to avoid problems with
+    // diacritics in Internet Explorer
+    if (SC.browser.msie) {
+      query = unescape(encodeURIComponent(query));
+    }
+
     this.set('lastSearchQuery', query);
     // clear previous results
     this.clearResults();

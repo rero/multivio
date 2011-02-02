@@ -94,7 +94,7 @@ SC.stringsFor('English', {
   '_doSearch': 'Search',
   '_goToNext': 'Next occurence',
   '_goToPrevious': 'Previous occurence',
-  '_searchIn': 'Search in file: ',
+  '_searchIn': 'Select the file in which to search',
   '_doClear' : 'Clear',
   '_noSearchResultTitle': 'No results found',
   '_noSearchResultDesc': 'No result was found for the given query',
