@@ -348,7 +348,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _currentPositionDidChange: function () {
   
     Multivio.logger.debug('_currentPositionDidChange');
-    this._getPageIndexing();
+    // TODO
+    // disabled this (apparently useless, for now) call in order to avoid
+    // charging the server for no reason (mom, 02.02.2011)
+    //this._getPageIndexing();
   
   }.observes('Multivio.masterController.currentPosition'),
   /**
@@ -361,7 +364,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _currentFileDidChange: function () {
 
     Multivio.logger.debug('_currentFileDidChange');
-    this._getPageIndexing();      
+    // TODO
+    // disabled this (apparently useless, for now) call in order to avoid
+    // charging the server for no reason (mom, 02.02.2011)
+    //this._getPageIndexing();      
 
   }.observes('Multivio.masterController.currentFile'), 
 

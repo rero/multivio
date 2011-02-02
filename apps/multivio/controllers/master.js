@@ -109,7 +109,7 @@ Multivio.masterController = SC.ObjectController.create(
     this.set('currentFile', reference);
     // TODO dwy: call currentFileDidChange manually to make sure we always get
     // the metadata at this stage
-    this.currentFileDidChange();
+    //this.currentFileDidChange();
     Multivio.CDM.getPhysicalstructure(reference);
     this.zoomState = Multivio.configurator.get('zoomParameters').initState;
     Multivio.logger.info('masterController initialized');

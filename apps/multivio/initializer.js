@@ -44,6 +44,7 @@ Multivio.initializer = SC.Object.create(
     Multivio.layoutController.set('showThemeSelector', YES);
     // if new document clear treeController
     Multivio.treeController.clear();
+    Multivio.masterController.set('currentFile', null);
     // first split url and get parameters
     var inputUrl = !SC.none(location.hash) ? location.hash : undefined;
     if (inputUrl !== undefined) {
