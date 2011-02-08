@@ -34,7 +34,8 @@ Multivio.views = SC.Page.design(
 
     controllers: ['zoomController', 'navigationController', 
                   'searchController', 'selectionController', 
-                  'imageController',  'treeController', 'thumbnailController'],
+                  'imageController',  'treeController', 'thumbnailController',
+                  'searchTreeController'], // TODO test dwy add search tree controller
       
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     
