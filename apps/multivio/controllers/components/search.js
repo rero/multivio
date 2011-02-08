@@ -177,8 +177,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // send request to server to get text
     // NOTE: coordinates are original, unrotated
-    t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
-                                     x1, y1, x2, y2, angle);
+    //t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
+    //                                 x1, y1, x2, y2, angle);
+    // TODO multiline selection
+    this.getSelectionsOnLinesBetweenPoints(x1, y1, x2, y2);
     
     return t;
     
@@ -300,11 +302,12 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var lines = pi.pages[current_page].lines;
 
     // parse lines, search for the first selected one
-    var l, start = -1, stop = -1;
+    var l, start = -1, stop = -1, word_start = -1, word_stop = -1,
+      selected_words = [], words_1 = [], words_2 = [], words_3 = [];
     for (var i = 0; i < lines.length; i++) {
       l = lines[i];
       
-      Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
+      //Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
       
       // found the first line
       if (start === -1 && y1 <= l.t && y2 >= l.t) {
@@ -317,11 +320,95 @@ Multivio.HighlightController = SC.ArrayController.extend(
         
         stop = i;
         Multivio.logger.debug('line selection stop');
-        result.addObject(l);
-        // TODO parse words
-        /*while (YES) {
+        // store the last line
+        result.push(l);
+
+        // PART 2: parse words inside selected lines
+
+        var cl = undefined, w = undefined, wt = '';
+        word_start = -1; 
+        word_stop = -1;
+        // TODO? ignore last line/word because it's sometimes too far from selection?
+        // NOTE: we can detect the first and last word by looking only on the 
+        // first, respectively last line.
+        var k = 0, j = 0;
+        
+        // TODO (1) loop first line separately here
+        cl = result[k];
+        wt = cl.text.split(" "); // split text of current line into list of words
+        // parse the line
+        for (j = 0; j < cl.x.length; j++) {
+          w = cl.x[j];
           
-        }*/
+          
+          if (word_start === -1 && (x1 <= w.l || (w.l <= x1 && x1 <= w.r))) {
+            word_start = j;
+            Multivio.logger.debug('--word selection start at w #' + j);
+            Multivio.logger.debug('--word text: "' + wt[j] + '"');
+            //selected_words.insertAt(0, wt[j]);
+            // TODO definition of highlight zone
+            //break;
+          }  
+          
+          // add all words of the line once the start word has been found
+          if (word_start !== -1) {
+            words_1.push(wt[j]);
+          }
+          
+        }
+        
+        
+        // TODO (2) loop last line separately here
+        // TODO test skip a line more ?????
+        cl = result[result.length - 1];
+        wt = cl.text.split(" "); // split text of current line into list of words
+        // parse the line
+        for (j = 0; j < cl.x.length; j++) {
+          w = cl.x[j];
+          
+          // add all words of last line until the last word is found
+          if (word_stop === -1) {
+            words_3.push(wt[j]);
+          }
+          
+          if (x2 <= w.l) {
+            word_stop = j - 1;
+            Multivio.logger.debug('--word selection stop at w #' + j);
+            Multivio.logger.debug('--word text: "' + wt[j] + '"');
+            // TODO test remove last word because we detect the end too late
+            // (word_stop is on j-1).
+            words_3.pop();
+            // TODO definition of highlight zone
+            break;
+          }  
+        }
+
+        
+        // TODO (3) loop the lines inbetween and add all of their words
+        // to the result
+        for (k = 1; k < result.length - 1; k++) {
+          cl = result[k];
+          // split text of current line into list of words
+          wt = cl.text.split(" ");
+          // parse the words of each selected line
+          // TODO check which words are selected
+          for (j = 0; j < cl.x.length; j++) {
+            w = cl.x[j];
+            
+            //Multivio.logger.debug('--word #' + j + ' l: ' + w.l + ' r: ' + w.r);
+            Multivio.logger.debug('--word text: "' + wt[j] + '"');
+            
+            words_2.push(wt[j]);
+          }
+        }
+        
+        // build complete list of selected words
+        selected_words = words_1.concat(words_2).concat(words_3);
+        
+        // TODO debug: display the list of words
+        Multivio.logger.debug('selected_words: ' + selected_words);
+        
+        // get out of the lines' loop
         break;
       
       }
@@ -329,7 +416,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
       // a line between start and stop of selection        
       if (start !== -1 && stop === -1) {
         Multivio.logger.debug('line selection continue');
-        result.addObject(l);
+        result.push(l);
       }
       
     }
@@ -351,7 +438,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // TODO
     // disabled this (apparently useless, for now) call in order to avoid
     // charging the server for no reason (mom, 02.02.2011)
-    //this._getPageIndexing();
+    this._getPageIndexing();
   
   }.observes('Multivio.masterController.currentPosition'),
   /**
@@ -367,7 +454,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // TODO
     // disabled this (apparently useless, for now) call in order to avoid
     // charging the server for no reason (mom, 02.02.2011)
-    //this._getPageIndexing();      
+    this._getPageIndexing();      
 
   }.observes('Multivio.masterController.currentFile'), 
 
