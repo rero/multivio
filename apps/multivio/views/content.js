@@ -662,53 +662,53 @@ Multivio.HighlightContentView = SC.View.extend(
     if (firstTime) {
       sc_super();
     }
+    else {
+      var current_master_file = Multivio.masterController.get('currentFile');
+      var ref_url             = Multivio.searchController.get('url');
+      var csf = Multivio.searchController.get('currentSearchFile') || ref_url;
     
-    var current_master_file = Multivio.masterController.get('currentFile');
-    var ref_url             = Multivio.searchController.get('url');
-    var csf = Multivio.searchController.get('currentSearchFile') || ref_url;
-    
-    // update highlights only if the search results belong to the current
-    // file, or 'All files' search scope is selected.
-    if (csf !== current_master_file && csf !== ref_url) return;
+      // update highlights only if the search results belong to the current
+      // file, or 'All files' search scope is selected.
+      if (csf !== current_master_file && csf !== ref_url) return;
       
-    // clear view
-    this.removeAllChildren();
+      // clear view
+      this.removeAllChildren();
     
-    // add user selection rectangle and text div
-    this.appendChild(this.userSelection);
-    this.appendChild(this.selectedTextDiv);
+      // add user selection rectangle and text div
+      this.appendChild(this.userSelection);
+      this.appendChild(this.selectedTextDiv);
     
-    // get selections' highlights
-    var zones = this.get('selections');
-    var len   = zones.get('length');
-    var i;
+      // get selections' highlights
+      var zones = this.get('selections');
+      var len   = zones.get('length');
+      var i;
           
-    // redraw all selection zones
-    // NOTE: 'selections' is an array of zones
-    for (i = 0; i < len; i++) {
-      this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight', i);
+      // redraw all selection zones
+      // NOTE: 'selections' is an array of zones
+      for (i = 0; i < len; i++) {
+        this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight', i);
+      }
+    
+      // get current search results highlights
+      zones = this.get('searchResults');
+      len   = zones.get('length');
+    
+      // redraw all search results' zones
+      var cl = 'highlight search-highlight';
+      var cn = '';
+      var index = this.get('_selectionIndex');
+      // Note: apply a specific class name for the selected result highlight
+      for (i = 0; i < len; i++) {
+        cn = (i === index? cl + ' search-selected-highlight' : cl);
+        this._drawHighlightZone(zones.objectAt(i), cn, i);
+      }
+    
+      // highlight pane just redrawn, no need for update anymore
+      this.set('highlightNeedsUpdate', NO);
+    
+      // update scroll position
+      this.updateSearchResultScroll();
     }
-    
-    // get current search results highlights
-    zones = this.get('searchResults');
-    len   = zones.get('length');
-    
-    // redraw all search results' zones
-    var cl = 'highlight search-highlight';
-    var cn = '';
-    var index = this.get('_selectionIndex');
-    // Note: apply a specific class name for the selected result highlight
-    for (i = 0; i < len; i++) {
-      cn = (i === index? cl + ' search-selected-highlight' : cl);
-      this._drawHighlightZone(zones.objectAt(i), cn, i);
-    }
-    
-    // highlight pane just redrawn, no need for update anymore
-    this.set('highlightNeedsUpdate', NO);
-    
-    // update scroll position
-    this.updateSearchResultScroll();
-    
   },
   
   /**
