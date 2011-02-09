@@ -291,8 +291,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     var pi = this._getPageIndexing();
     
-    // no page indexing available :/
-    if (SC.none(pi) || pi === -1) return -1;
+    // no page indexing available
+    if (SC.none(pi) || SC.none(pi.pages) || pi === -1) return -1;
     
     // build result structure
     var result = [];
@@ -300,6 +300,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // select the lines of the current page
     var current_page = Multivio.masterController.get('currentPosition');
     var lines = pi.pages[current_page].lines;
+    var single_line = undefined, _loop_start_index = 0;
 
     // parse lines, search for the first selected one
     var l, start = -1, stop = -1, word_start = -1, word_stop = -1,
@@ -321,7 +322,14 @@ Multivio.HighlightController = SC.ArrayController.extend(
         stop = i;
         Multivio.logger.debug('line selection stop');
         // store the last line
-        result.push(l);
+        // TODO test: don't store last one because we detected it 1 too late,
+        // except when there's only 1 line
+        if (result.length === 0) {
+          result.push(l);
+        }
+
+        // use this because a single-line selection is a special case
+        single_line = (result.length === 1);
 
         // PART 2: parse words inside selected lines
 
@@ -333,7 +341,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         // first, respectively last line.
         var k = 0, j = 0;
         
-        // TODO (1) loop first line separately here
+        // ====(1) loop first line separately here
         cl = result[k];
         wt = cl.text.split(" "); // split text of current line into list of words
         // parse the line
@@ -343,27 +351,28 @@ Multivio.HighlightController = SC.ArrayController.extend(
           
           if (word_start === -1 && (x1 <= w.l || (w.l <= x1 && x1 <= w.r))) {
             word_start = j;
-            Multivio.logger.debug('--word selection start at w #' + j);
-            Multivio.logger.debug('--word text: "' + wt[j] + '"');
+            Multivio.logger.debug('--word selection start at w #' + word_start);
+            Multivio.logger.debug('--word text: "' + wt[word_start] + '"');
             //selected_words.insertAt(0, wt[j]);
             // TODO definition of highlight zone
             //break;
           }  
           
           // add all words of the line once the start word has been found
-          if (word_start !== -1) {
+          if (word_start !== -1 && j >= word_start) {
             words_1.push(wt[j]);
           }
           
         }
         
         
-        // TODO (2) loop last line separately here
-        // TODO test skip a line more ?????
+        // ====(2) loop last line separately here
         cl = result[result.length - 1];
         wt = cl.text.split(" "); // split text of current line into list of words
         // parse the line
-        for (j = 0; j < cl.x.length; j++) {
+        // NOTE: if it's a single line, take word_start index into account
+        _loop_start_index = (single_line? word_start: 0);
+        for (j = _loop_start_index; j < cl.x.length; j++) {
           w = cl.x[j];
           
           // add all words of last line until the last word is found
@@ -374,9 +383,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
           if (x2 <= w.l) {
             word_stop = j - 1;
             Multivio.logger.debug('--word selection stop at w #' + j);
-            Multivio.logger.debug('--word text: "' + wt[j] + '"');
-            // TODO test remove last word because we detect the end too late
+            Multivio.logger.debug('--word text: "' + wt[word_stop] + '"');
+            // remove last word because we detect the end too late
             // (word_stop is on j-1).
+            // note: pop() on empty list returns undefined, not an exception
             words_3.pop();
             // TODO definition of highlight zone
             break;
@@ -384,7 +394,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         }
 
         
-        // TODO (3) loop the lines inbetween and add all of their words
+        // ====(3) loop the lines inbetween and add all of their words
         // to the result
         for (k = 1; k < result.length - 1; k++) {
           cl = result[k];
@@ -403,9 +413,22 @@ Multivio.HighlightController = SC.ArrayController.extend(
         }
         
         // build complete list of selected words
-        selected_words = words_1.concat(words_2).concat(words_3);
+        // note: if we have only one line, words_2 is empty,
+        // words_3 contains the result because word_start and word_stop
+        // are known
+        if (result.length === 1) {
+          
+          // line below does not work for lists containing strings
+          selected_words = words_3;
+          
+        } else {
+          selected_words = words_1.concat(words_2).concat(words_3);          
+        }
         
         // TODO debug: display the list of words
+        Multivio.logger.debug('words_1: ' + words_1);
+        Multivio.logger.debug('words_2: ' + words_2);
+        Multivio.logger.debug('words_3: ' + words_3);
         Multivio.logger.debug('selected_words: ' + selected_words);
         
         // get out of the lines' loop
