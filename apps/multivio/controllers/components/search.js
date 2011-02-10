@@ -99,12 +99,56 @@ Multivio.HighlightController = SC.ArrayController.extend(
                           notNull().notEmpty(),
 
   /**
+    User selection rectangle. A modification of the selection triggers the
+    computation of the selected text (getSelectionsOnLinesBetweenPoints).
+    
+    Format of the data: {top: , left: , width: , height: }
+    
+    TODO: investigate if we compute the selected text all the while dragging
+    the mouse during selection, or on set intervals.
+  */
+  userSelection: undefined,
+
+  /**
     Selected text, string only
    
     @property {SC.String}
     @default undefined
   */
   selectedTextString:  undefined,
+
+  /**
+    Listen to change of the user selection on the content
+    
+    NOTE: need to normalise those coordinates before trying to find the 
+    selected words.
+    
+  */
+  userSelectionDidChange: function () {
+  
+    // first, get normalised coordinates
+    var c = this.get('userSelection'), o;
+    
+    // get rotation angle for update
+    var angle = this.get('rotateValue');
+    
+    // get zoom factor for update
+    var zoom_factor = this.get('zoomFactor');
+    
+    // get unzoomed coordinates
+    o = this._getOriginalZone(c, zoom_factor);
+    
+    // compute new coordinates according to current angle
+    // and original coordinates
+    o = this.getUnrotatedCoords(o, angle);
+    
+    // get array of selected words
+    var words = this.getSelectionsOnLinesBetweenPoints(o.left,  o.top, 
+                                           o.left + o.width, 
+                                           o.top  + o.height);                          
+    
+    
+  }.observes('userSelection'),
 
   /**
     When the content changes, get the text located inside the selection.
@@ -115,6 +159,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
       
     if (this.get('length') === 0) return;
     
+    // TODODO
     Multivio.selectionController.getSelectedText();
     
   }.observes('Multivio.selectionController.[]'),
@@ -180,7 +225,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     //t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
     //                                 x1, y1, x2, y2, angle);
     // TODO multiline selection
-    this.getSelectionsOnLinesBetweenPoints(x1, y1, x2, y2);
+    //this.getSelectionsOnLinesBetweenPoints(x1, y1, x2, y2);
     
     return t;
     
@@ -322,7 +367,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         stop = i;
         Multivio.logger.debug('line selection stop');
         // store the last line
-        // TODO test: don't store last one because we detected it 1 too late,
+        // note: don't store last one because we detected it 1 too late,
         // except when there's only 1 line
         if (result.length === 0) {
           result.push(l);
@@ -336,7 +381,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         var cl = undefined, w = undefined, wt = '';
         word_start = -1; 
         word_stop = -1;
-        // TODO? ignore last line/word because it's sometimes too far from selection?
+
         // NOTE: we can detect the first and last word by looking only on the 
         // first, respectively last line.
         var k = 0, j = 0;
@@ -355,7 +400,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
             Multivio.logger.debug('--word text: "' + wt[word_start] + '"');
             //selected_words.insertAt(0, wt[j]);
             // TODO definition of highlight zone
-            //break;
           }  
           
           // add all words of the line once the start word has been found
@@ -401,7 +445,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           // split text of current line into list of words
           wt = cl.text.split(" ");
           // parse the words of each selected line
-          // TODO check which words are selected
+          // and check which words are selected
           for (j = 0; j < cl.x.length; j++) {
             w = cl.x[j];
             
@@ -415,12 +459,9 @@ Multivio.HighlightController = SC.ArrayController.extend(
         // build complete list of selected words
         // note: if we have only one line, words_2 is empty,
         // words_3 contains the result because word_start and word_stop
-        // are known
+        // are known (whereas words_1 does not know word_stop)
         if (result.length === 1) {
-          
-          // line below does not work for lists containing strings
-          selected_words = words_3;
-          
+          selected_words = words_3; 
         } else {
           selected_words = words_1.concat(words_2).concat(words_3);          
         }

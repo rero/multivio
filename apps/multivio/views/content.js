@@ -561,14 +561,16 @@ Multivio.HighlightContentView = SC.View.extend(
       this.get('parentView').get('parentView').get('parentView').mouseUp(evt);
     }
     else {
+
+      // compute top and left values, if absent ("reverse" selection)
+      var l = this.userSelection.get('layout'), top, left;
+      top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
+      left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
+      
       // if persistent, create a highlight zone from this user selection 
       if (this.persistentSelection) {
-        var l = this.userSelection.get('layout'), top, left;
 
-        // compute top and left values, if absent ("reverse" selection)
-        top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
-        left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
-        // send to controller
+        // add highlight in controller
         Multivio.selectionController.
                         addHighlight(top, left, l.width, l.height, 
                           this.get('currentPage'), 'selection', 
@@ -578,6 +580,14 @@ Multivio.HighlightContentView = SC.View.extend(
 
       // hide user selection rectangle
       this.userSelection.set('isVisible', NO);
+
+      // TODO test send selection to selection controller
+      Multivio.selectionController.set('userSelection', { top: top, 
+                                                          left: left, 
+                                                          width: l.width,
+                                                          height: l.height,
+                                                          page: this.get('currentPage'),
+                                                          type: 'selection' });
 
       // clean up initial info
       this._mouseDownInfo = null;
