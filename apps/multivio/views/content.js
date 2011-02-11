@@ -571,11 +571,12 @@ Multivio.HighlightContentView = SC.View.extend(
       if (this.persistentSelection) {
 
         // add highlight in controller
-        Multivio.selectionController.
+        // TODO test let selection controller add highlights according to text
+        /*Multivio.selectionController.
                         addHighlight(top, left, l.width, l.height, 
                           this.get('currentPage'), 'selection', 
                           this.get('zoomFactor'), NO,
-                          Multivio.masterController.get('currentFile'));
+                          Multivio.masterController.get('currentFile'));*/
       }
 
       // hide user selection rectangle

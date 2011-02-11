@@ -139,7 +139,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     o = this._getOriginalZone(c, zoom_factor);
     
     // compute new coordinates according to current angle
-    // and original coordinates
+    // and unzoomed coordinates
     o = this.getUnrotatedCoords(o, angle);
     
     // get array of selected words
@@ -153,6 +153,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
   /**
     When the content changes, get the text located inside the selection.
     
+    TODO obsolete
+    
     @observes Multivio.selectionController.[]
   */
   contentDidChange: function () {
@@ -160,7 +162,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     if (this.get('length') === 0) return;
     
     // TODODO
-    Multivio.selectionController.getSelectedText();
+    //Multivio.selectionController.getSelectedText();
     
   }.observes('Multivio.selectionController.[]'),
   
@@ -346,8 +348,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var current_page = Multivio.masterController.get('currentPosition');
     var lines = pi.pages[current_page].lines;
     var single_line = undefined, _loop_start_index = 0;
-
-    // parse lines, search for the first selected one
+    // line coordinates for the creation of highlight zones
+    var lx1 = 0, ly1 = 0, lx2 = 0, ly2 = 0; 
+    
+    // parse lines, look for the first selected one
     var l, start = -1, stop = -1, word_start = -1, word_stop = -1,
       selected_words = [], words_1 = [], words_2 = [], words_3 = [];
     for (var i = 0; i < lines.length; i++) {
@@ -399,14 +403,22 @@ Multivio.HighlightController = SC.ArrayController.extend(
             Multivio.logger.debug('--word selection start at w #' + word_start);
             Multivio.logger.debug('--word text: "' + wt[word_start] + '"');
             //selected_words.insertAt(0, wt[j]);
-            // TODO definition of highlight zone
           }  
           
           // add all words of the line once the start word has been found
           if (word_start !== -1 && j >= word_start) {
             words_1.push(wt[j]);
           }
-          
+        }
+        // definition of highlight zone
+        // if there are several lines selected, we know the first line
+        // is selected to the end.
+        if (result.length !== 1) {
+          lx1 = cl.x[word_start].l;
+          ly1 = cl.t;
+          lx2 = lx1 + cl.w;
+          ly2 = ly1 + cl.h;
+          this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
         }
         
         
@@ -425,18 +437,39 @@ Multivio.HighlightController = SC.ArrayController.extend(
           }
           
           if (x2 <= w.l) {
-            word_stop = j - 1;
+            word_stop = Math.max(j - 1, 0); //note: ensure it's never below zero
             Multivio.logger.debug('--word selection stop at w #' + j);
             Multivio.logger.debug('--word text: "' + wt[word_stop] + '"');
             // remove last word because we detect the end too late
             // (word_stop is on j-1).
             // note: pop() on empty list returns undefined, not an exception
             words_3.pop();
-            // TODO definition of highlight zone
+            
             break;
           }  
         }
-
+        // it's possible that we get out of the loop without detecting 
+        // the end, and word_stop still equals -1. If that's the case, it means
+        // we select the whole line.
+        if (word_stop === -1) word_stop = cl.x.length - 1;
+        
+        // definition of highlight zone
+        // if only one line, both start and stop word coordinates are known
+        if (result.length === 1) {
+          lx1 = cl.x[word_start].l;
+          ly1 = cl.t;
+          lx2 = cl.x[word_stop].r;
+          ly2 = ly1 + cl.h;
+        } else { // else, from start of line until word_stop
+          lx1 = cl.l;
+          ly1 = cl.t;
+          Multivio.logger.debug('word_stop: ' + word_stop);
+          Multivio.logger.debug('cl.x.length: ' + cl.x.length);
+          
+          lx2 = cl.x[word_stop].r;
+          ly2 = ly1 + cl.h;
+        }
+        this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
         
         // ====(3) loop the lines inbetween and add all of their words
         // to the result
@@ -454,6 +487,14 @@ Multivio.HighlightController = SC.ArrayController.extend(
             
             words_2.push(wt[j]);
           }
+          
+          // inbetween, lines are wholly selected
+          lx1 = cl.l;
+          ly1 = cl.t;
+          lx2 = lx1 + cl.w;
+          ly2 = ly1 + cl.h;
+          this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
+          
         }
         
         // build complete list of selected words
@@ -658,6 +699,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
                                       current_zoom_factor, is_original,
                                       url) {
 
+    Multivio.logger.debug('addHighlight, tlwh: %@,%@,%@,%@'.fmt(top_, left_, width_, height_));
+
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
        height_ <= this.minimalZoneDimension) return null;
@@ -713,6 +756,30 @@ Multivio.HighlightController = SC.ArrayController.extend(
     this.addObject(new_obj);
     
     return new_obj;
+  },
+  
+  /**
+    Helper function to add a highlight, giving only basic xy params.
+  */
+  addHighlightHelper: function (x1, y1, x2, y2, is_original) {
+
+    Multivio.logger.debug('addHighlightHelper, x1y1x2y2: %@,%@,%@,%@'.fmt(x1, y1, x2, y2));
+
+    // compute tlwh
+    var top_ =  y1,
+        left_ = x1, 
+        width_  = Math.abs(x2 - x1),
+        height_ = Math.abs(y2 - y1);
+
+    // gather necessary data (take current values of context)
+    var z = this.get('zoomFactor');
+    var u = Multivio.masterController.get('currentFile');
+    var p = Multivio.masterController.get('currentPosition');
+    var t = 'selection';
+    
+    //  top_, left_, width_, height_, page_, type_, current_zoom_factor, is_original, url
+    return this.addHighlight(top_, left_, width_, height_, p, t, z, is_original, u);
+    
   },
   
   /**
