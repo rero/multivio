@@ -104,7 +104,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     Format of the data: {top: , left: , width: , height: }
     
-    TODO: investigate if we compute the selected text all the while dragging
+    TODO: investigate if we can compute the selected text all the while dragging
     the mouse during selection, or on set intervals.
   */
   userSelection: undefined,
@@ -146,26 +146,14 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var words = this.getSelectionsOnLinesBetweenPoints(o.left,  o.top, 
                                            o.left + o.width, 
                                            o.top  + o.height);                          
+    // store text 
+    // NOTE: view listens to changes on 'selectedTextString'
+    var text = words.join(' ');
+    Multivio.selectionController.set('selectedTextString', text);
     
+    Multivio.logger.debug('userSelectionDidChange: text: [%@]'.fmt(text));
     
-  }.observes('userSelection'),
-
-  /**
-    When the content changes, get the text located inside the selection.
-    
-    TODO obsolete
-    
-    @observes Multivio.selectionController.[]
-  */
-  contentDidChange: function () {
-      
-    if (this.get('length') === 0) return;
-    
-    // TODODO
-    //Multivio.selectionController.getSelectedText();
-    
-  }.observes('Multivio.selectionController.[]'),
-  
+  }.observes('userSelection'),  
 
   /**
     Receive the selected text from the CDM and
@@ -174,8 +162,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     NOTE: as of now, only using the first object, ignoring any additional
     objects.
     
+    NOTE: obsolete
+    
   */
-  selectedTextDidChange: function () {
+  /*selectedTextDidChange: function () {
     
     var url = Multivio.masterController.get('currentFile');
     var t = this.get('selectedText')[url];
@@ -197,7 +187,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // for the next selection
     Multivio.CDM.set('selectedText', undefined);
         
-  }.observes('selectedText'),
+  }.observes('selectedText'),*/
 
   /**
     Returns the text located inside all the highlight zones.
@@ -209,7 +199,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     @returns {String} the selected text
     
   */
-  getSelectedText: function () {
+  /*getSelectedText: function () {
     
     if (this.get('length') === 0) return '';
     
@@ -231,7 +221,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     return t;
     
-  },
+  },*/
 
   /**
     Select the text field on the view that contains the text selection,
@@ -334,12 +324,12 @@ Multivio.HighlightController = SC.ArrayController.extend(
     Multivio.logger.debug('getSelectionsOnLinesBetweenPoints(%@,%@,%@,%@)'.fmt(x1, y1, x2, y2));
     
     // discard too small selections
-    if (Math.abs(x2 - x1) < 3 || Math.abs(y2 - y1) < 3) return;
+    if (Math.abs(x2 - x1) < 3 || Math.abs(y2 - y1) < 3) return [];
     
     var pi = this._getPageIndexing();
     
     // no page indexing available
-    if (SC.none(pi) || SC.none(pi.pages) || pi === -1) return -1;
+    if (SC.none(pi) || SC.none(pi.pages) || pi === -1) return [];
     
     // build result structure
     var result = [];
@@ -410,6 +400,12 @@ Multivio.HighlightController = SC.ArrayController.extend(
             words_1.push(wt[j]);
           }
         }
+        // temp fix (TODO):
+        // we may not find the start when text is on 2+ columns.
+        if (word_start === -1) {
+          Multivio.logger.debug('first line, word_start is -1, setting to 0...');
+          word_start = 0;
+        } 
         // definition of highlight zone
         // if there are several lines selected, we know the first line
         // is selected to the end.
@@ -526,7 +522,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
       
     }
     
-    return result;
+    return selected_words;
     
   },
 

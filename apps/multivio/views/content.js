@@ -582,7 +582,7 @@ Multivio.HighlightContentView = SC.View.extend(
       // hide user selection rectangle
       this.userSelection.set('isVisible', NO);
 
-      // TODO test send selection to selection controller
+      // send selection to selection controller
       Multivio.selectionController.set('userSelection', { top: top, 
                                                           left: left, 
                                                           width: l.width,
@@ -681,7 +681,7 @@ Multivio.HighlightContentView = SC.View.extend(
       // update highlights only if the search results belong to the current
       // file, or 'All files' search scope is selected.
       if (csf !== current_master_file && csf !== ref_url) return;
-      
+ 
       // clear view
       this.removeAllChildren();
     
