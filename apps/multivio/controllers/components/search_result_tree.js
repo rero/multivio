@@ -22,11 +22,12 @@ Multivio.searchTreeController = SC.TreeController.create(
 /** @scope Multivio.searchTreeController.prototype */ {
   
   /**
-    Local variable for binding
+    Local variables for binding
   */
-  position: null,
   logicalStructure: null,
   physicalStructure: null,
+  
+  fileList: null,
   
   searchResults: null,
   
@@ -51,9 +52,112 @@ Multivio.searchTreeController = SC.TreeController.create(
   _treeLabelByPosition: undefined,
   
   
+  fileListDidChange: function () {
+    
+    if (SC.none(this.fileList)) return;
+    
+    Multivio.logger.debug('searchTreeController, fileListDidChange()');
+    
+    // build structure for files
+    var ref_url = Multivio.CDM.getReferer();
+    var files = this.get('fileList');
+    var cf = undefined, structure = [], node = undefined;
+    var single_file = files.length === 1;
+    for (var i = 0; i < files.length; i++) {
+      cf = files[i];
+      //skip referer URL, except if there's only one file
+      if (!single_file && cf.url === ref_url) continue;
+      
+      Multivio.logger.debug('->adding file node #%@, label: %@, url: %@'.fmt(i, cf.label, cf.url));
+
+      // build file node
+      node = {
+        file_position: {
+          index: null,
+          url: cf.url
+        },
+        label: cf.label,
+        type: 'file',
+        childs: null
+      };
+      structure.push(node);
+      
+    }
+    
+    // add file structure under refererNode
+    this._addSubtree(structure);
+    this.initializeTree();
+    
+  }.observes('fileList'),
+  
   searchResultsDidChange: function () {
     
+    if (SC.none(this.searchResults)) return;    
+    
     Multivio.logger.debug('searchTreeController, searchResultsDidChange()');
+    
+    // go through file nodes in tree
+    var files = this.treeStructure[0].childs; // this.get('fileList');
+    var search_results = this.get('searchResults');
+    var cf = undefined, csr = undefined, node = undefined, file_node = undefined;
+    var structure = [], children = []; //this.treeStructure;
+    var fi, ri, res = undefined;
+    for (fi = 0; fi < files.length; fi++) {
+      cf = files[fi];
+      
+      Multivio.logger.debug('cf.type: ' + cf.type);
+      
+      // check that it's a file
+      if (SC.none(cf.type) || cf.type !== 'file') continue;
+      
+      // NOTE: need to add the files again since we rebuild the whole tree.
+      // build and add file node 
+      file_node = {
+        file_position: {
+          index: null,
+          url: cf.file_position.url
+        },
+        label: cf.label,
+        type: 'file',
+        childs: null
+      };
+      structure.push(file_node);
+      
+      csr = search_results[cf.file_position.url];
+
+      // no results for this file, skip
+      if (SC.none(csr) || SC.none(csr.file_position)) continue;
+
+      res = csr.file_position.results;
+      if (res.length > 0) file_node.childs = [];
+      // go through search results for the current file
+      for (ri = 0; ri < res.length; ri++) {
+        Multivio.logger.debug('adding search result: ' + res[ri].preview);
+        //build tree node for this result
+        node = {
+          file_position: {index: res[ri].index.page, url: csr.file_position.url},
+          label: res[ri].preview,
+          type: 'result' 
+        };
+        // add the result as a child of the file node
+        file_node.childs.push(node);
+      }
+      
+      // TODO max results reached, add a 'More' node
+      if (csr.max_reached !== 0) {
+        node = {
+          file_position: {index: null, url: csr.file_position.url},
+          label: '_More'.loc(), // TODO translation
+          type: 'more' 
+        };
+        file_node.childs.push(node);
+      }
+      
+    }
+    
+    // add file structure under root node
+    this._addSubtree(structure);
+    this.initializeTree();
     
   }.observes('searchResults'),
   
@@ -67,6 +171,8 @@ Multivio.searchTreeController = SC.TreeController.create(
   initialize: function (url) {
     
     Multivio.logger.info('searchTreeController, begin initialize(), url: ' + url);
+   
+    this.set('content', []);
     
     if (this.get('bindings').length !== 0) {
       this.reset();
@@ -91,91 +197,44 @@ Multivio.searchTreeController = SC.TreeController.create(
       this.treeStructure = null;
     }
     
-    // get logical structure first 
-    var logStr = Multivio.CDM.getLogicalStructure(url);
-    if (logStr !== -1) {
-      // if  logicalStructure = null get physical structure
-      if (SC.none(logStr)) {
-        var phySt = Multivio.CDM.getPhysicalstructure(url);
-        if (phySt === -1) {
-          this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');
-        }
-        else {
-          if (SC.none(phySt)) {
-            Multivio.logger.info('This document has no logical and no physical structure');
-          }
-          // create logical structure with physical structure
-          else {
-            var structure = [];
-            for (var i = 0; i < phySt.length; i++) {
-              var oneElem = phySt[i];
-              var newElem = {
-                file_position: {
-                  index: Multivio.masterController.isGrouped ? i + 1 :null,
-                  url: oneElem.url
-                },
-                label: oneElem.label
-              };
-              structure.push(newElem);
-            }
-            this._addSubtree(structure);
-            this.initializeTree();
-          }
-        }
-      }
-
-      // logical structure != null
-      else {
-        // now test if file_position.index = null
-        // if index is null create index using physicalStructure
-        var firstLogicalEl = logStr[0];
-        var newLogStr = [];
-        if (firstLogicalEl.file_position.index === null) {
-          var phyStr = Multivio.CDM.getPhysicalstructure(url);
-          if (phyStr !== -1) {
-            if (SC.none(phyStr)) {
-              Multivio.logger.error('This document has no physical structure to create index');
-            }
-            // create index
-            else {
-              if (Multivio.masterController.isGrouped) {
-                var fakeNode = {
-                  file_position: {
-                    index: 0,
-                    url: ''
-                  },
-                  label: 'fake node',
-                  childs: logStr          
-                };
-                var newLogSt = this.setLogicalIndex(fakeNode, phyStr);
-                // remove the fake node
-                this._addSubtree(newLogSt.childs);
-                this.initializeTree();
-              } 
-              else {
-                this._addSubtree(logStr);
-                this.initializeTree();
-              }
-            }
-          }
-          // phyStr = -1 : create a binding
-          else {
-            this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
-          }
-        }
-        // index for logical structure already exist use it
-        else {
-          this._addSubtree(logStr);
-          this.initializeTree();
-        }
-      }
-    }
-    // logicalStructure not in the client create the binding
-    else {
-      this.bind('logicalStructure', 'Multivio.CDM.logicalStructure');
-    }
     
-    Multivio.logger.info('searchTreeController initialized');
+    // TODO test: remove this section below, as we listen to fileList instead
+    var phySt = Multivio.CDM.getPhysicalstructure(url);
+    if (phySt === -1) {
+      this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');
+    }
+    else {
+      if (SC.none(phySt)) {
+        //Multivio.logger.info('This document has no logical and no physical structure');
+      }
+      // create logical structure with physical structure
+      else {
+        var structure = [];
+        for (var i = 0; i < phySt.length; i++) {
+          var oneElem = phySt[i];
+          var newElem = {
+            file_position: {
+              index: Multivio.masterController.isGrouped ? i + 1 :null,
+              url: oneElem.url
+            },
+            label: oneElem.label
+          };
+          structure.push(newElem);
+        }
+        this._addSubtree(structure);
+        this.initializeTree();
+      }
+    }
+   
+    Multivio.logger.info('searchTreeController initialized, adding bindings');
+  
+    // TODO test
+    this.bind('fileList', 'Multivio.searchController.currentFileList');
+    this.bind('searchResults', 'Multivio.searchController.searchResults');   
+   
+    // NOTE: when this is not done, UI freezes on load. This is done in 
+    // _createTree
+    //Multivio.sendAction('addComponent', 'searchTreeController');
   },
   
   /**
@@ -197,186 +256,19 @@ Multivio.searchTreeController = SC.TreeController.create(
       childs: null
     }];
     // create rootNode and add refererNode as it child
+    // TODO test: don't add a referer node
     var rootNode = {
       file_position: {
         index: null,
         url: null
       },
       label: "Root Node",
-      childs: refererNode
+      childs: null
     };
     this.treeStructure.push(rootNode);
-    this.treeStructure.push(refererNode);
+    //this.treeStructure.push(refererNode);
   },
   
-  /**
-    Add new logical structure to the current treeStructure
-
-    @private
-  */
-  _addSubtree: function (list) {
-    var newStructure = [];
-    // if treeStructure is not null
-    // append child to the refererNode
-    if (!SC.none(this.treeStructure)) {
-      var refererNode = this.treeStructure[1];
-      refererNode[0].childs = list;
-      newStructure.push(this.treeStructure[0]);
-      newStructure.push(refererNode[0]);
-    }
-    for (var i = 0; i < list.length; i++) {
-      newStructure.push(list[i]);
-    }
-    this.treeStructure = newStructure;
-  },
-  
-  /**
-    Reset bindings
-  */
-  reset: function () {
-    var listOfBindings = this.get('bindings');
-    for (var i = 0; i < listOfBindings.length; i++) {
-      var oneBinding = listOfBindings[i];
-      oneBinding.disconnect();
-    }
-    //this.selection =  SC.SelectionSet.EMPTY;
-    this.bindings =  [];
-  },
-  
-  clear: function () {
-    this.position = null;
-    this.logicalStructure = null;
-    this.physicalStructure = null;    
-    this.treeExist = NO;
-    this.globalStructure = null;
-    this.treeStructure = null;
-    this._treeLabelByPosition = undefined;
-  },
-  
-  /**
-    Create the index for a logical structure. 
-    To do it we compare urls of the logical and the physical structures
-
-    @param {Object} oneNode a node of the logicalStructure. At the first call,
-        this node has as childs the logical structure file
-    @param {Objet} list the physical structure of the file
-  */
-  setLogicalIndex: function (oneNode, list) {  
-    var url = oneNode.file_position.url;
-
-    for (var j = 0; j < list.length; j++) {
-      var physicalUrl = list[j].url;
-      if (physicalUrl === url) {
-        oneNode.file_position.index = j + 1;
-        break;
-      }
-    }
-    var hasChildren = oneNode.childs;
-    if (!SC.none(hasChildren)) {
-      for (var i = 0; i < hasChildren.length; i++) {
-        var onechild = oneNode.childs[i];
-        this.setLogicalIndex(onechild, list);
-      }
-    }
-    return oneNode;
-  },
-
-  /**
-    CDM.logicalStructure has changed. Verify if we can create the sub-model.
-
-    @observes logicalStructure
-  */  
-  logicalStructureDidChange: function () {
-    
-    Multivio.logger.debug('searchTreeController, logicalStructureDidChange');
-    
-    if (!SC.none(this.get('logicalStructure'))) {
-      var cf = Multivio.masterController.get('currentFile');
-      if (Multivio.masterController.isGrouped) {
-        cf = Multivio.CDM.getReferer();
-      }
-      if (!SC.none(cf)) {
-        var logStr = this.get('logicalStructure')[cf];
-        if (logStr !== -1) {
-          // logical structure = null get physical structure
-          if (SC.none(logStr)) {
-            var phSt = Multivio.CDM.getPhysicalstructure(cf);
-            // physical structure
-            if (phSt !== -1) {
-              if (SC.none(phSt)) {
-                Multivio.logger.error('This document has no logical and no physical structure ');
-              }
-              else {
-                var structure = [];
-                for (var i = 0; i < phSt.length; i++) {
-                  var oneElem = phSt[i];
-                  var newElem = {
-                    file_position: {
-                      index: Multivio.masterController.isGrouped ? i + 1 :null,
-                      url: oneElem.url
-                    },
-                    label: oneElem.label
-                  };
-                  structure.push(newElem);
-                }
-                this._addSubtree(structure);
-                this.initializeTree();
-              }
-            }
-            // physical structure  = -1 create the binding 
-            else {
-              this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');              
-            }
-          }
-          // logical structure exist
-          else {
-            // now test if file_position.index = null
-            // if index is null create index using physical structure
-            var firstLogicalEl = logStr[0];
-            var newLogStr = [];
-            if (firstLogicalEl.file_position.index === null) {
-              var phyStr = Multivio.CDM.getPhysicalstructure(cf);
-              if (phyStr !== -1) {
-                if (SC.none(phyStr)) {
-                  Multivio.logger.error('This document has no physical structure to create index');
-                }
-                else {
-                  if (Multivio.masterController.isGrouped) {
-                    var fakeNode = {
-                      file_position: {
-                        index: 0,
-                        url: ''
-                      },
-                      label: 'fake node',
-                      childs: logStr          
-                    };
-                    var newLogSt = this.setLogicalIndex(fakeNode, phyStr);
-                    // remove the fake node
-                    this._addSubtree(newLogSt.childs);
-                    this.initializeTree();
-                  }
-                  else {
-                    this._addSubtree(logStr);
-                    this.initializeTree();
-                  }
-                }
-              }
-              // physical structure = -1 create the binding
-              else {
-                this.bind('physicalStructure',  'Multivio.CDM.physicalStructure');
-              }
-            }
-            // logical strcuture index exist use it
-            else {
-              this._addSubtree(logStr);
-              this.initializeTree();
-            }            
-          }
-        }
-      }
-    }
-  }.observes('logicalStructure'),
-
   /**
     CDM.physicalStructure has changed. Verify if we can create the sub-model.
 
@@ -384,7 +276,8 @@ Multivio.searchTreeController = SC.TreeController.create(
   */  
   physicalStructureDidChange: function () {
     
-    Multivio.logger.debug('searchTreeController, physicalStructureDidChange');
+    // TODO test
+    return;
     
     if (!SC.none(this.get('physicalStructure'))) {
       var cf = Multivio.masterController.get('currentFile');
@@ -455,19 +348,42 @@ Multivio.searchTreeController = SC.TreeController.create(
         }
       }
     }
-  }.observes('physicalStructure'),
+  }.observes('physicalStructure'),  
   
+  /**
+    Add new logical structure to the current treeStructure
+
+    @private
+  */
+  _addSubtree: function (list) {
+    var newStructure = [];
+    // if treeStructure is not null
+    // append child to the refererNode
+    if (!SC.none(this.treeStructure)) {
+      // TODO remove refererNode, use root node
+      //var refererNode = this.treeStructure[1];
+      var refererNode = this.treeStructure[0];
+      // TODO debug here 
+      refererNode.childs = list;
+      newStructure.push(this.treeStructure[0]);
+      //newStructure.push(refererNode[0]);
+    }
+    for (var i = 0; i < list.length; i++) {
+      newStructure.push(list[i]);
+    }
+    this.treeStructure = newStructure;
+  },
+ 
   /**
     Choose if a new tree must be create or if we have to update the tree. 
   */
   initializeTree: function () {
-    
-    Multivio.logger.debug('searchTreeController, initializeTree');
-    
     this.reset();
-    this.bind('position', 'Multivio.masterController.currentPosition');
-    //TODO
+    // TODO test bindings
+    //this.bind('position', 'Multivio.masterController.currentPosition');
+    this.bind('fileList', 'Multivio.searchController.currentFileList');
     this.bind('searchResults', 'Multivio.searchController.searchResults');
+    
     var structure = this.treeStructure;
     if (this.get('treeExist')) {
       this._updateTree(structure);
@@ -478,10 +394,8 @@ Multivio.searchTreeController = SC.TreeController.create(
     // order keys to use correctly this._getListOfLabelsForIndex
     var keys = this.ascendingKeys(this._treeLabelByPosition);
     var temp = [];
-    Multivio.logger.debug('searchTreeController, initializeTree, keys: ' + keys);
     for (var i = 0; i < keys.length; i++) {
       var oneKey = keys[i];
-      Multivio.logger.debug('searchTreeController, initializeTree, oneKey: ' + oneKey);
       temp[oneKey] = this._treeLabelByPosition[oneKey];
     }
     this._treeLabelByPosition = temp;
@@ -494,9 +408,6 @@ Multivio.searchTreeController = SC.TreeController.create(
     @private
   */  
   _createTree: function (structure) {
-    
-    Multivio.logger.debug('searchTreeController, _createTree');
-    
     this.set('treeExist', YES);
     // create the globalStructure
     var tempStruct = [];
@@ -541,72 +452,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     res.push(oneNode);
     return res;
   },
-
-  /**
-    Updates selection by observing changes of the position property.
-    
-    @observes position
-  */
-  positionDidChange: function () {
-    
-    Multivio.logger.debug('searchTreeController, positionDidChange');
-    
-    var newPosition = this.get('position');
-    if (!SC.none(newPosition)) {  
-      // retrieve the list of labels for this position
-      var labels = this._getListOfLabelsForIndex(newPosition);
-      if (!SC.none(labels)) {
-        // verify if we really need to set selection
-        var currentSelection = !SC.none(this.get('selection')) ?
-            this.get('selection').firstObject() : undefined;
-        if (labels.length === 1) {
-          var treeLabelToSelect = labels[0];
-          if (currentSelection !== treeLabelToSelect) {
-            this.set('selection', 
-                SC.SelectionSet.create().addObject(treeLabelToSelect));
-            Multivio.logger.info('searchTreeController#positionDidChange case 1: %@'.
-                fmt(this.get('selection').firstObject()));
-          }
-        }
-        else {
-          // verify if label is already selected
-          var isAlreadySelected = NO;
-          for (var i = 0; i < labels.length; i++) {
-            var tempLabel = labels[i];
-            if (currentSelection === tempLabel) {
-              isAlreadySelected = YES;
-              break;
-            }
-          }
-          if (!isAlreadySelected) {
-            this.set('selection', 
-                SC.SelectionSet.create().addObject(labels[0]));
-            Multivio.logger.info('searchTreeController#positionDidChange case 2: %@'.
-                fmt(this.get('selection').firstObject()));
-          }
-        } 
-      }
-      else {
-        // select the currentFile label
-        var listOfLabels = this.get('arrangedObjects');
-        for (var j = 0; j < listOfLabels.length; j++) {
-          var elem = listOfLabels.objectAt(j);
-          if (elem.file_position.url === Multivio.masterController.currentFile) {
-            // verify if label is not already selected
-            var currentS = !SC.none(this.get('selection')) ?
-                this.get('selection').firstObject() : undefined;
-            if (SC.none(currentS) || currentS.file_position.url !== 
-                elem.file_position.url && currentS.file_position.index !== 
-                elem.file_position.index) {
-              this.set('selection', SC.SelectionSet.create().addObject(elem));
-              break;
-            }
-          }
-        }
-      }
-    }
-  }.observes('position'),
-  
+ 
   /**
     Return a list of treeLabel link to this index.
     
@@ -694,9 +540,6 @@ Multivio.searchTreeController = SC.TreeController.create(
     @private
   */
   _updateTree: function (lgs) {
-    
-    Multivio.logger.info('searchTreeController#_updateTree begin');
-    
     // first remove old bindings and create news
     var listOfBindings = this.get('bindings');
     for (var j = 0; j < listOfBindings.length; j++) {
@@ -705,9 +548,11 @@ Multivio.searchTreeController = SC.TreeController.create(
     }
     this.bindings = [];
     this.position = null;
-    this.bind('position', 'Multivio.masterController.currentPosition');    
-    // TODO 
-    this.bind('searchResults', 'Multivio.searchController.searchResults');
+    
+    // TODO bindings
+    //this.bind('position', 'Multivio.masterController.currentPosition');
+    this.bind('fileList', 'Multivio.searchController.currentFileList');
+    this.bind('searchResults', 'Multivio.searchController.searchResults');    
     this.selection = null;
     this.content = null;
     
@@ -763,7 +608,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     this.set('content', treeContent);
     // add view 
     Multivio.sendAction('addComponent', 'searchTreeController');
-    Multivio.logger.info('searchTreeController#_updateTree end');
+    Multivio.logger.info('searchTreeController#_updateTree');
   },
   
   /**
@@ -774,65 +619,29 @@ Multivio.searchTreeController = SC.TreeController.create(
   allowSelection: function (allowValue) {
     this.set('allowsSelection', allowValue);
   },
+ 
   
   /**
-    Updates position by observing changes of the selection property.
-    
-    @observes selection
+    Reset bindings
   */
-  _selectionDidChange: function () {
-    
-    Multivio.logger.debug('searchTreeController, _selectionDidChange');
-    
-    var newSelection = this.get('selection'); 
-    if (!SC.none(newSelection) && !SC.none(newSelection.firstObject())) {
-      var selectionIndex = newSelection.firstObject().file_position.index;
-      // if index === null => change file
-      if (SC.none(selectionIndex)) {
-        var url = newSelection.firstObject().file_position.url;
-        if (!SC.none(url)) {
-          if (url !== Multivio.masterController.currentFile &&
-              url !== Multivio.CDM.getReferer()) { 
-            Multivio.makeFirstResponder(Multivio.INIT);
-            Multivio.sendAction('notAllowSelection');
-            Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState; 
-            Multivio.masterController.set('currentFile', url);
-          }
-          else {
-            // currentfile selected set position = 1
-            // referer selected do nothing
-            if (url === Multivio.masterController.currentFile) {
-              this.set('position', 1);
-            }
-          }
-        }
-        else {
-          var listOfTree = this.get('arrangedObjects');
-          var ind = listOfTree.indexOf(newSelection.firstObject());
-          // get next element (normaly the first child)
-          // TO DO Verify if url is not null else find next valid url
-          ind++;
-          Multivio.masterController.set('currentFile', 
-              listOfTree.objectAt(ind).file_position.url);
-        }
-      }
-      
-      //set new position
-      else {
-        var currentPosition = this.get('position');
-        var labelFCPosition = this._getListOfLabelsForIndex(currentPosition);
-        //var selectionIndex = newSelection.firstObject().file_position.index;
-        if (!SC.none(labelFCPosition)) {
-          labelFCPosition = labelFCPosition[0];
-        }
-        var selectionLabel = newSelection.firstObject();
-        if (selectionIndex !== currentPosition && selectionLabel !== labelFCPosition) {
-          this.set('position', selectionIndex);
-          Multivio.logger.info('searchTreeController#selectionDidChange: %@'.
-              fmt(this.get('position')));
-        }
-      }
+  reset: function () {
+    var listOfBindings = this.get('bindings');
+    for (var i = 0; i < listOfBindings.length; i++) {
+      var oneBinding = listOfBindings[i];
+      oneBinding.disconnect();
     }
-  }.observes('selection')
+    //this.selection =  SC.SelectionSet.EMPTY;
+    this.bindings =  [];
+  },
+  
+  clear: function () {
+    this.position = null;
+    this.logicalStructure = null;
+    this.physicalStructure = null;    
+    this.treeExist = NO;
+    this.globalStructure = null;
+    this.treeStructure = null;
+    this._treeLabelByPosition = undefined;
+  }
 
 });

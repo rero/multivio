@@ -75,7 +75,7 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     sc_super();
     var lab = this.get('content').label;
     
-    Multivio.logger.debug('SearchTreeView, render, content.label: ' + lab);
+    //Multivio.logger.debug('SearchTreeView, render, content.label: ' + lab);
     
     // TODO: find a better method to calculate size
     var labelSize = SC.metricsForString(lab, 
@@ -112,7 +112,7 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     // above is undefined
     var label = this.get('content').label;
     
-    Multivio.logger.debug('SearchTreeView, renderLabel, label: ' + label + ' context: ' + context);
+    //Multivio.logger.debug('SearchTreeView, renderLabel, label: ' + label + ' context: ' + context);
     
     /*if (!SC.none(nb) && nb !== 0) {
       label = label + " (" + nb + ")";
