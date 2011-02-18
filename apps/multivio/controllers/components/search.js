@@ -329,7 +329,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     var pi = this._getPageIndexing();
     
     // no page indexing available
-    if (SC.none(pi) || SC.none(pi.pages) || pi === -1) return [];
+    if (SC.none(pi) || pi === -1) return -1;
     
     // build result structure
     var result = [];
@@ -1571,7 +1571,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         Multivio.logger.debug('_searchResultsDidChange, (5) concat all results...');
         
         // clear all results before adding the whole again
-        this.set('content', []);
+        // TODO test debug
+        //this.set('content', []);
         
         for (var i = 0; i < file_list.length; i++) {
           
@@ -1636,7 +1637,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         Multivio.usco.showAlertPaneInfo('_tooManyResults'.loc(), 
           '_firstOccurrences'.loc(res[key].max_reached), 'OK');
       }*/
-      
     }
     
   }.observes('searchResults'),
@@ -1651,6 +1651,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @observes Multivio.CDM.searchResults
   */
   CDMsearchResultsDidChange: function () {
+    
     var ref = this.get('url');
     var searchFile = this.get('currentSearchFile');
     

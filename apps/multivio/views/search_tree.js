@@ -94,6 +94,8 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     @param {String} icon a URL or class name
   */
   renderIcon: function (context, icon) {
+    // don't draw icon for 'More' nodes
+    if (this.content.get('type') === 'more') return;
     if (SC.none(this.content.get('file_position').index)) {
       context.begin('img').addClass('icon').addClass('')
           .attr('src', static_url('images/icons/file')).end();
@@ -107,16 +109,6 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     @param {String} label
   */    
   renderLabel: function (context, label) {
-    
-    // TODO test dwy: get label from content because the one given as parameter
-    // above is undefined
-    var label = this.get('content').label;
-    
-    //Multivio.logger.debug('SearchTreeView, renderLabel, label: ' + label + ' context: ' + context);
-    
-    /*if (!SC.none(nb) && nb !== 0) {
-      label = label + " (" + nb + ")";
-    }*/
     
     if (SC.none(this.content.get('file_position').index)) {
       context.push('<label class="document-label-view">', label || '', '</label>');

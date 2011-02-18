@@ -90,7 +90,7 @@ Multivio.SearchView = SC.View.extend(
       rowHeight: 15,
       contentBinding: 'Multivio.searchTreeController.arrangedObjects',
       selectionBinding: 'Multivio.searchTreeController.selection',
-      contentValueKey: 'context',
+      contentValueKey: 'label',
       exampleView: Multivio.SearchTreeLabelView
       //controllers: ['searchTreeController']
     })
