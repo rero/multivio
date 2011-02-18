@@ -106,6 +106,7 @@ SC.stringsFor('English', {
   '_listOfResults': 'List of results',
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
+  '_More': 'More...',
 
   // Strings for the help section
   '_helpTitle': "Help",

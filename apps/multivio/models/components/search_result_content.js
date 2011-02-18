@@ -35,11 +35,10 @@ Multivio.SearchTreeContent =  SC.Object.extend({
 
   /**
     Return the list of the children of this Multivio.Tree as TreeContent
-    TODO dwy adapt for search results (file_position,..)
   */
   treeItemChildren: function () {
     
-    Multivio.logger.debug('SearchTreeContent, treeItemChildren, childs: ' + this.childs);
+    //Multivio.logger.debug('SearchTreeContent, treeItemChildren, childs: ' + this.childs);
     
     var ret = [];
     var children = this.childs;
