@@ -75,8 +75,6 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     sc_super();
     var lab = this.get('content').label;
     
-    //Multivio.logger.debug('SearchTreeView, render, content.label: ' + lab);
-    
     // TODO: find a better method to calculate size
     var labelSize = SC.metricsForString(lab, 
         '"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;');
@@ -104,7 +102,10 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
 
   /**
     Override renderLabel method to set some labels in bold 
-
+    
+    NOTE: 'More' nodes have file_position.index === null, so they get the
+    document-label-view class as well.
+    
     @param {Object} context
     @param {String} label
   */    

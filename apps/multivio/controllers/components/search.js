@@ -1347,7 +1347,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   setSelectionIndex: function (index) {
     
-    Multivio.logger.debug("setSelectionIndex " + index);
+    Multivio.logger.debug("search ctrl, setSelectionIndex " + index);
     
     var newSel = SC.SelectionSet.create();
     newSel.addObject(this.objectAt(index));
@@ -1392,7 +1392,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     SC.RunLoop.begin();
     this.set('searchStatus', '_searchInProgress'.loc());
     // #CHE
-    // deny selection
+    // deny selection TODO set ctrl 'allowsSelection'
     Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', NO);
     SC.RunLoop.end();
     
@@ -1571,8 +1571,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         Multivio.logger.debug('_searchResultsDidChange, (5) concat all results...');
         
         // clear all results before adding the whole again
-        // TODO test debug
-        //this.set('content', []);
+        this.set('content', []);
         
         for (var i = 0; i < file_list.length; i++) {
           
@@ -1704,6 +1703,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         else {
           this.set('searchStatus', '_listOfResults'.loc());
         }
+        // TODO set ctrl allowsSelection
         Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', YES);
         Multivio.logger.debug('End of the search');
       }

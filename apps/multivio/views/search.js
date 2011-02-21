@@ -154,7 +154,7 @@ Update the position of the scroll in the view if needed.
     theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    target: 'Multivio.searchController',
+    target: 'Multivio.searchTreeController',
     action: 'goToNextResult'
   }),
 
@@ -166,7 +166,7 @@ Update the position of the scroll in the view if needed.
     theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    target: 'Multivio.searchController',
+    target: 'Multivio.searchTreeController',
     action: 'goToPreviousResult'
   }),
   

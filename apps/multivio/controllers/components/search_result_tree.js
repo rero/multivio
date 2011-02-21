@@ -44,6 +44,11 @@ Multivio.searchTreeController = SC.TreeController.create(
   */
   _treeLabelByPosition: undefined,
   
+  /**
+    An array that contains a tree node for a specific result id 
+    (one node for one id).
+  */
+  _treeNodeById: undefined,
   
   _createRootAndFileNodes: function () {
     
@@ -89,8 +94,52 @@ Multivio.searchTreeController = SC.TreeController.create(
   },
   
   fileListDidChange: function () {
+    
     this._createRootAndFileNodes();
+    
+    // check for existing search results when recreating the tree
+    this.searchResultsDidChange();
+    
   }.observes('fileList'),
+  
+  selectionDidChange: function () {
+
+    Multivio.logger.debug('searchTreeController, selectionDidChange()');
+
+    var sel = this.get('selection');
+    
+    if (SC.none(sel)) return;
+    
+    var so = sel.firstObject();
+
+    Multivio.logger.debug('searchTreeController, selectionDidChange(), so: ' + so);
+
+    if (SC.none(so)) return;
+
+    // TODO action according to type of node
+    if (so.type === 'result') {
+
+      Multivio.logger.debug('searchTreeController, selectionDidChange(), send to search ctrl, id: ' + so.id);
+
+      // TODO need to create new selection object or not?
+      // TODO cannot transfer it like that, the contents of the search ctrl
+      // are diferent from the search tree ctrl.
+      // TODO how to do the mapping ? Maybe use the index that is stored in the
+      // master ctrl
+      // or use content of CDM.searchresults
+      // TODO test this: when adding result nodes, store result ID number
+      // (global) 
+      // TODO warning are we sure it's the same order as used in view 
+      // and search ctrl ??
+      Multivio.searchController.setSelectionIndex(so.id);
+
+
+      // TODO send a new query to server with increased 'max_results' param.
+    } else if (so.type === 'more') {
+      
+    }
+
+  }.observes('selection'),
   
   /**
     NOTE: make this function observe 'Multivio.searchController.searchResults'
@@ -107,7 +156,8 @@ Multivio.searchTreeController = SC.TreeController.create(
 
     Multivio.logger.debug('searchTreeController, searchResultsDidChange(), enter?: ' + search_results);
     
-    // 
+    // if no search results, init empty structure with files
+    // TODO? maybe don't display files if no result?
     if (SC.none(search_results)) {
       Multivio.logger.debug('searchTreeController, searchResultsDidChange(), clearing tree...');
       // clear tree if there are no results
@@ -117,23 +167,31 @@ Multivio.searchTreeController = SC.TreeController.create(
       return;    
     }
     
-    Multivio.logger.debug('searchTreeController, searchResultsDidChange()');
+    Multivio.logger.debug('searchTreeController, searchResultsDidChange(), root:' + this.treeStructure[0]);
     
     // go through file nodes in tree
+    // TODO test because of files is null error
+    // if the files were not initialised yet, do it now
+    if (SC.none(this.treeStructure[0].childs)) {
+      this.fileList = Multivio.searchController.get('currentFileList');
+      this._createRootAndFileNodes();
+    }
+    // NOTE: we expect that the root node already has file nodes (see above)
     var files = this.treeStructure[0].childs;
     var cf = undefined, csr = undefined, node = undefined, file_node = undefined;
     var structure = [], children = [];
-    var fi, ri, res = undefined;
+    var fi, ri, res = undefined, result_id = 0;
+    
+    Multivio.logger.debug('searchTreeController, searchResultsDidChange(), #files: ' + files.length);
     
     for (fi = 0; fi < files.length; fi++) {
       cf = files[fi];
-      
-      //Multivio.logger.debug('cf.type: ' + cf.type);
-      
+  
       // check that it's a file
       if (SC.none(cf.type) || cf.type !== 'file') continue;
       
-      // NOTE: need to add the files again since we rebuild the whole tree.
+      // NOTE: need to add the files again since we rebuild the whole subtree 
+      // under the root node.
       // build and add file node 
       file_node = {
         file_position: {
@@ -152,17 +210,22 @@ Multivio.searchTreeController = SC.TreeController.create(
       if (SC.none(csr) || SC.none(csr.file_position)) continue;
 
       res = csr.file_position.results;
+      Multivio.logger.debug('searchTreeController, searchResultsDidChange(), #results: ' + res.length);
       if (res.length > 0) file_node.childs = [];
       // go through search results for the current file
       for (ri = 0; ri < res.length; ri++) {
         //Multivio.logger.debug('adding search result: ' + res[ri].preview);
-        //build tree node for this result
+        // build tree node for this result
+        // NOTE: store the result id number to identify the selection
+        // this is used to forward the selection to the search ctrl.
         node = {
           file_position: {index: res[ri].index.page, url: csr.file_position.url},
           label: res[ri].preview,
-          type: 'result' 
+          type: 'result',
+          id: result_id++
         };
         // add the result as a child of the file node
+        Multivio.logger.debug('searchTreeController, searchResultsDidChange(), add result:[' + node + '] to file: ' + file_node);
         file_node.childs.push(node);
       }
       
@@ -171,14 +234,15 @@ Multivio.searchTreeController = SC.TreeController.create(
         node = {
           file_position: {index: null, url: csr.file_position.url},
           label: '_More'.loc(),
-          type: 'more' 
+          type: 'more',
+          current_max: csr.max_reached
         };
         file_node.childs.push(node);
       }
       
     }
     
-    // add file structure under root node
+    // add file structure under the root node
     this._addSubtree(structure);
     this.initializeTree();
     
@@ -197,9 +261,14 @@ Multivio.searchTreeController = SC.TreeController.create(
    
     this.set('content', []);
     
-    if (this.get('bindings').length !== 0) {
+    // TODO test debug always reinit
+    //if (this.get('bindings').length !== 0) {
+    if (YES) {
       this.reset();
+      // TODO test
+      this.clear();
     }
+    
     // if isGrouped get the structure of the referer 
     if (Multivio.masterController.isGrouped) {
       this.treeStructure = null;
@@ -207,7 +276,7 @@ Multivio.searchTreeController = SC.TreeController.create(
       this.treeExist = NO;
     }
 
-    // Create the first time the rootNode and referer
+    // create the root node for the first time
     if (SC.none(this.treeStructure)) {
       var metadata = Multivio.CDM.getFileMetadata(url);
       if (metadata !== -1) {
@@ -223,8 +292,11 @@ Multivio.searchTreeController = SC.TreeController.create(
     
     Multivio.logger.info('searchTreeController initialized, adding bindings');
   
-    // rebind the useful stuff
+    // bind the useful stuff
     this.bind('fileList', 'Multivio.searchController.currentFileList');
+
+    // TODOODOD check for existing search results
+    this.searchResultsDidChange();
 
   },
   
@@ -354,6 +426,8 @@ Multivio.searchTreeController = SC.TreeController.create(
     }
     this.set('globalStructure', tempStruct);
     this._treeLabelByPosition = [];
+    // TODO test
+    this._treeNodeById = [];
     // create treeContent and set content
     var treeContent = Multivio.SearchTreeContent.create(structure[0]);
     this.set('content', treeContent);
@@ -469,6 +543,9 @@ Multivio.searchTreeController = SC.TreeController.create(
     @private
   */
   _updateTree: function (lgs) {
+    
+    Multivio.logger.info('searchTreeController, _updateTree(%@)'.fmt(lgs));
+    
     // first remove old bindings and create news
     var listOfBindings = this.get('bindings');
     for (var j = 0; j < listOfBindings.length; j++) {
@@ -531,6 +608,8 @@ Multivio.searchTreeController = SC.TreeController.create(
     }
     this.globalStructure = newStruct;
     this._treeLabelByPosition = [];
+    // TODO test
+    this._treeNodeById = [];
     var treeContent = Multivio.SearchTreeContent.create(newStruct[0]);
     this.set('content', treeContent);
     // add view 
@@ -566,6 +645,84 @@ Multivio.searchTreeController = SC.TreeController.create(
     this.globalStructure = null;
     this.treeStructure = null;
     this._treeLabelByPosition = undefined;
+  },
+  
+  // TODO test result navigation here instead of SearchController
+  
+  /**
+    Selects the first search result.
+  */
+  goToFirstResult: function () {
+    var sel = this.get('selection');
+    var newSel = SC.SelectionSet.create();
+    
+    Multivio.logger.debug("goToFirstResult");
+    
+    // select first item
+    newSel.addObject(this._treeNodeById[0]);
+    SC.RunLoop.begin();
+    this.set('selection', newSel);
+    SC.RunLoop.end();
+  },
+
+  /**
+    Selects the next search result.
+    If none selected, selects the first one.
+    If the last search result is selected, executing goToNextResult()
+    will select the first element.
+  */
+  goToNextResult: function () {
+    var sel = this.get('selection');
+    
+    Multivio.logger.debug("goToNextResult");
+    
+    // select first item if none selected,
+    if (SC.none(sel) || sel.get('length') === 0) {
+      this.goToFirstResult();
+    } else { // otherwise, next element in array 
+            // (go back to first element after reaching last)
+      var selObj = sel.firstObject();
+      var newSel = SC.SelectionSet.create();
+      var l = this._treeNodeById.length; //this.get('length');            
+      var currentIndex = selObj.id || Multivio.masterController.currentSearchResultSelectionIndex;
+      var nextObject = this._treeNodeById[++currentIndex % l]; //this.objectAt(++currentIndex % l);
+      newSel.addObject(nextObject);
+      SC.RunLoop.begin();
+      this.set('selection', newSel);
+      SC.RunLoop.end();
+    }
+  },
+  
+  /**
+    Selects the previous search result.
+    If none selected, selects the last one.
+    If the first search result is selected, executing goToPreviousResult()
+    will select the last element.
+  */
+  goToPreviousResult: function () {
+    var sel = this.get('selection');
+    var newSel = SC.SelectionSet.create();
+    var l = this._treeNodeById.length; //this.get('length');
+    
+    // select last item if none selected,
+    if (SC.none(sel) || sel.get('length') === 0) {
+      //newSel.addObject(this.objectAt(l - 1));
+      newSel.addObject(this._treeNodeById[l - 1]);
+      SC.RunLoop.begin();
+      this.set('selection', newSel);
+      SC.RunLoop.end();
+    } else { 
+      // otherwise, previous element in array 
+      // (go back to last element after reaching first)
+      var selObj = sel.firstObject();
+            
+      var currentIndex = selObj.id || Multivio.masterController.currentSearchResultSelectionIndex;
+      var prevObject = this._treeNodeById[(--currentIndex + l) % l];
+      newSel.addObject(prevObject);
+      SC.RunLoop.begin();
+      this.set('selection', newSel);
+      SC.RunLoop.end();
+    }
   }
 
 });

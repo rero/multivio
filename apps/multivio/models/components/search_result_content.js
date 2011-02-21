@@ -60,6 +60,11 @@ Multivio.SearchTreeContent =  SC.Object.extend({
       }
     }
     
+    // fill array of nodes by id
+    if (!SC.none(this.id)) {
+      Multivio.searchTreeController._treeNodeById[this.id] = this;
+    }
+    
     this.labelWidth = label.length;
     if (SC.none(children)) {
       this.treeItemIsExpanded = NO;
