@@ -277,8 +277,8 @@ Multivio.searchTreeController = SC.TreeController.create(
    
     this.set('content', []);
     
-    // TODO test debug always reinit
-    //if (this.get('bindings').length !== 0) {
+    // debug always reinit
+    // if (this.get('bindings').length !== 0) {
     if (YES) {
       this.reset();
       this.clear();
@@ -589,14 +589,14 @@ Multivio.searchTreeController = SC.TreeController.create(
     for (var i = 0; i < globs.length; i++) {
       var temp = globs[i];
       // add new children
-      // TODO test if none
+      // test if none
       if (!SC.none(temp) && temp.file_position.url === selected) {
         temp.childs = lgs;
         this.lastAdded.push(temp);
         
-        for (var j = 0; j < lgs.length; j++) {
-          newStruct.push(lgs[j]);
-          this.lastAdded.push(lgs[j]);
+        for (var z = 0; z < lgs.length; z++) {
+          newStruct.push(lgs[z]);
+          this.lastAdded.push(lgs[z]);
         }
       }
       newStruct.push(temp);
@@ -640,6 +640,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     this.globalStructure = null;
     this.treeStructure = null;
     this._treeLabelByPosition = undefined;
+    this._treeNodeById = undefined;
   },
   
   /**
@@ -676,9 +677,10 @@ Multivio.searchTreeController = SC.TreeController.create(
             // (go back to first element after reaching last)
       var selObj = sel.firstObject();
       var newSel = SC.SelectionSet.create();
-      var l = this._treeNodeById.length; //this.get('length');            
-      var currentIndex = selObj.id || Multivio.masterController.currentSearchResultSelectionIndex;
-      var nextObject = this._treeNodeById[++currentIndex % l]; //this.objectAt(++currentIndex % l);
+      var l = this._treeNodeById.length;           
+      var currentIndex = selObj.id || 
+                    Multivio.masterController.currentSearchResultSelectionIndex;
+      var nextObject = this._treeNodeById[++currentIndex % l]; 
       newSel.addObject(nextObject);
       SC.RunLoop.begin();
       this.set('selection', newSel);
@@ -695,7 +697,7 @@ Multivio.searchTreeController = SC.TreeController.create(
   goToPreviousResult: function () {
     var sel = this.get('selection');
     var newSel = SC.SelectionSet.create();
-    var l = this._treeNodeById.length; //this.get('length');
+    var l = this._treeNodeById.length;
     
     // select last item if none selected,
     if (SC.none(sel) || sel.get('length') === 0) {
@@ -709,7 +711,8 @@ Multivio.searchTreeController = SC.TreeController.create(
       // (go back to last element after reaching first)
       var selObj = sel.firstObject();
             
-      var currentIndex = selObj.id || Multivio.masterController.currentSearchResultSelectionIndex;
+      var currentIndex = selObj.id || 
+                    Multivio.masterController.currentSearchResultSelectionIndex;
       var prevObject = this._treeNodeById[(--currentIndex + l) % l];
       newSel.addObject(prevObject);
       SC.RunLoop.begin();
