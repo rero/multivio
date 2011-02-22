@@ -1158,14 +1158,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @return {Boolean} true if search successful
   */
   doSearch: function () {
-    var term = Multivio.getPath('views.searchPalette.contentView.'+
-        'innerSearch.searchQueryView').$input()[0].value;
+    // TODO removing this for now
+    //var term = Multivio.getPath('views.searchPalette.contentView.'+
+    //    'innerSearch.searchQueryView').$input()[0].value;
     // store last search query for later use
     var query = this.get('currentSearchTerm');
-    if (term !== query && !SC.none(term)) {
-      this.set('currentSearchTerm', term);
-      query = term;
-    }
+    //if (term !== query && !SC.none(term)) {
+    //  this.set('currentSearchTerm', term);
+    //  query = term;
+    //}
     // force UTF8 enconding of the query in order to avoid problems with
     // diacritics in Internet Explorer
     if (SC.browser.msie) {
@@ -1725,6 +1726,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // set file to search (default: all files, using referer url)
       this.set('currentSearchFile', this.get('url'));
 
+      // NOTE: we need to initialize currentFileList before searching
+      var phys = Multivio.CDM.get('physicalStructure');
+      Multivio.logger.debug('search ctrl init, phys: ' + phys);
+      this.set('currentFileList', [phys[this.get('url')][0]]);
+      this.currentFileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': this.get('url')});
+      
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);
 
