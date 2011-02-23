@@ -438,6 +438,8 @@ Multivio.views = SC.Page.design(
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         hasHorizontalScroller: NO,
         borderStyle: SC.BORDER_NONE,
+        thumbnailSelectionBinding: 'Multivio.thumbnailController.selection',
+        thumbnailController: Multivio.thumbnailController,
 
         contentView: SC.ListView.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },

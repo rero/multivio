@@ -9,7 +9,7 @@
 /**
   @class
 
-  View that contains thumbnails
+  ScrollView that contains thumbnails
 
   @author che
   @extends SC.ScrollView
@@ -19,11 +19,26 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
 /** @scope Multivio.ThumbnailView.prototype */ {
   
   /**
-    Binds to the thumbnail selection in the thumbnail controller
-
-    @binding {String}
-   */
-  thumbnailSelectionBinding: "Multivio.thumbnailController.selection",
+    Local variable used to create the binding to the selection of 
+    the controller.
+  */
+  thumbnailSelection: null,
+  
+  /**
+    Link to the controller
+  */
+  thumbnailController: null,
+    
+  /**
+    First time the childViews are created, update scroll position.
+      
+    @observes childViewsNeedLayout
+  */
+  childViewsDidChange: function () {
+    if (this.get('childViewsNeedLayout')) {
+      this.notifyPropertyChange('thumbnailSelection');
+    }
+  }.observes('childViewsNeedLayout'),
 
   /**
     Update the position of the scroll in the view if needed.
@@ -46,7 +61,7 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
       }
       // if needed scroll to the new position
       if (needToScroll) {
-        var selectionIndex = Multivio.thumbnailController.indexOf(selection);
+        var selectionIndex = this.get('thumbnailController').indexOf(selection);
         this.get('contentView').scrollToContentIndex(selectionIndex);
         Multivio.logger.debug('update thumbnail scroll'); 
       }
