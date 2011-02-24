@@ -8,7 +8,6 @@ License: See file license.js
 
 sc_require('views/content');
 sc_require('views/thumbnail');
-sc_require('views/thumbnail_content');
 sc_require('views/tree');
 sc_require('views/file_button');
 sc_require('views/metadata');
