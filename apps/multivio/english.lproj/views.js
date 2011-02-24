@@ -438,18 +438,45 @@ Multivio.views = SC.Page.design(
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         hasHorizontalScroller: NO,
         borderStyle: SC.BORDER_NONE,
-        thumbnailSelectionBinding: 'Multivio.thumbnailController.selection',
         thumbnailController: Multivio.thumbnailController,
 
         contentView: SC.ListView.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
           insertionOrientation: SC.VERTICAL_ORIENTATION,
           rowHeight: 130,
-          
-          exampleView: Multivio.ThumbnailContentView,
-          //useImageCache: NO,
           contentBinding: 'Multivio.thumbnailController.arrangedObjects',
-          selectionBinding: 'Multivio.thumbnailController.selection'
+          selectionBinding: 'Multivio.thumbnailController.selection',
+          
+          exampleView: SC.View.design({
+            childViews: 'thumbImage thumbLabel'.w(),
+            isSelectedDidChange: function () {
+              this.get('thumbLabel').updateLayer();
+            }.observes('isSelected'),
+            thumbImage: SC.View.design({
+              layout:  { top: 4, height: 100, centerX: 0, width: 100 },
+              classNames: 'mvo_transparent'.w(),
+              childViews: [
+                SC.ImageView.design({
+                  useImageCache: NO,
+                  classNames: 'centered-image',
+                  contentBinding: '.parentView.parentView.content',
+                  contentValueKey: 'url'
+                })
+              ]
+            }),
+            thumbLabel: SC.LabelView.design({
+              layout:  { bottom: 4, height: 18, centerX: 0, width: 46 },
+              textAlign: SC.ALIGN_CENTER,
+              contentBinding: '.parentView.content',
+              contentValueKey: 'pageNumber', 
+              render: function (context, firstTime) {
+                var isSelected = this.get('parentView').get('isSelected');
+                var classes = {'standard': !isSelected, 'selected': isSelected};
+                context.setClass(classes);
+                sc_super();
+              }
+            })
+          }).classNames('custom-thumbnail-item-view'.w())
         })
       })
     })

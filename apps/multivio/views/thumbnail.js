@@ -19,13 +19,7 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
 /** @scope Multivio.ThumbnailView.prototype */ {
   
   /**
-    Local variable used to create the binding to the selection of 
-    the controller.
-  */
-  thumbnailSelection: null,
-  
-  /**
-    Link to the controller
+    Link to a controller of type SC.ArrayController
   */
   thumbnailController: null,
     
@@ -36,7 +30,7 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
   */
   childViewsDidChange: function () {
     if (this.get('childViewsNeedLayout')) {
-      this.notifyPropertyChange('thumbnailSelection');
+        this._thumbnailSelectionDidChange();
     }
   }.observes('childViewsNeedLayout'),
 
@@ -47,7 +41,8 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
     @observes thumbnailSelection
   */
   _thumbnailSelectionDidChange: function () {
-    var selection = this.get('thumbnailSelection').firstObject();
+    var selection = this.get('thumbnailController').get('selection').
+        firstObject();
     if (!SC.none(selection)) {
       // retrieve the list of the thumbnails visible in the view
       var listView = this.get('contentView').get('childViews');
@@ -66,6 +61,6 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
         Multivio.logger.debug('update thumbnail scroll'); 
       }
     }
-  }.observes('thumbnailSelection')
+  }.observes('.thumbnailController.selection')
 
 });
