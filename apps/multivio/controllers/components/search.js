@@ -1940,13 +1940,27 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.set('currentSearchFile', this.get('url'));
 
       // NOTE: we need to initialize currentFileList before searching
-      var phys = Multivio.CDM.get('physicalStructure');
+      
+      var phys;
+      if (this.get('physicalStructureInitialised')) {
+        phys = this.get('physicalStructure');
+      } else {
+        // warning, phys can be -1
+        phys = Multivio.CDM.getPhysicalstructure(this.get('url'));
+        if (phys === -1) {
+          // store data to launch the search once we receive the file list
+          this.set('initial_search', YES);
+          this.set('initial_term', iq);
+          this.set('initial_url', this.get('url'));
+          return;
+        }
+      }
+      
       Multivio.logger.debug('search ctrl init, phys: ' + phys);
-      this.set('currentFileList', phys[this.get('url')]);
-      // TODO test not needed this.currentFileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': this.get('url')});
+      this.set('currentFileList', phys);
 
       Multivio.logger.debug('search ctrl init, url: ' + this.get('url'));
-      this.set('debug_file_list', phys[this.get('url')]);
+      this.set('debug_file_list', phys);
       this.set('debug_phys', phys);
       
       // clear init search term, avoid loops
@@ -1984,6 +1998,48 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('searchController initialized with url:' + url);
   },
+  
+  /**
+    This function is used to launch an initial search (coming from param
+    &search=<term> in URL), when we don't have the physical structure yet
+    to know the list of all files.
+  */
+  currentFileListDidChange: function () {
+    
+    Multivio.logger.debug('currentFileListDidChange');
+    
+    var cfl = this.get('currentFileList');
+    
+    if (SC.none(cfl)) return;
+    
+    var is = this.get('initial_search');
+    var it = this.get('initial_term');
+    var iu = this.get('initial_url');
+    
+    Multivio.logger.debug('currentFileListDidChange, is: %@, it: %@, iu: %@'.fmt(is, it, iu));
+
+    if (SC.none(is) || !is) return;
+    
+    // used stored data and clear it right away
+    this.set('currentSearchTerm', it);
+    this.set('initial_term', undefined);
+    
+    this.set('currentSearchFile', iu);
+    this.set('initial_url', undefined);
+    
+    this.set('initial_search', NO);
+    
+    // show search palette
+    Multivio.logger.debug('currentFileListDidChange, trying to display palette');
+    // get search button TODO button should be named in views.js
+    //var sbt = Multivio.getPath('views.mainContentView.leftButtons').
+    //                                                get('childViews')[2];
+    //Multivio.paletteController.showSearch(sbt);
+    
+    // launch search
+    this.doSearch();
+    
+  }.observes('currentFileList'),
   
   /**
     Reset variables and disconnect bindings
