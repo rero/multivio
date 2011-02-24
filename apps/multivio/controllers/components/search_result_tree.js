@@ -80,7 +80,10 @@ Multivio.searchTreeController = SC.TreeController.create(
       this._createRootNode();
     }
     
-    if (SC.none(this.fileList)) return;
+    if (SC.none(this.fileList)) {
+      Multivio.logger.debug('searchTreeController, _createRootAndFileNodes, no fileList, exit');
+      return;
+    }
     
     Multivio.logger.debug('searchTreeController, _createRootAndFileNodes()');
     
@@ -121,8 +124,11 @@ Multivio.searchTreeController = SC.TreeController.create(
     Multivio.logger.debug('searchTreeController, fileListDidChange()');
     
     // don't display files alone in tree 
-    //this._createRootAndFileNodes();
-    this._createRootNode();
+    // NOTE: creating the files here fixes the problem of search results not
+    // displaying in tree view on loading with &search=<term> in URL.
+    // But I don't actually know exactly why it fixes it...
+    this._createRootAndFileNodes();
+    //this._createRootNode();
     
     // check for existing search results when recreating the tree
     this.searchResultsDidChange();
@@ -173,7 +179,6 @@ Multivio.searchTreeController = SC.TreeController.create(
     Multivio.logger.debug('searchTreeController, searchResultsDidChange(), enter?: ' + search_results);
     
     // if no search results, init empty structure with files
-    // TODO? maybe don't display files if no result?
     if (SC.none(search_results)) {
       Multivio.logger.debug('searchTreeController, searchResultsDidChange(), clearing tree...');
       // clear tree if there are no results
@@ -200,12 +205,14 @@ Multivio.searchTreeController = SC.TreeController.create(
     for (fi = 0; fi < files.length; fi++) {
       cf = files[fi];
   
+      Multivio.logger.debug('searchTreeController, searchResultsDidChange(), file_url: ' + cf.url);
+  
       // skip 'all files' entry
       if (cf.url === ref_url) continue;
             
       // NOTE: need to add the files again since we rebuild the whole subtree 
       // under the root node.
-      // build and add file node 
+      // build file node 
       file_node = {
         file_position: {
           index: null,
@@ -293,12 +300,9 @@ Multivio.searchTreeController = SC.TreeController.create(
 
     // create the root node for the first time
     if (SC.none(this.treeStructure)) {
-      var metadata = Multivio.CDM.getFileMetadata(url);
-      if (metadata !== -1) {
-        //var ref = Multivio.CDM.getReferer();
-        //this._createRootAndRefererNodes(metadata.title, ref);
-        this._createRootNode();
-      }
+      //var ref = Multivio.CDM.getReferer();
+      //this._createRootAndRefererNodes(metadata.title, ref);
+      this._createRootNode();
     }
     // it not the first time we call initialize reset treeStructure
     else {
@@ -407,8 +411,9 @@ Multivio.searchTreeController = SC.TreeController.create(
     // create the globalStructure
     var tempStruct = [];
     tempStruct.push(structure[0]);
-    tempStruct.push(structure[1]);
-    for (var i = 2; i < structure.length; i++) {
+    //tempStruct.push(structure[1]); // note: not using referer node anymore
+    for (var i = 1; i < structure.length; i++) { 
+    //for (var i = 2; i < structure.length; i++) {
       var oneEl = structure[i];
       if (oneEl.childs) {
         var res = this.getListOfChilds(oneEl);
@@ -419,6 +424,7 @@ Multivio.searchTreeController = SC.TreeController.create(
       } 
     }
     this.set('globalStructure', tempStruct);
+
     this._treeLabelByPosition = [];
  
     this._treeNodeById = [];
@@ -556,6 +562,9 @@ Multivio.searchTreeController = SC.TreeController.create(
     
     // retrieve the old structure and append at the right position the new one
     var globs = this.get('globalStructure');
+    
+    if (SC.none(globs)) return;
+    
     var selected = Multivio.masterController.get('currentFile');
     var newStruct = [];
     if (lgs.length === 1) {

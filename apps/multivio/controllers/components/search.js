@@ -695,7 +695,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
                                       current_zoom_factor, is_original,
                                       url) {
 
-    Multivio.logger.debug('addHighlight, tlwh: %@,%@,%@,%@'.fmt(top_, left_, width_, height_));
+    //Multivio.logger.debug('addHighlight, tlwh: %@,%@,%@,%@'.fmt(top_, left_, width_, height_));
 
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
@@ -1420,6 +1420,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // Multivio.CDM.searchResults[<referer_url>], in the order of the files
       // as they appear in the list.
       var file_list = this.get('currentFileList');
+      Multivio.logger.debug('doSearch ALL: file_list: %@, length: %@'.fmt(file_list, file_list.length));
       for (var i = 0; i < file_list.length; i++) {
         
         // don't send request for referer url,
@@ -1653,6 +1654,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     var ref = this.get('url');
     var searchFile = this.get('currentSearchFile');
+    
+    Multivio.logger.debug('CDMsearchResultsDidChange, ref: %@, searchFile: %@'.fmt(ref, searchFile));
     
     if (!SC.none(Multivio.CDM.searchResults)) {
       var listOfUrls = Multivio.masterController.listOfFiles;
@@ -1939,8 +1942,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // NOTE: we need to initialize currentFileList before searching
       var phys = Multivio.CDM.get('physicalStructure');
       Multivio.logger.debug('search ctrl init, phys: ' + phys);
-      this.set('currentFileList', [phys[this.get('url')][0]]);
-      this.currentFileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': this.get('url')});
+      this.set('currentFileList', phys[this.get('url')]);
+      // TODO test not needed this.currentFileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': this.get('url')});
+
+      Multivio.logger.debug('search ctrl init, url: ' + this.get('url'));
+      this.set('debug_file_list', phys[this.get('url')]);
+      this.set('debug_phys', phys);
       
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);

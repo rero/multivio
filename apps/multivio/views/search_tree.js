@@ -11,8 +11,6 @@
 
   View that contains the search results tree.
 
-  TODO 
-
   @author dwy
   @extends SC.ScrollView
   @since 0.4.0
@@ -51,7 +49,7 @@ Multivio.SearchTreeView = SC.ScrollView.extend(
       if (needToScroll) {
         var arrayOfTree = Multivio.searchTreeController.get('arrangedObjects');
         
-        // TODO test dwy
+        // sanity check
         if (SC.none(arrayOfTree)) return;
         
         var selectionIndex = arrayOfTree.indexOf(treeS);
