@@ -1158,15 +1158,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @return {Boolean} true if search successful
   */
   doSearch: function () {
-    // TODO removing this for now
-    //var term = Multivio.getPath('views.searchPalette.contentView.'+
-    //    'innerSearch.searchQueryView').$input()[0].value;
+
     // store last search query for later use
     var query = this.get('currentSearchTerm');
-    //if (term !== query && !SC.none(term)) {
-    //  this.set('currentSearchTerm', term);
-    //  query = term;
-    //}
+
     // force UTF8 enconding of the query in order to avoid problems with
     // diacritics in Internet Explorer
     if (SC.browser.msie) {
