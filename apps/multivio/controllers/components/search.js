@@ -652,7 +652,11 @@ Multivio.HighlightController = SC.ArrayController.extend(
         
         // add 'All files' search option to file list
         var fileList = Multivio.CDM.clone(phys[url]);
-        fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});
+        // NOTE: don't add 'All files' if there's only one file
+        if (phys[url].length > 1) {
+          fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});          
+        }
+
         //testthis.set('currentFileList', fileList);
         // NOTE: set specifically in both controllers TODO find better solution
         Multivio.selectionController.set('currentFileList', fileList);
@@ -1658,7 +1662,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var searchFile = this.get('currentSearchFile');
     
     Multivio.logger.debug('CDMsearchResultsDidChange, ref: %@, searchFile: %@'.fmt(ref, searchFile));
-    
+
     if (!SC.none(Multivio.CDM.searchResults)) {
       var listOfUrls = Multivio.masterController.listOfFiles;
       var isFinish = YES;
@@ -1686,7 +1690,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
             isFinish = NO;
           }
           else {
-            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;
+            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;              
           }
         }
       }

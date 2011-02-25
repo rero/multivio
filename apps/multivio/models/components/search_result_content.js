@@ -38,7 +38,7 @@ Multivio.SearchTreeContent =  SC.Object.extend({
   */
   treeItemChildren: function () {
     
-    Multivio.logger.debug('SearchTreeContent, treeItemChildren, childs: ' + this.childs);
+    //Multivio.logger.debug('SearchTreeContent, treeItemChildren, childs: ' + this.childs);
     
     var ret = [];
     var children = this.childs;
