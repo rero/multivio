@@ -199,7 +199,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     var structure = [], children = [];
     var fi, ri, res = undefined, result_id = 0;
     var ref_url = Multivio.CDM.getReferer();
-    
+    var single_file = files.length === 1;
     Multivio.logger.debug('searchTreeController, searchResultsDidChange(), #files: ' + files.length);
     
     for (fi = 0; fi < files.length; fi++) {
@@ -207,8 +207,8 @@ Multivio.searchTreeController = SC.TreeController.create(
   
       Multivio.logger.debug('searchTreeController, searchResultsDidChange(), file_url: ' + cf.url);
   
-      // skip 'all files' entry
-      if (cf.url === ref_url) continue;
+      // skip 'all files' entry, let pass if it's a single file
+      if (!single_file && cf.url === ref_url) continue;
             
       // NOTE: need to add the files again since we rebuild the whole subtree 
       // under the root node.

@@ -1382,6 +1382,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       query = unescape(encodeURIComponent(query));
     }
 
+    Multivio.logger.debug('doSearch, query: ' + query);
+
     this.set('lastSearchQuery', query);
     // clear previous results
     this.clearResults();
