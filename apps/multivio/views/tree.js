@@ -19,37 +19,49 @@ Multivio.TreeView = SC.ScrollView.extend(
 /** @scope Multivio.TreeView.prototype */ {
 
   /**
-    Binds to the treeController's selection
-    
-    @binding
+    Link to a controller of type SC.TreeController
   */  
-  treeSelection: null,
-  treeSelectionBinding: SC.Binding.oneWay('Multivio.treeController.selection'),
+  treeController: null,
   
   /**
-    Updates scrollposition by observing changes of the treeController selection.
+    First time the childViews are created, update scroll position.
+    
+    @observes childViewsNeedLayout
+  */
+  childViewsDidChange: function () {
+    if (this.get('childViewsNeedLayout') && this.get('contentView').
+        get('childViews').get('length') !== 0) {
+      this.treeSelectionDidChange();
+    }
+  }.observes('childViewsNeedLayout'),
+  
+  /**
+    Updates scroll position by observing changes of the treeController selection.
     
     @observes treeSelection
   */  
   treeSelectionDidChange: function () {
-    var selection = this.get('treeSelection');
+    var selection = this.get('treeController').get('selection').firstObject();
     if (!SC.none(selection)) {
-      var treeS = this.get('treeSelection').firstObject();
       var needToScroll = YES;
       var childViews = this.get('contentView').get('childViews');
       // Don't verify the first and the last child to force to scroll
       for (var j = 1; j < childViews.get('length') - 1 ; j++) {
         var treeBranch = childViews[j].content;
-        if (treeBranch === treeS) {
+        if (treeBranch === selection) {
           needToScroll = NO;
           break;
         }
       }
       var leftScroll = this.get('horizontalScrollOffset');
       if (needToScroll) {
-        var arrayOfTree = Multivio.treeController.get('arrangedObjects');
-        var selectionIndex = arrayOfTree.indexOf(treeS);
-        // get the scroll offset before the move and set it after
+        var arrayOfTree = this.get('treeController').get('arrangedObjects');
+        var selectionIndex = arrayOfTree.indexOf(selection);
+        // add 1 because the horizontalScroll is not visible the firstTime
+        // this method is call
+        if (!this.get('isHorizontalScrollerVisible')) {
+          selectionIndex++;
+        }
         this.get('contentView').scrollToContentIndex(selectionIndex);
         Multivio.logger.debug('update tree scroll'); 
       }
@@ -58,7 +70,7 @@ Multivio.TreeView = SC.ScrollView.extend(
       }
       this.set('horizontalScrollOffset', leftScroll);
     }
-  }.observes('treeSelection')
+  }.observes('.treeController.selection')
 });
 
 Multivio.TreeLabelView = SC.ListItemView.extend(
@@ -68,13 +80,13 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
   render: function (context, firstTime) {
     sc_super();
     var lab = this.get('content').label;
-    // TODO: find a better method to calculate size
-    var labelSize = SC.metricsForString(lab, 
-        '"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;');
-    var newWith = labelSize.width + ((this.get('outlineLevel')+1)*32);
+    var list = context._classNames;
+    var newLabelSize =   SC.metricsForString(lab, list.toString());  
+    var newWidth = newLabelSize.width + parseInt(context._STYLE_PAIR_ARRAY[1],
+        10) + 24;
     //update size if necessary
-    if (this.get('parentView').get('frame').width < newWith) {
-      this.get('parentView').adjust('width', newWith);
+    if (this.get('parentView').get('frame').width < newWidth) {
+      this.get('parentView').adjust('width', newWidth);
     }
   },
     

@@ -514,6 +514,7 @@ Multivio.views = SC.Page.design(
       innerTree:  Multivio.TreeView.design({
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
+        treeController: Multivio.treeController,
 
         contentView: SC.ListView.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
