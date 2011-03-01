@@ -113,14 +113,14 @@ Multivio.HighlightContentView = SC.View.extend(
   //searchResultsBinding: 'Multivio.searchController.[]',
   
   /**
-    Binds to the zoom factor in the zoom controller.
-    This binding is read only.
+    Variable for a binding to the zoom factor in the zoom controller.
+    The binding must be specified when instantiating this view class.
   
     @binding {Number}
    */
   zoomFactor: null, 
-  zoomFactorBinding:
-      SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
+  //zoomFactorBinding:
+  //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
   
   /**
     Binds to the currentValue in the rotate controller.

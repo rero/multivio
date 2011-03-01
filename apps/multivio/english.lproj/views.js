@@ -422,6 +422,7 @@ Multivio.views = SC.Page.design(
 
           highlightpane: Multivio.HighlightContentView.design({
             layout: { top: 0, left: 0, right: 0, minWidth: 1 },
+            /* bindings */
             selectedTextStringBinding: 
                 SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
             currentPageBinding: 
@@ -432,7 +433,9 @@ Multivio.views = SC.Page.design(
                 SC.Binding.oneWay(
                   'Multivio.masterController.currentSearchResultSelectionIndex'),
             selectionsBinding: 'Multivio.selectionController.[]',
-            searchResultsBinding: 'Multivio.searchController.[]'
+            searchResultsBinding: 'Multivio.searchController.[]',
+            zoomFactorBinding:
+                SC.Binding.oneWay('Multivio.zoomController.zoomRatio')
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })
