@@ -62,15 +62,16 @@ Multivio.HighlightContentView = SC.View.extend(
   //            SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
   
   /**
-    Binds to the search result selection in the search controller.
-    This binding is read only.
+    Variable for a binding to the search result selection in the search
+    controller.
+    The binding must be specified when instantiating this view class.
 
-    @binding {SC.Selection}
+    @binding {Number}
   */
   searchResultSelectionIndex: null,
-  searchResultSelectionIndexBinding: 
-                SC.Binding.oneWay(
-                  'Multivio.masterController.currentSearchResultSelectionIndex'),
+  //searchResultSelectionIndexBinding: 
+  //              SC.Binding.oneWay(
+  //                'Multivio.masterController.currentSearchResultSelectionIndex'),
 //                    SC.Binding.oneWay('Multivio.searchController.selection'),
   
   /** 

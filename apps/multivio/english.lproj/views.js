@@ -427,7 +427,10 @@ Multivio.views = SC.Page.design(
             currentPageBinding: 
                 SC.Binding.oneWay("Multivio.masterController.currentPosition"),
             isLoadingContentBinding: 
-                SC.Binding.oneWay('Multivio.masterController.isLoadingContent')        
+                SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
+            searchResultSelectionIndexBinding: 
+                SC.Binding.oneWay(
+                  'Multivio.masterController.currentSearchResultSelectionIndex')
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })
