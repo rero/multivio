@@ -47,8 +47,9 @@ Multivio.HighlightContentView = SC.View.extend(
     @binding {Number}
   */
   currentPage: null,
-  currentPageBinding: 
-      SC.Binding.oneWay("Multivio.masterController.currentPosition"),
+  // TODO code review put reference to controller in views.js
+  //currentPageBinding: 
+  //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
   
   /**
       Binds to the masterController's isLoadingContent.

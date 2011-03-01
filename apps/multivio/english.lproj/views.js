@@ -423,7 +423,9 @@ Multivio.views = SC.Page.design(
           highlightpane: Multivio.HighlightContentView.design({
             layout: { top: 0, left: 0, right: 0, minWidth: 1 },
             selectedTextStringBinding: 
-                SC.Binding.oneWay("Multivio.selectionController.selectedTextString")
+                SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
+            currentPageBinding: 
+                SC.Binding.oneWay("Multivio.masterController.currentPosition")
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })
