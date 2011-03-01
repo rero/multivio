@@ -15,7 +15,7 @@ sc_require('views/file_button');
 sc_require('views/metadata');
 sc_require('views/search');
 sc_require('views/navigation');
-sc_require('views/magnifying_glass');
+sc_require('views/overview');
 sc_require('mixins/interface');
 
 
@@ -99,14 +99,14 @@ Multivio.views = SC.Page.design(
           layout: { centerX: -272, centerY: 0,  width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
-          name: 'magnifyingGlass',
-          toolTip: '_MagnifyingGlass'.loc(),
+          name: 'overview',
+          toolTip: '_Overview'.loc(),
           renderStyle: "renderImage",
           icon: 'loupe_new',
           theme: 'mvo-button',
           isEnabledBinding: 'Multivio.paletteController.isGlassButtonEnabled',
           target: "Multivio.paletteController",
-          action: "showMagnifyingGlass"
+          action: "showOverview"
         }),
 
         panButton: SC.ButtonView.design({
@@ -565,11 +565,11 @@ Multivio.views = SC.Page.design(
     })
   }),
   
-  // magnifying glass
-  magnifyingPalette: SC.PalettePane.design({
+  // miniature overview
+  overviewPalette: SC.PalettePane.design({
     isAnchored: YES,
     classNames: 'mvo-transparent',
-    contentView: Multivio.MagnifyingGlassView.design({
+    contentView: Multivio.OverviewView.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 }
     })
   }),

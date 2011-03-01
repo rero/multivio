@@ -22,7 +22,7 @@ SC.stringsFor('French', {
   '_Help': 'Aide',
   '_ShowToolbar': 'Bloquer ou débloquer l\'affichage permanente de la barre d\'outils',
   '_Download': 'Télécharger le fichier courant',
-  '_MagnifyingGlass': 'Afficher ou masquer la vue d\'ensemble',
+  '_Overview': 'Afficher ou masquer la vue d\'ensemble',
   '_Pan': 'Activer ou désactiver le mode \'déplacement\'',
   '_RotateLeft': 'Pivoter à gauche',
   '_RotateRight': 'Pivoter à droite',

@@ -9,14 +9,14 @@
 /**
   @class
 
-  View that contains create a magnifying glass
+  View that contains a miniature overview of the content
 
   @author che
   @extends View
   @since 0.4.0
 */
-Multivio.MagnifyingGlassView = SC.View.extend( 
-/** @scope Multivio.MagnifyingGlassView.prototype */ {
+Multivio.OverviewView = SC.View.extend( 
+/** @scope Multivio.OverviewView.prototype */ {
   
   /**
     Binds to the imageController selection.

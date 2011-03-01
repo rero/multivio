@@ -33,7 +33,7 @@ Multivio.paletteController = SC.ObjectController.create(
     If the button is active the toolbar is permanently visible
   */
   isHorizontalToolbarActive: null,
-  isMagnifyingGlassActive: null,
+  isOverviewActive: null,
   isGlassButtonEnabled: NO,
 
   
@@ -326,16 +326,16 @@ Multivio.paletteController = SC.ObjectController.create(
   },
   
   /**
-    MagnifyingGlass button has been pressed show the palette or hide it
+    Overview button has been pressed show the palette or hide it
 
     @param {SC.Button} button the button pressed
   */
-  showMagnifyingGlass: function (button) {
-    var mgView = Multivio.getPath('views.magnifyingPalette');
+  showOverview: function (button) {
+    var mgView = Multivio.getPath('views.overviewPalette');
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
       button.set('isActive', YES);
-      this.set('isMagnifyingGlassActive', YES);
+      this.set('isOverviewActive', YES);
       this.activeButton = button;
       // create a custom layout
       var layout = [];
@@ -349,7 +349,7 @@ Multivio.paletteController = SC.ObjectController.create(
       mgView.get('contentView').drawZone();
     }
     else {
-      this.set('isMagnifyingGlassActive', NO);
+      this.set('isOverviewActive', NO);
       button.set('isActive', NO);
       //mgView.removeAllChildren();
       // if activeButton = button close the palette
@@ -372,9 +372,9 @@ Multivio.paletteController = SC.ObjectController.create(
   glassButtonDidChange: function () {
     if (!this.get('isGlassButtonEnabled') && !SC.none(this.activeButton)) {
       this.activeButton.set('isActive', NO);
-      this.set('isMagnifyingGlassActive', NO);
+      this.set('isOverviewActive', NO);
       this.activeButton = null;
-      Multivio.getPath('views.magnifyingPalette').remove();
+      Multivio.getPath('views.overviewPalette').remove();
     }
   }.observes('isGlassButtonEnabled'),
   
@@ -401,8 +401,8 @@ Multivio.paletteController = SC.ObjectController.create(
       /* CAUTION: Do not use the name showHelp() - it's a JavaScript reserved word */
       this.showHelpPalette(button);
       break;
-    case 'magnifyingGlass':
-      this.showMagnifyingGlass(button);
+    case 'overview':
+      this.showOverview(button);
       break;
       
     default:
@@ -437,8 +437,8 @@ Multivio.paletteController = SC.ObjectController.create(
       case 'help':
         Multivio.getPath('views.helpPalette').remove();
         break;
-      case 'magnifyingGlass':
-        Multivio.getPath('views.magnifyingPalette').remove();
+      case 'overview':
+        Multivio.getPath('views.overviewPalette').remove();
         break;  
       
       default:

@@ -437,9 +437,9 @@ Multivio.ContentView = SC.ScrollView.extend(
         this.get('contentView').adjust('left', undefined);
       }
     }
-    // if magnifying palette is active, refresh draw zone
-    if (Multivio.paletteController.get('isMagnifyingGlassActive')) {
-      Multivio.getPath('views.magnifyingPalette').get('contentView').drawZone();
+    // if overview palette is active, refresh draw zone
+    if (Multivio.paletteController.get('isOverviewActive')) {
+      Multivio.getPath('views.overviewPalette').get('contentView').drawZone();
     }
   },
   
@@ -492,14 +492,14 @@ Multivio.ContentView = SC.ScrollView.extend(
   },
   
   /**
-    Refresh draw zone of the magnifying glass palette observing offsets of scrolls
+    Refresh draw zone of the overview palette observing offsets of scrolls
     
     
     @observes verticalScrollOffset, horizontalScrollOffset 
   */
   scrollOffsetDidChange: function () {
-    if (Multivio.paletteController.get('isMagnifyingGlassActive')) {
-      Multivio.getPath('views.magnifyingPalette').get('contentView').drawZone();
+    if (Multivio.paletteController.get('isOverviewActive')) {
+      Multivio.getPath('views.overviewPalette').get('contentView').drawZone();
     }
   }.observes('verticalScrollOffset', 'horizontalScrollOffset'),
   

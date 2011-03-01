@@ -22,7 +22,7 @@ SC.stringsFor('English', {
   '_Help': 'Help',
   '_ShowToolbar': 'Show the toolbar permanently or only by hovering with the mouse pointer',
   '_Download': 'Download the current file',
-  '_MagnifyingGlass': 'Show or hide the overview',
+  '_Overview': 'Show or hide the overview',
   '_Pan': 'Activate or deactivate the \'pan\' mode',
   '_RotateLeft': 'Rotate left',
   '_RotateRight': 'Rotate right',
