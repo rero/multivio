@@ -72,7 +72,7 @@ Multivio.HighlightContentView = SC.View.extend(
   //searchResultSelectionIndexBinding: 
   //              SC.Binding.oneWay(
   //                'Multivio.masterController.currentSearchResultSelectionIndex'),
-//                    SC.Binding.oneWay('Multivio.searchController.selection'),
+  //                    SC.Binding.oneWay('Multivio.searchController.selection'),
   
   /** 
     Determines whether the highlight view (this) needs to be redrawn or not.
@@ -92,18 +92,20 @@ Multivio.HighlightContentView = SC.View.extend(
   coordinatesNeedUpdate: NO,
   
   /** 
-    Binds to the selectionController's content,
+    Variable for a binding to the selectionController's content,
     an array of user selected zones.
+    The binding must be specified when instantiating this view class.
 
     @binding {SC.Array}
 
   */
   selections: [],
-  selectionsBinding: 'Multivio.selectionController.[]',
+  //selectionsBinding: 'Multivio.selectionController.[]',
   
   /** 
     Binds to the searchController's content,
     an array of search results.
+    The binding must be specified when instantiating this view class.
     
     @binding {SC.Array}
   */
