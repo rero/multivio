@@ -22,7 +22,7 @@ Multivio.HighlightContentView = SC.View.extend(
 /** @scope Multivio.HighlightContentView.prototype */ {
   
   /** 
-    div which contains the selected text.
+    'div' which contains the selected text.
     
     @property {SC.TextFieldView}
     @default null
@@ -30,8 +30,8 @@ Multivio.HighlightContentView = SC.View.extend(
   selectedTextDiv: null,
   
   /**
-    Binds to the selectionController's selectedTextString.
-    This binding is read only.
+    Variable for a binding to the selectionController's selectedTextString.
+    The binding must be specified when instantiating this view class.
     
     @binding {SC.String}
   */
@@ -41,8 +41,8 @@ Multivio.HighlightContentView = SC.View.extend(
   //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
   
   /**
-    Binds to the masterController's currentPosition.
-    This binding is read only.
+    Variable for a binding to the masterController's currentPosition.
+    The binding must be specified when instantiating this view class.
     
     @binding {Number}
   */
@@ -52,14 +52,14 @@ Multivio.HighlightContentView = SC.View.extend(
   //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
   
   /**
-      Binds to the masterController's isLoadingContent.
-      This binding is read only.
+    Variable for a binding to the masterController's isLoadingContent.
+    The binding must be specified when instantiating this view class.
       
-      @binding {Boolean}
+    @binding {Boolean}
   */
   isLoadingContent: null,
-  isLoadingContentBinding: 
-              SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
+  //isLoadingContentBinding: 
+  //            SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
   
   /**
     Binds to the search result selection in the search controller.
@@ -316,6 +316,8 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes currentPage
   */
   currentPageDidChange: function () {
+
+    Multivio.logger.debug('HL::currentPageDidChange()');
 
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
