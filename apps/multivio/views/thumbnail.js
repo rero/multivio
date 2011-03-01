@@ -30,7 +30,7 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
   */
   childViewsDidChange: function () {
     if (this.get('childViewsNeedLayout')) {
-        this._thumbnailSelectionDidChange();
+      this._thumbnailSelectionDidChange();
     }
   }.observes('childViewsNeedLayout'),
 
@@ -44,22 +44,9 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
     var selection = this.get('thumbnailController').get('selection').
         firstObject();
     if (!SC.none(selection)) {
-      // retrieve the list of the thumbnails visible in the view
-      var listView = this.get('contentView').get('childViews');
-      var needToScroll = YES;
-      // don't verify the first and the last child to force to scroll
-      for (var i = 1; i < listView.get('length') - 1; i++) {
-        var thumb = listView[i].content;
-        if (thumb === selection) {
-          needToScroll = NO;
-        }
-      }
-      // if needed scroll to the new position
-      if (needToScroll) {
-        var selectionIndex = this.get('thumbnailController').indexOf(selection);
-        this.get('contentView').scrollToContentIndex(selectionIndex);
-        Multivio.logger.debug('update thumbnail scroll'); 
-      }
+      var selectionIndex = this.get('thumbnailController').indexOf(selection);
+      this.get('contentView').scrollToContentIndex(selectionIndex);
+      Multivio.logger.debug('update thumbnail scroll'); 
     }
   }.observes('.thumbnailController.selection')
 

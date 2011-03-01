@@ -41,30 +41,20 @@ Multivio.TreeView = SC.ScrollView.extend(
     @observes treeSelection
   */  
   treeSelectionDidChange: function () {
-    var selection = this.get('treeController').get('selection').firstObject();
+    var selection = this.get('treeController').get('selection');
     if (!SC.none(selection)) {
-      var needToScroll = YES;
-      var childViews = this.get('contentView').get('childViews');
-      // Don't verify the first and the last child to force to scroll
-      for (var j = 1; j < childViews.get('length') - 1 ; j++) {
-        var treeBranch = childViews[j].content;
-        if (treeBranch === selection) {
-          needToScroll = NO;
-          break;
-        }
-      }
       var leftScroll = this.get('horizontalScrollOffset');
-      if (needToScroll) {
-        var arrayOfTree = this.get('treeController').get('arrangedObjects');
-        var selectionIndex = arrayOfTree.indexOf(selection);
-        // add 1 because the horizontalScroll is not visible the firstTime
-        // this method is call
-        if (!this.get('isHorizontalScrollerVisible')) {
-          selectionIndex++;
-        }
-        this.get('contentView').scrollToContentIndex(selectionIndex);
-        Multivio.logger.debug('update tree scroll'); 
+      var selectionIndex = this.get('treeController').get('arrangedObjects')
+          .indexOf(selection.firstObject());
+
+      // add 1 because the horizontalScroll is not visible the firstTime
+      // this method is call
+      if (!this.get('isHorizontalScrollerVisible')) {
+        selectionIndex++;
       }
+      this.get('contentView').scrollToContentIndex(selectionIndex);
+      Multivio.logger.debug('update tree scroll'); 
+
       if (leftScroll === this.get('maximumHorizontalScrollOffset')) {
         leftScroll = 0;
       }
