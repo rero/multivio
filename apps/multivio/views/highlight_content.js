@@ -36,8 +36,9 @@ Multivio.HighlightContentView = SC.View.extend(
     @binding {SC.String}
   */
   selectedTextString: null,
-  selectedTextStringBinding: 
-      SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
+  // TODO code review put reference to controller in views.js
+  //selectedTextStringBinding: 
+  //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
   
   /**
     Binds to the masterController's currentPosition.
@@ -664,7 +665,11 @@ Multivio.HighlightContentView = SC.View.extend(
       this.set('highlightNeedsUpdate', NO);
     
       // update scroll position
-      this.updateSearchResultScroll();
+      // TODO test don't update scroll on each render, causes issues with
+      // user selection
+      // (when trying to select text on the same page as the selected search
+      // result, keeps scrolling to it)
+      //this.updateSearchResultScroll();
     }
   },
   
