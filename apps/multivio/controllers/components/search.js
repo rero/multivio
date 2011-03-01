@@ -99,6 +99,17 @@ Multivio.HighlightController = SC.ArrayController.extend(
                           notNull().notEmpty(),
 
   /**
+    User selection rectangle. A modification of the selection triggers the
+    computation of the selected text (getSelectionsOnLinesBetweenPoints).
+    
+    Format of the data: {top: , left: , width: , height: }
+    
+    TODO: investigate if we can compute the selected text all the while dragging
+    the mouse during selection, or on set intervals.
+  */
+  userSelection: undefined,
+
+  /**
     Selected text, string only
    
     @property {SC.String}
@@ -107,18 +118,44 @@ Multivio.HighlightController = SC.ArrayController.extend(
   selectedTextString:  undefined,
 
   /**
-    When the content changes, get the text located inside the selection.
+    Listen to change of the user selection on the content
     
-    @observes Multivio.selectionController.[]
+    NOTE: need to normalise those coordinates before trying to find the 
+    selected words.
+    
   */
-  contentDidChange: function () {
-      
-    if (this.get('length') === 0) return;
-    
-    Multivio.selectionController.getSelectedText();
-    
-  }.observes('Multivio.selectionController.[]'),
+  userSelectionDidChange: function () {
   
+    // first, get normalised coordinates
+    var c = this.get('userSelection'), o;
+    
+    // get rotation angle for update
+    var angle = this.get('rotateValue');
+    
+    // get zoom factor for update
+    var zoom_factor = this.get('zoomFactor');
+    
+    // get unzoomed coordinates
+    o = this._getOriginalZone(c, zoom_factor);
+    
+    // compute new coordinates according to current angle
+    // and unzoomed coordinates
+    o = this.getUnrotatedCoords(o, angle);
+    
+    // get array of selected words
+    var words = this.getSelectionsOnLinesBetweenPoints(o.left,  o.top, 
+                                           o.left + o.width, 
+                                           o.top  + o.height);                          
+    // store text 
+    // NOTE: view listens to changes on 'selectedTextString'
+    var text = '';
+    if (!SC.none(words)) text = words.join(' ');
+    
+    Multivio.selectionController.set('selectedTextString', text);
+    
+    Multivio.logger.debug('userSelectionDidChange: text: [%@]'.fmt(text));
+    
+  }.observes('userSelection'),  
 
   /**
     Receive the selected text from the CDM and
@@ -127,8 +164,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     NOTE: as of now, only using the first object, ignoring any additional
     objects.
     
+    NOTE: obsolete
+    
   */
-  selectedTextDidChange: function () {
+  /*selectedTextDidChange: function () {
     
     var url = Multivio.masterController.get('currentFile');
     var t = this.get('selectedText')[url];
@@ -150,7 +189,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // for the next selection
     Multivio.CDM.set('selectedText', undefined);
         
-  }.observes('selectedText'),
+  }.observes('selectedText'),*/
 
   /**
     Returns the text located inside all the highlight zones.
@@ -162,7 +201,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     @returns {String} the selected text
     
   */
-  getSelectedText: function () {
+  /*getSelectedText: function () {
     
     if (this.get('length') === 0) return '';
     
@@ -177,12 +216,14 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // send request to server to get text
     // NOTE: coordinates are original, unrotated
-    t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
-                                     x1, y1, x2, y2, angle);
+    //t = Multivio.CDM.getSelectedText(z.url, z.page_number, 
+    //                                 x1, y1, x2, y2, angle);
+    // TODO multiline selection
+    //this.getSelectionsOnLinesBetweenPoints(x1, y1, x2, y2);
     
     return t;
     
-  },
+  },*/
 
   /**
     Select the text field on the view that contains the text selection,
@@ -285,12 +326,12 @@ Multivio.HighlightController = SC.ArrayController.extend(
     Multivio.logger.debug('getSelectionsOnLinesBetweenPoints(%@,%@,%@,%@)'.fmt(x1, y1, x2, y2));
     
     // discard too small selections
-    if (Math.abs(x2 - x1) < 3 || Math.abs(y2 - y1) < 3) return;
+    if (Math.abs(x2 - x1) < 3 || Math.abs(y2 - y1) < 3) return [];
     
     var pi = this._getPageIndexing();
     
-    // no page indexing available :/
-    if (SC.none(pi) || pi === -1) return -1;
+    // no page indexing available
+    if (SC.none(pi) || pi === -1) return [];
     
     // build result structure
     var result = [];
@@ -298,43 +339,192 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // select the lines of the current page
     var current_page = Multivio.masterController.get('currentPosition');
     var lines = pi.pages[current_page].lines;
-
-    // parse lines, search for the first selected one
-    var l, start = -1, stop = -1;
+    var single_line = undefined, _loop_start_index = 0;
+    // line coordinates for the creation of highlight zones
+    var lx1 = 0, ly1 = 0, lx2 = 0, ly2 = 0; 
+    
+    // parse lines, look for the first selected one
+    var l, start = -1, stop = -1, word_start = -1, word_stop = -1,
+      selected_words = [], words_1 = [], words_2 = [], words_3 = [];
     for (var i = 0; i < lines.length; i++) {
       l = lines[i];
       
-      Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
+      //Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
       
       // found the first line
       if (start === -1 && y1 <= l.t && y2 >= l.t) {
         start = i;
-        Multivio.logger.debug('line selection start');
+        //Multivio.logger.debug('line selection start');
       } 
       
       // found the last line
       if (start !== -1 && stop === -1 && y2 <= (l.t + l.h)) {
         
         stop = i;
-        Multivio.logger.debug('line selection stop');
-        result.addObject(l);
-        // TODO parse words
-        /*while (YES) {
+        //Multivio.logger.debug('line selection stop');
+        // store the last line
+        // note: don't store last one because we detected it 1 too late,
+        // except when there's only 1 line
+        if (result.length === 0) {
+          result.push(l);
+        }
+
+        // use this because a single-line selection is a special case
+        single_line = (result.length === 1);
+
+        // PART 2: parse words inside selected lines
+
+        var cl = undefined, w = undefined, wt = '';
+        word_start = -1; 
+        word_stop = -1;
+
+        // NOTE: we can detect the first and last word by looking only on the 
+        // first, respectively last line.
+        var k = 0, j = 0;
+        
+        // ====(1) loop first line separately here
+        cl = result[k];
+        wt = cl.text.split(" "); // split text of current line into list of words
+        // parse the line
+        for (j = 0; j < cl.x.length; j++) {
+          w = cl.x[j];
           
-        }*/
+          
+          if (word_start === -1 && (x1 <= w.l || (w.l <= x1 && x1 <= w.r))) {
+            word_start = j;
+            //Multivio.logger.debug('--word selection start at w #' + word_start);
+            //Multivio.logger.debug('--word text: "' + wt[word_start] + '"');
+            //selected_words.insertAt(0, wt[j]);
+          }  
+          
+          // add all words of the line once the start word has been found
+          if (word_start !== -1 && j >= word_start) {
+            words_1.push(wt[j]);
+          }
+        }
+        // temp fix (TODO):
+        // we may not find the start when text is on 2+ columns.
+        if (word_start === -1) {
+          Multivio.logger.debug('first line, word_start is -1, setting to 0...');
+          word_start = 0;
+        } 
+        // definition of highlight zone
+        // if there are several lines selected, we know the first line
+        // is selected to the end.
+        if (result.length !== 1) {
+          lx1 = cl.x[word_start].l;
+          ly1 = cl.t;
+          lx2 = lx1 + cl.w;
+          ly2 = ly1 + cl.h;
+          this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
+        }
+        
+        
+        // ====(2) loop last line separately here
+        cl = result[result.length - 1];
+        wt = cl.text.split(" "); // split text of current line into list of words
+        // parse the line
+        // NOTE: if it's a single line, take word_start index into account
+        _loop_start_index = (single_line? word_start: 0);
+        for (j = _loop_start_index; j < cl.x.length; j++) {
+          w = cl.x[j];
+          
+          // add all words of last line until the last word is found
+          if (word_stop === -1) {
+            words_3.push(wt[j]);
+          }
+          
+          if (x2 <= w.l) {
+            word_stop = Math.max(j - 1, 0); //note: ensure it's never below zero
+            //Multivio.logger.debug('--word selection stop at w #' + j);
+            //Multivio.logger.debug('--word text: "' + wt[word_stop] + '"');
+            // remove last word because we detect the end too late
+            // (word_stop is on j-1).
+            // note: pop() on empty list returns undefined, not an exception
+            words_3.pop();
+            
+            break;
+          }  
+        }
+        // it's possible that we get out of the loop without detecting 
+        // the end, and word_stop still equals -1. If that's the case, it means
+        // we select the whole line.
+        if (word_stop === -1) word_stop = cl.x.length - 1;
+        
+        // definition of highlight zone
+        // if only one line, both start and stop word coordinates are known
+        if (result.length === 1) {
+          lx1 = cl.x[word_start].l;
+          ly1 = cl.t;
+          lx2 = cl.x[word_stop].r;
+          ly2 = ly1 + cl.h;
+        } else { // else, from start of line until word_stop
+          lx1 = cl.l;
+          ly1 = cl.t;
+          //Multivio.logger.debug('word_stop: ' + word_stop);
+          //Multivio.logger.debug('cl.x.length: ' + cl.x.length);
+          
+          lx2 = cl.x[word_stop].r;
+          ly2 = ly1 + cl.h;
+        }
+        this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
+        
+        // ====(3) loop the lines inbetween and add all of their words
+        // to the result
+        for (k = 1; k < result.length - 1; k++) {
+          cl = result[k];
+          // split text of current line into list of words
+          wt = cl.text.split(" ");
+          // parse the words of each selected line
+          // and check which words are selected
+          for (j = 0; j < cl.x.length; j++) {
+            w = cl.x[j];
+            
+            //Multivio.logger.debug('--word #' + j + ' l: ' + w.l + ' r: ' + w.r);
+            //Multivio.logger.debug('--word text: "' + wt[j] + '"');
+            
+            words_2.push(wt[j]);
+          }
+          
+          // inbetween, lines are wholly selected
+          lx1 = cl.l;
+          ly1 = cl.t;
+          lx2 = lx1 + cl.w;
+          ly2 = ly1 + cl.h;
+          this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
+          
+        }
+        
+        // build complete list of selected words
+        // note: if we have only one line, words_2 is empty,
+        // words_3 contains the result because word_start and word_stop
+        // are known (whereas words_1 does not know word_stop)
+        if (result.length === 1) {
+          selected_words = words_3; 
+        } else {
+          selected_words = words_1.concat(words_2).concat(words_3);          
+        }
+        
+        // TODO debug: display the list of words
+        /*Multivio.logger.debug('words_1: ' + words_1);
+        Multivio.logger.debug('words_2: ' + words_2);
+        Multivio.logger.debug('words_3: ' + words_3);
+        Multivio.logger.debug('selected_words: ' + selected_words);*/
+        
+        // get out of the lines' loop
         break;
       
       }
 
       // a line between start and stop of selection        
       if (start !== -1 && stop === -1) {
-        Multivio.logger.debug('line selection continue');
-        result.addObject(l);
+        //Multivio.logger.debug('line selection continue');
+        result.push(l);
       }
       
     }
     
-    return result;
+    return selected_words;
     
   },
 
@@ -351,7 +541,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // TODO
     // disabled this (apparently useless, for now) call in order to avoid
     // charging the server for no reason (mom, 02.02.2011)
-    //this._getPageIndexing();
+    this._getPageIndexing();
   
   }.observes('Multivio.masterController.currentPosition'),
   /**
@@ -367,7 +557,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // TODO
     // disabled this (apparently useless, for now) call in order to avoid
     // charging the server for no reason (mom, 02.02.2011)
-    //this._getPageIndexing();      
+    this._getPageIndexing();      
 
   }.observes('Multivio.masterController.currentFile'), 
 
@@ -464,7 +654,11 @@ Multivio.HighlightController = SC.ArrayController.extend(
         
         // add 'All files' search option to file list
         var fileList = Multivio.CDM.clone(phys[url]);
-        fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});
+        // NOTE: don't add 'All files' if there's only one file
+        if (phys[url].length > 1) {
+          fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});          
+        }
+
         //testthis.set('currentFileList', fileList);
         // NOTE: set specifically in both controllers TODO find better solution
         Multivio.selectionController.set('currentFileList', fileList);
@@ -506,6 +700,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
   addHighlight: function (top_, left_, width_, height_, page_, type_,
                                       current_zoom_factor, is_original,
                                       url) {
+
+    //Multivio.logger.debug('addHighlight, tlwh: %@,%@,%@,%@'.fmt(top_, left_, width_, height_));
 
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
@@ -562,6 +758,30 @@ Multivio.HighlightController = SC.ArrayController.extend(
     this.addObject(new_obj);
     
     return new_obj;
+  },
+  
+  /**
+    Helper function to add a highlight, giving only basic xy params.
+  */
+  addHighlightHelper: function (x1, y1, x2, y2, is_original) {
+
+    Multivio.logger.debug('addHighlightHelper, x1y1x2y2: %@,%@,%@,%@'.fmt(x1, y1, x2, y2));
+
+    // compute tlwh
+    var top_ =  y1,
+        left_ = x1, 
+        width_  = Math.abs(x2 - x1),
+        height_ = Math.abs(y2 - y1);
+
+    // gather necessary data (take current values of context)
+    var z = this.get('zoomFactor');
+    var u = Multivio.masterController.get('currentFile');
+    var p = Multivio.masterController.get('currentPosition');
+    var t = 'selection';
+    
+    //  top_, left_, width_, height_, page_, type_, current_zoom_factor, is_original, url
+    return this.addHighlight(top_, left_, width_, height_, p, t, z, is_original, u);
+    
   },
   
   /**
@@ -716,8 +936,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // get zoom factor for update
     var zoom_factor = this.get('zoomFactor');
     
-    Multivio.logger.debug('updateCoordinates, angle:' + angle);
-    Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
+    //Multivio.logger.debug('updateCoordinates, angle:' + angle);
+    //Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
     
     // get page width and height
     // NOTE: only handling the highlight zones on the current page
@@ -1105,20 +1325,25 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       SC.RunLoop.begin();
       Multivio.logger.debug("selectionDidChange: switching to file: " + 
                                                 selectedObject.url);
+                                                
+      // set init state since we change file
+      // TODO state chart
+      Multivio.makeFirstResponder(Multivio.INIT);                   
       Multivio.masterController.set('currentFile', selectedObject.url);
+      
+      // store the position of the file to switch to once the initialisation
+      // of the new file is done
+      Multivio.masterController.set('initialPosition', 
+                                                selectedObject.page_number);
       
       SC.RunLoop.end();
 
+    } else {
+      Multivio.logger.debug("selectionDidChange: switching to page: " + 
+                                                selectedObject.page_number);                                              
+      Multivio.masterController.set('currentPosition', 
+                                                selectedObject.page_number);
     }
-        
-    // change master's currentPosition so that we 'jump' to the place 
-    // in the content where the search result points
-    SC.RunLoop.begin();
-    Multivio.logger.debug("selectionDidChange: switching to page: " + 
-                                              selectedObject.page_number);                                              
-    Multivio.masterController.set('currentPosition', 
-                                              selectedObject.page_number);
-    SC.RunLoop.end();
     
     return YES;
     
@@ -1133,7 +1358,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   setSelectionIndex: function (index) {
     
-    Multivio.logger.debug("setSelectionIndex " + index);
+    Multivio.logger.debug("search ctrl, setSelectionIndex " + index);
     
     var newSel = SC.SelectionSet.create();
     newSel.addObject(this.objectAt(index));
@@ -1158,19 +1383,17 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @return {Boolean} true if search successful
   */
   doSearch: function () {
-    var term = Multivio.getPath('views.searchPalette.contentView.'+
-        'innerSearch.searchQueryView').$input()[0].value;
+
     // store last search query for later use
     var query = this.get('currentSearchTerm');
-    if (term !== query && !SC.none(term)) {
-      this.set('currentSearchTerm', term);
-      query = term;
-    }
+
     // force UTF8 enconding of the query in order to avoid problems with
     // diacritics in Internet Explorer
     if (SC.browser.msie) {
       query = unescape(encodeURIComponent(query));
     }
+
+    Multivio.logger.debug('doSearch, query: ' + query);
 
     this.set('lastSearchQuery', query);
     // clear previous results
@@ -1182,7 +1405,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     SC.RunLoop.begin();
     this.set('searchStatus', '_searchInProgress'.loc());
     // #CHE
-    // deny selection
+    // deny selection TODO set ctrl 'allowsSelection'
     Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', NO);
     SC.RunLoop.end();
     
@@ -1210,6 +1433,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // Multivio.CDM.searchResults[<referer_url>], in the order of the files
       // as they appear in the list.
       var file_list = this.get('currentFileList');
+      Multivio.logger.debug('doSearch ALL: file_list: %@, length: %@'.fmt(file_list, file_list.length));
       for (var i = 0; i < file_list.length; i++) {
         
         // don't send request for referer url,
@@ -1426,7 +1650,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         Multivio.usco.showAlertPaneInfo('_tooManyResults'.loc(), 
           '_firstOccurrences'.loc(res[key].max_reached), 'OK');
       }*/
-      
     }
     
   }.observes('searchResults'),
@@ -1441,9 +1664,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @observes Multivio.CDM.searchResults
   */
   CDMsearchResultsDidChange: function () {
+    
     var ref = this.get('url');
     var searchFile = this.get('currentSearchFile');
     
+    Multivio.logger.debug('CDMsearchResultsDidChange, ref: %@, searchFile: %@'.fmt(ref, searchFile));
+
     if (!SC.none(Multivio.CDM.searchResults)) {
       var listOfUrls = Multivio.masterController.listOfFiles;
       var isFinish = YES;
@@ -1471,7 +1697,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
             isFinish = NO;
           }
           else {
-            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;
+            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;              
           }
         }
       }
@@ -1493,6 +1719,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         else {
           this.set('searchStatus', '_listOfResults'.loc());
         }
+        // TODO set ctrl allowsSelection
         Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', YES);
         Multivio.logger.debug('End of the search');
       }
@@ -1725,6 +1952,30 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // set file to search (default: all files, using referer url)
       this.set('currentSearchFile', this.get('url'));
 
+      // NOTE: we need to initialize currentFileList before searching
+      
+      var phys;
+      if (this.get('physicalStructureInitialised')) {
+        phys = this.get('physicalStructure');
+      } else {
+        // warning, phys can be -1
+        phys = Multivio.CDM.getPhysicalstructure(this.get('url'));
+        if (phys === -1) {
+          // store data to launch the search once we receive the file list
+          this.set('initial_search', YES);
+          this.set('initial_term', iq);
+          this.set('initial_url', this.get('url'));
+          return;
+        }
+      }
+      
+      Multivio.logger.debug('search ctrl init, phys: ' + phys);
+      this.set('currentFileList', phys);
+
+      Multivio.logger.debug('search ctrl init, url: ' + this.get('url'));
+      this.set('debug_file_list', phys);
+      this.set('debug_phys', phys);
+      
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);
 
@@ -1760,6 +2011,48 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('searchController initialized with url:' + url);
   },
+  
+  /**
+    This function is used to launch an initial search (coming from param
+    &search=<term> in URL), when we don't have the physical structure yet
+    to know the list of all files.
+  */
+  currentFileListDidChange: function () {
+    
+    Multivio.logger.debug('currentFileListDidChange');
+    
+    var cfl = this.get('currentFileList');
+    
+    if (SC.none(cfl)) return;
+    
+    var is = this.get('initial_search');
+    var it = this.get('initial_term');
+    var iu = this.get('initial_url');
+    
+    Multivio.logger.debug('currentFileListDidChange, is: %@, it: %@, iu: %@'.fmt(is, it, iu));
+
+    if (SC.none(is) || !is) return;
+    
+    // used stored data and clear it right away
+    this.set('currentSearchTerm', it);
+    this.set('initial_term', undefined);
+    
+    this.set('currentSearchFile', iu);
+    this.set('initial_url', undefined);
+    
+    this.set('initial_search', NO);
+    
+    // show search palette
+    Multivio.logger.debug('currentFileListDidChange, trying to display palette');
+    // get search button TODO button should be named in views.js
+    //var sbt = Multivio.getPath('views.mainContentView.leftButtons').
+    //                                                get('childViews')[2];
+    //Multivio.paletteController.showSearch(sbt);
+    
+    // launch search
+    this.doSearch();
+    
+  }.observes('currentFileList'),
   
   /**
     Reset variables and disconnect bindings

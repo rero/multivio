@@ -106,6 +106,7 @@ SC.stringsFor('French', {
   '_listOfResults': 'Liste de résultats',
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
+  '_More': 'Plus...',
 
   // Strings for the help section
   '_helpTitle': "Aide",

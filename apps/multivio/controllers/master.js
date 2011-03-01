@@ -40,6 +40,13 @@ Multivio.masterController = SC.ObjectController.create(
   currentPosition: null,
   
   /**
+    An initial position to set after a reinitialisation 
+    (typically, after chaning the current file)
+  
+  */
+  initialPosition: null,
+  
+  /**
     Boolean that say if files must be grouped or not
   */
   isGrouped: NO,
@@ -200,6 +207,21 @@ Multivio.masterController = SC.ObjectController.create(
     }
     Multivio.logger.debug('MasterController set currentPosition 1');
   },
+  
+  /**
+     Set current position to an initial value. 
+   */
+  selectAPosition: function () {
+    var newPos = this.get('initialPosition');
+    
+    Multivio.logger.debug('MasterController selectAPosition: ' + newPos);
+    
+    if (!SC.none(newPos)) {
+      this.set('initialPosition', null);
+      this.set('currentPosition', newPos);      
+    }
+  },
+  
   
   /**
      Set current position to the max

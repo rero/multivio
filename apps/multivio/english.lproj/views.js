@@ -6,7 +6,9 @@ License: See file license.js
 ==============================================================================
 */
 
-sc_require('views/content');
+sc_require('views/main_content');
+sc_require('views/image_content');
+sc_require('views/highlight_content');
 sc_require('views/thumbnail');
 sc_require('views/tree');
 sc_require('views/file_button');
@@ -34,7 +36,8 @@ Multivio.views = SC.Page.design(
 
     controllers: ['zoomController', 'navigationController', 
                   'searchController', 'selectionController', 
-                  'imageController',  'treeController', 'thumbnailController'],
+                  'imageController',  'treeController', 'thumbnailController',
+                  'searchTreeController'], // TODO test dwy add search tree controller
       
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     

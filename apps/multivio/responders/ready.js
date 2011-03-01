@@ -30,10 +30,14 @@ Multivio.READY = SC.Responder.create(
   },
   
   /**
-    Select the first or the last position of the current file
+    Select the first, the last, or a specific position of the current file
   */
   firstPosition: function () {
-    if (this.showLastPosition) {
+    // dwy 2011.03.01 check if we need to load to a specific position 
+    // (typically, after changing the current file)
+    if (!SC.none(Multivio.masterController.get('initialPosition'))) {
+      Multivio.masterController.selectAPosition();
+    } else if (this.showLastPosition) {
       Multivio.masterController.selectLastPosition();
       this.showLastPosition = NO;
     }

@@ -7,7 +7,7 @@
 */
 
 sc_require('mixins/interface');
-
+sc_require('views/search_tree');
 
 /** @class
 
@@ -76,7 +76,27 @@ Multivio.SearchView = SC.View.extend(
     action: 'doClear'
   }),
   
-  resultsScrollView: SC.ScrollView.design({
+  resultsScrollView: Multivio.SearchTreeView.design({
+
+    layout: { top: 100, left: 0, right: 0, bottom: 0 },
+
+    borderStyle: SC.BORDER_NONE,
+    hasHorizontalScroller: YES,
+    hasVerticalScroller: YES,
+    
+    contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
+      layout: { top: 0, left: 0, right: 0, bottom: 0 },
+      insertionOrientation: SC.VERTICAL_ORIENTATION,
+      rowHeight: 15,
+      contentBinding: 'Multivio.searchTreeController.arrangedObjects',
+      selectionBinding: 'Multivio.searchTreeController.selection',
+      contentValueKey: 'label',
+      exampleView: Multivio.SearchTreeLabelView
+      //controllers: ['searchTreeController']
+    })
+  }),
+  
+  /*resultsScrollView: SC.ScrollView.design({
 
     layout: { top: 100, left: 0, right: 0, bottom: 0 },
 
@@ -92,7 +112,7 @@ Multivio.SearchView = SC.View.extend(
       selectionBinding: 'Multivio.searchController.selection',
       contentValueKey: 'context'
     })
-  }),
+  }),*/
   
   /**
 Update the position of the scroll in the view if needed.
@@ -134,7 +154,7 @@ Update the position of the scroll in the view if needed.
     theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    target: 'Multivio.searchController',
+    target: 'Multivio.searchTreeController',
     action: 'goToNextResult'
   }),
 
@@ -146,7 +166,7 @@ Update the position of the scroll in the view if needed.
     theme: 'mvo-button',
     renderStyle: "renderImage",
     titleMinWidth : 0,
-    target: 'Multivio.searchController',
+    target: 'Multivio.searchTreeController',
     action: 'goToPreviousResult'
   }),
   
