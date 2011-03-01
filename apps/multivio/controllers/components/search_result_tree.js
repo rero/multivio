@@ -97,7 +97,7 @@ Multivio.searchTreeController = SC.TreeController.create(
       //skip referer URL, except if there's only one file
       if (!single_file && cf.url === ref_url) continue;
       
-      Multivio.logger.debug('->adding file node #%@, label: %@, url: %@'.fmt(i, cf.label, cf.url));
+      //Multivio.logger.debug('->adding file node #%@, label: %@, url: %@'.fmt(i, cf.label, cf.url));
 
       // build file node
       node = {
@@ -205,7 +205,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     for (fi = 0; fi < files.length; fi++) {
       cf = files[fi];
   
-      Multivio.logger.debug('searchTreeController, searchResultsDidChange(), file_url: ' + cf.url);
+      //Multivio.logger.debug('searchTreeController, searchResultsDidChange(), file_url: ' + cf.url);
   
       // skip 'all files' entry, let pass if it's a single file
       if (!single_file && cf.url === ref_url) continue;
@@ -229,7 +229,7 @@ Multivio.searchTreeController = SC.TreeController.create(
       if (SC.none(csr) || SC.none(csr.file_position)) continue;
 
       res = csr.file_position.results;
-      Multivio.logger.debug('searchTreeController, searchResultsDidChange(), #results: ' + res.length);
+      //Multivio.logger.debug('searchTreeController, searchResultsDidChange(), #results: ' + res.length);
       if (res.length > 0) { 
         file_node.childs = [];
         // add file in tree view only if it has results
@@ -248,7 +248,7 @@ Multivio.searchTreeController = SC.TreeController.create(
           id: result_id++
         };
         // add the result as a child of the file node
-        Multivio.logger.debug('searchTreeController, searchResultsDidChange(), add result:[' + node + '] to file: ' + file_node);
+        //Multivio.logger.debug('searchTreeController, searchResultsDidChange(), add result:[' + node + '] to file: ' + file_node);
         file_node.childs.push(node);
       }
       

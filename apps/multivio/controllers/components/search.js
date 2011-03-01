@@ -934,8 +934,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // get zoom factor for update
     var zoom_factor = this.get('zoomFactor');
     
-    Multivio.logger.debug('updateCoordinates, angle:' + angle);
-    Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
+    //Multivio.logger.debug('updateCoordinates, angle:' + angle);
+    //Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
     
     // get page width and height
     // NOTE: only handling the highlight zones on the current page
@@ -1323,20 +1323,25 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       SC.RunLoop.begin();
       Multivio.logger.debug("selectionDidChange: switching to file: " + 
                                                 selectedObject.url);
+                                                
+      // set init state since we change file
+      // TODO state chart
+      Multivio.makeFirstResponder(Multivio.INIT);                   
       Multivio.masterController.set('currentFile', selectedObject.url);
+      
+      // store the position of the file to switch to once the initialisation
+      // of the new file is done
+      Multivio.masterController.set('initialPosition', 
+                                                selectedObject.page_number);
       
       SC.RunLoop.end();
 
+    } else {
+      Multivio.logger.debug("selectionDidChange: switching to page: " + 
+                                                selectedObject.page_number);                                              
+      Multivio.masterController.set('currentPosition', 
+                                                selectedObject.page_number);
     }
-        
-    // change master's currentPosition so that we 'jump' to the place 
-    // in the content where the search result points
-    SC.RunLoop.begin();
-    Multivio.logger.debug("selectionDidChange: switching to page: " + 
-                                              selectedObject.page_number);                                              
-    Multivio.masterController.set('currentPosition', 
-                                              selectedObject.page_number);
-    SC.RunLoop.end();
     
     return YES;
     
