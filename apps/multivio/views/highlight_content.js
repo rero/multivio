@@ -103,14 +103,14 @@ Multivio.HighlightContentView = SC.View.extend(
   //selectionsBinding: 'Multivio.selectionController.[]',
   
   /** 
-    Binds to the searchController's content,
+    Variable for a binding to the searchController's content,
     an array of search results.
     The binding must be specified when instantiating this view class.
     
     @binding {SC.Array}
   */
   searchResults: [],
-  searchResultsBinding: 'Multivio.searchController.[]',
+  //searchResultsBinding: 'Multivio.searchController.[]',
   
   /**
     Binds to the zoom factor in the zoom controller.
