@@ -21,6 +21,11 @@ License: See file license.js
 Multivio.HighlightContentView = SC.View.extend(
 /** @scope Multivio.HighlightContentView.prototype */ {
   
+  /**
+    Reference to the selection controller
+  */
+  selectionController: null,
+  
   /** 
     'div' which contains the selected text.
     
@@ -123,14 +128,14 @@ Multivio.HighlightContentView = SC.View.extend(
   //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
   
   /**
-    Binds to the currentValue in the rotate controller.
-    This binding is read only.
+    Variable for a binding to the currentValue in the rotate controller.
+    The binding must be specified when instantiating this view class.
 
     @binding {Number}
   */
   rotateValue: null,
-  rotateValueBinding:
-      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
+  //rotateValueBinding:
+  //    SC.Binding.oneWay('Multivio.rotateController.currentValue'),
   
   /** 
     Rectangle of user selection during mouse drag.
@@ -224,7 +229,7 @@ Multivio.HighlightContentView = SC.View.extend(
     this.selectedTextDiv.set('value', t);
     
     // get input field of the SC.TextFieldView used for selection
-    Multivio.selectionController.selectTextField();
+    this.get('selectionController').selectTextField();
     
     SC.RunLoop.end();
 
@@ -242,7 +247,7 @@ Multivio.HighlightContentView = SC.View.extend(
       
       // update done by the controllers
       Multivio.searchController.updateCoordinates();
-      Multivio.selectionController.updateCoordinates();
+      this.get('selectionController').updateCoordinates();
       
       // update done, reset flag 
       this.set('coordinatesNeedUpdate', NO);
@@ -340,7 +345,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     // notify controllers the rotation change
     Multivio.searchController.set('rotateValue', this.get('rotateValue'));
-    Multivio.selectionController.set('rotateValue', this.get('rotateValue'));
+    this.get('selectionController').set('rotateValue', this.get('rotateValue'));
 
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
@@ -359,7 +364,7 @@ Multivio.HighlightContentView = SC.View.extend(
                                                 fmt(this.get('zoomFactor')));
 
     // notify controllers the zoom change
-    Multivio.selectionController.set('zoomFactor', this.get('zoomFactor'));
+    this.get('selectionController').set('zoomFactor', this.get('zoomFactor'));
     Multivio.searchController.set('zoomFactor', this.get('zoomFactor'));
     
     // flag the view for a redraw, (causes render() function to be called)
@@ -418,7 +423,7 @@ Multivio.HighlightContentView = SC.View.extend(
     }
     else {
       // cancel selections on current page
-      Multivio.selectionController.removeAllHighlights();
+      this.get('selectionController').removeAllHighlights();
 
       // get current rectangle and view layout
       var viewLayout = this.get('layout');
@@ -525,7 +530,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
         // add highlight in controller
         // TODO test let selection controller add highlights according to text
-        /*Multivio.selectionController.
+        /*this.get('selectionController').
                         addHighlight(top, left, l.width, l.height, 
                           this.get('currentPage'), 'selection', 
                           this.get('zoomFactor'), NO,
@@ -536,7 +541,7 @@ Multivio.HighlightContentView = SC.View.extend(
       this.userSelection.set('isVisible', NO);
 
       // send selection to selection controller
-      Multivio.selectionController.set('userSelection', { top: top, 
+      this.get('selectionController').set('userSelection', { top: top, 
                                                           left: left, 
                                                           width: l.width,
                                                           height: l.height,
