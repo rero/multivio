@@ -70,7 +70,12 @@ SC.stringsFor('French', {
   '_VersionIncompatibility':          'Les versions du serveur et du client ne sont pas compatibles.',
   '_ServerNotFound':                  'Le serveur Multivio n\'est pas disponible.',
   '_Default':                         'Une erreur s\'est produite. Veuillez contacter l\'adresse de support %@',
-  
+  '_Go back':                         'Revenir',
+
+  '_EmailErrorMessageSubject':        'Erreur Multivio',
+  '_EmailErrorMessageHeader':         '[Insérez votre texte ci-dessous, ou envoyez simplement ce message en l\'état]',
+  '_EmailErrorMessageTechnicalInfo':  'Information technique - NE PAS MODIFIER',
+
   // Warning messages
   '_Loading the requested resolution may take a long time':
       'Le chargement du contenu dans la résolution demandée peut prendre longtemps',

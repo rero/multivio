@@ -47,7 +47,7 @@ Multivio.INIT = SC.Responder.create(
         // support variable not configured, fall back to a hard-coded default
         support = 'info@multivio.org';
       }
-      errorMessage = '_Default'.loc(support);
+      errorMessage = '_Default'.loc(support, support);
     }
     Multivio.usco.showAlertPaneError('_An error occurred'.loc(), errorMessage);
     Multivio.treeController.allowSelection(YES);

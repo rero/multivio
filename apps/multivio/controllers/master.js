@@ -108,6 +108,7 @@ Multivio.masterController = SC.ObjectController.create(
     of the document and set it as the currentFile
   */
   initialize: function () {
+    
     // change application state
     Multivio.makeFirstResponder(Multivio.WAITING);
     this.listOfFiles = null;

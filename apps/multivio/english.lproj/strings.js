@@ -70,6 +70,11 @@ SC.stringsFor('English', {
   '_VersionIncompatibility':          'The server and the client versions are not compatible.',
   '_ServerNotFound':                  'The Multivio server is not accessible.',
   '_Default':                         'An error occured. Please contact support at %@',
+  '_Go back':                         'Go back',
+
+  '_EmailErrorMessageSubject':        'Multivio error',
+  '_EmailErrorMessageHeader':         '[Insert your text below, or simply send this message as it is]',
+  '_EmailErrorMessageTechnicalInfo':  'Technical information - DO NOT MODIFY',
   
   // Warning messages
   '_Loading the requested resolution may take a long time':
