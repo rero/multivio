@@ -38,7 +38,9 @@ Multivio.SearchView = SC.View.extend(
         evt.stop();
         return YES;
       } 
-      else {
+      else { 
+        // if another key was pressed, notify that the value changed
+        this.fieldValueDidChange(NO);
         return NO;
       }
     }
