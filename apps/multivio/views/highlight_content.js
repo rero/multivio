@@ -225,6 +225,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // with 1x1 dimensions outside the view so it's not actually visible
     // but still takes new text values
     this.appendChild(this.selectedTextDiv);
+    // the div must be visible and enabled so that the text can be copied
     this.selectedTextDiv.set('isVisible', YES);
     this.selectedTextDiv.set('isEnabled', YES);
 
@@ -289,7 +290,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // (after the page changes, the coordinates need to be updated anyway)
     //this.set('coordinatesNeedUpdate', YES);
     SC.RunLoop.begin();
-    Multivio.searchController.updateCoordinates();
+    this.get('searchController').updateCoordinates();
 
     this.updateSearchResultScroll();
 
@@ -469,6 +470,13 @@ Multivio.HighlightContentView = SC.View.extend(
       this.userSelection.adjust('width',  0);
       this.userSelection.adjust('height', 0);
       this.userSelection.set('isVisible', YES);
+      
+      // put the hidden text div at the same height as the selection,
+      // to avoid unwanted scrolling on selection text copy (Firefox)
+      // NOTE: unwanted horizontal scrolling can still happen, but we have to 
+      // keep the div outside of the content so we don't see it.
+      //this.selectedTextDiv.adjust('left', loc.x);
+      this.selectedTextDiv.adjust('top',  loc.y);
     }
 
     return YES;
@@ -552,7 +560,7 @@ Multivio.HighlightContentView = SC.View.extend(
       if (this.persistentSelection) {
 
         // add highlight in controller
-        // TODO test let selection controller add highlights according to text
+        // let selection controller add highlights according to text
         /*this.get('selectionController').
                         addHighlight(top, left, l.width, l.height, 
                           this.get('currentPage'), 'selection', 
@@ -570,6 +578,13 @@ Multivio.HighlightContentView = SC.View.extend(
                                                           height: l.height,
                                                           page: this.get('currentPage'),
                                                           type: 'selection' });
+      
+      // TODO test put the hidden text div at the same height as the selection,
+      // to avoid unwanted scrolling on selection text copy (Firefox)
+      // NOTE: unwanted horizontal scrolling can still happen, but we have to 
+      // keep the div outside of the content so we don't see it.
+      //this.selectedTextDiv.adjust('left', left);
+      this.selectedTextDiv.adjust('top',  top);
 
       // clean up initial info
       this._mouseDownInfo = null;
@@ -681,8 +696,7 @@ Multivio.HighlightContentView = SC.View.extend(
       this.appendChild(this.selectedTextDiv);
     
       // get selections' highlights
-      // TODO test code review
-      var zones = this.get('selectionController').get('content') || []; //this.get('selections');
+      var zones = this.get('selectionController').get('content') || [];
       var len   = zones.get('length');
       var i;
           
@@ -693,8 +707,7 @@ Multivio.HighlightContentView = SC.View.extend(
       }
     
       // get current search results highlights
-      // TODO test code review
-      zones = this.get('searchController').get('content') || []; //this.get('searchResults');
+      zones = this.get('searchController').get('content') || [];
       len   = zones.get('length');
     
       // redraw all search results' zones
@@ -711,7 +724,7 @@ Multivio.HighlightContentView = SC.View.extend(
       this.set('highlightNeedsUpdate', NO);
     
       // update scroll position
-      // TODO test don't update scroll on each render, causes issues with
+      // NOTE don't update scroll on each render, causes issues with
       // user selection
       // (when trying to select text on the same page as the selected search
       // result, keeps scrolling to it)

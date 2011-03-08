@@ -438,8 +438,6 @@ Multivio.views = SC.Page.design(
             searchResultSelectionIndexBinding: 
                 SC.Binding.oneWay(
                   'Multivio.masterController.currentSearchResultSelectionIndex'),
-            /*selectionsBinding: 'Multivio.selectionController.[]',
-            searchResultsBinding: 'Multivio.searchController.[]',*/
             zoomFactorBinding:
                 SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
             rotateValueBinding:
