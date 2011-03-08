@@ -36,6 +36,16 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchController: null,
   
+  /**
+    Reference to the pan controller
+  */
+  panController: null,
+  
+  /**
+    Reference to the palette controller
+  */
+  paletteController: null,
+  
   /** 
     'div' which contains the selected text.
     
