@@ -337,6 +337,9 @@ Multivio.HighlightContentView = SC.View.extend(
 
     Multivio.logger.debug('HL::currentPageDidChange()');
 
+    // update the coordinates of the highlights of the current page
+    this.set('coordinatesNeedUpdate', YES);
+
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
     
@@ -574,7 +577,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   selectionsDidChange: function () {
     
-    Multivio.logger.debug('---selectionsDidChange');
+    //Multivio.logger.debug('---selectionsDidChange');
            
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
@@ -592,7 +595,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultsDidChange: function () {
 
-    Multivio.logger.debug('---searchResultsDidChange');
+    //Multivio.logger.debug('---searchResultsDidChange');
 
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
@@ -650,15 +653,15 @@ Multivio.HighlightContentView = SC.View.extend(
       var ref_url             = this.get('searchController').get('url');
       var csf = this.get('searchController').get('currentSearchFile') || ref_url;
     
-      Multivio.logger.debug('---render: cmf: ' + current_master_file);
-      Multivio.logger.debug('---render: ref: ' + ref_url);
-      Multivio.logger.debug('---render: csf: ' + csf);
+      //Multivio.logger.debug('---render: cmf: ' + current_master_file);
+      //Multivio.logger.debug('---render: ref: ' + ref_url);
+      //Multivio.logger.debug('---render: csf: ' + csf);
       
       // update highlights only if the search results belong to the current
       // file, or 'All files' search scope is selected.
       if (csf !== current_master_file && csf !== ref_url) return;
  
-      Multivio.logger.debug('---rendering');
+      //Multivio.logger.debug('---rendering');
  
       // clear view
       this.removeAllChildren();
