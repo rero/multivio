@@ -22,9 +22,19 @@ Multivio.HighlightContentView = SC.View.extend(
 /** @scope Multivio.HighlightContentView.prototype */ {
   
   /**
+    Reference to the master controller
+  */
+  masterController: null,
+  
+  /**
     Reference to the selection controller
   */
   selectionController: null,
+  
+  /**
+    Reference to the search controller
+  */
+  searchController: null,
   
   /** 
     'div' which contains the selected text.
@@ -246,7 +256,7 @@ Multivio.HighlightContentView = SC.View.extend(
     if (this.get('coordinatesNeedUpdate')) {
       
       // update done by the controllers
-      Multivio.searchController.updateCoordinates();
+      this.get('searchController').updateCoordinates();
       this.get('selectionController').updateCoordinates();
       
       // update done, reset flag 
@@ -344,7 +354,7 @@ Multivio.HighlightContentView = SC.View.extend(
                                                     this.get('rotateValue'));
 
     // notify controllers the rotation change
-    Multivio.searchController.set('rotateValue', this.get('rotateValue'));
+    this.get('searchController').set('rotateValue', this.get('rotateValue'));
     this.get('selectionController').set('rotateValue', this.get('rotateValue'));
 
     // flag the view for a redraw, (causes render() function to be called)
@@ -365,7 +375,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     // notify controllers the zoom change
     this.get('selectionController').set('zoomFactor', this.get('zoomFactor'));
-    Multivio.searchController.set('zoomFactor', this.get('zoomFactor'));
+    this.get('searchController').set('zoomFactor', this.get('zoomFactor'));
     
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
@@ -416,8 +426,8 @@ Multivio.HighlightContentView = SC.View.extend(
   mouseDown: function (evt) {
     
     // hide a palette
-    Multivio.paletteController.hidePalette(null);
-    if (Multivio.panController.get('isPanActive')) {
+    this.get('paletteController').hidePalette(null);
+    if (this.get('panController').get('isPanActive')) {
       // send mouseDown event to the Multivio.ContentView (pan widget)
       this.get('parentView').get('parentView').get('parentView').mouseDown(evt);
     }
@@ -460,7 +470,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   mouseDragged: function (evt) {
 
-    if (Multivio.panController.get('isPanActive')) {
+    if (this.get('panController').get('isPanActive')) {
       // send mouseDragged event to the Multivio.ContentView (pan widget)
       this.get('parentView').get('parentView').get('parentView').mouseDragged(evt);
     }
@@ -514,7 +524,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   mouseUp: function (evt) {
 
-    if (Multivio.panController.get('isPanActive')) {
+    if (this.get('panController').get('isPanActive')) {
       // send mouseUp event to the Multivio.ContentView (pan widget)
       this.get('parentView').get('parentView').get('parentView').mouseUp(evt);
     }
@@ -563,6 +573,8 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes Multivio.selectionController.[]
   */
   selectionsDidChange: function () {
+    
+    Multivio.logger.debug('---selectionsDidChange');
            
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
@@ -570,7 +582,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
     
-  }.observes('Multivio.selectionController.[]'),
+  }.observes('.selectionController.[]'),
   
   /**
     When the search results change,
@@ -580,13 +592,15 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultsDidChange: function () {
 
+    Multivio.logger.debug('---searchResultsDidChange');
+
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
 
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
 
-  }.observes('Multivio.searchController.[]'),
+  }.observes('.searchController.[]'),
   
   /**
     @method
@@ -632,13 +646,19 @@ Multivio.HighlightContentView = SC.View.extend(
       sc_super();
     }
     else {
-      var current_master_file = Multivio.masterController.get('currentFile');
-      var ref_url             = Multivio.searchController.get('url');
-      var csf = Multivio.searchController.get('currentSearchFile') || ref_url;
+      var current_master_file = this.get('masterController').get('currentFile');
+      var ref_url             = this.get('searchController').get('url');
+      var csf = this.get('searchController').get('currentSearchFile') || ref_url;
     
+      Multivio.logger.debug('---render: cmf: ' + current_master_file);
+      Multivio.logger.debug('---render: ref: ' + ref_url);
+      Multivio.logger.debug('---render: csf: ' + csf);
+      
       // update highlights only if the search results belong to the current
       // file, or 'All files' search scope is selected.
       if (csf !== current_master_file && csf !== ref_url) return;
+ 
+      Multivio.logger.debug('---rendering');
  
       // clear view
       this.removeAllChildren();
@@ -648,7 +668,8 @@ Multivio.HighlightContentView = SC.View.extend(
       this.appendChild(this.selectedTextDiv);
     
       // get selections' highlights
-      var zones = this.get('selections');
+      // TODO test code review
+      var zones = this.get('selectionController').get('content') || []; //this.get('selections');
       var len   = zones.get('length');
       var i;
           
@@ -659,7 +680,8 @@ Multivio.HighlightContentView = SC.View.extend(
       }
     
       // get current search results highlights
-      zones = this.get('searchResults');
+      // TODO test code review
+      zones = this.get('searchController').get('content') || []; //this.get('searchResults');
       len   = zones.get('length');
     
       // redraw all search results' zones
@@ -695,7 +717,7 @@ Multivio.HighlightContentView = SC.View.extend(
   _drawHighlightZone: function (zone, classNames_, index) {
     
     // check if the zone belongs to the current file
-    if (Multivio.masterController.get('currentFile') !== zone.url) return;
+    if (this.get('masterController').get('currentFile') !== zone.url) return;
     
     // check if the zone belongs to the current page.
     if (this.get('currentPage') !== zone.page_number) return;

@@ -423,7 +423,11 @@ Multivio.views = SC.Page.design(
           highlightpane: Multivio.HighlightContentView.design({
             layout: { top: 0, left: 0, right: 0, minWidth: 1 },
             /* controllers */
+            masterController: Multivio.masterController,
             selectionController: Multivio.selectionController,
+            searchController: Multivio.searchController,
+            paletteController: Multivio.paletteController,
+            panController: Multivio.panController,
             /* bindings */
             selectedTextStringBinding: 
                 SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
@@ -434,8 +438,8 @@ Multivio.views = SC.Page.design(
             searchResultSelectionIndexBinding: 
                 SC.Binding.oneWay(
                   'Multivio.masterController.currentSearchResultSelectionIndex'),
-            selectionsBinding: 'Multivio.selectionController.[]',
-            searchResultsBinding: 'Multivio.searchController.[]',
+            /*selectionsBinding: 'Multivio.selectionController.[]',
+            searchResultsBinding: 'Multivio.searchController.[]',*/
             zoomFactorBinding:
                 SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
             rotateValueBinding:
