@@ -1594,6 +1594,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           // skip referer url, except if there's only one file
           if (file_list.length > 1 && file_list[i].url === ref_url) continue;
           
+          if (SC.none(res[file_list[i].url])) {
+            Multivio.logger.debug('_searchResultsDidChange, (6) results undefined for this url, skip');
+            continue;
+          }
+          
           // store results separately for each file
           this._setSearchResults(res[file_list[i].url], query);
           
@@ -1697,7 +1702,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
             isFinish = NO;
           }
           else {
-            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;              
+            if (!SC.none(Multivio.CDM.searchResults[ref].file_position)) {
+              nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;
+            }
           }
         }
       }
@@ -1712,7 +1719,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       }
       
       // if the search is finished set the search status.
-      if (isFinish) {
+      if (isFinish) {   
         if (nbOfRes === 0) {
           this.set('searchStatus', '_noResult'.loc());
         }
@@ -1758,6 +1765,17 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         num_all_res += all_res[j].file_position.results.length;
       }
       Multivio.logger.debug('number of search results: ' + num_res);
+      // NOTE: this is redundant with function CDMsearchResultsDidChange,
+      // but done here as well because there is one case where the function
+      // does not detect the count correctly: when a search parameter
+      // (&search=) is given in URL, for a XML document containing only
+      // one file.
+      if (num_res === 0) {
+        this.set('searchStatus', '_noResult'.loc());
+      }
+      else {
+        this.set('searchStatus', '_listOfResults'.loc());
+      }
       
       //#CHE
       // warn user if no result found

@@ -158,8 +158,11 @@ Multivio.paletteController = SC.ObjectController.create(
       if (phys !== -1 && phys.length < 2 && 
           searchPalette.get('contentView').get('childViews')[0].
           get('childViews').length === 8) {
-        searchPalette.get('contentView').get('childViews')[0].
-            get('childViews')[7].remove();
+            
+        var childToRemove = Multivio.getPath(
+            'views.searchPalette.contentView.innerSearch.searchScopeView');
+        Multivio.getPath('views.searchPalette.contentView.innerSearch').
+            removeChild(childToRemove);
       }
       searchPalette.set('layout', this.paletteLayout(YES));
       searchPalette.append();
