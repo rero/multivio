@@ -46,6 +46,11 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   paletteController: null,
   
+  /**
+    Reference to the zoom controller
+  */
+  zoomController: null,
+  
   /** 
     'div' which contains the selected text.
     
@@ -143,7 +148,7 @@ Multivio.HighlightContentView = SC.View.extend(
   
     @binding {Number}
    */
-  zoomFactor: null, 
+  //zoomFactor: null, 
   //zoomFactorBinding:
   //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
   
@@ -380,22 +385,24 @@ Multivio.HighlightContentView = SC.View.extend(
     When the zoom changes, notify the highlight and search controllers
     and flag the view for a redraw.
 
-    @observes zoomFactor
+    @observes .zoomController.zoomRatio
   */
   zoomFactorDidChange: function () {
     
+    var zoo = this.get('zoomController').get('zoomRatio');
+    
     Multivio.logger.debug('HighlightContentView#zoomFactorDidChange(): %@'.
-                                                fmt(this.get('zoomFactor')));
+                                                fmt(zoo));
 
     // notify controllers the zoom change
-    this.get('selectionController').set('zoomFactor', this.get('zoomFactor'));
-    this.get('searchController').set('zoomFactor', this.get('zoomFactor'));
+    this.get('selectionController').set('zoomFactor', zoo);
+    this.get('searchController').set('zoomFactor', zoo);
     
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
 
     
-  }.observes('zoomFactor'),
+  }.observes('.zoomController.zoomRatio'),
   
   /**
     When content has finished loading (isLoadingContent changes to NO),
