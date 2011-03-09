@@ -936,6 +936,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     // get zoom factor for update
     var zoom_factor = this.get('zoomFactor');
     
+    if (SC.none(angle) || SC.none(zoom_factor)) {
+      return;
+    }
+    
     //Multivio.logger.debug('updateCoordinates, angle:' + angle);
     //Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
     
