@@ -80,7 +80,6 @@ Multivio.views = SC.Page.design(
       
         childViews: [
           'loupeButton',
-          'panButton',
           'rotateLeftButton',
           'rotateRightButton',
           'firstPageButton',
@@ -104,23 +103,9 @@ Multivio.views = SC.Page.design(
           renderStyle: "renderImage",
           icon: 'loupe_new',
           theme: 'mvo-button',
-          isEnabledBinding: 'Multivio.paletteController.isGlassButtonEnabled',
-          target: "Multivio.paletteController",
+          isEnabledBinding: 'Multivio.overviewController.isOverviewEnabled',
+          target: "Multivio.overviewController",
           action: "showOverview"
-        }),
-
-        panButton: SC.ButtonView.design({
-          layout: { centerX: -240, centerY: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'pan',
-          toolTip: '_Pan'.loc(),
-          renderStyle: "renderImage",
-          icon: 'pan_new',
-          theme: 'mvo-button',
-          isEnabledBinding: 'Multivio.panController.isPanButtonEnabled',
-          target: "Multivio.panController",
-          action: "activePan"
         }),
 
         rotateLeftButton: SC.ButtonView.design({
@@ -401,6 +386,7 @@ Multivio.views = SC.Page.design(
 
       innerMainContent: Multivio.ContentView.design({
         layout: { top: 5, bottom: 5, left: 5, right: 5 },
+        overviewController: Multivio.overviewController,
         isFirstResponder: YES,
         acceptsFirstResponder: YES,
         isKeyResponder: YES,
@@ -416,6 +402,7 @@ Multivio.views = SC.Page.design(
           childViews: 'innerContent highlightpane'.w(),
 
           innerContent: Multivio.ImageContentView.design({
+            overviewController: Multivio.overviewController,
             layout: { top: 0, left: 0, minWidth: 1 },
             useImageCache: NO
           }),
@@ -570,7 +557,17 @@ Multivio.views = SC.Page.design(
     isAnchored: YES,
     classNames: 'mvo-transparent',
     contentView: Multivio.OverviewView.design({
-      layout: { top: 0, bottom: 0, left: 0, right: 0 }
+      layout: { top: 0, bottom: 0, left: 0, right: 0 },
+      overviewController: Multivio.overviewController,
+      childViews: 'imageOverview visibleZone'.w(),
+      
+      imageOverview: SC.ImageView.design({
+        useImageCache: NO,
+        borderStyle: SC.BORDER_NONE 
+      }),
+      visibleZone: SC.View.design({
+        classNames: 'mvo-glass-zone highlight-pane-pan'
+      })
     })
   }),
   

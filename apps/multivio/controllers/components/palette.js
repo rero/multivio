@@ -33,9 +33,6 @@ Multivio.paletteController = SC.ObjectController.create(
     If the button is active the toolbar is permanently visible
   */
   isHorizontalToolbarActive: null,
-  isOverviewActive: null,
-  isGlassButtonEnabled: NO,
-
   
   /**
     Return the layout position of the palette
@@ -326,59 +323,6 @@ Multivio.paletteController = SC.ObjectController.create(
   },
   
   /**
-    Overview button has been pressed show the palette or hide it
-
-    @param {SC.Button} button the button pressed
-  */
-  showOverview: function (button) {
-    var mgView = Multivio.getPath('views.overviewPalette');
-    // no activeButton => show this palette
-    if (SC.none(this.activeButton)) {
-      button.set('isActive', YES);
-      this.set('isOverviewActive', YES);
-      this.activeButton = button;
-      // create a custom layout
-      var layout = [];
-      layout.width = 150;
-      layout.height = 150;
-      layout.left = Multivio.getPath('views.mainContentView.content').get('frame').x + 15;
-      layout.bottom = 150;
-      mgView.set('layout', layout);
-      mgView.append();
-      //mgView.updateLayer();
-      mgView.get('contentView').drawZone();
-    }
-    else {
-      this.set('isOverviewActive', NO);
-      button.set('isActive', NO);
-      //mgView.removeAllChildren();
-      // if activeButton = button close the palette
-      // else replace the palette by an other one
-      if (this.activeButton !== button) {
-        this.hidePalette(this.activeButton.name);
-        this.showOtherPalette(button);
-      }
-      else {
-        this.activeButton = null;
-        mgView.remove();
-      }
-    }
-  },
-  /**
-    isGlassButtonEnabled status did change. Verify if we must hide the palette.
-    
-    @observes isGlassButtonEnabled {Boolean}
-  */
-  glassButtonDidChange: function () {
-    if (!this.get('isGlassButtonEnabled') && !SC.none(this.activeButton)) {
-      this.activeButton.set('isActive', NO);
-      this.set('isOverviewActive', NO);
-      this.activeButton = null;
-      Multivio.getPath('views.overviewPalette').remove();
-    }
-  }.observes('isGlassButtonEnabled'),
-  
-  /**
     Call the method to show the good palette
     
     @param {SC.Button} the button pressed
@@ -400,9 +344,6 @@ Multivio.paletteController = SC.ObjectController.create(
     case 'help':
       /* CAUTION: Do not use the name showHelp() - it's a JavaScript reserved word */
       this.showHelpPalette(button);
-      break;
-    case 'overview':
-      this.showOverview(button);
       break;
       
     default:
@@ -437,9 +378,6 @@ Multivio.paletteController = SC.ObjectController.create(
       case 'help':
         Multivio.getPath('views.helpPalette').remove();
         break;
-      case 'overview':
-        Multivio.getPath('views.overviewPalette').remove();
-        break;  
       
       default:
         Multivio.logger.info('unable to hide the selected palette');

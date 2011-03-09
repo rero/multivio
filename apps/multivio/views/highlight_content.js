@@ -405,36 +405,30 @@ Multivio.HighlightContentView = SC.View.extend(
     
     // hide a palette
     Multivio.paletteController.hidePalette(null);
-    if (Multivio.panController.get('isPanActive')) {
-      // send mouseDown event to the Multivio.ContentView (pan widget)
-      this.get('parentView').get('parentView').get('parentView').mouseDown(evt);
-    }
-    else {
-      // cancel selections on current page
-      Multivio.selectionController.removeAllHighlights();
+    // cancel selections on current page
+    Multivio.selectionController.removeAllHighlights();
 
-      // get current rectangle and view layout
-      var viewLayout = this.get('layout');
+    // get current rectangle and view layout
+    var viewLayout = this.get('layout');
 
-      // get position of mouse relative to the view
-      var loc = this.convertFrameFromView({ x: evt.pageX, y: evt.pageY });
+    // get position of mouse relative to the view
+    var loc = this.convertFrameFromView({ x: evt.pageX, y: evt.pageY });
 
-      // save mouse and rectangle positions when mouse is clicked
-      this._mouseDownInfo = {
-        pageX:  evt.pageX,    // coordinates of mouse on the page
-        pageY:  evt.pageY,
-        x:      loc.x,        // coordinates of mouse on the view
-        y:      loc.y,       
-        viewLayout: viewLayout
-      };
+    // save mouse and rectangle positions when mouse is clicked
+    this._mouseDownInfo = {
+      pageX:  evt.pageX,    // coordinates of mouse on the page
+      pageY:  evt.pageY,
+      x:      loc.x,        // coordinates of mouse on the view
+      y:      loc.y,       
+      viewLayout: viewLayout
+    };
 
-      // set the start coordinates (top left) of the rectangle where the mouse was clicked
-      this.userSelection.adjust('left', loc.x);
-      this.userSelection.adjust('top',  loc.y);
-      this.userSelection.adjust('width',  0);
-      this.userSelection.adjust('height', 0);
-      this.userSelection.set('isVisible', YES);
-    }
+    // set the start coordinates (top left) of the rectangle where the mouse was clicked
+    this.userSelection.adjust('left', loc.x);
+    this.userSelection.adjust('top',  loc.y);
+    this.userSelection.adjust('width',  0);
+    this.userSelection.adjust('height', 0);
+    this.userSelection.set('isVisible', YES);
 
     return YES;
   },
@@ -447,46 +441,39 @@ Multivio.HighlightContentView = SC.View.extend(
     @return {Boolean} true if everything OK
   */
   mouseDragged: function (evt) {
+    var info = this._mouseDownInfo, dim;
 
-    if (Multivio.panController.get('isPanActive')) {
-      // send mouseDragged event to the Multivio.ContentView (pan widget)
-      this.get('parentView').get('parentView').get('parentView').mouseDragged(evt);
+    // handle width difference
+    dim = (evt.pageX - info.pageX);
+
+    // "normal" direction (left-to-right), anchor point is 'left'
+    if (dim >= 0) {
+      this.userSelection.adjust('left', info.x);
+      this.userSelection.adjust('right', null);      
     }
+    // reverse direction (right-to-left), anchor point is 'right'
     else {
-      var info = this._mouseDownInfo, dim;
-
-      // handle width difference
-      dim = (evt.pageX - info.pageX);
-
-      // "normal" direction (left-to-right), anchor point is 'left'
-      if (dim >= 0) {
-        this.userSelection.adjust('left', info.x);
-        this.userSelection.adjust('right', null);      
-      }
-      // reverse direction (right-to-left), anchor point is 'right'
-      else {
-        dim *= (-1); 
-        this.userSelection.adjust('right', info.viewLayout.width - info.x);
-        this.userSelection.adjust('left', null);
-      }
-      this.userSelection.adjust('width', dim);
-
-      // handle height difference
-      dim = (evt.pageY - info.pageY);
-
-      // "normal" direction (top-to-bottom), anchor point is 'top'
-      if (dim >= 0) {
-        this.userSelection.adjust('top', info.y);
-        this.userSelection.adjust('bottom', null);      
-      }
-      // reverse direction (down-to-up), anchor point is 'bottom'    
-      else {
-        dim *= (-1); 
-        this.userSelection.adjust('bottom', info.viewLayout.height - info.y);
-        this.userSelection.adjust('top', null);
-      }
-      this.userSelection.adjust('height', dim);
+      dim *= (-1); 
+      this.userSelection.adjust('right', info.viewLayout.width - info.x);
+      this.userSelection.adjust('left', null);
     }
+    this.userSelection.adjust('width', dim);
+
+    // handle height difference
+    dim = (evt.pageY - info.pageY);
+
+    // "normal" direction (top-to-bottom), anchor point is 'top'
+    if (dim >= 0) {
+      this.userSelection.adjust('top', info.y);
+      this.userSelection.adjust('bottom', null);      
+    }
+    // reverse direction (down-to-up), anchor point is 'bottom'    
+    else {
+      dim *= (-1); 
+      this.userSelection.adjust('bottom', info.viewLayout.height - info.y);
+      this.userSelection.adjust('top', null);
+    }
+    this.userSelection.adjust('height', dim);
 
     return YES;
   },
@@ -502,45 +489,37 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   mouseUp: function (evt) {
 
-    if (Multivio.panController.get('isPanActive')) {
-      // send mouseUp event to the Multivio.ContentView (pan widget)
-      this.get('parentView').get('parentView').get('parentView').mouseUp(evt);
-    }
-    else {
-
-      // compute top and left values, if absent ("reverse" selection)
-      var l = this.userSelection.get('layout'), top, left;
-      top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
-      left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
+    // compute top and left values, if absent ("reverse" selection)
+    var l = this.userSelection.get('layout'), top, left;
+    top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
+    left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
       
-      // if persistent, create a highlight zone from this user selection 
-      if (this.persistentSelection) {
+    // if persistent, create a highlight zone from this user selection 
+    if (this.persistentSelection) {
 
-        // add highlight in controller
-        // TODO test let selection controller add highlights according to text
-        /*Multivio.selectionController.
+      // add highlight in controller
+      // TODO test let selection controller add highlights according to text
+      /*Multivio.selectionController.
                         addHighlight(top, left, l.width, l.height, 
                           this.get('currentPage'), 'selection', 
                           this.get('zoomFactor'), NO,
                           Multivio.masterController.get('currentFile'));*/
-      }
+    }
 
-      // hide user selection rectangle
-      this.userSelection.set('isVisible', NO);
+    // hide user selection rectangle
+    this.userSelection.set('isVisible', NO);
 
-      // send selection to selection controller
-      Multivio.selectionController.set('userSelection', { top: top, 
+    // send selection to selection controller
+    Multivio.selectionController.set('userSelection', { top: top, 
                                                           left: left, 
                                                           width: l.width,
                                                           height: l.height,
                                                           page: this.get('currentPage'),
                                                           type: 'selection' });
 
-      // clean up initial info
-      this._mouseDownInfo = null;
+    // clean up initial info
+    this._mouseDownInfo = null;
 
-    }
-        
     return YES;
   },
   

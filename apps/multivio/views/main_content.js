@@ -70,21 +70,12 @@ Multivio.ContentView = SC.ScrollView.extend(
   imageSizeBinding: 'Multivio.CDM.imageSize',
   
   /**
-    Binds to the isPanButtonEnabled of the panController
+    Link to the controler(SC.ObjectController) of the overview palette.
     
-    @binding {Boolean}
+    This controller need to have an object that contains the scrolls 
+    and a boolean variable that enabled and disabled the overview button.
   */
-  panButton: NO,
-  panButtonBinding: 'Multivio.panController.isPanButtonEnabled',
-  glassButton: NO,
-  glassButtonBinding: 'Multivio.paletteController.isGlassButtonEnabled',
-  
-  /**  
-    Variable that contains mouse pointer position. Information used by pan
-    
-    @ private 
-  */ 
-  _mouseDownInfo: null, 
+  overviewController: null,
 
   /**
     The native image size
@@ -175,22 +166,20 @@ Multivio.ContentView = SC.ScrollView.extend(
   }.observes('imageSize'),
   
   /**
-    ScrollerVisible property has changed, see if we can enabled (disabled) pan
-    button
+    ScrollerVisible property has changed, see if we can enabled (disabled)
+    overview button
     
     @observes isHorizontalScrollerVisible and isVerticalScrollerVisible
   */
   scrollStateDidChange: function () {
-    if (this.get('isHorizontalScrollerVisible') || 
-        this.get('isVerticalScrollerVisible')) {
-      this.set('panButton', YES);
-      this.set('glassButton', YES);
+    if (!this.get('isHorizontalScrollerVisible') && 
+        !this.get('isVerticalScrollerVisible') && 
+        !this.get('isLoadingContent')) {
+      this.get('overviewController').set('isOverviewEnabled', NO);
     }
     else {
-      this.set('panButton', NO);
-      this.set('glassButton', NO);
+      this.get('overviewController').set('isOverviewEnabled', YES);
     }
-    
   }.observes('isHorizontalScrollerVisible', 'isVerticalScrollerVisible'),
   
 
@@ -437,10 +426,6 @@ Multivio.ContentView = SC.ScrollView.extend(
         this.get('contentView').adjust('left', undefined);
       }
     }
-    // if overview palette is active, refresh draw zone
-    if (Multivio.paletteController.get('isOverviewActive')) {
-      Multivio.getPath('views.overviewPalette').get('contentView').drawZone();
-    }
   },
   
   /**
@@ -492,106 +477,29 @@ Multivio.ContentView = SC.ScrollView.extend(
   },
   
   /**
-    Refresh draw zone of the overview palette observing offsets of scrolls
-    
-    
-    @observes verticalScrollOffset, horizontalScrollOffset 
-  */
-  scrollOffsetDidChange: function () {
-    if (Multivio.paletteController.get('isOverviewActive')) {
-      Multivio.getPath('views.overviewPalette').get('contentView').drawZone();
-    }
-  }.observes('verticalScrollOffset', 'horizontalScrollOffset'),
-  
-  /**
     On mouse down hide the current palette or save mouse pointer position
     
     @param {SC.Event} Event fired
   */
   mouseDown: function (evt) {
-    if (Multivio.panController.get('isPanActive')) {
-      // indicate dragging - rerenders view
-      this.set('isDragging', YES);
-      this._mouseDownInfo = {
-        pageX: evt.pageX, // save mouse pointer loc for later use
-        pageY: evt.pageY
-      };
-      return YES;
-    }
-    else {
-      Multivio.paletteController.hidePalette(null);
-      // declare the event as not handled to allow browser context menu
-      return NO;
-    }
-  },
-  
-  /**
-    On mouse up reset mouseDownInfo variable
-    
-    @param {SC.Event} Event fired
-  */  
-  mouseUp: function (evt) {
-    if (Multivio.panController.get('isPanActive')) {
-      // no longer dragging - will rerender
-      this.set('isDragging', NO);
-
-      // apply one more time to set final position
-      this.mouseDragged(evt); 
-      this._mouseDownInfo = null; // cleanup info
-      return YES; // handled!
-    }
-  },
-  
-  /**
-    On mouse dragged set scrollHoffset
-    
-    @param {SC.Event} Event fired
-  */  
-  mouseDragged: function (evt) {
-    if (Multivio.panController.get('isPanActive')) {
-      if (this.get('isVerticalScrollerVisible'))  {
-        var currentVerticalOffset = this.get('verticalScrollOffset');
-        var newVerticalOffset = currentVerticalOffset + 
-            (this._mouseDownInfo.pageY - evt.pageY);
-        this.set('verticalScrollOffset', newVerticalOffset);
-      }
-      if (this.get('isHorizontalScrollerVisible')) {
-        var currentHorizontalOffset = this.get('horizontalScrollOffset');
-        var newHorizontalOffset = currentHorizontalOffset + 
-            (this._mouseDownInfo.pageX - evt.pageX);
-        this.set('horizontalScrollOffset', newHorizontalOffset);
-      }
-      // save new values
-      this._mouseDownInfo = {
-        pageX: evt.pageX,
-        pageY: evt.pageY
-      };
-      return YES;
-    }
+    Multivio.paletteController.hidePalette(null);
+    return YES;
   },
   
   /**
     Move vertical and(or) horizontal scrollbars
     
-    @param {Number} vertical  
-    @param {Number} horizontal  
+    @observes .overviewController.scrolls 
   */
-  moveScroll: function (vertical, horizontal) {
-    if (this.get('isVerticalScrollerVisible') && vertical !== 0)  {
-      var currentVerticalOffset = this.get('verticalScrollOffset');
-      var newVerticalOffset = currentVerticalOffset + vertical;
-      if (newVerticalOffset > 0 || newVerticalOffset < this.get('maximumVerticalScrollOffset')) {
-        this.set('verticalScrollOffset', newVerticalOffset);
-      }
-    }
-    if (this.get('isHorizontalScrollerVisible') && horizontal !== 0) {
-      var currentHorizontalOffset = this.get('horizontalScrollOffset');
-      var newHorizontalOffset = currentHorizontalOffset + horizontal; 
-      if (newHorizontalOffset > 0 || newHorizontalOffset < this.get('maximumHorizontalScrollOffset')) {    
-        this.set('horizontalScrollOffset', newHorizontalOffset);
-      }
-    }
-  },
+  scrollsDidChange: function () {
+    var scroll = this.get('overviewController').get('scrolls');
+    var horizontalH = Math.round(this.get('contentView').get('frame').width * 
+        scroll.horizontal);
+    var horizontalV = Math.round(this.get('contentView').get('frame').height * 
+        scroll.vertical);
+        
+    this.scrollTo(horizontalH, horizontalV);
+  }.observes('.overviewController.scrolls'),
   
   /**
     This Method is call when a key of the keyboard has been selected
