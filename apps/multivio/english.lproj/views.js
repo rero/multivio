@@ -429,8 +429,8 @@ Multivio.views = SC.Page.design(
             paletteController: Multivio.paletteController,
             panController: Multivio.panController,
             /* bindings */
-            selectedTextStringBinding: 
-                SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
+            //selectedTextStringBinding: 
+            //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
             currentPageBinding: 
                 SC.Binding.oneWay("Multivio.masterController.currentPosition"),
             isLoadingContentBinding: 

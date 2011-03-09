@@ -241,7 +241,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   selectedTextStringDidChange: function () {
     
-    var t = this.get('selectedTextString');
+    var t = this.get('selectionController').get('selectedTextString');
     
     Multivio.logger.debug('HighlightContentView: selectedTextStringDidChange: ' + t);
     
@@ -254,7 +254,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     SC.RunLoop.end();
 
-  }.observes('selectedTextString'),
+  }.observes('.selectionController.selectedTextString'),
   
   /**
     When the coordinate update flag is set, update them in both controllers.
