@@ -429,20 +429,21 @@ Multivio.views = SC.Page.design(
             paletteController: Multivio.paletteController,
             panController: Multivio.panController,
             zoomController: Multivio.zoomController,
+            rotateController: Multivio.rotateController,
             /* bindings */
             //selectedTextStringBinding: 
             //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
             //currentPageBinding: 
             //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
             isLoadingContentBinding: 
-                SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
+                SC.Binding.oneWay('Multivio.masterController.isLoadingContent')
             //searchResultSelectionIndexBinding: 
             //    SC.Binding.oneWay(
             //      'Multivio.masterController.currentSearchResultSelectionIndex'),
             //zoomFactorBinding:
             //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
-            rotateValueBinding:
-                SC.Binding.oneWay('Multivio.rotateController.currentValue')
+            //rotateValueBinding:
+            //    SC.Binding.oneWay('Multivio.rotateController.currentValue')
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })

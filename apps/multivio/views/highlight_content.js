@@ -51,6 +51,11 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   zoomController: null,
   
+  /**
+    Reference to the rotate controller
+  */
+  rotateController: null,
+  
   /** 
     'div' which contains the selected text.
     
@@ -158,7 +163,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @binding {Number}
   */
-  rotateValue: null,
+  //rotateValue: null,
   //rotateValueBinding:
   //    SC.Binding.oneWay('Multivio.rotateController.currentValue'),
   
@@ -365,21 +370,22 @@ Multivio.HighlightContentView = SC.View.extend(
     When the rotation angle changes,
     flag the highlight view for a redraw to update display.
 
-    @observes rotateValue
+    @observes .rotateController.currentValue
   */
   rotateValueDidChange: function () {
 
-    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' +
-                                                    this.get('rotateValue'));
+    var ro = this.get('rotateController').get('currentValue');
+
+    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' + ro);
 
     // notify controllers the rotation change
-    this.get('searchController').set('rotateValue', this.get('rotateValue'));
-    this.get('selectionController').set('rotateValue', this.get('rotateValue'));
+    this.get('searchController').set('rotateValue', ro);
+    this.get('selectionController').set('rotateValue', ro);
 
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
     
-  }.observes('rotateValue'),
+  }.observes('.rotateController.currentValue'),
   
   /**
     When the zoom changes, notify the highlight and search controllers
