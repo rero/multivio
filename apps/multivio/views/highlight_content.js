@@ -71,7 +71,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     @binding {Number}
   */
-  currentPage: null,
+  //currentPage: null,
   // TODO code review put reference to controller in views.js
   //currentPageBinding: 
   //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
@@ -354,13 +354,13 @@ Multivio.HighlightContentView = SC.View.extend(
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
     
-  }.observes('currentPage'),
+  }.observes('.masterController.currentPosition'),
   
   /**
     When the rotation angle changes,
     flag the highlight view for a redraw to update display.
 
-    @observes currentPage
+    @observes rotateValue
   */
   rotateValueDidChange: function () {
 
@@ -570,13 +570,13 @@ Multivio.HighlightContentView = SC.View.extend(
 
       // hide user selection rectangle
       this.userSelection.set('isVisible', NO);
-
+      var currentPage = this.get('masterController').get('currentPosition');
       // send selection to selection controller
       this.get('selectionController').set('userSelection', { top: top, 
                                                           left: left, 
                                                           width: l.width,
                                                           height: l.height,
-                                                          page: this.get('currentPage'),
+                                                          page: currentPage,
                                                           type: 'selection' });
       
       // TODO test put the hidden text div at the same height as the selection,
@@ -746,7 +746,7 @@ Multivio.HighlightContentView = SC.View.extend(
     if (this.get('masterController').get('currentFile') !== zone.url) return;
     
     // check if the zone belongs to the current page.
-    if (this.get('currentPage') !== zone.page_number) return;
+    if (this.get('masterController').get('currentPosition') !== zone.page_number) return;
     
     // NOTE: not applying zoom factor, we expect adapted data in zone.current
     var cz = zone.current;
