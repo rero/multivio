@@ -103,24 +103,6 @@ Multivio.SearchView = SC.View.extend(
     })
   }),
   
-  /**
-Update the position of the scroll in the view if needed.
-
-@private
-@observes Multivio.searchController.selection
-*/
-  /*_searchResultSelectionDidChange: function () {
-    var selection = this.get('searchController').get('selection');
-
-    if (!SC.none(selection)) {
-      var selectionIndex = this.get('searchController').get('arrangedObjects')
-                .indexOf(selection.firstObject());
-      this.get('resultsScrollView').get('contentView')
-                                          .scrollToContentIndex(selectionIndex);
-      Multivio.logger.debug('_searchResultSelectionDidChange, scroll to index: ' + selectionIndex);                                          
-    }
-  }.observes('.searchController.selection'),*/
-  
   nextResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 0 },
     needsEllipsis: NO,
@@ -146,7 +128,6 @@ Update the position of the scroll in the view if needed.
   }),
   
   searchScopeView : SC.SelectButtonView.design({
-  //searchScopeView : SC.SelectFieldView.design({
 
     layout: { top: 36, left: 0, right: 0, height: 25 },
 
@@ -161,12 +142,6 @@ Update the position of the scroll in the view if needed.
     needsEllipsis: NO,
     supportFocusRing: NO
   }),
-  
-  /*scopeLabelView: SC.LabelView.design({
-layout: { top: 30, left: 0, height: 50, width: 80 },
-textAlign: SC.ALIGN_LEFT,
-value: '_searchIn'.loc()
-})*/
   
   messageLabelView: SC.LabelView.design({
     layout: { top: 72, left: 0, right: 0, height: 22 },

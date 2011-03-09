@@ -19,50 +19,39 @@ Multivio.SearchTreeView = SC.ScrollView.extend(
 /** @scope Multivio.SearchTreeView.prototype */ {
 
   /**
-    Binds to the treeController's selection
+    Reference to the controller for the search results' tree
     
-    @binding
-  */  
-  treeSelection: null,
-  treeSelectionBinding: SC.Binding.oneWay('Multivio.searchTreeController.selection'),
-  
+    TODO export explicit reference
+  */
+  searchTreeController: Multivio.searchTreeController,
+
   /**
-    Updates scrollposition by observing changes of the treeController selection.
+    Updates scrollposition by observing changes of the searchTreeController selection.
     
-    @observes treeSelection
+    @observes .searchTreeController.selection
+    
   */  
   treeSelectionDidChange: function () {
-    var selection = this.get('treeSelection');
+    var selection = this.get('searchTreeController').get('selection');
     if (!SC.none(selection)) {
-      var treeS = this.get('treeSelection').firstObject();
-      var needToScroll = YES;
-      var childViews = this.get('contentView').get('childViews');
-      // Don't verify the first and the last child to force to scroll
-      for (var j = 1; j < childViews.get('length') - 1 ; j++) {
-        var treeBranch = childViews[j].content;
-        if (treeBranch === treeS) {
-          needToScroll = NO;
-          break;
-        }
-      }
       var leftScroll = this.get('horizontalScrollOffset');
-      if (needToScroll) {
-        var arrayOfTree = Multivio.searchTreeController.get('arrangedObjects');
-        
-        // sanity check
-        if (SC.none(arrayOfTree)) return;
-        
-        var selectionIndex = arrayOfTree.indexOf(treeS);
-        // get the scroll offset before the move and set it after
-        this.get('contentView').scrollToContentIndex(selectionIndex);
-        Multivio.logger.debug('update tree scroll'); 
+      var selectionIndex = this.get('searchTreeController').get('arrangedObjects')
+          .indexOf(selection.firstObject());
+
+      // add 1 because the horizontalScroll is not visible the firstTime
+      // this method is call
+      if (!this.get('isHorizontalScrollerVisible')) {
+        selectionIndex++;
       }
+      this.get('contentView').scrollToContentIndex(selectionIndex);
+      Multivio.logger.debug('update search tree scroll');
+
       if (leftScroll === this.get('maximumHorizontalScrollOffset')) {
         leftScroll = 0;
       }
       this.set('horizontalScrollOffset', leftScroll);
     }
-  }.observes('treeSelection')
+  }.observes('.searchTreeController.selection')
 });
 
 Multivio.SearchTreeLabelView = SC.ListItemView.extend(
