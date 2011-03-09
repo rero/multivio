@@ -60,7 +60,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     @binding {SC.String}
   */
-  selectedTextString: null,
+  //selectedTextString: null,
   // TODO code review put reference to controller in views.js
   //selectedTextStringBinding: 
   //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
@@ -93,7 +93,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @binding {Number}
   */
-  searchResultSelectionIndex: null,
+  //searchResultSelectionIndex: null,
   //searchResultSelectionIndexBinding: 
   //              SC.Binding.oneWay(
   //                'Multivio.masterController.currentSearchResultSelectionIndex'),
@@ -282,7 +282,7 @@ Multivio.HighlightContentView = SC.View.extend(
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
 
-    @observes searchResultSelectionIndex
+    @observes .masterController.currentSearchResultSelectionIndex
   */
   searchResultSelectionIndexDidChange: function () {
 
@@ -297,7 +297,7 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('layerNeedsUpdate', YES);
     SC.RunLoop.end();
 
-  }.observes('searchResultSelectionIndex'),
+  }.observes('.masterController.currentSearchResultSelectionIndex'),
   
   /**
     Update the position of the scroll in the view if needed.
@@ -308,7 +308,7 @@ Multivio.HighlightContentView = SC.View.extend(
     
     //var selection = this.get('searchResultSelection').firstObject();
     //var selectionIndex = Multivio.searchController.indexOf(selection);
-    var selectionIndex = this.get('searchResultSelectionIndex');
+    var selectionIndex = this.get('masterController').get('currentSearchResultSelectionIndex');
     
     // store selection index, will be used to apply 
     // a specific style for the selected highlight in this.render()
