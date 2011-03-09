@@ -683,6 +683,8 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   render: function (context, firstTime) {
 
+    var start = new Date().getMilliseconds();
+
     if (firstTime) {
       sc_super();
     }
@@ -743,6 +745,10 @@ Multivio.HighlightContentView = SC.View.extend(
       // result, keeps scrolling to it)
       //this.updateSearchResultScroll();
     }
+    
+    var end = new Date().getMilliseconds();
+    Multivio.logger.debug('--- RENDER TIME: ' + (end - start));
+    
   },
   
   /**
