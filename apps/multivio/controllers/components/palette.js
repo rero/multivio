@@ -313,8 +313,9 @@ Multivio.paletteController = SC.ObjectController.create(
     case SC.BUTTON1_STATUS:
       var file = pane.description;
       file = file.split('(');
-      // don't use window.open because ther is a bug with IE
-      window.location.href = file[0];
+      // open a new tab to download the file
+      var newWindow = window.open(file[0]);
+      newWindow.location.href = file[0];
       break;
         
     case SC.BUTTON2_STATUS:
