@@ -316,6 +316,8 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   updateSearchResultScroll: function () {
     
+    var start = new Date().getMilliseconds();
+    
     //var selection = this.get('searchResultSelection').firstObject();
     //var selectionIndex = Multivio.searchController.indexOf(selection);
     var selectionIndex = this.get('masterController').get('currentSearchResultSelectionIndex');
@@ -345,6 +347,9 @@ Multivio.HighlightContentView = SC.View.extend(
       // need to redraw the highlight zones to show current selection
       this.set('coordinatesNeedUpdate', YES);
     }
+    
+    var end = new Date().getMilliseconds();
+    Multivio.logger.debug('--- SCROLL TIME: ' + (end - start));
     
   },
   

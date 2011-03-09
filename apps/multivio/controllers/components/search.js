@@ -1274,7 +1274,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @observes selection
   */
   _selectionDidChange: function () {
-        
+    
+    var start = new Date().getMilliseconds();
+    
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     var selIndex = this.indexOf(selectedObject);
@@ -1344,6 +1346,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       Multivio.masterController.set('currentPosition', 
                                                 selectedObject.page_number);
     }
+    
+    var end = new Date().getMilliseconds();
+    Multivio.logger.debug('--- SEARCH SEL TIME: ' + (end - start));
     
     return YES;
     
