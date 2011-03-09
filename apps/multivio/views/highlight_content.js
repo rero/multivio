@@ -92,7 +92,7 @@ Multivio.HighlightContentView = SC.View.extend(
       
     @binding {Boolean}
   */
-  isLoadingContent: null,
+  //isLoadingContent: null,
   //isLoadingContentBinding: 
   //            SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
   
@@ -414,11 +414,11 @@ Multivio.HighlightContentView = SC.View.extend(
     When content has finished loading (isLoadingContent changes to NO),
     update search results' scroll and flag the view for a redraw.
 
-    @observes isLoadingContent
+    @observes .masterController.isLoadingContent
   */
   isLoadingContentDidChange: function () {
     
-    var loading = this.get('isLoadingContent');
+    var loading = this.get('masterController').get('isLoadingContent');
     var hnu     = this.get('highlightNeedsUpdate');
     
     Multivio.logger.debug('HighlightContentView#isLoadingContentDidChange()' + 
@@ -437,7 +437,7 @@ Multivio.HighlightContentView = SC.View.extend(
     if (hnu && !loading) {
       this.set('layerNeedsUpdate', YES);
     }  
-  }.observes('isLoadingContent'),
+  }.observes('.masterController.isLoadingContent'),
   
   
   /* mouse events */

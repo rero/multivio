@@ -435,8 +435,8 @@ Multivio.views = SC.Page.design(
             //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
             //currentPageBinding: 
             //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
-            isLoadingContentBinding: 
-                SC.Binding.oneWay('Multivio.masterController.isLoadingContent')
+            //isLoadingContentBinding: 
+            //    SC.Binding.oneWay('Multivio.masterController.isLoadingContent')
             //searchResultSelectionIndexBinding: 
             //    SC.Binding.oneWay(
             //      'Multivio.masterController.currentSearchResultSelectionIndex'),
