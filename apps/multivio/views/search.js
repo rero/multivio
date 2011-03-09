@@ -109,7 +109,7 @@ Update the position of the scroll in the view if needed.
 @private
 @observes Multivio.searchController.selection
 */
-  _searchResultSelectionDidChange: function () {
+  /*_searchResultSelectionDidChange: function () {
     var selection = this.get('searchController').get('selection');
 
     if (!SC.none(selection)) {
@@ -119,7 +119,7 @@ Update the position of the scroll in the view if needed.
                                           .scrollToContentIndex(selectionIndex);
       Multivio.logger.debug('_searchResultSelectionDidChange, scroll to index: ' + selectionIndex);                                          
     }
-  }.observes('.searchController.selection'),
+  }.observes('.searchController.selection'),*/
   
   nextResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 0 },
