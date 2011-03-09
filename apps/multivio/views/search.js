@@ -19,6 +19,10 @@ View for the search functionality.
 */
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
+  
+  /* reference to controllers */
+  searchController: null,
+  searchTreeController: null,
                   
   childViews: ['messageLabelView', 'searchQueryView', 'clearButtonView',
                'searchButtonView', 'previousResultButtonView',
@@ -33,8 +37,9 @@ Multivio.SearchView = SC.View.extend(
     keyDown: function (evt) {
       //if press tab or enter set the value
       if (evt.which === 13) {
-        Multivio.searchController.set('currentSearchTerm', this.$input()[0].value);
-        Multivio.searchController.doSearch();
+        this.get('parentView').get('searchController').set('currentSearchTerm', 
+                                                        this.$input()[0].value);
+        this.get('parentView').get('searchController').doSearch();
         evt.stop();
         return YES;
       } 
@@ -98,24 +103,6 @@ Multivio.SearchView = SC.View.extend(
     })
   }),
   
-  /*resultsScrollView: SC.ScrollView.design({
-
-    layout: { top: 100, left: 0, right: 0, bottom: 0 },
-
-    borderStyle: SC.BORDER_NONE,
-    hasHorizontalScroller: YES,
-    hasVerticalScroller: YES,
-    
-    contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
-      layout: { top: 0, left: 0, right: 0, bottom: 0 },
-      insertionOrientation: SC.VERTICAL_ORIENTATION,
-      rowHeight: 15,
-      contentBinding: 'Multivio.searchController.arrangedObjects',
-      selectionBinding: 'Multivio.searchController.selection',
-      contentValueKey: 'context'
-    })
-  }),*/
-  
   /**
 Update the position of the scroll in the view if needed.
 
@@ -123,30 +110,16 @@ Update the position of the scroll in the view if needed.
 @observes Multivio.searchController.selection
 */
   _searchResultSelectionDidChange: function () {
-    var selection = Multivio.searchController.get('selection').firstObject();
+    var selection = this.get('searchController').get('selection');
 
     if (!SC.none(selection)) {
-      // retrieve the list of the results visible in the view
-      var listView = this.get('resultsScrollView')
-                          .get('contentView').get('childViews');
-      var needToScroll = YES;
-      // don't verify the first and the last child to force to scroll
-      for (var i = 1; i < listView.get('length') - 1; i++) {
-        var res = listView[i].content;
-
-        if (res === selection) {
-          needToScroll = NO;
-        }
-      }
-
-      // if needed, scroll to the new position
-      if (needToScroll) {
-        var selectionIndex = Multivio.searchController.indexOf(selection);
-        this.get('resultsScrollView').get('contentView')
-                                    .scrollToContentIndex(selectionIndex);
-      }
+      var selectionIndex = this.get('searchController').get('arrangedObjects')
+                .indexOf(selection.firstObject());
+      this.get('resultsScrollView').get('contentView')
+                                          .scrollToContentIndex(selectionIndex);
+      Multivio.logger.debug('_searchResultSelectionDidChange, scroll to index: ' + selectionIndex);                                          
     }
-  }.observes('Multivio.searchController.selection'),
+  }.observes('.searchController.selection'),
   
   nextResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 0 },

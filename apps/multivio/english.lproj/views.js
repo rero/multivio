@@ -520,7 +520,10 @@ Multivio.views = SC.Page.design(
       childViews: 'innerSearch'.w(),
       innerSearch: Multivio.SearchView.design({
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
-        borderStyle: SC.BORDER_NONE
+        borderStyle: SC.BORDER_NONE,
+        /* controllers */
+        searchController: Multivio.searchController,
+        searchTreeController: Multivio.searchTreeController
       })
     })
   }), //.classNames('shadow_light inner_view'.w()),
