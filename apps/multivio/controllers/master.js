@@ -200,6 +200,11 @@ Multivio.masterController = SC.ObjectController.create(
       this.set('currentPosition', newPos);
     }
     else {
+      // verify newPos is a valid value else select the first page
+      var curM = this.get('metadata')[this.get('currentFile')];
+      if (isNaN(newPos) || newPos > curM.nPages) {
+        newPos = 1;
+      }
       this.set('currentPosition', newPos);
       if (newPos !== 1) {
         Multivio.configurator.set('initialPosition', 1);
@@ -268,8 +273,8 @@ Multivio.masterController = SC.ObjectController.create(
     }
     else {
       var listOfDoc = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
-      // if initialDocNr is too small or too big select the first document
-      if (initDoc < 1 || initDoc > listOfDoc.length) {
+      // if initialDocNr is too small or too big or isNaN select the first document
+      if (isNaN(initDoc) || initDoc < 1 || initDoc > listOfDoc.length) {
         initDoc = 0;
       }
       else {
