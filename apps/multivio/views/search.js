@@ -34,7 +34,10 @@ Multivio.SearchView = SC.View.extend(
     hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm',
     //#CHE change this because problem with key event
-    keyDown: function (evt) {
+    //#DWY use keyUp so that we are sure that the new character has already
+    //been inserted into the text field (prevents us from losing the
+    //last character).
+    keyUp: function (evt) {
       //if press tab or enter set the value
       if (evt.which === 13) {
         this.get('parentView').get('searchController').set('currentSearchTerm', 
