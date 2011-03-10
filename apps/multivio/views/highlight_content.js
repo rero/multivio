@@ -259,9 +259,11 @@ Multivio.HighlightContentView = SC.View.extend(
     // set text in the div (SC.TextFieldView)
     this.selectedTextDiv.set('value', t);
     
-    // get input field of the SC.TextFieldView used for selection
-    this.get('selectionController').selectTextField();
-    
+    // focus and select input field (html element), so that it can be copied
+    // by the browser when pressing ctrl/apple + c   
+    this.selectedTextDiv.$input()[0].focus();
+    this.selectedTextDiv.$input()[0].select();
+        
     SC.RunLoop.end();
 
   }.observes('.selectionController.selectedTextString'),

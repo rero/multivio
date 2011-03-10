@@ -226,44 +226,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   },*/
 
   /**
-    Select the text field on the view that contains the text selection,
-    so that it can be copied by the browser on ctrl + c.
-  */
-  selectTextField: function () {
-    
-    var t = this.get('selectedTextString');
-    
-    // ignore empty text selections
-    if (SC.none(t) || t === '') return;
-    
-    // TODO test store current scroll position on the view
-    var w = Multivio.getPath('views.mainContentView.content.innerMainContent'),
-        h = w.get('horizontalScrollOffset'),
-        v = w.get('verticalScrollOffset');
-    
-    Multivio.logger.debug('selectTextField, store scroll position: v: %@, h: %@'.fmt(v, h));
-    
-    var selected_text_field = SC.$('label#selected_text')[0]
-      .childNodes[1].childNodes[0];
-     
-    // focus and select text field, so that it can be copied by the browser
-    // when pressing ctrl/apple + c  
-    selected_text_field.focus();
-    selected_text_field.select();
-    
-    // TODO test update scroll position back (firefox scrolls up to textfield)
-    w = Multivio.getPath('views.mainContentView.content.innerMainContent');
-    //h = w.get('horizontalScrollOffset');
-    //v = w.get('verticalScrollOffset');
-    //Multivio.logger.debug('selectTextField, before restore: v: %@, h: %@'.fmt(v, h));
-    w.set('horizontalScrollOffset', h);
-    w.set('verticalScrollOffset', v);
-
-    w.set('layerNeedsUpdate', YES);
-
-  },
-
-  /**
     Returns the line to which the point belongs, according to the
     page indexing. If page indexing does not exist, returns -1.
     
