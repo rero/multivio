@@ -30,6 +30,7 @@ Multivio.SearchView = SC.View.extend(
   
   searchQueryView: SC.TextFieldView.design({
     layout: { top: 0, left: 0, right: 54, height: 24 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     classNames: 'search',
     hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm',
@@ -56,6 +57,7 @@ Multivio.SearchView = SC.View.extend(
 
   searchButtonView: SC.ButtonView.design({
     layout: { top: 2, right: 24, width: 20, height: 20 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     icon: 'search_new_16',
     renderStyle: "renderImage",
     titleMinWidth : 0,
@@ -72,6 +74,7 @@ Multivio.SearchView = SC.View.extend(
   
   clearButtonView: SC.ButtonView.design({
     layout: { top: 2, right: 0, width: 20, height: 20 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     icon: 'cancel_new_16',
     renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
@@ -96,6 +99,7 @@ Multivio.SearchView = SC.View.extend(
     
     contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
       layout: { top: 0, left: 0, right: 0, bottom: 0 },
+      isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
       insertionOrientation: SC.VERTICAL_ORIENTATION,
       rowHeight: 15,
       contentBinding: 'Multivio.searchTreeController.arrangedObjects',
@@ -108,6 +112,7 @@ Multivio.SearchView = SC.View.extend(
   
   nextResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 0 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
     icon: 'down_new_16',
@@ -120,6 +125,7 @@ Multivio.SearchView = SC.View.extend(
 
   previousResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 24 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     needsEllipsis: NO,
     toolTip : '_goToPrevious'.loc(),
     icon: 'up_new_16',
@@ -133,7 +139,7 @@ Multivio.SearchView = SC.View.extend(
   searchScopeView : SC.SelectButtonView.design({
 
     layout: { top: 36, left: 0, right: 0, height: 25 },
-
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',    
     toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
     objectsBinding: 'Multivio.searchController.currentFileList',

@@ -137,6 +137,11 @@ Multivio.searchTreeController = SC.TreeController.create(
   
   selectionDidChange: function () {
 
+    if (!this.get('allowsSelection')) {
+      Multivio.logger.debug('tree selectionDidChange, selection not allowed, exit');
+      return;
+    }
+
     var start = new Date().getMilliseconds();
 
     Multivio.logger.debug('searchTreeController, selectionDidChange()');

@@ -58,6 +58,8 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
 /** @scope Multivio.SearchTreeLabelView.prototype */ {
   hasContentIcon: YES,
   
+  isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
+  
   render: function (context, firstTime) {
     sc_super();
     var lab = this.get('content').label;
@@ -98,11 +100,14 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
   */    
   renderLabel: function (context, label) {
     
+    // disable element if needed
+    var cl = (this.get('isEnabled')? '': 'disabled');
+    
     if (SC.none(this.content.get('file_position').index)) {
-      context.push('<label class="document-label-view">', label || '', '</label>');
+      context.push('<label class="document-label-view %@">'.fmt(cl), label || '', '</label>');
     }
     else {
-      context.push('<label>', label || '', '</label>');
+      context.push('<label class="%@">'.fmt(cl), label || '', '</label>');
     }
   }
 

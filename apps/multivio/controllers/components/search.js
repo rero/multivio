@@ -1237,6 +1237,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   _selectionDidChange: function () {
     
+    if (!this.get('allowsSelection')) {
+      Multivio.logger.debug('search _selectionDidChange, selection not allowed, exit');
+      return;
+    }
+    
     var start = new Date().getMilliseconds();
     
     var selSet = this.get('selection');
@@ -1371,9 +1376,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     SC.RunLoop.begin();
     this.set('searchStatus', '_searchInProgress'.loc());
-    // #CHE
-    // deny selection TODO set ctrl 'allowsSelection'
-    Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', NO);
+    // don't allow selection while search is in progress    
+    // TODO set state
+    this.set('allowsSelection', NO);
+    Multivio.searchTreeController.set('allowsSelection', NO);
     SC.RunLoop.end();
     
     Multivio.logger.debug('SearchController.doSearch("%@"), file: %@'.
@@ -1693,8 +1699,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         else {
           this.set('searchStatus', '_listOfResults'.loc());
         }
-        // TODO set ctrl allowsSelection
-        Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', YES);
+        // allow selection when search is done
+        // TODO set state
+        this.set('allowsSelection', YES);
+        Multivio.searchTreeController.set('allowsSelection', YES);
         Multivio.logger.debug('End of the search');
       }
     }

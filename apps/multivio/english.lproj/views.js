@@ -37,7 +37,7 @@ Multivio.views = SC.Page.design(
     controllers: ['zoomController', 'navigationController', 
                   'searchController', 'selectionController', 
                   'imageController',  'treeController', 'thumbnailController',
-                  'searchTreeController'], // TODO test dwy add search tree controller
+                  'searchTreeController'],
       
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     
@@ -429,7 +429,7 @@ Multivio.views = SC.Page.design(
             paletteController: Multivio.paletteController,
             panController: Multivio.panController,
             zoomController: Multivio.zoomController,
-            rotateController: Multivio.rotateController,
+            rotateController: Multivio.rotateController
             /* bindings */
             //selectedTextStringBinding: 
             //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
