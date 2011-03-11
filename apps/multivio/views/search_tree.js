@@ -35,8 +35,9 @@ Multivio.SearchTreeView = SC.ScrollView.extend(
     var selection = this.get('searchTreeController').get('selection');
     if (!SC.none(selection)) {
       var leftScroll = this.get('horizontalScrollOffset');
-      var selectionIndex = this.get('searchTreeController').get('arrangedObjects')
-          .indexOf(selection.firstObject());
+      var tree_content = this.get('searchTreeController').get('arrangedObjects');
+      if (SC.none(tree_content)) return;
+      var selectionIndex = tree_content.indexOf(selection.firstObject());
 
       // add 1 because the horizontalScroll is not visible the firstTime
       // this method is call
