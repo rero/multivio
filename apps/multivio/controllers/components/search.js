@@ -1919,12 +1919,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);
 
-      // show search palette
-      Multivio.logger.debug('search ctrl init, trying to display palette');
+      // TODO show search palette
+      //Multivio.logger.debug('search ctrl init, trying to display palette');
       // get search button TODO button should be named in views.js
-      var sbt = Multivio.getPath('views.mainContentView.leftButtons').
-                                                      get('childViews')[2];
-      Multivio.paletteController.showSearch(sbt);
+      //var sbt = Multivio.getPath('views.mainContentView.leftButtons').
+      //                                                get('childViews')[2];
+      //Multivio.paletteController.showSearch(sbt);
 
       Multivio.logger.debug('search ctrl init, running search with url: ' + 
                                               this.get('currentSearchFile'));
@@ -1982,8 +1982,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     this.set('initial_search', NO);
     
-    // show search palette
-    Multivio.logger.debug('currentFileListDidChange, trying to display palette');
+    // TODO show search palette
+    //Multivio.logger.debug('currentFileListDidChange, trying to display palette');
     // get search button TODO button should be named in views.js
     //var sbt = Multivio.getPath('views.mainContentView.leftButtons').
     //                                                get('childViews')[2];
