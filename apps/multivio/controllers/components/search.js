@@ -1631,83 +1631,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     }
     
   }.observes('searchResults'),
-  
-  /**
-    CDM received new values see if we have all needed information
     
-    #CHE
-    NOTE: Need to merge this function an d the previous one because the 
-    two functions observes the same value
-    
-    @observes Multivio.CDM.searchResults
-  */
-  CDMsearchResultsDidChange: function () {
-    
-    var ref = this.get('url');
-    var searchFile = this.get('currentSearchFile');
-    
-    Multivio.logger.debug('CDMsearchResultsDidChange, ref: %@, searchFile: %@'.fmt(ref, searchFile));
-
-    if (!SC.none(Multivio.CDM.searchResults)) {
-      var listOfUrls = Multivio.masterController.listOfFiles;
-      var isFinish = YES;
-      var nbOfRes = 0;
-    
-      // ref === searchFile => search all files
-      if (ref === searchFile) {
-        if (!SC.none(listOfUrls)) {
-          for (var i = 0; i < listOfUrls.length; i++) {
-            var oneFile = listOfUrls[i].url;
-            var result = Multivio.CDM.searchResults[oneFile];
-            if (SC.none(result) || result[0] === -1) {
-              isFinish = NO;
-              break;
-            }
-            else {
-              nbOfRes += result.file_position.results.length;
-            }
-          }
-        }
-        // only one file
-        else {
-          if (SC.none(Multivio.CDM.searchResults[ref]) || 
-              Multivio.CDM.searchResults[ref][0] === -1) {
-            isFinish = NO;
-          }
-          else {
-            if (!SC.none(Multivio.CDM.searchResults[ref].file_position)) {
-              nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;
-            }
-          }
-        }
-      }
-      else {
-        if (SC.none(Multivio.CDM.searchResults[searchFile]) || 
-            Multivio.CDM.searchResults[searchFile][0] === -1) {
-          isFinish = NO;
-        }
-        else {
-          nbOfRes += Multivio.CDM.searchResults[searchFile].file_position.results.length;
-        }
-      }
-      
-      // if the search is finished set the search status.
-      if (isFinish) {   
-        if (nbOfRes === 0) {
-          this.set('searchStatus', '_noResult'.loc());
-        }
-        else {
-          this.set('searchStatus', '_listOfResults'.loc());
-        }
-        // allow selection when search is done
-        // TODO set state
-        this.set('allowsSelection', YES);
-        Multivio.searchTreeController.set('allowsSelection', YES);
-        Multivio.logger.debug('End of the search');
-      }
-    }
-  }.observes('Multivio.CDM.searchResults'),
-  
   /**
     Store the search results (if any) by creating new highlight zones
     and computing coordinates according to the current zoom.
@@ -1723,33 +1647,46 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // if there are results                                         
     if (res !== -1 && !SC.none(res)) {
       
-      // get total number of search results, not for this file only
-      Multivio.logger.debug('counting all search results');
+      // get total number of search results, not for this file only (ref url)
+      Multivio.logger.debug('---counting all search results');
       var num_all_res, num_res = res.file_position.results.length;
-      var all_res = this.get('searchResults')[this.get('url')];
-      num_all_res = num_res;
-      // NOTE: don't take 'All Files' into account
-      var num_files = this.get('currentFileList').length - 1;
-      // TODO #searching
-      // TODO in this loop we can detect if we received a response
+      var all_res = this.get('searchResults');
+      num_all_res = 0;
+      var files = this.get('currentFileList');
+      var num_files = files.length;
+      // in this loop we can detect if we received a response
       // for every file in the list
-      for (var j = 0; j < num_files; j++) {
+      // NOTE: don't take 'All Files' into account, begin at index 1
+      //handle case where there's only one file
+      var done = YES, u;
+      var start = (num_files > 1? 1: 0);
+      for (var j = start; j < num_files; j++) {
+        // current url
+        u = files[j].url;
+        // result missing, search not done  
+        if (SC.none(all_res) || SC.none(all_res[u])) {
+          done = NO;
+          continue;
+        }
         
-        if (SC.none(all_res) || SC.none(all_res[j])) continue;
+        num_all_res += all_res[u].file_position.results.length;
+      }
+      Multivio.logger.debug('---search done: ' + done);
+      Multivio.logger.debug('---number of search results: ' + num_all_res);
+
+      if (done) {
+        // allow selection when search is done
+        // TODO set state
+        this.set('allowsSelection', YES);
+        Multivio.searchTreeController.set('allowsSelection', YES);
+        Multivio.logger.debug('End of the search');
         
-        num_all_res += all_res[j].file_position.results.length;
-      }
-      Multivio.logger.debug('number of search results: ' + num_res);
-      // NOTE: this is redundant with function CDMsearchResultsDidChange,
-      // but done here as well because there is one case where the function
-      // does not detect the count correctly: when a search parameter
-      // (&search=) is given in URL, for a XML document containing only
-      // one file.
-      if (num_res === 0) {
-        this.set('searchStatus', '_noResult'.loc());
-      }
-      else {
-        this.set('searchStatus', '_listOfResults'.loc());
+        if (num_all_res === 0) {
+          this.set('searchStatus', '_noResult'.loc());
+        }
+        else {
+          this.set('searchStatus', '_listOfResults'.loc());
+        }
       }
       
       //#CHE
