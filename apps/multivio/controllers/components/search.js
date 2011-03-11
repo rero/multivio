@@ -1654,17 +1654,27 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       num_all_res = 0;
       var files = this.get('currentFileList');
       var num_files = files.length;
+      var ref_url = this.get('url');
+
       // in this loop we can detect if we received a response
       // for every file in the list
       // NOTE: don't take 'All Files' into account, begin at index 1
       //handle case where there's only one file
       var done = YES, u;
-      var start = (num_files > 1? 1: 0);
-      for (var j = start; j < num_files; j++) {
+      for (var j = 0; j < num_files; j++) {
+
         // current url
         u = files[j].url;
+        
+        // skip 'all files'
+        if (files[j].label === '_AllFiles'.loc()) {
+          Multivio.logger.debug('---"All files", skip: ' + u);
+          continue;
+        }
+                        
         // result missing, search not done  
         if (SC.none(all_res) || SC.none(all_res[u])) {
+          //Multivio.logger.debug('---no result, skip: ' + u);
           done = NO;
           continue;
         }
@@ -1963,7 +1973,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
     if (SC.none(is) || !is) return;
     
-    // used stored data and clear it right away
+    // use stored data and clear it right away
     this.set('currentSearchTerm', it);
     this.set('initial_term', undefined);
     
