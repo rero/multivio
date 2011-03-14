@@ -104,6 +104,7 @@ Multivio.views = SC.Page.design(
           icon: 'loupe_new',
           theme: 'mvo-button',
           isEnabledBinding: 'Multivio.overviewController.isOverviewEnabled',
+          isActiveBinding: 'Multivio.overviewController.isOverviewActive',
           target: "Multivio.overviewController",
           action: "showOverview"
         }),
@@ -386,7 +387,7 @@ Multivio.views = SC.Page.design(
 
       innerMainContent: Multivio.ContentView.design({
         layout: { top: 5, bottom: 5, left: 5, right: 5 },
-        overviewController: Multivio.overviewController,
+        imageController: Multivio.imageController,
         isFirstResponder: YES,
         acceptsFirstResponder: YES,
         isKeyResponder: YES,
@@ -402,7 +403,7 @@ Multivio.views = SC.Page.design(
           childViews: 'innerContent highlightpane'.w(),
 
           innerContent: Multivio.ImageContentView.design({
-            overviewController: Multivio.overviewController,
+            imageController: Multivio.imageController,
             layout: { top: 0, left: 0, minWidth: 1 },
             useImageCache: NO
           }),
@@ -558,16 +559,7 @@ Multivio.views = SC.Page.design(
     classNames: 'mvo-transparent',
     contentView: Multivio.OverviewView.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
-      overviewController: Multivio.overviewController,
-      childViews: 'imageOverview visibleZone'.w(),
-      
-      imageOverview: SC.ImageView.design({
-        useImageCache: NO,
-        borderStyle: SC.BORDER_NONE 
-      }),
-      visibleZone: SC.View.design({
-        classNames: 'mvo-glass-zone highlight-pane-pan'
-      })
+      overviewController: Multivio.overviewController
     })
   }),
   

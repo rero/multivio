@@ -309,13 +309,19 @@ Multivio.paletteController = SC.ObjectController.create(
     @param {} status
   */
   alertPaneDidDismiss: function (pane, status) {
+          console.info(status);
     switch (status) {
+
     case SC.BUTTON1_STATUS:
       var file = pane.description;
       file = file.split('(');
       // open a new tab to download the file
-      var newWindow = window.open(file[0]);
-      newWindow.location.href = file[0];
+      if (parseInt(SC.browser.msie,0)==7){
+        window.location.href = file[0];
+      }
+      else {
+        window.open(file[0]);
+      }
       break;
         
     case SC.BUTTON2_STATUS:

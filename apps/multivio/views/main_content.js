@@ -70,12 +70,12 @@ Multivio.ContentView = SC.ScrollView.extend(
   imageSizeBinding: 'Multivio.CDM.imageSize',
   
   /**
-    Link to the controler(SC.ObjectController) of the overview palette.
+    Link to the imageControler.
     
     This controller need to have an object that contains the scrolls 
-    and a boolean variable that enabled and disabled the overview button.
+    and a boolean variable that says if one (or two) scroll is visible.
   */
-  overviewController: null,
+  imageController: null,
 
   /**
     The native image size
@@ -166,23 +166,23 @@ Multivio.ContentView = SC.ScrollView.extend(
   }.observes('imageSize'),
   
   /**
-    ScrollerVisible property has changed, see if we can enabled (disabled)
-    overview button
+    isLoadingContent property has changed, verify scrollerVisible property 
+    and update the isOneScrollVisible property of the imageController
     
-    @observes isHorizontalScrollerVisible and isVerticalScrollerVisible
+    @observes isLoadingContent
   */
   scrollStateDidChange: function () {
-    if (!this.get('isHorizontalScrollerVisible') && 
-        !this.get('isVerticalScrollerVisible') && 
-        !this.get('isLoadingContent')) {
-      this.get('overviewController').set('isOverviewEnabled', NO);
+    if (!this.get('isLoadingContent')) {
+      if (!this.get('isHorizontalScrollerVisible') && 
+          !this.get('isVerticalScrollerVisible')) {
+        this.get('imageController').set('isOneScrollVisible', NO);
+      }
+      else {
+        this.get('imageController').set('isOneScrollVisible', YES);
+      }
     }
-    else {
-      this.get('overviewController').set('isOverviewEnabled', YES);
-    }
-  }.observes('isHorizontalScrollerVisible', 'isVerticalScrollerVisible'),
+  }.observes('isLoadingContent'),
   
-
   /**
     Callback applied after image has been loaded.
     It puts the image in the container and adjust the size
@@ -489,17 +489,17 @@ Multivio.ContentView = SC.ScrollView.extend(
   /**
     Move vertical and(or) horizontal scrollbars
     
-    @observes .overviewController.scrolls 
+    @observes .imageController.scrollPosition
   */
   scrollsDidChange: function () {
-    var scroll = this.get('overviewController').get('scrolls');
+    var scroll = this.get('imageController').get('scrollPosition');
     var horizontalH = Math.round(this.get('contentView').get('frame').width * 
-        scroll.horizontal);
+        scroll.horizontalPos);
     var horizontalV = Math.round(this.get('contentView').get('frame').height * 
-        scroll.vertical);
+        scroll.verticalPos);
         
     this.scrollTo(horizontalH, horizontalV);
-  }.observes('.overviewController.scrolls'),
+  }.observes('.imageController.scrollPosition'),
   
   /**
     This Method is call when a key of the keyboard has been selected

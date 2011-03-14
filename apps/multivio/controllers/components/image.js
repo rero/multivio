@@ -44,10 +44,31 @@ Multivio.imageController = SC.ArrayController.create(
   allowsMultipleSelection: NO,
   
   /**
+    Local variable used to store the clipping frame of the current image
+    
+    Note: this variable is used by the overview
+  */ 
+  visiblePart: {
+    height: null,
+    width: null,
+    x: 0,
+    y: 0
+  },
+  
+  /**
+    Local variable used by the main_content view to move the scroll
+  */
+  scrollPosition: {
+    verticalPos: 0,
+    horizontalPos: 0
+  },
+  
+  /**
     local variable for bindings
    */
   physicalStructure: null,
   position: null,
+  isOneScrollVisible: NO,
   
   /**
     Initialize the controller. This controller needs to know the number 
@@ -61,6 +82,7 @@ Multivio.imageController = SC.ArrayController.create(
       this.reset();
     }
     this.bind('position', 'Multivio.masterController.currentPosition');
+    this.bind('isOneScrollVisible', 'Multivio.overviewController.isOverviewEnabled');
     
     var meta = Multivio.CDM.getFileMetadata(url);
     if (SC.none(meta.nPages)) {

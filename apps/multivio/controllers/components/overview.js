@@ -23,7 +23,7 @@ Multivio.overviewController = SC.ObjectController.create(
   
   
   /**
-    Binds to the imageController selection and 
+    Binds to the imageController selection, visiblePart and 
     to the rotateController currentValue.
     
     These bindings are used to load new image
@@ -32,6 +32,7 @@ Multivio.overviewController = SC.ObjectController.create(
   */
   selection: null,
   rotate: 0,
+  visiblePart: null,
   
   /**
     local variables
@@ -39,17 +40,9 @@ Multivio.overviewController = SC.ObjectController.create(
   // the overview button
   isOverviewActive: NO,
   isOverviewEnabled: NO,
-  overviewButton: null,
   
   // for the overviewImage
   thumbnailUrl: null,
-  // for the overview 
-  visiblePart: {
-    height: null,
-    width: null,
-    x: 0,
-    y: 0
-  },
 
   // for the scroll of the main image
   scrolls : {
@@ -63,14 +56,11 @@ Multivio.overviewController = SC.ObjectController.create(
     @param {SC.Button} button the button pressed
   */
   showOverview: function (button) {
-    if (SC.none(this.get('overviewButton'))) {
-      this.set('overviewButton', button);
-    }
     if (! this.get('isOverviewActive')) {
       this.set('isOverviewActive', YES);
-      this.get('overviewButton').set('isActive', YES);
       this.bind('selection', SC.Binding.oneWay('Multivio.imageController.selection'));
       this.bind('rotate', SC.Binding.oneWay('Multivio.rotateController.currentValue'));
+      this.bind('visiblePart', SC.Binding.oneWay('Multivio.imageController.visiblePart'));
       
       // create the layout
       var layout = [];
@@ -87,7 +77,6 @@ Multivio.overviewController = SC.ObjectController.create(
     }
     else {
       this.set('isOverviewActive', NO);
-      this.get('overviewButton').set('isActive', NO);
       this.reset();
       Multivio.getPath('views.overviewPalette').remove();
     }
@@ -99,9 +88,8 @@ Multivio.overviewController = SC.ObjectController.create(
     @observes isOverviewEnabled
   */
   isOverviewEnabledDidChange: function () {
-    if (!this.get('isOverviewEnabled') && !SC.none(this.get('overviewButton'))) {
+    if (!this.get('isOverviewEnabled')) {
       this.set('isOverviewActive', NO);
-      this.get('overviewButton').set('isActive', NO);
       this.reset();
       Multivio.getPath('views.overviewPalette').remove();
     }
@@ -120,7 +108,23 @@ Multivio.overviewController = SC.ObjectController.create(
     this.set('bindings', []);
     this.selection = null;
     this.rotate = 0;
+    this.visiblePart = null;
   },
+  
+  /**
+    Scrolls did change. This indicates that the visiblePartIndicator view of 
+    the overview Palette has moved. 
+    Update scrollPosition of the imageController.
+  
+    @observes scrolls
+  */
+  scrollsDidChange: function () {
+    console.info('scrollPosition did change');
+    var newScrolls = {};
+    newScrolls.verticalPos = this.get('scrolls').vertical;
+    newScrolls.horizontalPos = this.get('scrolls').horizontal;
+    Multivio.imageController.set('scrollPosition', newScrolls);
+  }.observes('scrolls'),
    
   /**
     Load a new image by observing changes of the current selection
