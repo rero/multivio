@@ -599,7 +599,7 @@ Multivio.HighlightContentView = SC.View.extend(
                                                           page: currentPage,
                                                           type: 'selection' });
       
-      // TODO test put the hidden text div at the same height as the selection,
+      // NOTE: put the hidden text div at the same height as the selection,
       // to avoid unwanted scrolling on selection text copy (Firefox)
       // NOTE: unwanted horizontal scrolling can still happen, but we have to 
       // keep the div outside of the content so we don't see it.

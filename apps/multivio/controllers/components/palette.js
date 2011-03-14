@@ -153,17 +153,6 @@ Multivio.paletteController = SC.ObjectController.create(
     if (SC.none(this.activeButton)) {
       button.set('isActive', YES);
       this.activeButton = button;
-      var ref = Multivio.CDM.getReferer();
-      var phys = Multivio.CDM.getPhysicalstructure(ref);
-      if (phys !== -1 && phys.length < 2 && 
-          searchPalette.get('contentView').get('childViews')[0].
-          get('childViews').length === 8) {
-            
-        var childToRemove = Multivio.getPath(
-            'views.searchPalette.contentView.innerSearch.searchScopeView');
-        Multivio.getPath('views.searchPalette.contentView.innerSearch').
-            removeChild(childToRemove);
-      }
       searchPalette.set('layout', this.paletteLayout(YES));
       searchPalette.append();
     }

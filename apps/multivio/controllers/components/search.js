@@ -467,7 +467,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           selected_words = words_1.concat(words_2).concat(words_3);          
         }
         
-        // TODO debug: display the list of words
+        // debug: display the list of words
         /*Multivio.logger.debug('words_1: ' + words_1);
         Multivio.logger.debug('words_2: ' + words_2);
         Multivio.logger.debug('words_3: ' + words_3);
@@ -580,6 +580,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     if (this.get('physicalStructureInitialised')) return;
     
     var url = Multivio.CDM.getReferer();
+    var dr =  null;
 
     Multivio.logger.debug('_physicalStructureDidChange,referer: ' + url +
                                                         ' phys: ' + phys[url]);
@@ -589,9 +590,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
       this.set('physicalStructureInitialised', YES);
 
-      if (phys[url].length < 2 && 
-          Multivio.getPath('views.searchPalette.contentView.innerSearch').
-          get('childViews').length === 8) {
+      if (phys[url].length < 2) {
             
         Multivio.logger.debug('_physicalStructureDidChange, removing scope');
         Multivio.logger.debug('_physicalStructureDidChange, url: ' + 
@@ -605,12 +604,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
         //this.set('currentFileList', [phys[url][0]]);
         // NOTE: set specifically in both controllers TODO find better solution
         Multivio.searchController.set('currentFileList', [phys[url][0]]);
-        Multivio.selectionController.set('currentFileList', [phys[url][0]]);
+        Multivio.selectionController.set('currentFileList', [phys[url][0]]);      
         
-        var childToRemove = Multivio.getPath(
-            'views.searchPalette.contentView.innerSearch.searchScopeView');
-        Multivio.getPath('views.searchPalette.contentView.innerSearch').
-            removeChild(childToRemove);
       }
       else {
         
@@ -621,22 +616,22 @@ Multivio.HighlightController = SC.ArrayController.extend(
           fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});          
         }
 
-        //testthis.set('currentFileList', fileList);
         // NOTE: set specifically in both controllers TODO find better solution
         Multivio.selectionController.set('currentFileList', fileList);
         Multivio.searchController.set('currentFileList', fileList);
-      
-        var dr = {};
-        // init display properties for each file
-        for (var i = 0; i < phys[url].length; i++) {
-          dr[phys[url][i].url] = YES;
-        }
 
-        // NOTE: set specifically in both controllers TODO find better solution
-        //this.set('displayResults', dr);
-        Multivio.selectionController.set('displayResults', dr);
-        Multivio.searchController.set('displayResults', dr);
       }
+      
+      // init display properties for each file
+      dr = {};
+      for (var i = 0; i < phys[url].length; i++) {
+        dr[phys[url][i].url] = YES;
+      }
+
+      // NOTE: set specifically in both controllers TODO find better solution
+      //this.set('displayResults', dr);
+      Multivio.selectionController.set('displayResults', dr);
+      Multivio.searchController.set('displayResults', dr);
     }
   }.observes('physicalStructure'),
 
@@ -1212,8 +1207,24 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // look for existing stuff in the CDM
     var all_results = Multivio.CDM.get('searchResults');
-    var new_results = {};    
-        
+    var new_results = null;    
+    
+    if (!SC.none(all_results)) {
+      if (!SC.none(all_results[url])) {
+        new_results = Multivio.CDM.clone(all_results);
+      } else {
+        // results for this url do not exist, keep results empty
+      }
+    }
+    
+    // always update the search results, be it empty or not
+    SC.RunLoop.begin();
+    this.set('_load_url', url);
+    // this should trigger _searchResultsDidChange()
+    this.set('searchResults', new_results); 
+    SC.RunLoop.end();
+    
+    /*
     if (!SC.none(all_results) && !SC.none(all_results[url])) {
       new_results = Multivio.CDM.clone(all_results);
       SC.RunLoop.begin();
@@ -1222,6 +1233,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.set('searchResults', new_results); 
       SC.RunLoop.end();
     }
+    */
     
   },
 
@@ -1522,7 +1534,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     Multivio.logger.debug("_searchResultsDidChange: (1) res:" + res);
     Multivio.logger.debug("_searchResultsDidChange: (2) url:" + current_url);
-    
+        
     // use the current url as key for storage    
     var key = current_url;
     
@@ -1554,7 +1566,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       if (key === ref_url) {
         var file_list = this.get('currentFileList');
         var res_all = [];
-        
+                
         Multivio.logger.debug('_searchResultsDidChange, (5) concat all results...');
         
         // clear all results before adding the whole again
@@ -1678,7 +1690,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           done = NO;
           continue;
         }
-        
         num_all_res += all_res[u].file_position.results.length;
       }
       Multivio.logger.debug('---search done: ' + done);

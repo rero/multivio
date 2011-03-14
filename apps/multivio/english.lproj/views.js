@@ -524,6 +524,7 @@ Multivio.views = SC.Page.design(
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
         /* controllers */
+        selectionController: Multivio.selectionController,
         searchController: Multivio.searchController,
         searchTreeController: Multivio.searchTreeController
       })
