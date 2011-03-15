@@ -19,213 +19,121 @@ Multivio.OverviewView = SC.View.extend(
 /** @scope Multivio.OverviewView.prototype */ {
   
   /**
-    Binds to the imageController selection.
+    Link to a controler of type SC.ObjectController.
     
-    This binding is used load new image
-
-    @binding {Boolean}
+    This controller need to have:
+      - an url for the image
+      - an object that contains the visble part of the reference image
+      - an object that contains the scrolls 
   */
-  selection: null,
-  selectionBinding: 'Multivio.imageController.selection',
+  overviewController: null,
   
   /**
-    Binds to the masterController isLoadingContent property.
-    
-    This binding is used to draw the highlighted zone
-
-    @binding {Boolean}
+    name of the children
   */
-  isLoadingContent: null,
-  isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
-  
-  rotate: 0,
-  rotateBinding: 'Multivio.rotateController.currentValue',
-  
-  
-  /** 
-    @property {Object}
-    
-    define the highlighted zone
-    
-    @default width, height, x, y = 0 
-  */
-  zoneToDraw: {
-    width: 0,
-    height: 0,
-    x: 0,
-    y: 0
-  },
-  
-  /** 
-    @property {Object}
-    
-    define the image size
-    
-    @default width, height = 0
-  */
-  imageSize: {
-    width: 0,
-    height: 0
-  },
-  
-  /** 
-    @property {String}
-    
-    @default null
-  */
-  imageUrl: null,
+  imageOverview: null,
+  visiblePartIndicator: null,
   
   /**
-    First time creates the children of this view. Then set value of the
-    image and the layout for the highlighted zone.
-    
-    @param {Object} context
-    @param {Boolean} firstTime 
+    Overwrite createChildView to create the view
   */
-  render: function (context, firstTime) {
-    if (firstTime) {
-      // first child is an image
-      var thumbnail = this.createChildView(SC.ImageView.design({
-        //layout: { top: 10, bottom: 10, left: 10, right: 10},
-        layout: {centerX: 0, centerY: 0},
+  createChildViews: function () {
+    var childViews = [];
+    
+    this.imageOverview = this.createChildView(
+      SC.ImageView.design({
         useImageCache: NO,
-        value: '',
         borderStyle: SC.BORDER_NONE 
-      }));
-      this.appendChild(thumbnail);
-      // second child is the highlighted zone
-      var zone = this.createChildView(SC.View.design({
-        //layout: {top: 5, left: 5,  width: 30, height: 30},
-        layout: {width: 30, height: 30},
+      })
+    );
+    childViews.push(this.imageOverview);
+    
+    this.visiblePartIndicator = this.createChildView(
+      SC.View.design({
         classNames: 'mvo-glass-zone highlight-pane-pan'
-        
-      }));
-      this.appendChild(zone);
-    }
-    else {
-      if (this.get('childViews').length !== 0) {
-        this.get('childViews')[0].set('layout', {
-          'centerX': 0,
-          'centerY': 0,
-          'width': this.imageSize.width,
-          'height': this.imageSize.height
-        });
-        this.get('childViews')[0].set('value', this.imageUrl);
-      
-        this.get('childViews')[1].set('layout', {
-          'top': this.zoneToDraw.y + this.get('childViews')[0].get('frame').y - 5, 
-          'left': this.zoneToDraw.x + this.get('childViews')[0].get('frame').x - 5, 
-          'width': this.zoneToDraw.width, 
-          'height': this.zoneToDraw.height
-        });
-      }
-    }
-    sc_super();
-  },
-  
-  reset: function () {
-    this.removeAllChildren();
+      })
+    );
+    childViews.push(this.visiblePartIndicator);
+    
+    this.set('childViews', childViews);
   },
   
   /**
-    Calculate the size and the position of the highlighted zone.
-  */
-  drawZone: function () {
-    // get the referer image
-    var centralView = Multivio.getPath('views.mainContentView.content.innerMainContent');
-    var imageView = centralView.get('contentView');
-    // calculate position and size of the zone
-    var widthRatio = 100 / imageView.get('frame').width * centralView.get('frame').width;
-    var heightRatio = 100 / imageView.get('frame').height * centralView.get('frame').height;
-    var relPosX = imageView.get('frame').x < 0 ? 
-        imageView.get('frame').width / imageView.get('frame').x : 0;
-    var relPosY = imageView.get('frame').y < 0 ? 
-        imageView.get('frame').height / imageView.get('frame').y : 0;
-    this.zoneToDraw.width = widthRatio >= 100 ? this.imageSize.width :
-        (this.imageSize.width * widthRatio) / 100;
-    this.zoneToDraw.height = heightRatio >= 100 ? this.imageSize.height : 
-        (this.imageSize.height * heightRatio) / 100;
-    this.zoneToDraw.width = Math.round(this.zoneToDraw.width);
-    this.zoneToDraw.height = Math.round(this.zoneToDraw.height);
-    
-    relPosX = -1 * relPosX;
-    this.zoneToDraw.x = relPosX === 0 ? 0 : 
-        Math.round(this.imageSize.width / relPosX);
-    relPosY = -1 * relPosY;
-    this.zoneToDraw.y = relPosY === 0 ? 0 : 
-        Math.round(this.imageSize.height / relPosY);    
-    this.updateLayer();
-  },
+    Diplay the received image
   
-  /**
-    Retreive the size of the loaded image and the url
-    
-    @callback SC.imageCache.load
-    @param {String} url
-    @param {Image} image
+    @param {String} url the url of the image
+    @param {Object} image the image to display or an error
   */
-  load: function (url, image) {
-    this.imageUrl = url;
-    this.imageSize.width = image.width;
-    this.imageSize.height = image.height;
+  displayImage: function (url, image) {
+    this.imageOverview.set('layout', {
+      centerX: 0,
+      centerY: 0,
+      width: image.width,
+      height: image.height
+    });
+    this.imageOverview.set('value', url);
     this.drawZone();
   },
   
   /**
-    Load a new image by observing changes of the current selection
-    
-    @observes selection
+    Create the childView that represents the visible part 
+    of the reference image
   */
-  selectionDidChange: function () {
-    var currentSelection = this.get('selection');
-    if (!SC.none(currentSelection) && !SC.none(currentSelection.firstObject())) {
-      var imageUrl = currentSelection.firstObject().url;
-      var rot = this.get('rotate');
-      imageUrl = imageUrl.replace('?', '?max_width=130&max_height=130&angle=' + 
-          rot + '&');
-      SC.imageCache.loadImage(imageUrl, this, this.load);
+  drawZone: function () {
+    var vpart = this.get('overviewController').get('visiblePart'),
+        frame = this.imageOverview.get('frame');
+
+    if (!SC.none(vpart)) {
+      var percentHeight = vpart.height;
+      var percentWidth = vpart.width;
+      var positionX = Math.round(frame.width * vpart.x);
+      var positionY = Math.round(frame.height * vpart.y);
+
+      if (!SC.none(percentHeight)) {
+        this.visiblePartIndicator.set('layout', {
+          top:    frame.y - 3 + positionY,
+          left:   frame.x - 3 + positionX,
+          width:  frame.width * percentWidth,
+          height: frame.height * percentHeight
+        });
+      }
     }
-  }.observes('selection'),
+  },
   
   /**
-    Load a new image by observing changes of the value of the rotation
+    The position or the size of the visible part of the reference image
+    has changed. Call the drawZone methode to update it.
     
-    @observes rotate
+    @observes .overviewController.visiblePart 
   */
-  rotateDidChange: function () {
-    this.selectionDidChange();
-  }.observes('rotate'),
-  
+  zonePositionOrSizeDidChange: function () {
+    this.drawZone();
+  }.observes('.overviewController.visiblePart'),
   
   /**
-    Draw the new highlighted zone by observing changes of the isLoadingContent
-    property
+    The reference image did change. Load the new image.
     
-    @observes selection
+    @observes .overviewController.thumbnailUrl 
   */
-  isLoadingContentDidChange: function () {
-    if (!this.get('isLoadingContent')) {
-      this.drawZone();
-    }
-  }.observes('isLoadingContent'),
+  thumbnailUrlDidChange: function () {
+    var newUrl = this.get('overviewController').get('thumbnailUrl');
+    SC.imageCache.loadImage(newUrl, this, this.displayImage);
+  }.observes('.overviewController.thumbnailUrl'),
   
   /**
-    On mouse down save mouse pointer position
+    On mouse down save mouse pointer position and 
+    set isDragging property to YES.
     
     @param {SC.Event} Event fired
   */
   mouseDown: function (evt) {
-    // indicate dragging - rerenders view
-    this.get('childViews')[1].set('isDragging', YES);
     // save mouse pointer loc for later use
     this._mouseDownInfo = {
       pageX: evt.pageX,
       pageY: evt.pageY,
-      left: this.get('childViews')[1].get('layout').left,
-      top: this.get('childViews')[1].get('layout').top
+      left: this.visiblePartIndicator.get('layout').left,
+      top: this.visiblePartIndicator.get('layout').top
     };
-    this.oldT = 0;
-    this.oldL = 0;
     return YES;
   },
 
@@ -235,63 +143,28 @@ Multivio.OverviewView = SC.View.extend(
     @param {SC.Event} Event fired
   */  
   mouseUp: function (evt) {
-    this.get('childViews')[1].set('isDragging', NO);
     // apply one more time to set final position
     this.mouseDragged(evt); 
     return YES; // handled!
   },
 
   /**
-    On mouse dragged set move the highlighted zone and send and event to the 
-    referer image
+    On mouse dragged set the scrolls of the controller
 
     @param {SC.Event} Event fired
-  */  
-  oldT: 0,
-  oldL: 0,
+  */
   mouseDragged: function (evt) {
     var info = this._mouseDownInfo;
     var newLeft = info.left + (evt.pageX - info.pageX);
     var newTop = info.top + (evt.pageY - info.pageY);
-    var newT = 0;
-    var newL = 0;
     
-    // define border : left, rigth, top, bottom
-    var borderLeft = this.get('childViews')[0].get('frame').x - 5;
-    var borderTop = this.get('childViews')[0].get('frame').y - 5;
-    if (newLeft < borderLeft) {
-      newLeft = borderLeft;
-    }
-    if (newLeft > borderLeft + this.imageSize.width - this.zoneToDraw.width) {
-      newLeft = borderLeft + this.imageSize.width - this.zoneToDraw.width;
-    }
-    if (newTop < borderTop) {
-      newTop = borderTop;
-    }
-    if (newTop > borderTop + this.imageSize.height - this.zoneToDraw.height) {
-      newTop = borderTop + this.imageSize.height - this.zoneToDraw.height;
-    }
+    var newScroll = {};
+    var ioframe = this.imageOverview.get('frame');
+    var iolayout = this.imageOverview.get('layout');
+    newScroll.horizontal = (newLeft - ioframe.x + 3) / iolayout.width;
+    newScroll.vertical = (newTop - ioframe.y + 3) / iolayout.height;
     
-    // move zone 
-    this.get('childViews')[1].set('layout', {
-        'top': newTop,
-        'left': newLeft, 
-        'width': this.zoneToDraw.width, 
-        'height': this.zoneToDraw.height
-      });
-    // calculate the scroll move and send event 
-    var centralV = Multivio.getPath('views.mainContentView.content.innerMainContent'); 
-    newT = evt.pageY - info.pageY;
-    var diff = newT - this.oldT; 
-    var ratioH = centralV.get('contentView').get('frame').height / 
-        this.imageSize.height;
-    this.oldT = newT;
-    
-    newL = evt.pageX - info.pageX;
-    var diffL = newL - this.oldL;
-    this.oldL = newL;
-    
-    centralV.moveScroll(Math.round(diff * ratioH), Math.round(diffL * ratioH));
+    this.get('overviewController').set('scrolls', newScroll);
     return YES;
   }
 

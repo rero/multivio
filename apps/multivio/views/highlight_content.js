@@ -21,8 +21,38 @@ License: See file license.js
 Multivio.HighlightContentView = SC.View.extend(
 /** @scope Multivio.HighlightContentView.prototype */ {
   
+  /**
+    Reference to the master controller
+  */
+  masterController: null,
+  
+  /**
+    Reference to the selection controller
+  */
+  selectionController: null,
+  
+  /**
+    Reference to the search controller
+  */
+  searchController: null,
+  
+  /**
+    Reference to the palette controller
+  */
+  paletteController: null,
+  
+  /**
+    Reference to the zoom controller
+  */
+  zoomController: null,
+  
+  /**
+    Reference to the rotate controller
+  */
+  rotateController: null,
+  
   /** 
-    div which contains the selected text.
+    'div' which contains the selected text.
     
     @property {SC.TextFieldView}
     @default null
@@ -30,46 +60,49 @@ Multivio.HighlightContentView = SC.View.extend(
   selectedTextDiv: null,
   
   /**
-    Binds to the selectionController's selectedTextString.
-    This binding is read only.
+    Variable for a binding to the selectionController's selectedTextString.
+    The binding must be specified when instantiating this view class.
     
     @binding {SC.String}
   */
-  selectedTextString: null,
-  selectedTextStringBinding: 
-      SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
+  //selectedTextString: null,
+  // TODO code review put reference to controller in views.js
+  //selectedTextStringBinding: 
+  //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
   
   /**
-    Binds to the masterController's currentPosition.
-    This binding is read only.
+    Variable for a binding to the masterController's currentPosition.
+    The binding must be specified when instantiating this view class.
     
     @binding {Number}
   */
-  currentPage: null,
-  currentPageBinding: 
-      SC.Binding.oneWay("Multivio.masterController.currentPosition"),
+  //currentPage: null,
+  // TODO code review put reference to controller in views.js
+  //currentPageBinding: 
+  //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
   
   /**
-      Binds to the masterController's isLoadingContent.
-      This binding is read only.
+    Variable for a binding to the masterController's isLoadingContent.
+    The binding must be specified when instantiating this view class.
       
-      @binding {Boolean}
+    @binding {Boolean}
   */
-  isLoadingContent: null,
-  isLoadingContentBinding: 
-              SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
+  //isLoadingContent: null,
+  //isLoadingContentBinding: 
+  //            SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
   
   /**
-    Binds to the search result selection in the search controller.
-    This binding is read only.
+    Variable for a binding to the search result selection in the search
+    controller.
+    The binding must be specified when instantiating this view class.
 
-    @binding {SC.Selection}
+    @binding {Number}
   */
-  searchResultSelectionIndex: null,
-  searchResultSelectionIndexBinding: 
-                SC.Binding.oneWay(
-                  'Multivio.masterController.currentSearchResultSelectionIndex'),
-//                    SC.Binding.oneWay('Multivio.searchController.selection'),
+  //searchResultSelectionIndex: null,
+  //searchResultSelectionIndexBinding: 
+  //              SC.Binding.oneWay(
+  //                'Multivio.masterController.currentSearchResultSelectionIndex'),
+  //                    SC.Binding.oneWay('Multivio.searchController.selection'),
   
   /** 
     Determines whether the highlight view (this) needs to be redrawn or not.
@@ -89,43 +122,45 @@ Multivio.HighlightContentView = SC.View.extend(
   coordinatesNeedUpdate: NO,
   
   /** 
-    Binds to the selectionController's content,
+    Variable for a binding to the selectionController's content,
     an array of user selected zones.
+    The binding must be specified when instantiating this view class.
 
     @binding {SC.Array}
 
   */
   selections: [],
-  selectionsBinding: 'Multivio.selectionController.[]',
+  //selectionsBinding: 'Multivio.selectionController.[]',
   
   /** 
-    Binds to the searchController's content,
+    Variable for a binding to the searchController's content,
     an array of search results.
+    The binding must be specified when instantiating this view class.
     
     @binding {SC.Array}
   */
   searchResults: [],
-  searchResultsBinding: 'Multivio.searchController.[]',
+  //searchResultsBinding: 'Multivio.searchController.[]',
   
   /**
-    Binds to the zoom factor in the zoom controller.
-    This binding is read only.
+    Variable for a binding to the zoom factor in the zoom controller.
+    The binding must be specified when instantiating this view class.
   
     @binding {Number}
    */
-  zoomFactor: null, 
-  zoomFactorBinding:
-      SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
+  //zoomFactor: null, 
+  //zoomFactorBinding:
+  //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
   
   /**
-    Binds to the currentValue in the rotate controller.
-    This binding is read only.
+    Variable for a binding to the currentValue in the rotate controller.
+    The binding must be specified when instantiating this view class.
 
     @binding {Number}
   */
-  rotateValue: null,
-  rotateValueBinding:
-      SC.Binding.oneWay('Multivio.rotateController.currentValue'),
+  //rotateValue: null,
+  //rotateValueBinding:
+  //    SC.Binding.oneWay('Multivio.rotateController.currentValue'),
   
   /** 
     Rectangle of user selection during mouse drag.
@@ -195,6 +230,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // with 1x1 dimensions outside the view so it's not actually visible
     // but still takes new text values
     this.appendChild(this.selectedTextDiv);
+    // the div must be visible and enabled so that the text can be copied
     this.selectedTextDiv.set('isVisible', YES);
     this.selectedTextDiv.set('isEnabled', YES);
 
@@ -210,7 +246,7 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   selectedTextStringDidChange: function () {
     
-    var t = this.get('selectedTextString');
+    var t = this.get('selectionController').get('selectedTextString');
     
     Multivio.logger.debug('HighlightContentView: selectedTextStringDidChange: ' + t);
     
@@ -218,12 +254,14 @@ Multivio.HighlightContentView = SC.View.extend(
     // set text in the div (SC.TextFieldView)
     this.selectedTextDiv.set('value', t);
     
-    // get input field of the SC.TextFieldView used for selection
-    Multivio.selectionController.selectTextField();
-    
+    // focus and select input field (html element), so that it can be copied
+    // by the browser when pressing ctrl/apple + c   
+    this.selectedTextDiv.$input()[0].focus();
+    this.selectedTextDiv.$input()[0].select();
+        
     SC.RunLoop.end();
 
-  }.observes('selectedTextString'),
+  }.observes('.selectionController.selectedTextString'),
   
   /**
     When the coordinate update flag is set, update them in both controllers.
@@ -236,8 +274,8 @@ Multivio.HighlightContentView = SC.View.extend(
     if (this.get('coordinatesNeedUpdate')) {
       
       // update done by the controllers
-      Multivio.searchController.updateCoordinates();
-      Multivio.selectionController.updateCoordinates();
+      this.get('searchController').updateCoordinates();
+      this.get('selectionController').updateCoordinates();
       
       // update done, reset flag 
       this.set('coordinatesNeedUpdate', NO);
@@ -251,7 +289,7 @@ Multivio.HighlightContentView = SC.View.extend(
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
 
-    @observes searchResultSelectionIndex
+    @observes .masterController.currentSearchResultSelectionIndex
   */
   searchResultSelectionIndexDidChange: function () {
 
@@ -259,14 +297,14 @@ Multivio.HighlightContentView = SC.View.extend(
     // (after the page changes, the coordinates need to be updated anyway)
     //this.set('coordinatesNeedUpdate', YES);
     SC.RunLoop.begin();
-    Multivio.searchController.updateCoordinates();
+    this.get('searchController').updateCoordinates();
 
     this.updateSearchResultScroll();
 
     this.set('layerNeedsUpdate', YES);
     SC.RunLoop.end();
 
-  }.observes('searchResultSelectionIndex'),
+  }.observes('.masterController.currentSearchResultSelectionIndex'),
   
   /**
     Update the position of the scroll in the view if needed.
@@ -275,9 +313,11 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   updateSearchResultScroll: function () {
     
+    var start = new Date().getMilliseconds();
+    
     //var selection = this.get('searchResultSelection').firstObject();
     //var selectionIndex = Multivio.searchController.indexOf(selection);
-    var selectionIndex = this.get('searchResultSelectionIndex');
+    var selectionIndex = this.get('masterController').get('currentSearchResultSelectionIndex');
     
     // store selection index, will be used to apply 
     // a specific style for the selected highlight in this.render()
@@ -305,6 +345,9 @@ Multivio.HighlightContentView = SC.View.extend(
       this.set('coordinatesNeedUpdate', YES);
     }
     
+    var end = new Date().getMilliseconds();
+    Multivio.logger.debug('--- SCROLL TIME: ' + (end - start));
+    
   },
   
   /**
@@ -315,61 +358,69 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   currentPageDidChange: function () {
 
+    Multivio.logger.debug('HL::currentPageDidChange()');
+
+    // update the coordinates of the highlights of the current page
+    this.set('coordinatesNeedUpdate', YES);
+
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
     
-  }.observes('currentPage'),
+  }.observes('.masterController.currentPosition'),
   
   /**
     When the rotation angle changes,
     flag the highlight view for a redraw to update display.
 
-    @observes currentPage
+    @observes .rotateController.currentValue
   */
   rotateValueDidChange: function () {
 
-    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' +
-                                                    this.get('rotateValue'));
+    var ro = this.get('rotateController').get('currentValue');
+
+    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' + ro);
 
     // notify controllers the rotation change
-    Multivio.searchController.set('rotateValue', this.get('rotateValue'));
-    Multivio.selectionController.set('rotateValue', this.get('rotateValue'));
+    this.get('searchController').set('rotateValue', ro);
+    this.get('selectionController').set('rotateValue', ro);
 
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
     
-  }.observes('rotateValue'),
+  }.observes('.rotateController.currentValue'),
   
   /**
     When the zoom changes, notify the highlight and search controllers
     and flag the view for a redraw.
 
-    @observes zoomFactor
+    @observes .zoomController.zoomRatio
   */
   zoomFactorDidChange: function () {
     
+    var zoo = this.get('zoomController').get('zoomRatio');
+    
     Multivio.logger.debug('HighlightContentView#zoomFactorDidChange(): %@'.
-                                                fmt(this.get('zoomFactor')));
+                                                fmt(zoo));
 
     // notify controllers the zoom change
-    Multivio.selectionController.set('zoomFactor', this.get('zoomFactor'));
-    Multivio.searchController.set('zoomFactor', this.get('zoomFactor'));
+    this.get('selectionController').set('zoomFactor', zoo);
+    this.get('searchController').set('zoomFactor', zoo);
     
     // flag the view for a redraw, (causes render() function to be called)
     this.set('highlightNeedsUpdate', YES);
 
     
-  }.observes('zoomFactor'),
+  }.observes('.zoomController.zoomRatio'),
   
   /**
     When content has finished loading (isLoadingContent changes to NO),
     update search results' scroll and flag the view for a redraw.
 
-    @observes isLoadingContent
+    @observes .masterController.isLoadingContent
   */
   isLoadingContentDidChange: function () {
     
-    var loading = this.get('isLoadingContent');
+    var loading = this.get('masterController').get('isLoadingContent');
     var hnu     = this.get('highlightNeedsUpdate');
     
     Multivio.logger.debug('HighlightContentView#isLoadingContentDidChange()' + 
@@ -388,7 +439,7 @@ Multivio.HighlightContentView = SC.View.extend(
     if (hnu && !loading) {
       this.set('layerNeedsUpdate', YES);
     }  
-  }.observes('isLoadingContent'),
+  }.observes('.masterController.isLoadingContent'),
   
   
   /* mouse events */
@@ -403,38 +454,37 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   mouseDown: function (evt) {
     
-    // hide a palette
-    Multivio.paletteController.hidePalette(null);
-    if (Multivio.panController.get('isPanActive')) {
-      // send mouseDown event to the Multivio.ContentView (pan widget)
-      this.get('parentView').get('parentView').get('parentView').mouseDown(evt);
-    }
-    else {
-      // cancel selections on current page
-      Multivio.selectionController.removeAllHighlights();
+    // cancel selections on current page
+    this.get('selectionController').removeAllHighlights();
 
-      // get current rectangle and view layout
-      var viewLayout = this.get('layout');
+    // get current rectangle and view layout
+    var viewLayout = this.get('layout');
 
-      // get position of mouse relative to the view
-      var loc = this.convertFrameFromView({ x: evt.pageX, y: evt.pageY });
+    // get position of mouse relative to the view
+    var loc = this.convertFrameFromView({ x: evt.pageX, y: evt.pageY });
 
-      // save mouse and rectangle positions when mouse is clicked
-      this._mouseDownInfo = {
-        pageX:  evt.pageX,    // coordinates of mouse on the page
-        pageY:  evt.pageY,
-        x:      loc.x,        // coordinates of mouse on the view
-        y:      loc.y,       
-        viewLayout: viewLayout
-      };
+    // save mouse and rectangle positions when mouse is clicked
+    this._mouseDownInfo = {
+      pageX:  evt.pageX,    // coordinates of mouse on the page
+      pageY:  evt.pageY,
+      x:      loc.x,        // coordinates of mouse on the view
+      y:      loc.y,       
+      viewLayout: viewLayout
+    };
 
-      // set the start coordinates (top left) of the rectangle where the mouse was clicked
-      this.userSelection.adjust('left', loc.x);
-      this.userSelection.adjust('top',  loc.y);
-      this.userSelection.adjust('width',  0);
-      this.userSelection.adjust('height', 0);
-      this.userSelection.set('isVisible', YES);
-    }
+    // set the start coordinates (top left) of the rectangle where the mouse was clicked
+    this.userSelection.adjust('left', loc.x);
+    this.userSelection.adjust('top',  loc.y);
+    this.userSelection.adjust('width',  0);
+    this.userSelection.adjust('height', 0);
+    this.userSelection.set('isVisible', YES);
+    
+    // put the hidden text div at the same height as the selection,
+    // to avoid unwanted scrolling on selection text copy (Firefox)
+    // NOTE: unwanted horizontal scrolling can still happen, but we have to 
+    // keep the div outside of the content so we don't see it.
+    //this.selectedTextDiv.adjust('left', loc.x);
+    this.selectedTextDiv.adjust('top',  loc.y);
 
     return YES;
   },
@@ -448,45 +498,39 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   mouseDragged: function (evt) {
 
-    if (Multivio.panController.get('isPanActive')) {
-      // send mouseDragged event to the Multivio.ContentView (pan widget)
-      this.get('parentView').get('parentView').get('parentView').mouseDragged(evt);
+    var info = this._mouseDownInfo, dim;
+
+    // handle width difference
+    dim = (evt.pageX - info.pageX);
+
+    // "normal" direction (left-to-right), anchor point is 'left'
+    if (dim >= 0) {
+      this.userSelection.adjust('left', info.x);
+      this.userSelection.adjust('right', null);      
     }
+    // reverse direction (right-to-left), anchor point is 'right'
     else {
-      var info = this._mouseDownInfo, dim;
-
-      // handle width difference
-      dim = (evt.pageX - info.pageX);
-
-      // "normal" direction (left-to-right), anchor point is 'left'
-      if (dim >= 0) {
-        this.userSelection.adjust('left', info.x);
-        this.userSelection.adjust('right', null);      
-      }
-      // reverse direction (right-to-left), anchor point is 'right'
-      else {
-        dim *= (-1); 
-        this.userSelection.adjust('right', info.viewLayout.width - info.x);
-        this.userSelection.adjust('left', null);
-      }
-      this.userSelection.adjust('width', dim);
-
-      // handle height difference
-      dim = (evt.pageY - info.pageY);
-
-      // "normal" direction (top-to-bottom), anchor point is 'top'
-      if (dim >= 0) {
-        this.userSelection.adjust('top', info.y);
-        this.userSelection.adjust('bottom', null);      
-      }
-      // reverse direction (down-to-up), anchor point is 'bottom'    
-      else {
-        dim *= (-1); 
-        this.userSelection.adjust('bottom', info.viewLayout.height - info.y);
-        this.userSelection.adjust('top', null);
-      }
-      this.userSelection.adjust('height', dim);
+      dim *= (-1); 
+      this.userSelection.adjust('right', info.viewLayout.width - info.x);
+      this.userSelection.adjust('left', null);
     }
+    this.userSelection.adjust('width', dim);
+
+    // handle height difference
+    dim = (evt.pageY - info.pageY);
+
+    // "normal" direction (top-to-bottom), anchor point is 'top'
+    if (dim >= 0) {
+      this.userSelection.adjust('top', info.y);
+      this.userSelection.adjust('bottom', null);      
+    }
+    // reverse direction (down-to-up), anchor point is 'bottom'    
+    else {
+      dim *= (-1); 
+      this.userSelection.adjust('bottom', info.viewLayout.height - info.y);
+      this.userSelection.adjust('top', null);
+    }
+    this.userSelection.adjust('height', dim);
 
     return YES;
   },
@@ -502,45 +546,44 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   mouseUp: function (evt) {
 
-    if (Multivio.panController.get('isPanActive')) {
-      // send mouseUp event to the Multivio.ContentView (pan widget)
-      this.get('parentView').get('parentView').get('parentView').mouseUp(evt);
+    // compute top and left values, if absent ("reverse" selection)
+    var l = this.userSelection.get('layout'), top, left;
+    top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
+    left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
+    
+    // if persistent, create a highlight zone from this user selection 
+    if (this.persistentSelection) {
+
+      // add highlight in controller
+      // let selection controller add highlights according to text
+      /*this.get('selectionController').
+                      addHighlight(top, left, l.width, l.height, 
+                        this.get('currentPage'), 'selection', 
+                        this.get('zoomFactor'), NO,
+                        Multivio.masterController.get('currentFile'));*/
     }
-    else {
 
-      // compute top and left values, if absent ("reverse" selection)
-      var l = this.userSelection.get('layout'), top, left;
-      top = l.top ? l.top :     (this._mouseDownInfo.viewLayout.height - l.bottom - l.height);
-      left = l.left ? l.left :  (this._mouseDownInfo.viewLayout.width  - l.right  - l.width);
-      
-      // if persistent, create a highlight zone from this user selection 
-      if (this.persistentSelection) {
+    // hide user selection rectangle
+    this.userSelection.set('isVisible', NO);
+    var currentPage = this.get('masterController').get('currentPosition');
+    // send selection to selection controller
+    this.get('selectionController').set('userSelection', { top: top, 
+                                                        left: left, 
+                                                        width: l.width,
+                                                        height: l.height,
+                                                        page: currentPage,
+                                                        type: 'selection' });
+    
+    // NOTE: put the hidden text div at the same height as the selection,
+    // to avoid unwanted scrolling on selection text copy (Firefox)
+    // NOTE: unwanted horizontal scrolling can still happen, but we have to 
+    // keep the div outside of the content so we don't see it.
+    //this.selectedTextDiv.adjust('left', left);
+    this.selectedTextDiv.adjust('top',  top);
 
-        // add highlight in controller
-        // TODO test let selection controller add highlights according to text
-        /*Multivio.selectionController.
-                        addHighlight(top, left, l.width, l.height, 
-                          this.get('currentPage'), 'selection', 
-                          this.get('zoomFactor'), NO,
-                          Multivio.masterController.get('currentFile'));*/
-      }
+    // clean up initial info
+    this._mouseDownInfo = null;
 
-      // hide user selection rectangle
-      this.userSelection.set('isVisible', NO);
-
-      // send selection to selection controller
-      Multivio.selectionController.set('userSelection', { top: top, 
-                                                          left: left, 
-                                                          width: l.width,
-                                                          height: l.height,
-                                                          page: this.get('currentPage'),
-                                                          type: 'selection' });
-
-      // clean up initial info
-      this._mouseDownInfo = null;
-
-    }
-        
     return YES;
   },
   
@@ -551,6 +594,8 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes Multivio.selectionController.[]
   */
   selectionsDidChange: function () {
+    
+    //Multivio.logger.debug('---selectionsDidChange');
            
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
@@ -558,7 +603,7 @@ Multivio.HighlightContentView = SC.View.extend(
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
     
-  }.observes('Multivio.selectionController.[]'),
+  }.observes('.selectionController.[]'),
   
   /**
     When the search results change,
@@ -568,13 +613,15 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultsDidChange: function () {
 
+    //Multivio.logger.debug('---searchResultsDidChange');
+
     // set flag for updating coordinates to take rotation and zoom into account
     this.set('coordinatesNeedUpdate', YES);
 
     // flag the view for a redraw, causes render() function to be called
     this.set('layerNeedsUpdate', YES);
 
-  }.observes('Multivio.searchController.[]'),
+  }.observes('.searchController.[]'),
   
   /**
     @method
@@ -616,17 +663,25 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   render: function (context, firstTime) {
 
+    var start = new Date().getMilliseconds();
+
     if (firstTime) {
       sc_super();
     }
     else {
-      var current_master_file = Multivio.masterController.get('currentFile');
-      var ref_url             = Multivio.searchController.get('url');
-      var csf = Multivio.searchController.get('currentSearchFile') || ref_url;
+      var current_master_file = this.get('masterController').get('currentFile');
+      var ref_url             = this.get('searchController').get('url');
+      var csf = this.get('searchController').get('currentSearchFile') || ref_url;
     
+      //Multivio.logger.debug('---render: cmf: ' + current_master_file);
+      //Multivio.logger.debug('---render: ref: ' + ref_url);
+      //Multivio.logger.debug('---render: csf: ' + csf);
+      
       // update highlights only if the search results belong to the current
       // file, or 'All files' search scope is selected.
       if (csf !== current_master_file && csf !== ref_url) return;
+ 
+      //Multivio.logger.debug('---rendering');
  
       // clear view
       this.removeAllChildren();
@@ -636,7 +691,7 @@ Multivio.HighlightContentView = SC.View.extend(
       this.appendChild(this.selectedTextDiv);
     
       // get selections' highlights
-      var zones = this.get('selections');
+      var zones = this.get('selectionController').get('content') || [];
       var len   = zones.get('length');
       var i;
           
@@ -647,7 +702,7 @@ Multivio.HighlightContentView = SC.View.extend(
       }
     
       // get current search results highlights
-      zones = this.get('searchResults');
+      zones = this.get('searchController').get('content') || [];
       len   = zones.get('length');
     
       // redraw all search results' zones
@@ -664,8 +719,16 @@ Multivio.HighlightContentView = SC.View.extend(
       this.set('highlightNeedsUpdate', NO);
     
       // update scroll position
-      this.updateSearchResultScroll();
+      // NOTE don't update scroll on each render, causes issues with
+      // user selection
+      // (when trying to select text on the same page as the selected search
+      // result, keeps scrolling to it)
+      //this.updateSearchResultScroll();
     }
+    
+    var end = new Date().getMilliseconds();
+    Multivio.logger.debug('--- RENDER TIME: ' + (end - start));
+    
   },
   
   /**
@@ -679,10 +742,10 @@ Multivio.HighlightContentView = SC.View.extend(
   _drawHighlightZone: function (zone, classNames_, index) {
     
     // check if the zone belongs to the current file
-    if (Multivio.masterController.get('currentFile') !== zone.url) return;
+    if (this.get('masterController').get('currentFile') !== zone.url) return;
     
     // check if the zone belongs to the current page.
-    if (this.get('currentPage') !== zone.page_number) return;
+    if (this.get('masterController').get('currentPosition') !== zone.page_number) return;
     
     // NOTE: not applying zoom factor, we expect adapted data in zone.current
     var cz = zone.current;

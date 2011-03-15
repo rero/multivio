@@ -18,6 +18,12 @@ Multivio.ImageContentView = SC.ImageView.extend(
 /** @scope Multivio.ImageContentView.prototype */ {
   
   /**
+    Link to the imageController. This controller contains an object
+    to store the clippingFrame of this view
+  */
+  imageController: null,
+  
+  /**
     Catch mouse Event and send it to the HighlightContentView
     
     #CHE  
@@ -34,6 +40,30 @@ Multivio.ImageContentView = SC.ImageView.extend(
   mouseUp: function (evt) {
     this.get('parentView').get('childViews')[1].mouseUp(evt);
   },
+  
+  /**
+    ClippingFrame did change, update overviewController values.
+    
+    clippingFrame: the clipping frame returns the visible portion of the view.
+  
+    @observes clippingFrame
+  */
+  clippingFrameDidChange: function () {
+    // test no division by 0
+    if (this.get('frame').height > 0 &&  this.get('frame').width > 0) {
+      var clipping = {};
+      clipping.height =  Math.round((this.get('clippingFrame').height / 
+          this.get('frame').height) * 100) / 100;
+      clipping.width =  Math.round((this.get('clippingFrame').width / 
+          this.get('frame').width) * 100) / 100;
+      clipping.x =  Math.round((this.get('clippingFrame').x / 
+          this.get('frame').width) * 100) / 100;
+      clipping.y =  Math.round((this.get('clippingFrame').y / 
+          this.get('frame').height) * 100) / 100;
+      
+      this.get('imageController').set('visiblePart', clipping);
+    }
+  }.observes('clippingFrame'),
 
   /**
     @method

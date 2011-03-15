@@ -37,7 +37,7 @@ Multivio.views = SC.Page.design(
     controllers: ['zoomController', 'navigationController', 
                   'searchController', 'selectionController', 
                   'imageController',  'treeController', 'thumbnailController',
-                  'searchTreeController'], // TODO test dwy add search tree controller
+                  'searchTreeController'],
       
     childViews: 'navigation bottomButtons leftButtons content'.w(),
     
@@ -80,7 +80,6 @@ Multivio.views = SC.Page.design(
       
         childViews: [
           'loupeButton',
-          'panButton',
           'rotateLeftButton',
           'rotateRightButton',
           'firstPageButton',
@@ -104,23 +103,10 @@ Multivio.views = SC.Page.design(
           renderStyle: "renderImage",
           icon: 'loupe_new',
           theme: 'mvo-button',
-          isEnabledBinding: 'Multivio.paletteController.isGlassButtonEnabled',
-          target: "Multivio.paletteController",
+          isEnabledBinding: 'Multivio.overviewController.isOverviewEnabled',
+          isActiveBinding: 'Multivio.overviewController.isOverviewActive',
+          target: "Multivio.overviewController",
           action: "showOverview"
-        }),
-
-        panButton: SC.ButtonView.design({
-          layout: { centerX: -240, centerY: 0, width: 32, height: 32 },
-          titleMinWidth : 0,
-          needsEllipsis: NO,
-          name: 'pan',
-          toolTip: '_Pan'.loc(),
-          renderStyle: "renderImage",
-          icon: 'pan_new',
-          theme: 'mvo-button',
-          isEnabledBinding: 'Multivio.panController.isPanButtonEnabled',
-          target: "Multivio.panController",
-          action: "activePan"
         }),
 
         rotateLeftButton: SC.ButtonView.design({
@@ -401,6 +387,7 @@ Multivio.views = SC.Page.design(
 
       innerMainContent: Multivio.ContentView.design({
         layout: { top: 5, bottom: 5, left: 5, right: 5 },
+        imageController: Multivio.imageController,
         isFirstResponder: YES,
         acceptsFirstResponder: YES,
         isKeyResponder: YES,
@@ -416,12 +403,34 @@ Multivio.views = SC.Page.design(
           childViews: 'innerContent highlightpane'.w(),
 
           innerContent: Multivio.ImageContentView.design({
+            imageController: Multivio.imageController,
             layout: { top: 0, left: 0, minWidth: 1 },
             useImageCache: NO
           }),
 
           highlightpane: Multivio.HighlightContentView.design({
-            layout: { top: 0, left: 0, right: 0, minWidth: 1 }
+            layout: { top: 0, left: 0, right: 0, minWidth: 1 },
+            /* controllers */
+            masterController: Multivio.masterController,
+            selectionController: Multivio.selectionController,
+            searchController: Multivio.searchController,
+            paletteController: Multivio.paletteController,
+            zoomController: Multivio.zoomController,
+            rotateController: Multivio.rotateController
+            /* bindings */
+            //selectedTextStringBinding: 
+            //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
+            //currentPageBinding: 
+            //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
+            //isLoadingContentBinding: 
+            //    SC.Binding.oneWay('Multivio.masterController.isLoadingContent')
+            //searchResultSelectionIndexBinding: 
+            //    SC.Binding.oneWay(
+            //      'Multivio.masterController.currentSearchResultSelectionIndex'),
+            //zoomFactorBinding:
+            //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
+            //rotateValueBinding:
+            //    SC.Binding.oneWay('Multivio.rotateController.currentValue')
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })
@@ -500,7 +509,10 @@ Multivio.views = SC.Page.design(
       childViews: 'innerSearch'.w(),
       innerSearch: Multivio.SearchView.design({
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
-        borderStyle: SC.BORDER_NONE
+        borderStyle: SC.BORDER_NONE,
+        /* controllers */
+        searchController: Multivio.searchController,
+        searchTreeController: Multivio.searchTreeController
       })
     })
   }), //.classNames('shadow_light inner_view'.w()),
@@ -570,7 +582,8 @@ Multivio.views = SC.Page.design(
     isAnchored: YES,
     classNames: 'mvo-transparent',
     contentView: Multivio.OverviewView.design({
-      layout: { top: 0, bottom: 0, left: 0, right: 0 }
+      layout: { top: 0, bottom: 0, left: 0, right: 0 },
+      overviewController: Multivio.overviewController
     })
   }),
   
