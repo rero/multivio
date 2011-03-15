@@ -1471,7 +1471,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var new_results = {};
 
     // if referer url is selected, clear all results
-    if (rf === cf) {
+    // NOTE: as of now, always clear results for all files
+    // This fixes a problem when searching in a specific file
+    // (in a multi-file document) when previous results exist
+    // for other files
+    if (YES) {//if (rf === cf) {
       new_results = undefined;
       Multivio.logger.debug("clearing all...");
       SC.RunLoop.begin();
@@ -1667,30 +1671,44 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       var files = this.get('currentFileList');
       var num_files = files.length;
       var ref_url = this.get('url');
+      var csf = this.get('currentSearchFile');
 
       // in this loop we can detect if we received a response
       // for every file in the list
       // NOTE: don't take 'All Files' into account, begin at index 1
       //handle case where there's only one file
       var done = YES, u;
-      for (var j = 0; j < num_files; j++) {
-
-        // current url
-        u = files[j].url;
-        
-        // skip 'all files'
-        if (files[j].label === '_AllFiles'.loc()) {
-          Multivio.logger.debug('---"All files", skip: ' + u);
-          continue;
-        }
-                        
-        // result missing, search not done  
-        if (SC.none(all_res) || SC.none(all_res[u])) {
-          //Multivio.logger.debug('---no result, skip: ' + u);
+      
+      // if we searched a specific file, check only this one
+      if (csf !== ref_url) {
+        if (SC.none(all_res) || SC.none(all_res[csf])) {
+          Multivio.logger.debug('---no result for specific file, skip: ' + csf);
           done = NO;
-          continue;
+        } else {
+          num_all_res = all_res[csf].file_position.results.length;          
         }
-        num_all_res += all_res[u].file_position.results.length;
+
+      } else { // searching all files, check the list
+      
+        for (var j = 0; j < num_files; j++) {
+
+          // current url
+          u = files[j].url;
+        
+          // skip 'all files'
+          if (files[j].label === '_AllFiles'.loc()) {
+            Multivio.logger.debug('---"All files", skip: ' + u);
+            continue;
+          }
+                        
+          // result missing, search not done  
+          if (SC.none(all_res) || SC.none(all_res[u])) {
+            //Multivio.logger.debug('---no result, skip: ' + u);
+            done = NO;
+            continue;
+          }
+          num_all_res += all_res[u].file_position.results.length;
+        }
       }
       Multivio.logger.debug('---search done: ' + done);
       Multivio.logger.debug('---number of search results: ' + num_all_res);
