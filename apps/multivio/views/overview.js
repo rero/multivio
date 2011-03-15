@@ -80,20 +80,21 @@ Multivio.OverviewView = SC.View.extend(
     of the reference image
   */
   drawZone: function () {
-    if (!SC.none(this.get('overviewController').get('visiblePart'))) {
-      var percentHeight = this.get('overviewController').get('visiblePart').height;
-      var percentWidth = this.get('overviewController').get('visiblePart').width;
-      var positionX = Math.round(this.imageOverview.get('frame').width * 
-          this.get('overviewController').get('visiblePart').x);
-      var positionY = Math.round(this.imageOverview.get('frame').height *
-          this.get('overviewController').get('visiblePart').y);
+    var vpart = this.get('overviewController').get('visiblePart'),
+        frame = this.imageOverview.get('frame');
+
+    if (!SC.none(vpart)) {
+      var percentHeight = vpart.height;
+      var percentWidth = vpart.width;
+      var positionX = Math.round(frame.width * vpart.x);
+      var positionY = Math.round(frame.height * vpart.y);
 
       if (!SC.none(percentHeight)) {
         this.visiblePartIndicator.set('layout', {
-          top: this.imageOverview.get('frame').y - 3 + positionY, 
-          left: this.imageOverview.get('frame').x - 3 + positionX, 
-          width: this.imageOverview.get('frame').width * percentWidth, 
-          height: this.imageOverview.get('frame').height * percentHeight
+          top:    frame.y - 3 + positionY,
+          left:   frame.x - 3 + positionX,
+          width:  frame.width * percentWidth,
+          height: frame.height * percentHeight
         });
       }
     }
@@ -158,10 +159,10 @@ Multivio.OverviewView = SC.View.extend(
     var newTop = info.top + (evt.pageY - info.pageY);
     
     var newScroll = {};
-    newScroll.horizontal = (newLeft - this.imageOverview.get('frame').x + 3) /
-        this.imageOverview.get('layout').width;
-    newScroll.vertical = (newTop - this.imageOverview.get('frame').y + 3) / 
-        this.imageOverview.get('layout').height;
+    var ioframe = this.imageOverview.get('frame');
+    var iolayout = this.imageOverview.get('layout');
+    newScroll.horizontal = (newLeft - ioframe.x + 3) / iolayout.width;
+    newScroll.vertical = (newTop - ioframe.y + 3) / iolayout.height;
     
     this.get('overviewController').set('scrolls', newScroll);
     return YES;

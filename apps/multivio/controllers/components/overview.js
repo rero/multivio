@@ -119,7 +119,6 @@ Multivio.overviewController = SC.ObjectController.create(
     @observes scrolls
   */
   scrollsDidChange: function () {
-    console.info('scrollPosition did change');
     var newScrolls = {};
     newScrolls.verticalPos = this.get('scrolls').vertical;
     newScrolls.horizontalPos = this.get('scrolls').horizontal;
