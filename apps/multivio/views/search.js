@@ -21,47 +21,68 @@ Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
   
   /* reference to controllers */
-  selectionController: null,
   searchController: null,
   searchTreeController: null,
                   
   childViews: ['messageLabelView', 'searchQueryView', 'clearButtonView',
                'searchButtonView', 'previousResultButtonView',
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
-               
+
+  /**
+    @method
+    
+    Override the render function so we can hide the search scope if needed.
+    
+    @param {Object} context
+    @param {Boolean} firstTime
+  */
+  render: function (context, firstTime) {
+     
+    if (firstTime) {
+      sc_super();
+      this._hideSearchScopeViewIfNeeded();
+    } 
+     
+  },
   
   /**
     Observe the list of files, and decide whether to show search scope view.
     The scope is displayed only if there is more than one file in the document.
     
-    @observes .selectionController.currentFileList
+    @observes .searchController.currentFileList
     
   */
   currentFileListDidChange: function () {
-
     Multivio.logger.debug('==search view, currentFileListDidChange');
+    this._hideSearchScopeViewIfNeeded();
+  }.observes('.searchController.currentFileList'),  
+               
+  
+  /**
+    @method
+    @private
+    Hide the search scope (list of files to select where to search) if
+    there is only one file in the document.
+  */
+  _hideSearchScopeViewIfNeeded: function () {
 
-    var phys = Multivio.selectionController.get('physicalStructure');
-    var url = this.get('searchController').get('url');
+    var cl = this.get('searchController').get('currentFileList');
 
-    if (!SC.none(phys) && !SC.none(phys[url]) && phys[url].length > 0) {
-
-      Multivio.logger.debug('==currentFileListDidChange,referer: ' + url +
-                                                           ' phys: ' + phys[url]);
-
-      // if only one file and search scope is attached, remove it
-      if (phys[url].length < 2 && !SC.none(this.searchScopeView.get('parentView'))) {
-        Multivio.logger.debug('==search view, removing scope');
-        this.removeChild(this.searchScopeView);
-      } 
-      // if there are more than 1 files, make sure scope is attached
-      else if (phys[url].length > 1 && 
-        SC.none(this.searchScopeView.get('parentView'))) {
-          
-        this.appendChild(this.searchScopeView);
-      }
+    Multivio.logger.debug('==search view, _hideSearchScopeViewIfNeeded: ' + cl);
+    
+    if (SC.none(cl)) return;
+  
+    // if only one file, remove it
+    if (cl.length <= 1) {
+      Multivio.logger.debug('==search view, hiding scope: ' + this.searchScopeView);
+      this.searchScopeView.set('isVisible', NO);
+    } 
+    // if there are more than 1 files, show it
+    else {
+      this.searchScopeView.set('isVisible', YES);
     }
-  }.observes('.selectionController.currentFileList'),
+    
+  },
   
   
   searchQueryView: SC.TextFieldView.design({
