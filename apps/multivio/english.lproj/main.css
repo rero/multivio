@@ -538,7 +538,7 @@ Rules for Multivio's usage page
 
 
 .mvo-front-view {
-  z-index: 10000;
+  z-index: 50;
   /*opacity : 1.0;
 moz-opacity : 1.0;
 ms-filter: "alpha(opacity=10)";*/ /* IE 8 */

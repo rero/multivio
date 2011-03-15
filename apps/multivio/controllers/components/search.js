@@ -226,44 +226,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   },*/
 
   /**
-    Select the text field on the view that contains the text selection,
-    so that it can be copied by the browser on ctrl + c.
-  */
-  selectTextField: function () {
-    
-    var t = this.get('selectedTextString');
-    
-    // ignore empty text selections
-    if (SC.none(t) || t === '') return;
-    
-    // TODO test store current scroll position on the view
-    var w = Multivio.getPath('views.mainContentView.content.innerMainContent'),
-        h = w.get('horizontalScrollOffset'),
-        v = w.get('verticalScrollOffset');
-    
-    Multivio.logger.debug('selectTextField, store scroll position: v: %@, h: %@'.fmt(v, h));
-    
-    var selected_text_field = SC.$('label#selected_text')[0]
-      .childNodes[1].childNodes[0];
-     
-    // focus and select text field, so that it can be copied by the browser
-    // when pressing ctrl/apple + c  
-    selected_text_field.focus();
-    selected_text_field.select();
-    
-    // TODO test update scroll position back (firefox scrolls up to textfield)
-    w = Multivio.getPath('views.mainContentView.content.innerMainContent');
-    //h = w.get('horizontalScrollOffset');
-    //v = w.get('verticalScrollOffset');
-    //Multivio.logger.debug('selectTextField, before restore: v: %@, h: %@'.fmt(v, h));
-    w.set('horizontalScrollOffset', h);
-    w.set('verticalScrollOffset', v);
-
-    w.set('layerNeedsUpdate', YES);
-
-  },
-
-  /**
     Returns the line to which the point belongs, according to the
     page indexing. If page indexing does not exist, returns -1.
     
@@ -505,7 +467,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           selected_words = words_1.concat(words_2).concat(words_3);          
         }
         
-        // TODO debug: display the list of words
+        // debug: display the list of words
         /*Multivio.logger.debug('words_1: ' + words_1);
         Multivio.logger.debug('words_2: ' + words_2);
         Multivio.logger.debug('words_3: ' + words_3);
@@ -618,6 +580,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     if (this.get('physicalStructureInitialised')) return;
     
     var url = Multivio.CDM.getReferer();
+    var dr =  null;
 
     Multivio.logger.debug('_physicalStructureDidChange,referer: ' + url +
                                                         ' phys: ' + phys[url]);
@@ -627,9 +590,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
       this.set('physicalStructureInitialised', YES);
 
-      if (phys[url].length < 2 && 
-          Multivio.getPath('views.searchPalette.contentView.innerSearch').
-          get('childViews').length === 8) {
+      if (phys[url].length < 2) {
             
         Multivio.logger.debug('_physicalStructureDidChange, removing scope');
         Multivio.logger.debug('_physicalStructureDidChange, url: ' + 
@@ -643,12 +604,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
         //this.set('currentFileList', [phys[url][0]]);
         // NOTE: set specifically in both controllers TODO find better solution
         Multivio.searchController.set('currentFileList', [phys[url][0]]);
-        Multivio.selectionController.set('currentFileList', [phys[url][0]]);
+        Multivio.selectionController.set('currentFileList', [phys[url][0]]);      
         
-        var childToRemove = Multivio.getPath(
-            'views.searchPalette.contentView.innerSearch.searchScopeView');
-        Multivio.getPath('views.searchPalette.contentView.innerSearch').
-            removeChild(childToRemove);
       }
       else {
         
@@ -659,22 +616,22 @@ Multivio.HighlightController = SC.ArrayController.extend(
           fileList.insertAt(0, {'label': '_AllFiles'.loc(), 'url': url});          
         }
 
-        //testthis.set('currentFileList', fileList);
         // NOTE: set specifically in both controllers TODO find better solution
         Multivio.selectionController.set('currentFileList', fileList);
         Multivio.searchController.set('currentFileList', fileList);
-      
-        var dr = {};
-        // init display properties for each file
-        for (var i = 0; i < phys[url].length; i++) {
-          dr[phys[url][i].url] = YES;
-        }
 
-        // NOTE: set specifically in both controllers TODO find better solution
-        //this.set('displayResults', dr);
-        Multivio.selectionController.set('displayResults', dr);
-        Multivio.searchController.set('displayResults', dr);
       }
+      
+      // init display properties for each file
+      dr = {};
+      for (var i = 0; i < phys[url].length; i++) {
+        dr[phys[url][i].url] = YES;
+      }
+
+      // NOTE: set specifically in both controllers TODO find better solution
+      //this.set('displayResults', dr);
+      Multivio.selectionController.set('displayResults', dr);
+      Multivio.searchController.set('displayResults', dr);
     }
   }.observes('physicalStructure'),
 
@@ -1250,8 +1207,24 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // look for existing stuff in the CDM
     var all_results = Multivio.CDM.get('searchResults');
-    var new_results = {};    
-        
+    var new_results = null;    
+    
+    if (!SC.none(all_results)) {
+      if (!SC.none(all_results[url])) {
+        new_results = Multivio.CDM.clone(all_results);
+      } else {
+        // results for this url do not exist, keep results empty
+      }
+    }
+    
+    // always update the search results, be it empty or not
+    SC.RunLoop.begin();
+    this.set('_load_url', url);
+    // this should trigger _searchResultsDidChange()
+    this.set('searchResults', new_results); 
+    SC.RunLoop.end();
+    
+    /*
     if (!SC.none(all_results) && !SC.none(all_results[url])) {
       new_results = Multivio.CDM.clone(all_results);
       SC.RunLoop.begin();
@@ -1260,6 +1233,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.set('searchResults', new_results); 
       SC.RunLoop.end();
     }
+    */
     
   },
 
@@ -1274,7 +1248,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @observes selection
   */
   _selectionDidChange: function () {
-        
+    
+    if (!this.get('allowsSelection')) {
+      Multivio.logger.debug('search _selectionDidChange, selection not allowed, exit');
+      return;
+    }
+    
+    var start = new Date().getMilliseconds();
+    
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     var selIndex = this.indexOf(selectedObject);
@@ -1345,6 +1326,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                                                 selectedObject.page_number);
     }
     
+    var end = new Date().getMilliseconds();
+    Multivio.logger.debug('--- SEARCH SEL TIME: ' + (end - start));
+    
     return YES;
     
   }.observes('selection'),
@@ -1404,9 +1388,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     SC.RunLoop.begin();
     this.set('searchStatus', '_searchInProgress'.loc());
-    // #CHE
-    // deny selection TODO set ctrl 'allowsSelection'
-    Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', NO);
+    // don't allow selection while search is in progress    
+    // TODO set state
+    this.set('allowsSelection', NO);
+    Multivio.searchTreeController.set('allowsSelection', NO);
     SC.RunLoop.end();
     
     Multivio.logger.debug('SearchController.doSearch("%@"), file: %@'.
@@ -1486,7 +1471,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var new_results = {};
 
     // if referer url is selected, clear all results
-    if (rf === cf) {
+    // NOTE: as of now, always clear results for all files
+    // This fixes a problem when searching in a specific file
+    // (in a multi-file document) when previous results exist
+    // for other files
+    if (YES) {//if (rf === cf) {
       new_results = undefined;
       Multivio.logger.debug("clearing all...");
       SC.RunLoop.begin();
@@ -1549,7 +1538,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     Multivio.logger.debug("_searchResultsDidChange: (1) res:" + res);
     Multivio.logger.debug("_searchResultsDidChange: (2) url:" + current_url);
-    
+        
     // use the current url as key for storage    
     var key = current_url;
     
@@ -1581,7 +1570,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       if (key === ref_url) {
         var file_list = this.get('currentFileList');
         var res_all = [];
-        
+                
         Multivio.logger.debug('_searchResultsDidChange, (5) concat all results...');
         
         // clear all results before adding the whole again
@@ -1593,6 +1582,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           
           // skip referer url, except if there's only one file
           if (file_list.length > 1 && file_list[i].url === ref_url) continue;
+          
+          if (SC.none(res[file_list[i].url])) {
+            Multivio.logger.debug('_searchResultsDidChange, (6) results undefined for this url, skip');
+            continue;
+          }
           
           // store results separately for each file
           this._setSearchResults(res[file_list[i].url], query);
@@ -1653,79 +1647,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     }
     
   }.observes('searchResults'),
-  
-  /**
-    CDM received new values see if we have all needed information
     
-    #CHE
-    NOTE: Need to merge this function an d the previous one because the 
-    two functions observes the same value
-    
-    @observes Multivio.CDM.searchResults
-  */
-  CDMsearchResultsDidChange: function () {
-    
-    var ref = this.get('url');
-    var searchFile = this.get('currentSearchFile');
-    
-    Multivio.logger.debug('CDMsearchResultsDidChange, ref: %@, searchFile: %@'.fmt(ref, searchFile));
-
-    if (!SC.none(Multivio.CDM.searchResults)) {
-      var listOfUrls = Multivio.masterController.listOfFiles;
-      var isFinish = YES;
-      var nbOfRes = 0;
-    
-      // ref === searchFile => search all files
-      if (ref === searchFile) {
-        if (!SC.none(listOfUrls)) {
-          for (var i = 0; i < listOfUrls.length; i++) {
-            var oneFile = listOfUrls[i].url;
-            var result = Multivio.CDM.searchResults[oneFile];
-            if (SC.none(result) || result[0] === -1) {
-              isFinish = NO;
-              break;
-            }
-            else {
-              nbOfRes += result.file_position.results.length;
-            }
-          }
-        }
-        // only one file
-        else {
-          if (SC.none(Multivio.CDM.searchResults[ref]) || 
-              Multivio.CDM.searchResults[ref][0] === -1) {
-            isFinish = NO;
-          }
-          else {
-            nbOfRes += Multivio.CDM.searchResults[ref].file_position.results.length;              
-          }
-        }
-      }
-      else {
-        if (SC.none(Multivio.CDM.searchResults[searchFile]) || 
-            Multivio.CDM.searchResults[searchFile][0] === -1) {
-          isFinish = NO;
-        }
-        else {
-          nbOfRes += Multivio.CDM.searchResults[searchFile].file_position.results.length;
-        }
-      }
-      
-      // if the search is finished set the search status.
-      if (isFinish) {
-        if (nbOfRes === 0) {
-          this.set('searchStatus', '_noResult'.loc());
-        }
-        else {
-          this.set('searchStatus', '_listOfResults'.loc());
-        }
-        // TODO set ctrl allowsSelection
-        Multivio.getPath('views.searchPalette.contentView.innerSearch.resultsScrollView.contentView').set('allowsSelection', YES);
-        Multivio.logger.debug('End of the search');
-      }
-    }
-  }.observes('Multivio.CDM.searchResults'),
-  
   /**
     Store the search results (if any) by creating new highlight zones
     and computing coordinates according to the current zoom.
@@ -1741,23 +1663,70 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // if there are results                                         
     if (res !== -1 && !SC.none(res)) {
       
-      // get total number of search results, not for this file only
-      Multivio.logger.debug('counting all search results');
+      // get total number of search results, not for this file only (ref url)
+      Multivio.logger.debug('---counting all search results');
       var num_all_res, num_res = res.file_position.results.length;
-      var all_res = this.get('searchResults')[this.get('url')];
-      num_all_res = num_res;
-      // NOTE: don't take 'All Files' into account
-      var num_files = this.get('currentFileList').length - 1;
-      // TODO #searching
-      // TODO in this loop we can detect if we received a response
+      var all_res = this.get('searchResults');
+      num_all_res = 0;
+      var files = this.get('currentFileList');
+      var num_files = files.length;
+      var ref_url = this.get('url');
+      var csf = this.get('currentSearchFile');
+
+      // in this loop we can detect if we received a response
       // for every file in the list
-      for (var j = 0; j < num_files; j++) {
+      // NOTE: don't take 'All Files' into account, begin at index 1
+      //handle case where there's only one file
+      var done = YES, u;
+      
+      // if we searched a specific file, check only this one
+      if (csf !== ref_url) {
+        if (SC.none(all_res) || SC.none(all_res[csf])) {
+          Multivio.logger.debug('---no result for specific file, skip: ' + csf);
+          done = NO;
+        } else {
+          num_all_res = all_res[csf].file_position.results.length;          
+        }
+
+      } else { // searching all files, check the list
+      
+        for (var j = 0; j < num_files; j++) {
+
+          // current url
+          u = files[j].url;
         
-        if (SC.none(all_res) || SC.none(all_res[j])) continue;
-        
-        num_all_res += all_res[j].file_position.results.length;
+          // skip 'all files'
+          if (files[j].label === '_AllFiles'.loc()) {
+            Multivio.logger.debug('---"All files", skip: ' + u);
+            continue;
+          }
+                        
+          // result missing, search not done  
+          if (SC.none(all_res) || SC.none(all_res[u])) {
+            //Multivio.logger.debug('---no result, skip: ' + u);
+            done = NO;
+            continue;
+          }
+          num_all_res += all_res[u].file_position.results.length;
+        }
       }
-      Multivio.logger.debug('number of search results: ' + num_res);
+      Multivio.logger.debug('---search done: ' + done);
+      Multivio.logger.debug('---number of search results: ' + num_all_res);
+
+      if (done) {
+        // allow selection when search is done
+        // TODO set state
+        this.set('allowsSelection', YES);
+        Multivio.searchTreeController.set('allowsSelection', YES);
+        Multivio.logger.debug('End of the search');
+        
+        if (num_all_res === 0) {
+          this.set('searchStatus', '_noResult'.loc());
+        }
+        else {
+          this.set('searchStatus', '_listOfResults'.loc());
+        }
+      }
       
       //#CHE
       // warn user if no result found
@@ -1979,12 +1948,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);
 
-      // show search palette
-      Multivio.logger.debug('search ctrl init, trying to display palette');
+      // TODO show search palette
+      //Multivio.logger.debug('search ctrl init, trying to display palette');
       // get search button TODO button should be named in views.js
-      var sbt = Multivio.getPath('views.mainContentView.leftButtons').
-                                                      get('childViews')[2];
-      Multivio.paletteController.showSearch(sbt);
+      //var sbt = Multivio.getPath('views.mainContentView.leftButtons').
+      //                                                get('childViews')[2];
+      //Multivio.paletteController.showSearch(sbt);
 
       Multivio.logger.debug('search ctrl init, running search with url: ' + 
                                               this.get('currentSearchFile'));
@@ -2033,7 +2002,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
     if (SC.none(is) || !is) return;
     
-    // used stored data and clear it right away
+    // use stored data and clear it right away
     this.set('currentSearchTerm', it);
     this.set('initial_term', undefined);
     
@@ -2042,8 +2011,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     this.set('initial_search', NO);
     
-    // show search palette
-    Multivio.logger.debug('currentFileListDidChange, trying to display palette');
+    // TODO show search palette
+    //Multivio.logger.debug('currentFileListDidChange, trying to display palette');
     // get search button TODO button should be named in views.js
     //var sbt = Multivio.getPath('views.mainContentView.leftButtons').
     //                                                get('childViews')[2];

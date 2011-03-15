@@ -19,26 +19,94 @@ View for the search functionality.
 */
 Multivio.SearchView = SC.View.extend(
 /** @scope Multivio.SearchView.prototype */ {
+  
+  /* reference to controllers */
+  searchController: null,
+  searchTreeController: null,
                   
   childViews: ['messageLabelView', 'searchQueryView', 'clearButtonView',
                'searchButtonView', 'previousResultButtonView',
                'nextResultButtonView', 'resultsScrollView', 'searchScopeView'],
+
+  /**
+    @method
+    
+    Override the render function so we can hide the search scope if needed.
+    
+    @param {Object} context
+    @param {Boolean} firstTime
+  */
+  render: function (context, firstTime) {
+     
+    if (firstTime) {
+      sc_super();
+      this._hideSearchScopeViewIfNeeded();
+    } 
+     
+  },
+  
+  /**
+    Observe the list of files, and decide whether to show search scope view.
+    The scope is displayed only if there is more than one file in the document.
+    
+    @observes .searchController.currentFileList
+    
+  */
+  currentFileListDidChange: function () {
+    Multivio.logger.debug('==search view, currentFileListDidChange');
+    this._hideSearchScopeViewIfNeeded();
+  }.observes('.searchController.currentFileList'),  
+               
+  
+  /**
+    @method
+    @private
+    Hide the search scope (list of files to select where to search) if
+    there is only one file in the document.
+  */
+  _hideSearchScopeViewIfNeeded: function () {
+
+    var cl = this.get('searchController').get('currentFileList');
+
+    Multivio.logger.debug('==search view, _hideSearchScopeViewIfNeeded: ' + cl);
+    
+    if (SC.none(cl)) return;
+  
+    // if only one file, remove it
+    if (cl.length <= 1) {
+      Multivio.logger.debug('==search view, hiding scope: ' + this.searchScopeView);
+      this.searchScopeView.set('isVisible', NO);
+    } 
+    // if there are more than 1 files, show it
+    else {
+      this.searchScopeView.set('isVisible', YES);
+    }
+    
+  },
+  
   
   searchQueryView: SC.TextFieldView.design({
     layout: { top: 0, left: 0, right: 54, height: 24 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     classNames: 'search',
     hint: '_typeQueryHere'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchTerm',
     //#CHE change this because problem with key event
-    keyDown: function (evt) {
+    //#DWY use keyUp so that we are sure that the new character has already
+    //been inserted into the text field (prevents us from losing the
+    //last character).
+    keyUp: function (evt) {
       //if press tab or enter set the value
       if (evt.which === 13) {
-        Multivio.searchController.set('currentSearchTerm', this.$input()[0].value);
-        Multivio.searchController.doSearch();
+        this.get('parentView').get('searchController').set('currentSearchTerm', 
+                                                        this.$input()[0].value);
+        this.get('parentView').get('searchController').doSearch();
         evt.stop();
         return YES;
       } 
-      else {
+      else { 
+        // if another key was pressed, notify that the value changed
+        this.fieldValueDidChange(NO);
         return NO;
       }
     }
@@ -46,6 +114,7 @@ Multivio.SearchView = SC.View.extend(
 
   searchButtonView: SC.ButtonView.design({
     layout: { top: 2, right: 24, width: 20, height: 20 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     icon: 'search_new_16',
     renderStyle: "renderImage",
     titleMinWidth : 0,
@@ -62,6 +131,7 @@ Multivio.SearchView = SC.View.extend(
   
   clearButtonView: SC.ButtonView.design({
     layout: { top: 2, right: 0, width: 20, height: 20 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     icon: 'cancel_new_16',
     renderStyle: "renderImage",
     toolTip : '_doClear'.loc(),
@@ -86,6 +156,7 @@ Multivio.SearchView = SC.View.extend(
     
     contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
       layout: { top: 0, left: 0, right: 0, bottom: 0 },
+      isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
       insertionOrientation: SC.VERTICAL_ORIENTATION,
       rowHeight: 15,
       contentBinding: 'Multivio.searchTreeController.arrangedObjects',
@@ -96,58 +167,9 @@ Multivio.SearchView = SC.View.extend(
     })
   }),
   
-  /*resultsScrollView: SC.ScrollView.design({
-
-    layout: { top: 100, left: 0, right: 0, bottom: 0 },
-
-    borderStyle: SC.BORDER_NONE,
-    hasHorizontalScroller: YES,
-    hasVerticalScroller: YES,
-    
-    contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
-      layout: { top: 0, left: 0, right: 0, bottom: 0 },
-      insertionOrientation: SC.VERTICAL_ORIENTATION,
-      rowHeight: 15,
-      contentBinding: 'Multivio.searchController.arrangedObjects',
-      selectionBinding: 'Multivio.searchController.selection',
-      contentValueKey: 'context'
-    })
-  }),*/
-  
-  /**
-Update the position of the scroll in the view if needed.
-
-@private
-@observes Multivio.searchController.selection
-*/
-  _searchResultSelectionDidChange: function () {
-    var selection = Multivio.searchController.get('selection').firstObject();
-
-    if (!SC.none(selection)) {
-      // retrieve the list of the results visible in the view
-      var listView = this.get('resultsScrollView')
-                          .get('contentView').get('childViews');
-      var needToScroll = YES;
-      // don't verify the first and the last child to force to scroll
-      for (var i = 1; i < listView.get('length') - 1; i++) {
-        var res = listView[i].content;
-
-        if (res === selection) {
-          needToScroll = NO;
-        }
-      }
-
-      // if needed, scroll to the new position
-      if (needToScroll) {
-        var selectionIndex = Multivio.searchController.indexOf(selection);
-        this.get('resultsScrollView').get('contentView')
-                                    .scrollToContentIndex(selectionIndex);
-      }
-    }
-  }.observes('Multivio.searchController.selection'),
-  
   nextResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 0 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     needsEllipsis: NO,
     toolTip : '_goToNext'.loc(),
     icon: 'down_new_16',
@@ -160,6 +182,7 @@ Update the position of the scroll in the view if needed.
 
   previousResultButtonView: SC.ButtonView.design({
     layout: { top: 70, height: 20, width: 20, right: 24 },
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
     needsEllipsis: NO,
     toolTip : '_goToPrevious'.loc(),
     icon: 'up_new_16',
@@ -171,10 +194,9 @@ Update the position of the scroll in the view if needed.
   }),
   
   searchScopeView : SC.SelectButtonView.design({
-  //searchScopeView : SC.SelectFieldView.design({
 
     layout: { top: 36, left: 0, right: 0, height: 25 },
-
+    isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',    
     toolTip: '_searchIn'.loc(),
     valueBinding: 'Multivio.searchController.currentSearchFile',
     objectsBinding: 'Multivio.searchController.currentFileList',
@@ -186,12 +208,6 @@ Update the position of the scroll in the view if needed.
     needsEllipsis: NO,
     supportFocusRing: NO
   }),
-  
-  /*scopeLabelView: SC.LabelView.design({
-layout: { top: 30, left: 0, height: 50, width: 80 },
-textAlign: SC.ALIGN_LEFT,
-value: '_searchIn'.loc()
-})*/
   
   messageLabelView: SC.LabelView.design({
     layout: { top: 72, left: 0, right: 0, height: 22 },

@@ -604,27 +604,7 @@ Multivio.ContentView = SC.ScrollView.extend(
           Multivio.navigationController.goToNext();
         }
         return YES;
-      // ctrl + c (or 'apple' + c for mac)
-      case 67:
-        var cmd = evt.commandCodes();
-              
-        if (cmd.indexOf('ctrl_c') !== -1) {
-          
-          // get input field of the SC.TextFieldView used for selection
-          // NOTE: this is done a second time (was done already in 
-          // selectedTextStringDidChange()) to select the text,
-          // as seemingly Safari needs it done twice so the text field
-          // is correctly selected
-          Multivio.selectionController.selectTextField();
-          
-          // put focus back on main content
-          var main = SC.$('div.sc-view .image-and-highlight-container')[0];
-          main.focus();
-        }
-        
-        // declare the event as not handled so the browser still
-        // does his job (copy text) on ctrl + c
-        return NO;
+
       default:
         return NO;
       }
