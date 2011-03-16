@@ -245,6 +245,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // select the lines of the current page
     var current_page = Multivio.masterController.get('currentPosition');
+    
+    // indexing is empty
+    if (SC.none(pi.pages) || SC.none(pi.pages[current_page])) return -1;
+
     var lines = pi.pages[current_page].lines;
     
     var l;
@@ -266,7 +270,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
   /**
     Returns the zones of the words encased in the given points, with respect
     to the lines defined in the page indexing.
-    If page indexing does not exist, returns -1.
+    If page indexing does not exist, returns empty list [].
     
     The result is given as a list of zones which contains words:
     
@@ -300,6 +304,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // select the lines of the current page
     var current_page = Multivio.masterController.get('currentPosition');
+    
+    // indexing is empty
+    if (SC.none(pi.pages) || SC.none(pi.pages[current_page])) return [];
+    
     var lines = pi.pages[current_page].lines;
     var single_line = undefined, _loop_start_index = 0;
     // line coordinates for the creation of highlight zones
@@ -307,27 +315,44 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // parse lines, look for the first selected one
     var l, start = -1, stop = -1, word_start = -1, word_stop = -1,
-      selected_words = [], words_1 = [], words_2 = [], words_3 = [];
+      selected_words = [], words_1 = [], words_2 = [], words_3 = [], 
+      last_line = NO, line_limit = -1;
     for (var i = 0; i < lines.length; i++) {
       l = lines[i];
       
-      //Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
+      //Multivio.logger.debug('current line #%@, tlwh: (%@,%@,%@,%@): "%@"'.fmt(i, l.t, l.l, l.w, l.h, l.text));
+      
+      //Multivio.logger.debug('checking start: start:%@, y1:%@, y2:%@, l.t:%@'.fmt(start, y1, y2, l.t));
       
       // found the first line
       if (start === -1 && y1 <= l.t && y2 >= l.t) {
         start = i;
-        //Multivio.logger.debug('line selection start');
+        Multivio.logger.debug('line selection start at line #' + i);
       } 
       
+      //Multivio.logger.debug('checking stop: start:%@, stop:%@, y2:%@, l.t:%@, l.h:%@'.fmt(start, stop, y2, l.t, l.h));
+      
       // found the last line
-      if (start !== -1 && stop === -1 && y2 <= (l.t + l.h)) {
+      // conditions:
+      //    1. start has been found
+      //    2. stop not yet found
+      //    3. current line is the last line of the page
+      //    4. y2 is vertically before the current line
+      // stop detection condition: (1 && 2) && (3 || 4)
+      last_line = (i === (lines.length - 1));
+      // note: put limit at middle height of line
+      line_limit = (l.t + l.h * 0.5);
+      if ((start !== -1 && stop === -1) && 
+          (last_line || (!last_line && y2 <= line_limit))) {
         
         stop = i;
-        //Multivio.logger.debug('line selection stop');
+        //Multivio.logger.debug('line selection stop at line #' + i);
         // store the last line
         // note: don't store last one because we detected it 1 too late,
-        // except when there's only 1 line
-        if (result.length === 0) {
+        // except when there's only 1 line, or when the selection
+        // goes further than the last line's limit
+        if (result.length === 0 ||
+           (last_line && y2 > line_limit)) {
           result.push(l);
         }
 
@@ -356,7 +381,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
             word_start = j;
             //Multivio.logger.debug('--word selection start at w #' + word_start);
             //Multivio.logger.debug('--word text: "' + wt[word_start] + '"');
-            //selected_words.insertAt(0, wt[j]);
           }  
           
           // add all words of the line once the start word has been found
@@ -471,8 +495,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
         /*Multivio.logger.debug('words_1: ' + words_1);
         Multivio.logger.debug('words_2: ' + words_2);
         Multivio.logger.debug('words_3: ' + words_3);
-        Multivio.logger.debug('selected_words: ' + selected_words);*/
-        
+        Multivio.logger.debug('selected_words: ' + selected_words);
+        */
         // get out of the lines' loop
         break;
       
