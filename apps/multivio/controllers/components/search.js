@@ -2018,6 +2018,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     if (SC.none(cfl)) return;
     
+    // once we receive the file list, we can get the page indexing as well
+    this._getPageIndexing();
+    
     var is = this.get('initial_search');
     var it = this.get('initial_term');
     var iu = this.get('initial_url');
