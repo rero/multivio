@@ -108,7 +108,7 @@ SC.stringsFor('French', {
   '_firstOccurrences': 'Seules les %@ premières occurrences sont affichées.',
   '_noResult': 'Texte introuvable',
   '_searchInProgress': 'La recherche est en cours...',
-  '_listOfResults': 'Liste de résultats',
+  '_listOfResults': 'Liste de résultats (%@%@)',
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
   '_More': 'Plus...',

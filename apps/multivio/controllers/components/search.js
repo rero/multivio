@@ -1701,7 +1701,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // for every file in the list
       // NOTE: don't take 'All Files' into account, begin at index 1
       //handle case where there's only one file
-      var done = YES, u;
+      var done = YES, u, more = '';
       
       // if we searched a specific file, check only this one
       if (csf !== ref_url) {
@@ -1709,7 +1709,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           Multivio.logger.debug('---no result for specific file, skip: ' + csf);
           done = NO;
         } else {
-          num_all_res = all_res[csf].file_position.results.length;          
+          num_all_res = all_res[csf].file_position.results.length;
+          // display a '+' if results were truncated
+          if (all_res[csf].max_reached !== 0) more = '+';
         }
 
       } else { // searching all files, check the list
@@ -1732,6 +1734,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
             continue;
           }
           num_all_res += all_res[u].file_position.results.length;
+          // display a '+' if results were truncated
+          if (all_res[u].max_reached !== 0) more = '+';
         }
       }
       Multivio.logger.debug('---search done: ' + done);
@@ -1748,7 +1752,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           this.set('searchStatus', '_noResult'.loc());
         }
         else {
-          this.set('searchStatus', '_listOfResults'.loc());
+          this.set('searchStatus', '_listOfResults'.loc(num_all_res, more));
         }
       }
       
@@ -1928,8 +1932,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     Multivio.logger.debug('search init: Master search file: ' + msf);
                                   
-    // initialise content                              
+    // initialise content, display                           
     this.set('content', []);
+    this.set('searchStatus', ''); 
     
     // if an input param was defined, run the search query
     var iq = this.get('initSearchTerm');

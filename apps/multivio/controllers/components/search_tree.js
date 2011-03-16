@@ -243,6 +243,10 @@ Multivio.searchTreeController = SC.TreeController.create(
       if (res.length > 0) { 
         file_node.childs = [];
         // add file in tree view only if it has results
+        // display number of search results for the file in its label
+        // (append a '+' if the results were truncated)
+        var more = (csr.max_reached === 0? '': '+');
+        file_node.label += ' (%@%@)'.fmt(res.length, more);
         structure.push(file_node);
       }
       // go through search results for the current file
@@ -262,8 +266,10 @@ Multivio.searchTreeController = SC.TreeController.create(
         file_node.childs.push(node);
       }
       
-      // max results reached, add a 'More' node
-      if (csr.max_reached !== 0) {
+      // max results reached, DON'T add a 'More' node, for now
+      // until the logic to query the server again for more result is
+      // implemented, don't put this node in the result tree
+      /*if (csr.max_reached !== 0) {
         node = {
           file_position: {index: null, url: csr.file_position.url},
           label: '_More'.loc(),
@@ -271,7 +277,7 @@ Multivio.searchTreeController = SC.TreeController.create(
           current_max: csr.max_reached
         };
         file_node.childs.push(node);
-      }
+      }*/
       
     }
     
