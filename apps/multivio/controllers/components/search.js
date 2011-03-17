@@ -400,7 +400,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         if (result.length !== 1) {
           lx1 = cl.x[word_start].l;
           ly1 = cl.t;
-          lx2 = lx1 + cl.w;
+          lx2 = cl.x[cl.x.length - 1].r;
           ly2 = ly1 + cl.h;
           this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
         }
@@ -475,7 +475,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           // inbetween, lines are wholly selected
           lx1 = cl.l;
           ly1 = cl.t;
-          lx2 = lx1 + cl.w;
+          lx2 = cl.x[cl.x.length - 1].r;
           ly2 = ly1 + cl.h;
           this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
           
