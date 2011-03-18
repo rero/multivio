@@ -1200,6 +1200,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */  
   searchStatus: '', 
   
+  
+  /**
+    Determines whether there was a check for textual content on the current
+    document or not. This is used to display a message only once per document.
+  
+    @property {Boolean}
+    @default NO
+  */
+  textualContentHasBeenChecked: NO,
+  
   /**
     When search file selection changes,
     load corresponding search results (if any).
@@ -1750,6 +1760,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         
         if (num_all_res === 0) {
           this.set('searchStatus', '_noResult'.loc());
+          // TODO check if there is textual content on the current page
+          this._checkTextualContent();
         }
         else {
           this.set('searchStatus', '_listOfResults'.loc(num_all_res, more));
@@ -1799,6 +1811,45 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              
       }      
     }
+  },
+
+
+  /**
+    @method
+    @private
+    
+    This function checks if the current page does have textual indexing.
+    If not, display a message to the user warning him that the document
+    is apparently not searchable.
+    
+    The check is performed only is this.textualContentHasBeenChecked is false.
+    
+  */
+  _checkTextualContent: function () {
+    
+    if (this.get('textualContentHasBeenChecked')) return;
+    
+    Multivio.logger.debug('_checkTextualContent');
+    
+    // get page indexin
+    var pi = this._getPageIndexing();
+    
+    // did not receive page indexing from the server
+    if (pi === -1) return;
+
+    // get the current page
+    var current_page = Multivio.masterController.get('currentPosition');
+    
+    // indexing is empty
+    if (SC.none(pi) || SC.none(pi.pages) || SC.none(pi.pages[current_page])) {
+      
+      Multivio.usco.showAlertPaneInfo('_NoTextualContent'.loc(), 
+        '_NotSearchable'.loc(), 'OK');
+      
+    }
+    
+    this.set('textualContentHasBeenChecked', YES);
+    
   },
 
   /**
@@ -1921,6 +1972,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
     // physical structure not yet initialised (do it only once)
     this.set('physicalStructureInitialised', NO);
+
+    // initialise check variable
+    this.set('textualContentHasBeenChecked', NO);
 
     // get previously selected search result
     // (when the controller has been reinitialised after a file change)

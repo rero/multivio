@@ -112,6 +112,8 @@ SC.stringsFor('English', {
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
   '_More': 'More...',
+  '_NoTextualContent': 'No textual content',
+  '_NotSearchable': 'This document is apparently not searchable',
 
   // Strings for the help section
   '_helpTitle': "Help",

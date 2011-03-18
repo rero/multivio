@@ -112,6 +112,9 @@ SC.stringsFor('French', {
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
   '_More': 'Plus...',
+  '_NoTextualContent': 'Aucun contenu textuel',
+  '_NotSearchable': "La fonction de recherche n'est apparemment \
+      pas disponible pour ce document",
 
   // Strings for the help section
   '_helpTitle': "Aide",
