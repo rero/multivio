@@ -107,7 +107,7 @@ Multivio.calendarController = SC.ObjectController.create(
       for (var j = 0; j < listOfM.length; j++) {
         var newM = {};
         newM.month = listOfM[j].date;
-        newM.name = this.getMonthName(listOfM[j].date);
+        newM.name = this.getMonthName(parseInt(listOfM[j].date, 10));
         newM.url = listOfM[j].url;
         newM.index = j;
         res.push(newM);
@@ -219,49 +219,24 @@ Multivio.calendarController = SC.ObjectController.create(
     @param {Number} number the number of the month
     @return {String} the name of the month
   */
-  getMonthName: function (number) {
-    var monthName = '';
-    switch (number) {
-    case '1':
-      monthName = 'January'.loc();
-      break;
-    case '2':
-      monthName = 'February'.loc();
-      break;
-    case '3':
-      monthName = 'March'.loc();
-      break;
-    case '4':
-      monthName = 'April'.loc();
-      break;
-    case '5':
-      monthName = 'Mai'.loc();
-      break;
-    case '6':
-      monthName = 'June'.loc();
-      break;
-    case '7':
-      monthName = 'July'.loc();
-      break;
-    case '8':
-      monthName = 'August'.loc();
-      break;
-    case '9':
-      monthName = 'September'.loc();
-      break;
-    case '10':
-      monthName = 'October'.loc();
-      break;
-    case '11':
-      monthName = 'November'.loc();
-      break;
-    case '12':
-      monthName = 'December'.loc();
-      break;
+  getMonthName: function (monthNumber) {
+    var monthNames =
+        'January February March April May June July August September October November December'.w();
+    var monthName = null;
+    if (SC.typeOf(monthNumber) === SC.T_NUMBER &&
+        monthNumber >= 1 && monthNumber <= 12) {
+      monthName = monthNames[monthNumber - 1].loc();
     }
-    return monthName;  
+    else {
+      // error in input parameter
+      var m =
+          'Invalid value %@ in input parameter "monthNumber". '.fmt(monthNumber) +
+          'Value must be an integer in the range [0,12].';
+      throw new Error(m);
+    }
+    return monthName;
   },
-  
+
   /**
     A new physical structure has been received call the function 
     createListOfDays

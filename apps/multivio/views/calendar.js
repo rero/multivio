@@ -55,8 +55,9 @@ Multivio.CalendarView = SC.View.extend(
           icon: 'go_backwards_new_16',
           theme: 'mvo-button',
           renderStyle: "renderImage",
-          isEnabledBinding: '.parentView.parentView.calendarController.isPreviousYearEnabled',
-          target: 'Multivio.calendarController',
+          isEnabledBinding:
+              '.parentView.parentView.calendarController.isPreviousYearEnabled',
+          target: this.get('calendarController'),
           action: 'previousYear'
         }),
         currentYear: SC.SelectButtonView.design({
@@ -79,7 +80,7 @@ Multivio.CalendarView = SC.View.extend(
           theme: 'mvo-button',
           renderStyle: "renderImage",
           isEnabledBinding: '.parentView.parentView.calendarController.isNextYearEnabled',
-          target: "Multivio.calendarController",
+          target: this.get('calendarController'),
           action: "nextYear"
         })
       })
@@ -100,11 +101,11 @@ Multivio.CalendarView = SC.View.extend(
           theme: 'mvo-button',
           renderStyle: "renderImage",
           isEnabledBinding: '.parentView.parentView.calendarController.isPreviousMonthEnabled',
-          target: "Multivio.calendarController",
+          target: this.get('calendarController'),
           action: "previousMonth"
         }),
         currentMonth: SC.SelectButtonView.design({
-          layout: {top: 5, left: 35, right: 35, height: 25},       
+          layout: {top: 5, left: 35, right: 35, height: 25},
           objectsBinding: '.parentView.parentView.calendarController.listOfMonths',
           valueBinding: '.parentView.parentView.calendarController.selectedMonth',
           theme: 'square',
@@ -123,7 +124,7 @@ Multivio.CalendarView = SC.View.extend(
           theme: 'mvo-button',
           renderStyle: "renderImage",
           isEnabledBinding: '.parentView.parentView.calendarController.isNextMonthEnabled',
-          target: "Multivio.calendarController",
+          target: this.get('calendarController'),
           action: "nextMonth"
         })
       })
@@ -139,7 +140,8 @@ Multivio.CalendarView = SC.View.extend(
           layout: {top: 0, left: 0, height: 24}
         }),
         monthDays: Multivio.DaysView.design({
-          layout: {top: 30, left: 0, height: 150} 
+          layout: {top: 30, left: 0, height: 150},
+          calendarController: this.get('calendarController')
         })
       })
     );
@@ -186,6 +188,11 @@ Multivio.DaysView = SC.View.extend(
   classNames: 'calendar-days-view',
   
   /**
+    Link to a controler of type SC.ObjectController.
+  */
+  calendarController: null,
+
+  /**
     Override render method to create the label and the data for the table of 
     metadata
     
@@ -193,14 +200,11 @@ Multivio.DaysView = SC.View.extend(
     @param {Boolean} firstTime 
   */
   render: function (context, firstTime) {
-    var selectedMonth = this.get('parentView').get('parentView').
-        get('calendarController').get('selectedMonth');
-    var selectedYear = this.get('parentView').get('parentView').
-        get('calendarController').get('selectedYear');
-    var listOfDays = this.get('parentView').get('parentView').
-        get('calendarController').get('listOfDays');
-    var selectedDay = this.get('parentView').get('parentView').
-        get('calendarController').get('selectedDay');
+    var calController = this.get('calendarController');
+    var selectedMonth = calController.get('selectedMonth');
+    var selectedYear = calController.get('selectedYear');
+    var listOfDays = calController.get('listOfDays');
+    var selectedDay = calController.get('selectedDay');
     
     // create todayDate
     var today = SC.DateTime.create();
@@ -218,13 +222,13 @@ Multivio.DaysView = SC.View.extend(
     // create the calendar  
     for (var i = 0; i < 42; ++i) {
       context = context.begin('div').addClass('calendar-day').addStyle({
-        position: 'absolute',
-        width: '29px',
-        height: '24px',
-        left: (29 * i % 203) + 'px',
-        top: (parseInt(i / 7, 10) * 25) + 'px',
-        textAlign: 'center'
-      }).push(day.get('day'));
+          position: 'absolute',
+          width: '29px',
+          height: '24px',
+          left: (29 * i % 203) + 'px',
+          top: (parseInt(i / 7, 10) * 25) + 'px',
+          textAlign: 'center'
+        }).push(day.get('day'));
       // add class for currentMonth, listOfDays and selectedDay 
       if (day.get('month') === newDate.get('month')) {
         context.removeClass('not-current-month');
@@ -267,8 +271,7 @@ Multivio.DaysView = SC.View.extend(
     var target = SC.$(evt.target);
     var i = target[0].innerHTML;
     if (target[0].classList.contains('sel')) {
-      this.get('parentView').get('parentView').get('calendarController').
-          set('selectedDay', parseInt(i, 10));
+      this.get('calendarController').set('selectedDay', parseInt(i, 10));
     }    
     return YES;
   },
@@ -280,7 +283,8 @@ Multivio.DaysView = SC.View.extend(
   */
   listOfDaysDidChange: function () {
     this.updateLayer();
-  }.observes('.parentView.parentView.calendarController.listOfDays', 
-      '.parentView.parentView.calendarController.selectedDay')
-  
+  }.observes(
+      '.calendarController.listOfDays',
+      '.calendarController.selectedDay')
+
 });
