@@ -344,12 +344,13 @@ Multivio.HighlightController = SC.ArrayController.extend(
       //    2. stop not yet found
       //    3. current line is the last line of the page
       //    4. selection bottom right point is higher than the current line
-      // stop detection condition: (1 && 2) && (3 || 4)
+      //    5. selection bottom right point is to the left of the current line
+      // stop detection condition: (1 && 2) && (3 || 4 || 5)
       last_line = (i === (lines.length - 1));
       // note: put limit at middle height of line
       line_limit = (l.t + l.h * 0.5);
       if ((start !== -1 && stop === -1) && 
-          (last_line || (y2 <= line_limit))) { 
+          (last_line || (y2 <= line_limit) || x2 <= l.l)) { 
         
         stop = i;
         Multivio.logger.debug('line selection stop at line #' + i);
