@@ -682,3 +682,30 @@ width: 16px;
 height: 16px;
 }
 
+/*
+==========================================================================
+Calendar
+==========================================================================
+*/
+.calendar-view {
+  color: #000;
+}
+
+.calendar-weekdays-view {
+  font-weight: bold;
+}
+
+.calendar-day.not-current-month {
+  color: #7f7f7f;
+}
+
+.calendar-day.sel {
+  font-weight: bold;
+  color: black;
+}
+
+.calendar-day.selected {
+  background-color: #36c;
+  color: #fff;
+  font-weight: bold;
+}

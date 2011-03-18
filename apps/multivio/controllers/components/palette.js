@@ -119,7 +119,14 @@ Multivio.paletteController = SC.ObjectController.create(
     @param {SC.Button} button the button pressed
   */
   showTree: function (button) {
-    var treeView = Multivio.getPath('views.treePalette');
+    var treeView = null;
+    if (Multivio.masterController.get('isTimeNavigationEnabled')) {
+      Multivio.calendarController.initialize();
+      treeView = Multivio.getPath('views.calendarPalette');
+    }
+    else {
+      treeView = Multivio.getPath('views.treePalette');
+    }
     // no activeButton => show this palette
     if (SC.none(this.activeButton)) {
       button.set('isActive', YES);
@@ -301,14 +308,12 @@ Multivio.paletteController = SC.ObjectController.create(
     @param {} status
   */
   alertPaneDidDismiss: function (pane, status) {
-          console.info(status);
     switch (status) {
-
     case SC.BUTTON1_STATUS:
       var file = pane.description;
       file = file.split('(');
       // open a new tab to download the file
-      if (parseInt(SC.browser.msie,0)==7){
+      if (parseInt(SC.browser.msie, 0) === 7) {
         window.location.href = file[0];
       }
       else {
@@ -366,7 +371,12 @@ Multivio.paletteController = SC.ObjectController.create(
         Multivio.getPath('views.thumbnailPalette').remove(); 
         break;
       case 'tree':
-        Multivio.getPath('views.treePalette').remove();
+        if (Multivio.masterController.get('isTimeNavigationEnabled')) {
+          Multivio.getPath('views.calendarPalette').remove();
+        }
+        else {
+          Multivio.getPath('views.treePalette').remove();
+        }
         break;
       case 'metadata':
         Multivio.getPath('views.metadataPalette').remove();

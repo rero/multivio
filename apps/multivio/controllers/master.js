@@ -102,6 +102,8 @@ Multivio.masterController = SC.ObjectController.create(
     @property {currentSearchFile}
   */
   currentSearchFile: null,
+  
+  isTimeNavigationEnabled: NO,
    
   /**
     Initialize masterController. Get the referer (the url given to multivio) 
@@ -145,6 +147,14 @@ Multivio.masterController = SC.ObjectController.create(
       if (currentMeta !== -1) {
         Multivio.sendAction('fileMetadataDidChange', cf);
         this.set('currentFileType', currentMeta.mime);
+        //TO DO che: change this test when the server-side is ready
+        if (cf === Multivio.CDM.getReferer()) {
+          console.info('Meta for referer');
+          var index = cf.indexOf('express');
+          if (index !== -1) {
+            this.set('isTimeNavigationEnabled', YES);
+          }
+        }
       }
     }
   }.observes('metadata'),

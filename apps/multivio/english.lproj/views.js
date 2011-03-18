@@ -11,6 +11,7 @@ sc_require('views/image_content');
 sc_require('views/highlight_content');
 sc_require('views/thumbnail');
 sc_require('views/tree');
+sc_require('views/calendar');
 sc_require('views/file_button');
 sc_require('views/metadata');
 sc_require('views/search');
@@ -542,6 +543,24 @@ Multivio.views = SC.Page.design(
           selectionBinding: 'Multivio.treeController.selection'
         })
       })
+    })
+  }),
+  
+  /**
+    Calendar palette
+  */
+  calendarPalette: SC.PalettePane.design({
+    isAnchored: YES,
+    classNames: 'mvo-transparent',
+    contentView: SC.View.design({
+      layout: { top: 0, bottom: 0, left: 0, right: 0 },
+      childViews: [
+        Multivio.CalendarView.design({
+          layout: { top: 2, bottom: 2, left: 2, right: 2 },
+          borderStyle: SC.BORDER_NONE,
+          calendarController: Multivio.calendarController,
+        })
+      ]
     })
   }),
 
