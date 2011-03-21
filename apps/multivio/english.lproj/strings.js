@@ -108,10 +108,12 @@ SC.stringsFor('English', {
   '_firstOccurrences': 'Only the first %@ occurences are displayed.',
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
-  '_listOfResults': 'List of results',
+  '_listOfResults': 'List of results (%@%@)',
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
   '_More': 'More...',
+  '_NoTextualContent': 'No textual content',
+  '_NotSearchable': 'This document is apparently not searchable',
 
   // Strings for the help section
   '_helpTitle': "Help",

@@ -245,6 +245,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // select the lines of the current page
     var current_page = Multivio.masterController.get('currentPosition');
+    
+    // indexing is empty
+    if (SC.none(pi.pages) || SC.none(pi.pages[current_page])) return -1;
+
     var lines = pi.pages[current_page].lines;
     
     var l;
@@ -266,7 +270,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
   /**
     Returns the zones of the words encased in the given points, with respect
     to the lines defined in the page indexing.
-    If page indexing does not exist, returns -1.
+    If page indexing does not exist, returns empty list [].
     
     The result is given as a list of zones which contains words:
     
@@ -300,6 +304,10 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // select the lines of the current page
     var current_page = Multivio.masterController.get('currentPosition');
+    
+    // indexing is empty
+    if (SC.none(pi.pages) || SC.none(pi.pages[current_page])) return [];
+    
     var lines = pi.pages[current_page].lines;
     var single_line = undefined, _loop_start_index = 0;
     // line coordinates for the creation of highlight zones
@@ -307,27 +315,60 @@ Multivio.HighlightController = SC.ArrayController.extend(
     
     // parse lines, look for the first selected one
     var l, start = -1, stop = -1, word_start = -1, word_stop = -1,
-      selected_words = [], words_1 = [], words_2 = [], words_3 = [];
+      selected_words = [], words_1 = [], words_2 = [], words_3 = [], 
+      last_line = NO, line_limit = -1;
     for (var i = 0; i < lines.length; i++) {
       l = lines[i];
       
-      //Multivio.logger.debug('current line, tlwh: (%@,%@,%@,%@): "%@"'.fmt(l.t, l.l, l.w, l.h, l.text));
+      //Multivio.logger.debug('current line #%@, tlwh: (%@,%@,%@,%@): "%@"'.fmt(i, l.t, l.l, l.w, l.h, l.text));
+      
+      //Multivio.logger.debug('checking start: start:%@, y1:%@, y2:%@, l.t:%@'.fmt(start, y1, y2, l.t));
       
       // found the first line
-      if (start === -1 && y1 <= l.t && y2 >= l.t) {
+      // conditions:
+      //    1. start not found yet
+      //    2. selection top left point higher than line top
+      //    3. selection bottom right point lower than line top
+      //    4. selection top left point to the left of line right
+      // start detection condition: 1 && 2 && 3 && 4
+      //Multivio.logger.debug('line, l.l:%@, l.r:%@, l.t:%@, x2,%@, y1:%@'
+      //  .fmt(l.l, l.r, l.t, x2, y1));
+      if (start === -1 && y1 <= l.t && y2 >= l.t && x1 <= l.r) {
         start = i;
-        //Multivio.logger.debug('line selection start');
+        Multivio.logger.debug('line selection start at line #' + i);
       } 
-      
+            
       // found the last line
-      if (start !== -1 && stop === -1 && y2 <= (l.t + l.h)) {
+      // conditions:
+      //    1. start has been found
+      //    2. stop not yet found
+      //    3. current line is the last line of the page
+      //    4. selection bottom right point is higher than the current line
+      //    5. selection bottom right point is to the left of the current line
+      // stop detection condition: (1 && 2) && (3 || 4 || 5)
+      last_line = (i === (lines.length - 1));
+      // note: put limit at middle height of line
+      line_limit = (l.t + l.h * 0.5);
+      if ((start !== -1 && stop === -1) && 
+          (last_line || (y2 <= line_limit) || x2 <= l.l)) { 
         
         stop = i;
-        //Multivio.logger.debug('line selection stop');
+        Multivio.logger.debug('line selection stop at line #' + i);
         // store the last line
         // note: don't store last one because we detected it 1 too late,
-        // except when there's only 1 line
-        if (result.length === 0) {
+        // except when there's only 1 line, or when the selection
+        // goes further than the last line's limit. In this case, the
+        // bottom right selection point must be to the right of the beginning
+        // of the line
+        // conditions recap:
+        //    1. there is only one line selected
+        //    2. the current line is the last one
+        //    3. the bottom right selection point is further down than the limit
+        //    4. the bottom right selection point is to the right of 
+        //       the beginning of the line
+        // conditions to store line at stop: (1 || (2 && 3) && 4)
+        if ((result.length === 0 ||
+           (last_line && y2 > line_limit) && x2 >= l.l)) {
           result.push(l);
         }
 
@@ -356,7 +397,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
             word_start = j;
             //Multivio.logger.debug('--word selection start at w #' + word_start);
             //Multivio.logger.debug('--word text: "' + wt[word_start] + '"');
-            //selected_words.insertAt(0, wt[j]);
           }  
           
           // add all words of the line once the start word has been found
@@ -376,7 +416,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         if (result.length !== 1) {
           lx1 = cl.x[word_start].l;
           ly1 = cl.t;
-          lx2 = lx1 + cl.w;
+          lx2 = cl.x[cl.x.length - 1].r;
           ly2 = ly1 + cl.h;
           this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
         }
@@ -451,7 +491,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           // inbetween, lines are wholly selected
           lx1 = cl.l;
           ly1 = cl.t;
-          lx2 = lx1 + cl.w;
+          lx2 = cl.x[cl.x.length - 1].r;
           ly2 = ly1 + cl.h;
           this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
           
@@ -471,8 +511,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
         /*Multivio.logger.debug('words_1: ' + words_1);
         Multivio.logger.debug('words_2: ' + words_2);
         Multivio.logger.debug('words_3: ' + words_3);
-        Multivio.logger.debug('selected_words: ' + selected_words);*/
-        
+        Multivio.logger.debug('selected_words: ' + selected_words);
+        */
         // get out of the lines' loop
         break;
       
@@ -1176,6 +1216,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */  
   searchStatus: '', 
   
+  
+  /**
+    Determines whether there was a check for textual content on the current
+    document or not. This is used to display a message only once per document.
+  
+    @property {Boolean}
+    @default NO
+  */
+  textualContentHasBeenChecked: NO,
+  
   /**
     When search file selection changes,
     load corresponding search results (if any).
@@ -1677,7 +1727,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // for every file in the list
       // NOTE: don't take 'All Files' into account, begin at index 1
       //handle case where there's only one file
-      var done = YES, u;
+      var done = YES, u, more = '';
       
       // if we searched a specific file, check only this one
       if (csf !== ref_url) {
@@ -1685,7 +1735,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           Multivio.logger.debug('---no result for specific file, skip: ' + csf);
           done = NO;
         } else {
-          num_all_res = all_res[csf].file_position.results.length;          
+          num_all_res = all_res[csf].file_position.results.length;
+          // display a '+' if results were truncated
+          if (all_res[csf].max_reached !== 0) more = '+';
         }
 
       } else { // searching all files, check the list
@@ -1708,6 +1760,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
             continue;
           }
           num_all_res += all_res[u].file_position.results.length;
+          // display a '+' if results were truncated
+          if (all_res[u].max_reached !== 0) more = '+';
         }
       }
       Multivio.logger.debug('---search done: ' + done);
@@ -1722,9 +1776,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         
         if (num_all_res === 0) {
           this.set('searchStatus', '_noResult'.loc());
+          // TODO check if there is textual content on the current page
+          this._checkTextualContent();
         }
         else {
-          this.set('searchStatus', '_listOfResults'.loc());
+          this.set('searchStatus', '_listOfResults'.loc(num_all_res, more));
         }
       }
       
@@ -1771,6 +1827,45 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              
       }      
     }
+  },
+
+
+  /**
+    @method
+    @private
+    
+    This function checks if the current page does have textual indexing.
+    If not, display a message to the user warning him that the document
+    is apparently not searchable.
+    
+    The check is performed only is this.textualContentHasBeenChecked is false.
+    
+  */
+  _checkTextualContent: function () {
+    
+    if (this.get('textualContentHasBeenChecked')) return;
+    
+    Multivio.logger.debug('_checkTextualContent');
+    
+    // get page indexin
+    var pi = this._getPageIndexing();
+    
+    // did not receive page indexing from the server
+    if (pi === -1) return;
+
+    // get the current page
+    var current_page = Multivio.masterController.get('currentPosition');
+    
+    // indexing is empty
+    if (SC.none(pi) || SC.none(pi.pages) || SC.none(pi.pages[current_page])) {
+      
+      Multivio.usco.showAlertPaneInfo('_NoTextualContent'.loc(), 
+        '_NotSearchable'.loc(), 'OK');
+      
+    }
+    
+    this.set('textualContentHasBeenChecked', YES);
+    
   },
 
   /**
@@ -1894,6 +1989,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // physical structure not yet initialised (do it only once)
     this.set('physicalStructureInitialised', NO);
 
+    // initialise check variable
+    this.set('textualContentHasBeenChecked', NO);
+
     // get previously selected search result
     // (when the controller has been reinitialised after a file change)
     var mi = Multivio.masterController.
@@ -1904,8 +2002,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     Multivio.logger.debug('search init: Master search file: ' + msf);
                                   
-    // initialise content                              
+    // initialise content, display                           
     this.set('content', []);
+    this.set('searchStatus', ''); 
     
     // if an input param was defined, run the search query
     var iq = this.get('initSearchTerm');
@@ -1993,6 +2092,9 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var cfl = this.get('currentFileList');
     
     if (SC.none(cfl)) return;
+    
+    // once we receive the file list, we can get the page indexing as well
+    this._getPageIndexing();
     
     var is = this.get('initial_search');
     var it = this.get('initial_term');
