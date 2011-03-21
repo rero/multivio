@@ -325,34 +325,50 @@ Multivio.HighlightController = SC.ArrayController.extend(
       //Multivio.logger.debug('checking start: start:%@, y1:%@, y2:%@, l.t:%@'.fmt(start, y1, y2, l.t));
       
       // found the first line
-      if (start === -1 && y1 <= l.t && y2 >= l.t) {
+      // conditions:
+      //    1. start not found yet
+      //    2. selection top left point higher than line top
+      //    3. selection bottom right point lower than line top
+      //    4. selection top left point to the left of line right
+      // start detection condition: 1 && 2 && 3 && 4
+      //Multivio.logger.debug('line, l.l:%@, l.r:%@, l.t:%@, x2,%@, y1:%@'
+      //  .fmt(l.l, l.r, l.t, x2, y1));
+      if (start === -1 && y1 <= l.t && y2 >= l.t && x1 <= l.r) {
         start = i;
         Multivio.logger.debug('line selection start at line #' + i);
       } 
-      
-      //Multivio.logger.debug('checking stop: start:%@, stop:%@, y2:%@, l.t:%@, l.h:%@'.fmt(start, stop, y2, l.t, l.h));
-      
+            
       // found the last line
       // conditions:
       //    1. start has been found
       //    2. stop not yet found
       //    3. current line is the last line of the page
-      //    4. y2 is vertically before the current line
-      // stop detection condition: (1 && 2) && (3 || 4)
+      //    4. selection bottom right point is higher than the current line
+      //    5. selection bottom right point is to the left of the current line
+      // stop detection condition: (1 && 2) && (3 || 4 || 5)
       last_line = (i === (lines.length - 1));
       // note: put limit at middle height of line
       line_limit = (l.t + l.h * 0.5);
       if ((start !== -1 && stop === -1) && 
-          (last_line || (!last_line && y2 <= line_limit))) {
+          (last_line || (y2 <= line_limit) || x2 <= l.l)) { 
         
         stop = i;
-        //Multivio.logger.debug('line selection stop at line #' + i);
+        Multivio.logger.debug('line selection stop at line #' + i);
         // store the last line
         // note: don't store last one because we detected it 1 too late,
         // except when there's only 1 line, or when the selection
-        // goes further than the last line's limit
-        if (result.length === 0 ||
-           (last_line && y2 > line_limit)) {
+        // goes further than the last line's limit. In this case, the
+        // bottom right selection point must be to the right of the beginning
+        // of the line
+        // conditions recap:
+        //    1. there is only one line selected
+        //    2. the current line is the last one
+        //    3. the bottom right selection point is further down than the limit
+        //    4. the bottom right selection point is to the right of 
+        //       the beginning of the line
+        // conditions to store line at stop: (1 || (2 && 3) && 4)
+        if ((result.length === 0 ||
+           (last_line && y2 > line_limit) && x2 >= l.l)) {
           result.push(l);
         }
 
@@ -400,7 +416,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
         if (result.length !== 1) {
           lx1 = cl.x[word_start].l;
           ly1 = cl.t;
-          lx2 = lx1 + cl.w;
+          lx2 = cl.x[cl.x.length - 1].r;
           ly2 = ly1 + cl.h;
           this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
         }
@@ -475,7 +491,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           // inbetween, lines are wholly selected
           lx1 = cl.l;
           ly1 = cl.t;
-          lx2 = lx1 + cl.w;
+          lx2 = cl.x[cl.x.length - 1].r;
           ly2 = ly1 + cl.h;
           this.addHighlightHelper(lx1, ly1, lx2, ly2, YES);
           
