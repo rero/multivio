@@ -222,7 +222,23 @@ Multivio.HighlightContentView = SC.View.extend(
     this.selectedTextDiv = this.createChildView(
       SC.TextFieldView.design({
         layout:  { top: -10, left: -10, width: 1, height: 1 },
-        layerId: 'selected_text'
+        layerId: 'selected_text',
+        // on key down, save the text value to restore it on keyUp
+        // and send the event up in the hierarchy
+        keyDown: function (evt) {
+          // save text value
+          this.set('saved_value', this.$input()[0].value);        
+          return NO;
+        },
+        // on key up, restore the saved value and select it
+        // and send the event up in the hierarchy        
+        keyUp: function (evt) {
+          // restore value and select it
+          this.$input()[0].value = this.get('saved_value');
+          this.$input()[0].focus();
+          this.$input()[0].select();
+          return NO;
+        }
       })
     );
      
