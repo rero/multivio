@@ -1857,7 +1857,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var current_page = Multivio.masterController.get('currentPosition');
     
     // indexing is empty
-    if (SC.none(pi) || SC.none(pi.pages) || SC.none(pi.pages[current_page])) {
+    if (SC.none(pi) || SC.none(pi.pages) || 
+        SC.none(pi.pages[current_page]) ||
+        SC.none(pi.pages[current_page].lines) ||
+        pi.pages[current_page].lines.length === 0) {
       
       Multivio.usco.showAlertPaneInfo('_NoTextualContent'.loc(), 
         '_NotSearchable'.loc(), 'OK');
