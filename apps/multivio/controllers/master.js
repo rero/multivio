@@ -69,7 +69,7 @@ Multivio.masterController = SC.ObjectController.create(
   zoomState: null,
   
   listOfFiles: null,
-  currentFilePosition: null,
+  currentFileIndex: -1,
     
   /**
     Binds to the cdm fileMetadata
@@ -174,24 +174,24 @@ Multivio.masterController = SC.ObjectController.create(
           for (var i = 0; i < refPh.length; i++) {
             this.listOfFiles[i] = refPh[i];
           }
-          this.currentFilePosition = 0;
+          this.currentFileIndex = 0;
         } 
       }
     }
   }.observes('physicalStructure'),
   
-  currentFilePositionDidChange: function () {
+  currentFileIndexDidChange: function () {
     this.currentFileType = null;
-    var newFilePos =  this.get('currentFilePosition');
+    var newFilePos =  this.get('currentFileIndex');
     var newFile = this.listOfFiles[newFilePos];
     this.set('currentFile', newFile.url);
-  }.observes('currentFilePosition'),
+  }.observes('currentFileIndex'),
   
-  setCurrentFilePosition: function (fileUrl) {
+  setCurrentFileIndex: function (fileUrl) {
     if (!SC.none(this.listOfFiles)) {
       for (var i = 0; i < this.listOfFiles.length; i++) {
         if (this.listOfFiles[i].url === fileUrl) {
-          this.set('currentFilePosition', i);
+          this.set('currentFileIndex', i);
           break;
         }
       }
@@ -328,7 +328,7 @@ Multivio.masterController = SC.ObjectController.create(
       this.currentFileType = null;
       this.set('currentPosition', null);
       var cf = this.get('currentFile');
-      this.setCurrentFilePosition(cf);
+      this.setCurrentFileIndex(cf);
       var meta = Multivio.CDM.getFileMetadata(cf);
       // meta === -1 => fileMetadata not in the client wait until fileMetadata
       // is available => metadataDidChange

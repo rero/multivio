@@ -25,6 +25,11 @@ Multivio.initializer = SC.Object.create(
     @default undefined
   */
   inputParameters: {},
+  
+  /**
+    @property Boolean
+  */
+  isFirstTime: YES,
 
 
   /**
@@ -126,8 +131,13 @@ Multivio.initializer = SC.Object.create(
       }
       this.set('inputParameters', prop);
     }
+
     // need to have serverName before this
-    Multivio.logger.initialize();
+    if (this.get('isFirstTime')) {
+      Multivio.logger.initialize();
+      this.set('isFirstTime', NO);
+    }
+    
     Multivio.logger.debug('end of configurator.readInputParameters()');
   },
 

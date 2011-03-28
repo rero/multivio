@@ -80,8 +80,8 @@ Multivio.views = SC.Page.design(
         classNames: 'mvo-front-view-transparent',
       
         childViews: [
-          'goPreviousButton',
-          'goNextButton',
+          'goPreviousFileButton',
+          'goNextFileButton',
           'overviewButton',
           'rotateLeftButton',
           'rotateRightButton',
@@ -97,7 +97,7 @@ Multivio.views = SC.Page.design(
           'zoomNativeSizeButton'
         ],
         
-        goPreviousButton: SC.ButtonView.design({
+        goPreviousFileButton: SC.ButtonView.design({
           layout: { centerX: -336, centerY: 0,  width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
@@ -105,16 +105,14 @@ Multivio.views = SC.Page.design(
           toolTip: '_GoPrevious'.loc(),
           renderStyle: "renderImage",
           icon: 'go_previous_new',
-          theme: 'mvo-button'
-          /*,
-          isEnabledBinding: 'Multivio.overviewController.isOverviewEnabled',
-          isActiveBinding: 'Multivio.overviewController.isOverviewActive',
-          target: "Multivio.overviewController",
-          action: "showOverview"
-          */
+          theme: 'mvo-button',
+          isEnabledBinding:
+              SC.Binding.not("Multivio.navigationController.isFirstFile"),
+          target: "Multivio.navigationController", 
+          action: "goToPreviousFile"
         }),
         
-        goNextButton: SC.ButtonView.design({
+        goNextFileButton: SC.ButtonView.design({
           layout: { centerX: -304, centerY: 0,  width: 32, height: 32 },
           titleMinWidth : 0,
           needsEllipsis: NO,
@@ -122,13 +120,11 @@ Multivio.views = SC.Page.design(
           toolTip: '_GoNext'.loc(),
           renderStyle: "renderImage",
           icon: 'go_next_new',
-          theme: 'mvo-button'
-          /*,
-          isEnabledBinding: 'Multivio.overviewController.isOverviewEnabled',
-          isActiveBinding: 'Multivio.overviewController.isOverviewActive',
-          target: "Multivio.overviewController",
-          action: "showOverview"
-          */
+          theme: 'mvo-button',
+          isEnabledBinding:
+              SC.Binding.not("Multivio.navigationController.isLastFile"),
+          target: "Multivio.navigationController", 
+          action: "goToNextFile"
         }),
         
         overviewButton: SC.ButtonView.design({

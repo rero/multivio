@@ -40,8 +40,13 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   currentPage: null,
   
-  currentFile: null,
-  //currentFileBinding: 'Multivio.masterController.currentFilePosition',
+  currentFileIndex: -1,
+  //currentFileBinding: 'Multivio.masterController.currentFileIndex',
+  
+  /**
+    The current list of files
+  */
+  listOfFiles: null,
   
   /**
     @property {Number} 
@@ -63,14 +68,59 @@ Multivio.navigationController = SC.ObjectController.create(
   isLoadingContentBinding: 'Multivio.masterController.isLoadingContent',
   
   /**
-    Boolean to enabled and disabled Buttons
+    Booleans to enable and disable buttons
   */
   isNextEnabled: YES,
   isPreviousEnabled: YES,
   isFirstEnabled: YES,
   isLastEnabled: YES,
   isCurrentPageEnabled: YES,
+
+  /**
+    Value is YES if the current file is the first one in the document, or
+    if the document contains a single file
+
+    @property Boolean
+  */
+  isFirstFile: function () {
+    return this.get('currentFileIndex') === 0 ? YES : NO;
+  }.property('currentFileIndex').cacheable(),
+
+  /**
+    Value is YES if the current file is the last one in the document, or
+    if the document contains a single file
+
+    @property Boolean
+  */
+  isLastFile: function () {
+    var nf = this.get('numberOfFilesInDocument');
+    return (nf > 0 && this.get('currentFileIndex') === nf - 1) ? YES : NO;
+  }.property('listOfFiles', 'currentFileIndex').cacheable(),
   
+  /**
+    Value is YES if the current document contains a single file, otherwise NO
+
+    @property Boolean
+  */
+  /*
+  isSingleFileDocument: function() {
+    return (
+        SC.typeOf(this.get('listOfFiles')) === SC.T_ARRAY &&
+        this.get('listOfFiles').length > 0
+      ) ? NO : YES;
+  }.property('listOfFiles').cacheable(),
+  */
+
+  /**
+    The number of files in the document. Returns -1 in case of error.
+
+    @property Number
+  */
+  numberOfFilesInDocument: function () {
+    return SC.typeOf(this.get('listOfFiles')) === SC.T_ARRAY ?
+        this.get('listOfFiles').length : -1;
+  }.property('listOfFiles').cacheable(),
+
   /**
     local variables used to create bindings
   */
@@ -88,7 +138,8 @@ Multivio.navigationController = SC.ObjectController.create(
   initialize: function (url) {
     this.position = null;
     this.bind('position', 'Multivio.masterController.currentPosition');
-    this.bind('currentFile', 'Multivio.masterController.currentFilePosition');
+    this.bind('currentFileIndex', 'Multivio.masterController.currentFileIndex');
+    this.bind('listOfFiles', 'Multivio.masterController.listOfFiles');
     
     var meta = Multivio.CDM.getFileMetadata(url);
     if (SC.none(meta.nPages)) {  
@@ -131,7 +182,7 @@ Multivio.navigationController = SC.ObjectController.create(
       }
     }
     //this.checkButton();  
-    if (!SC.none(this.get('currentFile')) && this.get('currentFile') > 0) {
+    if (!SC.none(this.get('currentFileIndex')) && this.get('currentFileIndex') > 0) {
       this.set('isFirstEnabled', YES);
     } 
     Multivio.logger.info('navigationController initialized');
@@ -154,7 +205,7 @@ Multivio.navigationController = SC.ObjectController.create(
         }
       }
       else {
-        var cf = Multivio.masterController.get('currentFile');
+        var cf = Multivio.masterController.get('currentFileIndex');
         if (!SC.none(cf)) {
           var currentPh = this.get('physicalStructure')[cf];
           // we have physicalstructure
@@ -242,7 +293,7 @@ Multivio.navigationController = SC.ObjectController.create(
       // enabled buttons after checking conditions
       this.set('isCurrentPageEnabled', YES);
       var current = this.get('currentPage');
-      var currentFileP = this.get('currentFile');
+      var currentFileI = this.get('currentFileIndex');
       if (Multivio.masterController.isGrouped) {
         if (current !== 1) {
           this.set('isPreviousEnabled', YES);
@@ -254,21 +305,21 @@ Multivio.navigationController = SC.ObjectController.create(
         }
       }
       else {
-        if (!SC.none(currentFileP)) {
+        if (!SC.none(currentFileI)) {
           if (current !== 1) {
             this.set('isPreviousEnabled', YES);
           }
           else {
             //current = 1 but we are no at the first doc
-            if (currentFileP !== 0) {
+            if (currentFileI !== 0) {
               this.set('isPreviousEnabled', YES);
             }
           }
-          if (currentFileP !== 0) {
+          if (currentFileI !== 0) {
             this.set('isFirstEnabled', YES);
           }
           else {
-            // currentFileP = 0 and current != 1 go to the first page
+            // currentFileI = 0 and current != 1 go to the first page
             if (current !== 1) {
               this.set('isFirstEnabled', YES);
             }
@@ -279,13 +330,13 @@ Multivio.navigationController = SC.ObjectController.create(
           else {
             // last page but not last document
             if (!SC.none(Multivio.masterController.listOfFiles) &&
-                currentFileP < Multivio.masterController.listOfFiles.length - 1) {
+                currentFileI < Multivio.masterController.listOfFiles.length - 1) {
               this.set('isNextEnabled', YES);
             }
           }
           if (!SC.none(Multivio.masterController.listOfFiles) && (
-              currentFileP < Multivio.masterController.listOfFiles.length - 
-              1 || (currentFileP === 
+              currentFileI < Multivio.masterController.listOfFiles.length - 
+              1 || (currentFileI === 
               (Multivio.masterController.listOfFiles.length - 1) )&& current !== 
               this.get('_numberOfPages'))) {
             this.set('isLastEnabled', YES);
@@ -342,7 +393,7 @@ Multivio.navigationController = SC.ObjectController.create(
     this.set('isLoadingContent', YES);
     SC.RunLoop.end();
     //only one document
-    if (SC.none(this.get('currentFile'))) {
+    if (SC.none(this.get('currentFileIndex'))) {
       this.set('currentPage', 1);
     }
     else {
@@ -350,14 +401,7 @@ Multivio.navigationController = SC.ObjectController.create(
         this.set('currentPage', 1);
       }
       else {
-        var current = this.get('currentFile');
-        current--;
-        this.currentPage = null;
-        this.set('currentFile', current);
-        Multivio.makeFirstResponder(Multivio.INIT);
-        Multivio.READY.showLastPosition = YES;
-        Multivio.sendAction('notAllowSelection');
-        Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
+        this.goToPreviousFile();
       }
     }
   },
@@ -370,7 +414,7 @@ Multivio.navigationController = SC.ObjectController.create(
     this.set('isLoadingContent', YES);
     SC.RunLoop.end();
     //only one document
-    if (SC.none(this.get('currentFile'))) {
+    if (SC.none(this.get('currentFileIndex'))) {
       var nbp = this.get('_numberOfPages');
       this.set('currentPage', nbp);
     }
@@ -379,22 +423,51 @@ Multivio.navigationController = SC.ObjectController.create(
         this.set('currentPage', this.get('_numberOfPages'));
       }
       else {
-        var current = this.get('currentFile');   
-        current++;
-        Multivio.makeFirstResponder(Multivio.INIT);    
-        Multivio.sendAction('notAllowSelection');
-        Multivio.masterController.zoomState = Multivio.zoomController.currentZoomState;
-        this.set('currentFile', current);
+        this.goToNextFile();
       }
     }
   },
-  
+
+  /**
+    Go to the previous file in the document
+  */
+  goToPreviousFile: function () {
+    var current = this.get('currentFileIndex');
+    // sanity check
+    if (SC.typeOf(current) === SC.T_NUMBER && current > 0) {
+      current--;
+      this.set('currentFileIndex', current);
+      Multivio.makeFirstResponder(Multivio.INIT);
+      //Multivio.READY.showLastPosition = YES;
+      Multivio.sendAction('notAllowSelection');
+      Multivio.masterController.zoomState =
+          Multivio.zoomController.currentZoomState;
+    }
+  },
+
+  /**
+    Go to the next file in the document
+  */
+  goToNextFile: function () {
+    var current = this.get('currentFileIndex');
+    // sanity check
+    if (SC.typeOf(current) === SC.T_NUMBER &&
+        current < this.get('numberOfFilesInDocument') - 1) {
+      current++;
+      Multivio.makeFirstResponder(Multivio.INIT);
+      Multivio.sendAction('notAllowSelection');
+      Multivio.masterController.zoomState =
+          Multivio.zoomController.currentZoomState;
+      this.set('currentFileIndex', current);
+    }
+  },
+
   /**
     Select if we have to go to the next page or to the next document
   */  
   goToNext: function () {
     //only one document
-    if (SC.none(this.get('currentFile'))) {
+    if (this.get('numberOfFilesInDocument') === 1) {
       if (this.get('currentPage') !== this.get('_numberOfPages')) {
         this.goToNextPage();
       }
@@ -402,7 +475,7 @@ Multivio.navigationController = SC.ObjectController.create(
     else {
       // last page
       if (this.get('currentPage') === this.get('_numberOfPages')) {
-        if (this.get('currentFile') !== 
+        if (this.get('currentFileIndex') !== 
             Multivio.masterController.listOfFiles.length - 1  &&
             !Multivio.masterController.isGrouped) {
           this.goToLastPage();
@@ -419,7 +492,7 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   goToPrevious: function () {
     // only one document
-    if (SC.none(this.get('currentFile'))) {
+    if (SC.none(this.get('currentFileIndex'))) {
       if (this.get('currentPage') !== 1) {
         this.goToPreviousPage();
       }
@@ -427,7 +500,7 @@ Multivio.navigationController = SC.ObjectController.create(
     else {
       // first page
       if (this.get('currentPage') === 1) {
-        if (this.get('currentFile') !== 0) {
+        if (this.get('currentFileIndex') !== 0) {
           this.goToFirstPage();
         }
       }
