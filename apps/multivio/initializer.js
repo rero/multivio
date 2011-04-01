@@ -188,6 +188,7 @@ Multivio.initializer = SC.Object.create(
       if (!SC.none(serverVersion) && 
           serverVersion === Multivio.configurator.serverCompatibility) {
         Multivio.logger.debug('Client and server are compatible');
+
         // TODO: would prefer to change state here, instead of initializing the master
         Multivio.masterController.initialize();   
       }

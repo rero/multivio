@@ -33,7 +33,7 @@ Multivio.NavigationView = SC.View.extend(
   */
   showWaiting: function () {
     var trans = Multivio.getPath(
-        'views.mainContentView.navigation.transparentView');
+        'views.navigationInfo.transparentView');
     var waitingIm = Multivio.getPath(
           'views.waitingImg');
     this.appendChild(trans);
@@ -49,17 +49,17 @@ Multivio.NavigationView = SC.View.extend(
   showView: function (file, page) {
     this.removeAllChildren();
     var trans = Multivio.getPath(
-        'views.mainContentView.navigation.transparentView');
+        'views.navigationInfo.transparentView');
     this.appendChild(trans);
     
     var pageLabel = Multivio.getPath(
-        'views.mainContentView.navigation.transparentView.currentPage');
+        'views.navigationInfo.transparentView.currentPage');
     pageLabel.set('value', '_Page'.loc() + ' : ' + page);
     
     // if only one file => no file Label & replace page number in the center
     if (!SC.none(file)) {    
       var fileLabel = Multivio.getPath(
-          'views.mainContentView.navigation.transparentView.currentFile');
+          'views.navigationInfo.transparentView.currentFile');
       fileLabel.set('value', '_File'.loc() + ' : ' + file);
       this.appendChild(fileLabel);
     }

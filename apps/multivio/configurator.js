@@ -133,8 +133,8 @@ Multivio.configurator = SC.Object.create(
     'default': {
       layoutClass: 'GridLayout3x3',
       layoutParams: {
-        'leftStripWidth':  200,
-        'rightStripWidth': 200,
+        'leftStripWidth':  0,
+        'rightStripWidth': 0,
         'headerHeight':     0,
         'footerHeight':     50,
         'marginTop':        10,
@@ -155,7 +155,9 @@ Multivio.configurator = SC.Object.create(
   componentLayouts: {
     'init': {
       baseLayout: 'default',
-      components: [{name: 'views.footerView',  coord: 'A3:C3'}]
+      components: [
+          {name: 'views.footerView', coord: 'A3:C3'}
+        ]
     },
     'usage': {
       baseLayout: 'default',
@@ -183,19 +185,31 @@ Multivio.configurator = SC.Object.create(
   layoutConfig: {
     xml: {
       components: [
-        {name: 'views.treeView', coord: 'A2:A2'}
+        {name: 'views.treeView', coord: 'A1:C2'}
       ]
     },
     pdf: {
-      components: [
-        {name: 'views.mainContentView', coord: 'A1:C2'}
-      ],
+      components: [{
+          name: 'views.mainContentView',
+          coord: 'A1:C2',
+          children: [
+              'views.leftButtons',
+              'views.bottomButtons',
+              'views.navigationInfo'
+            ]
+        }],
       zoomScale: 'scaleForVectorGraphics'
     },
     image : {
-      components: [
-        {name: 'views.mainContentView', coord: 'A1:C2'}
-      ],
+      components: [{
+          name: 'views.mainContentView',
+          coord: 'A1:C2',
+          childern: [
+              'views.leftButtons',
+              'views.bottomButtons',
+              'views.navigationInfo'
+            ]
+      }],
       zoomScale: 'scaleForBitmapGraphics'
     }
   },

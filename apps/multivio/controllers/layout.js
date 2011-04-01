@@ -128,8 +128,8 @@ Multivio.layoutController = SC.Object.create(
   configureWorkspace: function (componentLayoutName) {
     SC.RunLoop.begin();
 
-    // apply the base layout to the main page
-    var mainPage = Multivio.getPath('mainPage.mainPane');
+    // apply the base layout to the main page's main pane
+    var mainPane = Multivio.getPath('mainPage.mainPane');
     var baseLayoutName = Multivio.configurator.getPath(
         'componentLayouts.%@.baseLayout'.fmt(componentLayoutName));
     var baseLayoutConfig =
@@ -139,20 +139,79 @@ Multivio.layoutController = SC.Object.create(
       var errMess = 'Unable to find layout mixin %@'.fmt(baseLayoutName);
       throw {message: errMess};
     }
-    SC.mixin(mainPage, layoutMixin);
-    mainPage.layOutGrid(baseLayoutConfig.layoutParams);
+    SC.mixin(mainPane, layoutMixin);
+    mainPane.layOutGrid(baseLayoutConfig.layoutParams);
 
     // lay out the components
     var components = Multivio.configurator.getPath(
         'componentLayouts.%@.components'.fmt(componentLayoutName));
     for (var i = 0; i < components.length; i++) {
       var c = components[i];
-      mainPage.layOutComponent(c);
+      mainPane.layOutComponent(c);
+
+      // append children to component, if required
+      if (SC.typeOf(c.children) === SC.T_ARRAY) {
+        this.addChildViewsToComponent(c.children, c.name);
+      }
     }
+
+    // lay out child views floating views
+      /*
+        'views.leftButtons',
+        'views.bottomButtons',
+        'views.navigationInfo'], 'views.mainContentView');
+        */
+    /*
+    var sideBar = Multivio.getPath('views.leftButtons');
+    Multivio.getPath('views.mainContentView').appendChild(sideBar);
+    //sideBar.set('isVisibleInWindow', YES); TODO: is this needed?
+
+    var bottomToolbar = Multivio.getPath('views.bottomButtons');
+    Multivio.getPath('views.mainContentView').appendChild(bottomToolbar);
+    //bottomToolbar.set('isVisibleInWindow', YES); TODO: is this needed?
+
+    var navigationInfoFloat = Multivio.getPath('views.navigationInfo');
+    Multivio.getPath('views.mainContentView').appendChild(navigationInfoFloat);
+    //navigationInfoFloat.set('isVisibleInWindow', YES); TODO: is this needed?
+    */
 
     SC.RunLoop.end();
     Multivio.logger.info('layoutController workspace initialized');
   },
+
+
+  /**
+    Add independent, floating child views to the host view (in principle
+    the main content view). This is done outside of the main grid layout;
+    TODO: there might be a better place to put this
+  */
+  addChildViewsToComponent: function (floatingViews, hostView) {
+    // get host view
+    var hv = Multivio.getPath(hostView);
+    
+    if (SC.typeOf(hv) !== SC.T_OBJECT ||
+        SC.typeOf(hv.appendChild) !== SC.T_FUNCTION) {
+      throw new Error("hostView must respond to the appendChild() method");
+    }
+
+    if (SC.typeOf(floatingViews) !== SC.T_ARRAY) {
+      throw new Error("floatingViews must be an array");
+    }
+
+    // append each floating view to the host view
+    var len = floatingViews.length;
+    for (var v = 0; v < len; v++) {
+      if (SC.typeOf(floatingViews[v]) !== SC.T_STRING) {
+        throw new Error("the elements of floatingViews must be strings");
+      }
+      var fv = Multivio.getPath(floatingViews[v]);
+      if (SC.typeOf(fv) !== SC.T_OBJECT) {
+        throw new Error("floatingView %@ must be an object".fmt(fv));
+      }
+      hv.appendChild(fv);
+    }
+  },
+
   
   /**
     Removed a view 
@@ -160,8 +219,8 @@ Multivio.layoutController = SC.Object.create(
     @param {String} component the name of the component
   */
   removeComponent: function (component) {
-    var mainPage = Multivio.getPath('mainPage.mainPane');
-    mainPage.removeComponent(component); 
+    var mainPane = Multivio.getPath('mainPage.mainPane');
+    mainPane.removeComponent(component); 
   },
   
   /**
@@ -172,8 +231,13 @@ Multivio.layoutController = SC.Object.create(
   addComponent: function (controller) {
     // get component for this controller
     var component = this.viewByController[controller];
-    var mainPage = Multivio.getPath('mainPage.mainPane');
-    mainPage.layOutComponent(component);
+    var mainPane = Multivio.getPath('mainPage.mainPane');
+    mainPane.layOutComponent(component);
+
+    // append children to component, if required
+    if (SC.typeOf(component.children) === SC.T_ARRAY) {
+      this.addChildViewsToComponent(component.children, component.name);
+    }
 
     this.set('nbOfComponentToAdd', this.get('nbOfComponentToAdd') - 1);
   },

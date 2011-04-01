@@ -304,10 +304,10 @@ Multivio.masterController = SC.ObjectController.create(
   currentFileTypeDidChange: function () {
     var ct = this.get('currentFileType');
     var cf = this.get('currentFile');
-    var listOfControllerss = Multivio.layoutController.getListOfControllers(ct);
+    var listOfControllers = Multivio.layoutController.getListOfControllers(ct);
     
-    for (var i = 0; i < listOfControllerss.length; i++) {
-      var oneController = listOfControllerss[i];
+    for (var i = 0; i < listOfControllers.length; i++) {
+      var oneController = listOfControllers[i];
       Multivio[oneController].initialize(cf);
       // if we need zoomController set it state
       if (oneController === 'zoomController') {
@@ -339,7 +339,7 @@ Multivio.masterController = SC.ObjectController.create(
   }.observes('currentFile'),
   
   /**
-    isLoadingContent has changed, show the navigation view
+    isLoadingContent has changed, show the navigationInfo view
   
     @observes isLoadingContent
   */
@@ -347,7 +347,7 @@ Multivio.masterController = SC.ObjectController.create(
     var prop = this.get('isLoadingContent');
     // if isLoading, show waiting
     if (prop) {
-      Multivio.getPath('views.mainContentView.navigation').showWaiting();
+      Multivio.getPath('views.navigationInfo').showWaiting();
     }
     //else remove waiting or replace it with the name of the file and the position
     else {
@@ -357,7 +357,7 @@ Multivio.masterController = SC.ObjectController.create(
           var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
           var pos = this.get('currentPosition');
           if (!SC.none(pos)) {
-            Multivio.getPath('views.mainContentView.navigation').
+            Multivio.getPath('views.navigationInfo').
                 showView(phys[pos - 1].label, pos + '/' + phys.length);
             this.set('isNew', NO);
           }
@@ -385,14 +385,14 @@ Multivio.masterController = SC.ObjectController.create(
           }
           if (!SC.none(this.get('currentPosition'))) {
             var page = this.get('currentPosition') + '/' + max;
-            Multivio.getPath('views.mainContentView.navigation').
+            Multivio.getPath('views.navigationInfo').
                 showView(fileName, page);
             this.set('isNew', NO);
           }
         }
       }
       else {
-        Multivio.getPath('views.mainContentView.navigation').hideView();
+        Multivio.getPath('views.navigationInfo').hideView();
       }
     }
   }.observes('isLoadingContent'),

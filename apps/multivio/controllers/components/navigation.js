@@ -60,7 +60,7 @@ Multivio.navigationController = SC.ObjectController.create(
   /**
     Binds to the masterController isLoadingContent property.
     
-    This binding is used to enabled and disabled navigation buttons
+    This binding is used to enable and disable navigation buttons
 
     @binding {Boolean}
   */
