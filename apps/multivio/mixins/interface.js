@@ -51,9 +51,9 @@ Multivio.innerGradientThinTopBottom = {
       this.renderChildViews(context, firstTime);
       context.push(
         "<div class='top-edge-thin'></div>",
-        "<div class='right-edge'></div>",
+        "<div class='right-edge-thin'></div>",
         "<div class='bottom-edge-thin'></div>",
-        "<div class='left-edge'></div>");
+        "<div class='left-edge-thin'></div>");
     }
   }
 };

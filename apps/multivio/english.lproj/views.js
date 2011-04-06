@@ -489,17 +489,19 @@ Multivio.views = SC.Page.design(
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       
-      childViews: 'innerThumbnail'.w(),
-      innerThumbnail: Multivio.ThumbnailView.design({
-        layout: { top: 2, bottom: 2, left: 2, right: 2 },
+      childViews: 'innerThumbnail thumbnailListModeButtom thumbnailGridModeButtom'.w(),
+
+      innerThumbnail: Multivio.ThumbnailView.design(Multivio.innerGradientThinTopBottom, {
+        layout: { top: 2, bottom: 42, left: 2, right: 2 },
         hasHorizontalScroller: NO,
         borderStyle: SC.BORDER_NONE,
         thumbnailController: Multivio.thumbnailController,
 
-        contentView: SC.ListView.design({
+        contentView: SC.GridView.design({
           layout: { top: 0, bottom: 0, left: 0, right: 0 },
           insertionOrientation: SC.VERTICAL_ORIENTATION,
           rowHeight: 130,
+          columnWidth: 130,
           contentBinding: 'Multivio.thumbnailController.arrangedObjects',
           selectionBinding: 'Multivio.thumbnailController.selection',
           
@@ -510,7 +512,6 @@ Multivio.views = SC.Page.design(
             }.observes('isSelected'),
             thumbImage: SC.View.design({
               layout:  { top: 4, height: 100, centerX: 0, width: 100 },
-              classNames: 'mvo_transparent'.w(),
               childViews: [
                 SC.ImageView.design({
                   useImageCache: NO,
@@ -534,6 +535,35 @@ Multivio.views = SC.Page.design(
             })
           }).classNames('custom-thumbnail-item-view'.w())
         })
+      }),
+    
+      thumbnailListModeButtom: SC.ButtonView.design({
+        layout: { height: 32, bottom: 4, width: 32, left: 2 },
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        name: 'thumbnailListMode',
+        toolTip: '_ThumbnailListMode'.loc(),
+        renderStyle: "renderImage",
+        icon: 'thumbnail_list_mode_new',
+        theme: 'mvo-button',
+        isActiveBinding:
+            SC.Binding.not('Multivio.paletteController.isGridThumbnailActive'),
+        target: "Multivio.paletteController",
+        action: "setThumbnailListMode"
+      }),
+      
+      thumbnailGridModeButtom: SC.ButtonView.design({
+        layout: { height: 32, bottom: 4, width: 32, left: 32 },
+        titleMinWidth : 0,
+        needsEllipsis: NO,
+        name: 'thumbnailGridMode',
+        toolTip: '_ThumbnailGridMode'.loc(),
+        renderStyle: "renderImage",
+        icon: 'thumbnail_grid_mode_new',
+        theme: 'mvo-button',
+        isActiveBinding: 'Multivio.paletteController.isGridThumbnailActive',
+        target: "Multivio.paletteController",
+        action: "setThumbnailGridMode"
       })
     })
   }),
@@ -571,7 +601,7 @@ Multivio.views = SC.Page.design(
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       childViews: 'innerTree '.w(),
-      innerTree:  Multivio.TreeView.design({
+      innerTree:  Multivio.TreeView.design(Multivio.innerGradientThinTopBottom, {
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
         treeController: Multivio.treeController,
@@ -599,7 +629,7 @@ Multivio.views = SC.Page.design(
     contentView: SC.View.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       childViews: [
-        Multivio.CalendarView.design({
+        Multivio.CalendarView.design(Multivio.innerGradientThinTopBottom, {
           layout: { top: 2, bottom: 2, left: 2, right: 2 },
           borderStyle: SC.BORDER_NONE,
           calendarController: Multivio.calendarController
@@ -664,7 +694,7 @@ Multivio.views = SC.Page.design(
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
     
       childViews: 'innerHelp'.w(),
-      innerHelp: SC.ScrollView.design({
+      innerHelp: SC.ScrollView.design(Multivio.innerGradientThinTopBottom, {
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
         hasHorizontalScroller: NO,

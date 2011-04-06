@@ -133,7 +133,7 @@ Multivio.CalendarView = SC.View.extend(
     // the calendar
     this.day = this.createChildView(
       SC.View.design({
-        layout: {top: 80, left: 80, height: 180},
+        layout: {top: 90, width: 210, height: 180, centerX: 0},
         childViews: 'weekDays monthDays'.w(),
 
         weekDays: Multivio.WeekdaysView.design({
@@ -168,7 +168,7 @@ Multivio.WeekdaysView = SC.View.extend(
     for (var i = 0; i < 7; ++i) {
       context = context.begin('div').addClass('calendar-weekday').addStyle({
         position: 'absolute',
-        width: '29px',
+        width: '30px',
         left: 29 * i + 'px',
         top: '0px',
         bottom: '0px',
@@ -223,9 +223,9 @@ Multivio.DaysView = SC.View.extend(
     for (var i = 0; i < 42; ++i) {
       context = context.begin('div').addClass('calendar-day').addStyle({
           position: 'absolute',
-          width: '29px',
+          width: '30px',
           height: '24px',
-          left: (29 * i % 203) + 'px',
+          left: (30 * i % 210) + 'px',
           top: (parseInt(i / 7, 10) * 25) + 'px',
           textAlign: 'center'
         }).push(day.get('day'));

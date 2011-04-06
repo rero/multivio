@@ -247,13 +247,6 @@ Rules for the general Multivio layout
 }
 
 
-/*
-.mvo_transparent {
-background: 'transparent';
-background-color: 'none';
-}
-*/
-
 .centered-image {
   margin: auto auto;
 }
@@ -409,11 +402,11 @@ Rules for Multivio's usage page
   z-index: 2;
 }
 
-/* thin top edge for search result list */
+/* thin top edge for inner palette content */
 .top-edge-thin {
   background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px -5px;
   position: absolute;
-  height: 4px;
+  height: 6px;
   top: 0px;
   right: 0px;
   left: 0px;
@@ -430,11 +423,11 @@ Rules for Multivio's usage page
   z-index: 2;
 }
 
-/* thin bottom edge for search result list */
+/* thin bottom edge for inner palette content */
 .bottom-edge-thin {
-  background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px -1px;
+  background: static_url('images/mvo-sprite-x-thin.png') repeat-x 0px 0px;
   position: absolute;
-  height: 4px;
+  height: 5px;
   bottom: 0px;
   right: 0px;
   left: 0px;
@@ -451,10 +444,32 @@ Rules for Multivio's usage page
   z-index: 2;
 }
 
+/* thin left edge for inner palette content */
+.left-edge-thin {
+  background: static_url('images/mvo-sprite-y-thin.png') repeat-y -5px 0px;
+  position: absolute;
+  width: 5px;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: 2;
+}
+
 .right-edge {
   background: static_url('images/mvo-sprite-y.png') repeat-y 0px 0px;
   position: absolute;
   width: 10px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  z-index: 2;
+}
+
+/* thin right edge for inner palette content */
+.right-edge-thin {
+  background: static_url('images/mvo-sprite-y-thin.png') repeat-y 0px 0px;
+  position: absolute;
+  width: 5px;
   top: 0px;
   bottom: 0px;
   right: 0px;
@@ -696,12 +711,13 @@ Calendar
 }
 
 .calendar-day.not-current-month {
-  color: #7f7f7f;
+  color: #ccc;
 }
 
 .calendar-day.sel {
   font-weight: bold;
-  color: black;
+  color: #1111cc;
+  cursor: pointer;
 }
 
 .calendar-day.selected {

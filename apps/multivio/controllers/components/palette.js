@@ -23,10 +23,14 @@ Multivio.paletteController = SC.ObjectController.create(
   /**
     local variable used by this controller
   */
-  defaultWidth: 360,
+  defaultWidth: 320,
   activeButton: null,
   thumbnailSize: null,
   metadata: null,
+  
+  /**
+  */
+  isGridThumbnailActive: NO,
   
   /**
     variable used to say if the toolbar has been actived by the user.
@@ -100,6 +104,12 @@ Multivio.paletteController = SC.ObjectController.create(
       this.activeButton = button;
       thumbnailsView.set('layout', this.paletteLayout(NO));
       thumbnailsView.append();
+      if (this.get('isGridThumbnailActive')) {
+        this.setThumbnailGridMode();
+      }
+      else {
+        this.setThumbnailListMode();
+      }
     }
     else {
       if (this.activeButton !== button) {
@@ -112,7 +122,52 @@ Multivio.paletteController = SC.ObjectController.create(
       }
     }
   },
+
+
   
+  /**
+  adjustThumbnailGrid: function () {
+    var pal = Multivio.getPath('views.thumbnailPalette');
+    var layout = pal.layout;
+    if (this.get('isGridThumbnailActive')) {
+      layout['right'] = null;
+      layout['width'] = 150;
+      this.set('isGridThumbnailActive', NO);
+    }
+    else {
+      layout['width'] = null;
+      layout['right'] = 26;
+      this.set('isGridThumbnailActive', YES);
+    }
+    pal.adjust(layout);
+  },
+  */
+
+
+  /**
+  */
+  setThumbnailListMode: function () {
+    var pal = Multivio.getPath('views.thumbnailPalette');
+    var layout = pal.layout;
+    layout['right'] = null;
+    layout['width'] = 150;
+    this.set('isGridThumbnailActive', NO);
+    pal.adjust(layout);
+  },
+
+
+  /**
+  */
+  setThumbnailGridMode: function () {
+    var pal = Multivio.getPath('views.thumbnailPalette');
+    var layout = pal.layout;
+    layout['width'] = null;
+    layout['right'] = 26;
+    this.set('isGridThumbnailActive', YES);
+    pal.adjust(layout);
+  },
+
+
   /**
     Tree button has been pressed show the treePalette or hide it
     

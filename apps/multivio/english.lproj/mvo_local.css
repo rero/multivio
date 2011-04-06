@@ -174,6 +174,20 @@ body.mvo-white-theme     {
 .mvo-white-theme     .sc-button-view .img.show_toolbar_new {
    background-image: sc_static("images/icons/24x24/show_toolbar_dark_24x24.png");
 }
+
+/* Thumbnail list mode */
+.mvo-dark-gray-theme .sc-button-view .img.thumbnail_list_mode_new,
+.mvo-blue-theme      .sc-button-view .img.thumbnail_list_mode_new,
+.mvo-white-theme     .sc-button-view .img.thumbnail_list_mode_new {
+   background-image: sc_static("images/icons/24x24/thumbnail_list_dark_24x24.png");
+}
+/* Thumbnail grid mode */
+.mvo-dark-gray-theme .sc-button-view .img.thumbnail_grid_mode_new,
+.mvo-blue-theme      .sc-button-view .img.thumbnail_grid_mode_new,
+.mvo-white-theme     .sc-button-view .img.thumbnail_grid_mode_new {
+   background-image: sc_static("images/icons/24x24/thumbnail_grid_dark_24x24.png");
+}
+
 /* Cancel */
 .mvo-dark-gray-theme .sc-button-view .img.cancel_new_16,
 .mvo-blue-theme      .sc-button-view .img.cancel_new_16,
