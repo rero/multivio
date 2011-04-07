@@ -724,8 +724,11 @@ Multivio.views = SC.Page.design(
           isTextSelectable: YES,
           tagName: 'span',
           classNames: 'metadata_primary',
-          contentBinding: 'Multivio.metadataController.descriptiveMetadataDictionary',
-          contentValueKey: 'title'
+          valueBinding: 'Multivio.metadataController.title',
+          render: function (context, firstTime) {
+            context.attr('title', Multivio.metadataController.title());
+            sc_super();
+          }
         })
       ]
     }).classNames(''.w()),

@@ -155,26 +155,6 @@ Multivio.layoutController = SC.Object.create(
       }
     }
 
-    // lay out child views floating views
-      /*
-        'views.leftButtons',
-        'views.bottomButtons',
-        'views.navigationInfo'], 'views.mainContentView');
-        */
-    /*
-    var sideBar = Multivio.getPath('views.leftButtons');
-    Multivio.getPath('views.mainContentView').appendChild(sideBar);
-    //sideBar.set('isVisibleInWindow', YES); TODO: is this needed?
-
-    var bottomToolbar = Multivio.getPath('views.bottomButtons');
-    Multivio.getPath('views.mainContentView').appendChild(bottomToolbar);
-    //bottomToolbar.set('isVisibleInWindow', YES); TODO: is this needed?
-
-    var navigationInfoFloat = Multivio.getPath('views.navigationInfo');
-    Multivio.getPath('views.mainContentView').appendChild(navigationInfoFloat);
-    //navigationInfoFloat.set('isVisibleInWindow', YES); TODO: is this needed?
-    */
-
     SC.RunLoop.end();
     Multivio.logger.info('layoutController workspace initialized');
   },

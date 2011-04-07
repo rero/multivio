@@ -85,6 +85,21 @@ Multivio.metadataController = SC.ObjectController.create(
       }
     }
     return cc;
-  }.property('content')
+  }.property('content'),
+
+  /**
+    @observes content
+    @returns String the title, if any, from the metadata dictionary, otherwise null
+  */
+  title: function() {
+    var title = null;
+    try {
+      title = this.get('content').title;
+    }
+    catch (e) {
+      // this.get('content') didn't work; ignore
+    }
+    return title;
+  }.property('content').cacheable()
   
 });

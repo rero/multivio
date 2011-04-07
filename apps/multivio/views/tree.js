@@ -66,7 +66,7 @@ Multivio.TreeView = SC.ScrollView.extend(
 Multivio.TreeLabelView = SC.ListItemView.extend(
 /** @scope Multivio.TreeLabelView.prototype */ {
   hasContentIcon: YES,
-  
+
   render: function (context, firstTime) {
     sc_super();
     var lab = this.get('content').label;
@@ -77,6 +77,26 @@ Multivio.TreeLabelView = SC.ListItemView.extend(
     //update size if necessary
     if (this.get('parentView').get('frame').width < newWidth) {
       this.get('parentView').adjust('width', newWidth);
+    }
+
+    // add tooltip with label content, for long labels that are not entirely
+    // visible;
+    var grandParentScrollViewWidth = null;
+    try {
+      // try to get the width of its grandparent, which should be a scrollview
+      grandParentScrollViewWidth =
+          this.get('parentView').get('parentView').get('frame').width;
+    }
+    catch (e) {
+      // do nothing, the error will show up below
+    }
+    if (!(SC.typeOf(grandParentScrollViewWidth) === SC.T_NUMBER)) {
+      Multivio.logger.error('Tree list item view could not determine the size of its grandparent scroll view');
+    }
+    else {
+      if (grandParentScrollViewWidth < newWidth) {
+        context.attr('title', lab);
+      }
     }
   },
     
