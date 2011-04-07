@@ -313,12 +313,7 @@ Multivio.paletteController = SC.ObjectController.create(
       var file = pane.description;
       file = file.split('(');
       // open a new tab to download the file
-      if (parseInt(SC.browser.msie, 0) === 7) {
-        window.location.href = file[0];
-      }
-      else {
-        window.open(file[0]);
-      }
+      window.open(file[0]);
       break;
         
     case SC.BUTTON2_STATUS:

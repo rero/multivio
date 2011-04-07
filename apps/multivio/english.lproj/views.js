@@ -790,7 +790,7 @@ Multivio.views = SC.Page.design(
             })
           ],
           render: function (context, firstTime) {
-            context.push("<a href='https://www.multivio.org/'>");
+            context.push("<a href='https://www.multivio.org/' target='_blank'>");
             // add the version of the server in the tooltip
             var childView = this.get('childViews')[0];
             var toolTip = childView.get('toolTip');
