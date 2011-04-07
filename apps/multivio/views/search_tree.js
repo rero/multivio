@@ -57,6 +57,13 @@ Multivio.SearchTreeView = SC.ScrollView.extend(
 
 Multivio.SearchTreeLabelView = SC.ListItemView.extend(
 /** @scope Multivio.SearchTreeLabelView.prototype */ {
+
+  /**
+    Reference to search controller:
+    TODO: remove explicit reference to the Multivio.searchController object
+  */
+  searchController: Multivio.searchController,
+
   hasContentIcon: YES,
   
   isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
@@ -103,12 +110,28 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     
     // disable element if needed
     var cl = (this.get('isEnabled')? '': 'disabled');
-    
+
     if (SC.none(this.content.get('file_position').index)) {
       context.push('<label class="document-label-view %@">'.fmt(cl), label || '', '</label>');
     }
     else {
-      context.push('<label class="%@">'.fmt(cl), label || '', '</label>');
+      var text = label || '';
+
+      // try to render the current search term in bold in the label
+      var cst = this.searchController.get('currentSearchTerm');
+      if (SC.typeOf(cst) === SC.T_STRING && SC.typeOf(label) === SC.T_STRING) {
+        var parts = label.split(cst);
+        if (SC.typeOf(parts) === SC.T_ARRAY) {
+          text = parts[0];
+          for(var p = 1; p < parts.length; p++) {
+            text = '%@<strong>%@</strong>%@'.fmt(text, cst, parts[p]);
+          }
+        }
+      }
+
+      context.push('<label class="%@">'.fmt(cl));
+      context.push(text);
+      context.push('</label>');
     }
   }
 
