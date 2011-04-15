@@ -40,7 +40,7 @@ Multivio.views = SC.Page.design(
     isKeyResponder: YES,
 
     /**
-      On mouse up or down, hide the current palette.
+      On mouse down, hide the current palette.
       Since this view is the first responder, it will catch unhandled mouse
       events in the navigationInfo view below as well.
 
@@ -48,11 +48,11 @@ Multivio.views = SC.Page.design(
 
       mouseUp events can be propagated from child views to here, whereas 
       if a child view wants to use mouseUp and/or mouseDragged, this child view
-      will need to return YES to its mouseDown when it occurs. 
-      Thus, we use mouseUp here so that any child view of this view can choose
-      to use mouseDown, mouseUp, or mouseDragged, and propagate the mouseUp or
-      mouseDragged to its parent view(s) if needed.
-
+      will need to return YES to its mouseDown when it occurs. In this case,
+      it will be possible for a child view to propagate mouseUp up to here,
+      but not mouseDown (unless the child view manually creates and triggers
+      a new mouseDown event to its parent or nextResponder).
+      
       Another note: according to tests I made, mouseDragged is not propagated up 
       in the view hierarchy, even though this event should be propagated when
       the child view that catches mouseDragged returns NO, as per documentation.
@@ -60,10 +60,6 @@ Multivio.views = SC.Page.design(
 
       @param {SC.Event} Event fired
     */
-    mouseUp: function (evt) {
-      Multivio.paletteController.hidePalette(null);
-      return YES; // don't propagate event
-    },
     mouseDown: function (evt) {
       Multivio.paletteController.hidePalette(null);
       return YES; // return YES so this view can capture mouseUp
