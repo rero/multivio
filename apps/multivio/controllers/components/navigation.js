@@ -247,6 +247,11 @@ Multivio.navigationController = SC.ObjectController.create(
   */  
   _currentPageDidChange: function () {
     var newCurrentPage = this.get('currentPage');
+    // convert to int if it's a finite, legal number
+    // takes care of strings such as '01', '002', etc
+    if (isFinite(newCurrentPage)) {
+      newCurrentPage = parseInt(newCurrentPage, 10);
+    }
     if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
         isNaN(newCurrentPage)) {
       Multivio.usco.showAlertPaneWarn(

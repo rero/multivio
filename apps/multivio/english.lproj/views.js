@@ -273,16 +273,18 @@ Multivio.views = SC.Page.design(
           return NO;
         },
         keyDown: function (evt) {
-          //if enter set the value
-          if (evt.which === 13) {
-            var temp = this.$input()[0].value.replace(/^[0]*/, '');
-            this.set('value', temp);
-            // don't propagate the event
-            evt.stop();
-            return YES;
-          }
+          // if enter set the value
+          // if (evt.which === 13) {
+          //   var temp = this.$input()[0].value.replace(/^[0]*/, '');
+          //   this.set('value', temp);
+          //   // don't propagate the event
+          //   evt.stop();
+          //   return YES;
+          // }
           // intercept - and + and do nothing
           if (evt.which === 43 || evt.which === 45) {
+            // prevent default action (do not insert char in textfield)
+            evt.preventDefault();
             return YES;
           }
           return NO;
