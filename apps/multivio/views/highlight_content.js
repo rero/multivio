@@ -466,10 +466,10 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @event
     @param evt
-    @return {Boolean} true if everything OK
+    @return {Boolean} YES if event was handled, NO to propagate it.
   */
   mouseDown: function (evt) {
-    
+  
     // cancel selections on current page
     this.get('selectionController').removeAllHighlights();
 
@@ -488,7 +488,8 @@ Multivio.HighlightContentView = SC.View.extend(
       viewLayout: viewLayout
     };
 
-    // set the start coordinates (top left) of the rectangle where the mouse was clicked
+    // set the start coordinates (top left) of the rectangle where the mouse 
+    // was clicked
     this.userSelection.adjust('left', loc.x);
     this.userSelection.adjust('top',  loc.y);
     this.userSelection.adjust('width',  0);
@@ -502,7 +503,9 @@ Multivio.HighlightContentView = SC.View.extend(
     //this.selectedTextDiv.adjust('left', loc.x);
     this.selectedTextDiv.adjust('top',  loc.y);
 
+    // need to return YES so we can capture mouseDragged and mouseUp events
     return YES;
+
   },
   
   /**
@@ -510,7 +513,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @event
     @param evt
-    @return {Boolean} true if everything OK
+    @return {Boolean} YES if event was handled, NO to propagate it.
   */
   mouseDragged: function (evt) {
 
@@ -548,7 +551,8 @@ Multivio.HighlightContentView = SC.View.extend(
     }
     this.userSelection.adjust('height', dim);
 
-    return YES;
+    // propagate event higher in the view hierarchy
+    return NO;
   },
 
   /**
@@ -558,7 +562,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @event
     @param evt
-    @return {Boolean} true if everything OK
+    @return {Boolean} YES if event was handled, NO to propagate it.
   */
   mouseUp: function (evt) {
 
@@ -600,7 +604,8 @@ Multivio.HighlightContentView = SC.View.extend(
     // clean up initial info
     this._mouseDownInfo = null;
 
-    return YES;
+    // propagate event higher in the view hierarchy
+    return NO;
   },
   
   /**

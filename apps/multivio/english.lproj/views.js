@@ -19,7 +19,6 @@ sc_require('views/navigation');
 sc_require('views/overview');
 sc_require('mixins/interface');
 
-
 /**
   @class
 
@@ -39,6 +38,36 @@ Multivio.views = SC.Page.design(
     layout: { top: 0, bottom: 0, left: 0, right: 0 },
     acceptsFirstResponder: YES,
     isKeyResponder: YES,
+
+    /**
+      On mouse up or down, hide the current palette.
+      Since this view is the first responder, it will catch unhandled mouse
+      events in the navigationInfo view below as well.
+
+      Notes on mouse events:
+
+      mouseUp events can be propagated from child views to here, whereas 
+      if a child view wants to use mouseUp and/or mouseDragged, this child view
+      will need to return YES to its mouseDown when it occurs. 
+      Thus, we use mouseUp here so that any child view of this view can choose
+      to use mouseDown, mouseUp, or mouseDragged, and propagate the mouseUp or
+      mouseDragged to its parent view(s) if needed.
+
+      Another note: according to tests I made, mouseDragged is not propagated up 
+      in the view hierarchy, even though this event should be propagated when
+      the child view that catches mouseDragged returns NO, as per documentation.
+      -dwy
+
+      @param {SC.Event} Event fired
+    */
+    mouseUp: function (evt) {
+      Multivio.paletteController.hidePalette(null);
+      return YES; // don't propagate event
+    },
+    mouseDown: function (evt) {
+      Multivio.paletteController.hidePalette(null);
+      return YES; // return YES so this view can capture mouseUp
+    },
 
     controllers: ['zoomController', 'navigationController', 
                   'searchController', 'selectionController', 
@@ -85,20 +114,6 @@ Multivio.views = SC.Page.design(
             paletteController: Multivio.paletteController,
             zoomController: Multivio.zoomController,
             rotateController: Multivio.rotateController
-            /* bindings */
-            //selectedTextStringBinding: 
-            //    SC.Binding.oneWay("Multivio.selectionController.selectedTextString"),
-            //currentPageBinding: 
-            //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
-            //isLoadingContentBinding: 
-            //    SC.Binding.oneWay('Multivio.masterController.isLoadingContent')
-            //searchResultSelectionIndexBinding: 
-            //    SC.Binding.oneWay(
-            //      'Multivio.masterController.currentSearchResultSelectionIndex'),
-            //zoomFactorBinding:
-            //    SC.Binding.oneWay('Multivio.zoomController.zoomRatio'),
-            //rotateValueBinding:
-            //    SC.Binding.oneWay('Multivio.rotateController.currentValue')
           }).classNames('highlight-pane'.w())
         }).classNames('image-and-highlight-container'.w())
       })
@@ -111,7 +126,7 @@ Multivio.views = SC.Page.design(
     classNames: 'mvo-front-view',
     
     childViews: 'transparentView '.w(),
-    
+       
     transparentView: SC.View.design({
       layout: { left: 0, right: 0, top: 0, bottom: 0 },
       classNames: 'mvo-front-view-transparent',
@@ -268,9 +283,10 @@ Multivio.views = SC.Page.design(
         valueBinding: 'Multivio.navigationController.currentPage',
         isEnabledBinding: 'Multivio.navigationController.isCurrentPageEnabled',
         
-        mouseDown: function () {
+        mouseDown: function (evt) {
           this.becomeFirstResponder();
-          return NO;
+          evt.stopPropagation(); // don't propagate but execute default action
+          return YES;
         },
         keyDown: function (evt) {
           //if enter set the value
