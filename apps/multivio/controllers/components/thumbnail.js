@@ -216,7 +216,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
   */  
   positionDidChange: function () {
     var newPosition = this.get('position');
-    if (!SC.none(newPosition)) {
+    if (!SC.none(newPosition) && !SC.none(this.get('content'))) {
       var currentSelection = !SC.none(this.get('selection')) ?
           this.get('selection').firstObject() : undefined;
       var currentPageNumber = !SC.none(currentSelection) ?
@@ -230,7 +230,7 @@ Multivio.thumbnailController = SC.ArrayController.create(
             fmt(this.get('selection').firstObject().pageNumber));
       }
     }
-  }.observes('position'),
+  }.observes('position', 'content'),
 
   /**
     Updates position by observing changes of the selection property.

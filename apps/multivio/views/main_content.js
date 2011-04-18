@@ -194,6 +194,13 @@ Multivio.ContentView = SC.ScrollView.extend(
     @param {Image} image
   */
   _adjustSize: function (url, image) {
+    
+    // image received. Send to the zoomcontroller true 
+    // if the image size received is the native size
+    var isNativeSize = (image.width === this.nativeWidth && 
+        image.height === this.nativeHeight) ? YES : NO;
+    Multivio.zoomController.isNativeSize(isNativeSize);
+    
     SC.RunLoop.begin();
     var content = this.get('contentView');
     

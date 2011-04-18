@@ -66,7 +66,8 @@ Multivio.zoomController = SC.ObjectController.create(
   */
   isZoomInAllowed:  YES,
   isZoomOutAllowed: YES,
-  isStateEnabled:   YES,
+  isFullModeAllow: YES,
+  isWidthModeAllow: YES,
   
   /**
     Initialize this controller. Retrieve zoom values from the configurator.
@@ -281,11 +282,9 @@ Multivio.zoomController = SC.ObjectController.create(
       // disabled
       this.set('isZoomInAllowed', NO);
       this.set('isZoomOutAllowed', NO);
-      this.set('isStateEnabled', NO);
     }
     else {
       // enabled
-      this.set('isStateEnabled', YES);
       var newZoomStep = this.get('zoomStep');
       if (newZoomStep === -1) {
         var receivedZoomRatio = this.get('zoomRatio');
@@ -364,6 +363,84 @@ Multivio.zoomController = SC.ObjectController.create(
       break;
     }
   }.observes('currentZoomState'),
+  
+  /**
+    Set full and width mode to NO if native size is received
+    
+    @param {Boolean} value YES if native size received
+  */
+  isNativeSize: function (value) {
+    if (value) {
+      if (this.get('currentZoomState') === this.FULLPAGE) {
+        this.set('isFullModeAllow', NO);
+        this.set('isWidthModeAllow', NO);
+      }
+      if (this.get('currentZoomState') === this.PAGEWIDTH) {
+        this.set('isWidthModeAllow', NO);
+      }
+    }
+  },
+  
+  /**
+    Value is YES if the full mode is allow and if the loading is finished.
+
+    @property Boolean
+  */
+  isFullEnabled: function () {
+    if (this.get('isLoadingContent')) {
+      return NO;
+    }
+    else {
+      return this.get('isFullModeAllow');
+    }
+  }.property('isLoadingContent', 'isFullModeAllow'),
+  
+  /**
+    Value is YES if the width mode is allow and if the loading is finished.
+
+    @property Boolean
+  */
+  isWidthEnabled: function () {
+    if (this.get('isLoadingContent')) {
+      return NO;
+    }
+    else {
+      return this.get('isWidthModeAllow');
+    }
+  }.property('isLoadingContent', 'isWidthModeAllow'),
+  
+  /**
+    Value is YES if the loading is finished.
+
+    @property Boolean
+  */
+  isNativeEnabled: function () {
+    if (this.get('isLoadingContent')) {
+      return NO;
+    }
+    else {
+      if ((this.get('currentZoomState') === this.FULLPAGE && 
+          !this.get('isFullModeAllow')) || 
+          (this.get('currentZoomState') === this.PAGEWIDTH && 
+          !this.get('isWidthModeAllow'))) {
+        this.set('currentZoomState', this.HUNDREDPERCENT);
+      }
+      else {
+        return YES;
+      }
+    }
+  }.property('isLoadingContent'),
+  
+  
+  /**
+    New image is selected reset full and width mode.
+
+    @observes Multivio.imageController.selection
+  */
+  currentImagedidChange: function () {
+    this.set('isFullModeAllow', YES);
+    this.set('isWidthModeAllow', YES);
+  }.observes('Multivio.imageController.selection'),
   
   /**
     Intercept the key event and call the good zoom method

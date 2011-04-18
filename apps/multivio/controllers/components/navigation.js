@@ -226,7 +226,7 @@ Multivio.navigationController = SC.ObjectController.create(
   */
   positionDidChange: function () {
     var newPosition = this.get('position');
-    if (!SC.none(newPosition)) {
+    if (!SC.none(newPosition) && !SC.none(this.get('_numberOfPages'))) {
       // verify if we need to set selection (avoid loopbacks)
       var currentPageNumber = this.get('currentPage');
       if (currentPageNumber !== newPosition) {
@@ -236,7 +236,7 @@ Multivio.navigationController = SC.ObjectController.create(
             fmt(this.get('currentPage')));
       }
     }
-  }.observes('position'),
+  }.observes('position', '_numberOfPages'),
  
   /**
     Updates position by observing changes in navigation controller's
@@ -337,8 +337,8 @@ Multivio.navigationController = SC.ObjectController.create(
           if (!SC.none(Multivio.masterController.listOfFiles) && (
               currentFileI < Multivio.masterController.listOfFiles.length - 
               1 || (currentFileI === 
-              (Multivio.masterController.listOfFiles.length - 1) )&& current !== 
-              this.get('_numberOfPages'))) {
+              (Multivio.masterController.listOfFiles.length - 1)) && 
+                current !== this.get('_numberOfPages'))) {
             this.set('isLastEnabled', YES);
           }
         }

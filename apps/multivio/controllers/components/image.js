@@ -236,7 +236,7 @@ Multivio.imageController = SC.ArrayController.create(
   */
   positionDidChange: function () {
     var newPosition = this.get('position');
-    if (!SC.none(newPosition)) {
+    if (!SC.none(newPosition) && !SC.none(this.get('content'))) {
       // need to sub 1 because array start at 0 and page start at 1
       newPosition--;  
       var cont = this.get('content');
@@ -248,6 +248,6 @@ Multivio.imageController = SC.ArrayController.create(
       Multivio.logger.info('imageController#positionDidChange: %@'.
           fmt(this.get('selection').firstObject()));
     }
-  }.observes('position')
+  }.observes('position', 'content')
   
 });

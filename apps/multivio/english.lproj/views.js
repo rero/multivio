@@ -351,7 +351,7 @@ Multivio.views = SC.Page.design(
         renderStyle: "renderImage",
         icon: 'full_size_new',
         theme: 'mvo-button',
-        isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+        isEnabledBinding: "Multivio.zoomController.isFullEnabled",
         target: "Multivio.zoomController",
         action: "setPredefinedZoom"
       }),
@@ -365,7 +365,7 @@ Multivio.views = SC.Page.design(
         renderStyle: "renderImage",
         icon: 'full_width_new',
         theme: 'mvo-button',
-        isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+        isEnabledBinding: "Multivio.zoomController.isWidthEnabled",
         target: "Multivio.zoomController", 
         action: "setPredefinedZoom"
       }),
@@ -379,7 +379,7 @@ Multivio.views = SC.Page.design(
         renderStyle: "renderImage",
         icon: 'native_size_new',
         theme: 'mvo-button',
-        isEnabledBinding: "Multivio.zoomController.isStateEnabled",
+        isEnabledBinding: "Multivio.zoomController.isNativeEnabled",
         target: "Multivio.zoomController",
         action: "setPredefinedZoom"
       })

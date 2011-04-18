@@ -149,7 +149,6 @@ Multivio.masterController = SC.ObjectController.create(
         this.set('currentFileType', currentMeta.mime);
         //TO DO che: change this test when the server-side is ready
         if (cf === Multivio.CDM.getReferer()) {
-          console.info('Meta for referer');
           var index = cf.indexOf('express');
           if (index !== -1) {
             this.set('isTimeNavigationEnabled', YES);
