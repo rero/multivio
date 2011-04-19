@@ -475,17 +475,7 @@ Multivio.ContentView = SC.ScrollView.extend(
     toScroll += this.get('verticalScrollerView').thumbLength();
     return toScroll;
   },
-  
-  /**
-    On mouse down hide the current palette or save mouse pointer position
     
-    @param {SC.Event} Event fired
-  */
-  mouseDown: function (evt) {
-    Multivio.paletteController.hidePalette(null);
-    return YES;
-  },
-  
   /**
     Move vertical and(or) horizontal scrollbars
     

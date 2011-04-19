@@ -466,10 +466,10 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @event
     @param evt
-    @return {Boolean} true if everything OK
+    @return {Boolean} YES if event was handled, NO to propagate it.
   */
   mouseDown: function (evt) {
-    
+  
     // cancel selections on current page
     this.get('selectionController').removeAllHighlights();
 
@@ -488,7 +488,8 @@ Multivio.HighlightContentView = SC.View.extend(
       viewLayout: viewLayout
     };
 
-    // set the start coordinates (top left) of the rectangle where the mouse was clicked
+    // set the start coordinates (top left) of the rectangle where the mouse 
+    // was clicked
     this.userSelection.adjust('left', loc.x);
     this.userSelection.adjust('top',  loc.y);
     this.userSelection.adjust('width',  0);
@@ -502,15 +503,66 @@ Multivio.HighlightContentView = SC.View.extend(
     //this.selectedTextDiv.adjust('left', loc.x);
     this.selectedTextDiv.adjust('top',  loc.y);
 
+    // propagate the event to the next responder view. This is needed because 
+    // we have to return YES to this mouseDown event if we want to receive
+    // mouseUp and mouseDragged in this view as well. The following call
+    // triggers a mouseDown in the next responder so that other views in the
+    // hierarchy can handle it if they need to.
+    this._propagateEventTo(evt, this.get('nextResponder').get('layer'));
+    
+    // need to return YES so we can capture mouseDragged and mouseUp events here
     return YES;
+  },
+
+  
+  /*
+    Propagate a given event to the specified target. The relevant data of the 
+    given event is collected and a new event is created with it and triggered.
+  
+    NOTE: in the normal case, returning NO on an event is enough to propagate
+    it automatically in the view hierarchy. This is done specifically to
+    propagate a mouseDown event (we want to receive mouseDragged and mouseUp
+    so we need to return YES in mouseDown).
+    
+    This function can be used more generally to send an event to an arbitrary
+    element.
+  
+    @method
+    @private
+  
+    @param evt {SC.Event} the event to propagate
+    @param target {Element} the target element
+    @return {Boolean} YES if event was handled sucessfully
+  */
+  _propagateEventTo: function (evt, target) {
+
+    // collect event data
+    var args = {
+      which:    evt.which,
+      clientX:  evt.clientX,
+      clientY:  evt.clientY,
+      pageX:    evt.pageX,
+      pageY:    evt.pageY,
+      screenX:  evt.screenX,
+      screenY:  evt.screenY,
+      charCode: evt.charCode,
+      keyCode:  evt.keyCode,
+      altKey:   evt.altKey,
+      metaKey:  evt.metaKey,
+      ctrlKey:  evt.ctrlKey,
+      shiftKey: evt.shiftKey
+    };
+    // create a new event by simulating on the data and trigger it
+    var evt2 = SC.Event.simulateEvent(target, evt.type, args);
+    return SC.Event.trigger(target, evt.type, evt2);
   },
   
   /**
-    On mouseDrag, compute user selection view dimension and draw it on screen.
+    On mouseDragged, compute user selection view dimension and draw it on screen
 
     @event
     @param evt
-    @return {Boolean} true if everything OK
+    @return {Boolean} YES if event was handled, NO to propagate it.
   */
   mouseDragged: function (evt) {
 
@@ -548,7 +600,8 @@ Multivio.HighlightContentView = SC.View.extend(
     }
     this.userSelection.adjust('height', dim);
 
-    return YES;
+    // propagate event higher in the view hierarchy
+    return NO;
   },
 
   /**
@@ -558,7 +611,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
     @event
     @param evt
-    @return {Boolean} true if everything OK
+    @return {Boolean} YES if event was handled, NO to propagate it.
   */
   mouseUp: function (evt) {
 
@@ -600,7 +653,8 @@ Multivio.HighlightContentView = SC.View.extend(
     // clean up initial info
     this._mouseDownInfo = null;
 
-    return YES;
+    // propagate event higher in the view hierarchy
+    return NO;
   },
   
   /**
