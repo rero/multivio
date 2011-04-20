@@ -309,6 +309,13 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultSelectionIndexDidChange: function () {
 
+    var loading = this.get('masterController').get('isLoadingContent');
+
+    if (loading) {
+      Multivio.logger.debug('highlight_content, index did change, loading, skip');
+      return;
+    }
+
     // update coordinates for the current selection
     // (after the page changes, the coordinates need to be updated anyway)
     //this.set('coordinatesNeedUpdate', YES);

@@ -680,7 +680,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     Create a new highlight zone with given coordinates and zoom factor.
     
     'is_original' specifies if the coordinates are given in the original
-     size of the content. This information is used to compute the coordinates
+     size  of the content. This information is used to compute the coordinates
      according to the current zoom factor.
     
     @param {Number} top_ 
@@ -926,6 +926,12 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
   */
   updateCoordinates: function (zoom_update_needed, rotation_update_needed) {
+    
+    
+    // TODO experimental selection
+    if (Multivio.firstResponder !== Multivio.READY) {
+      return;
+    }
     
     // get rotation angle for update
     var angle = this.get('rotateValue');
@@ -1316,7 +1322,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // store selection for later use. Storage must be done in master
     // controller, because if there is a file change, the search controller
     // will be reinitialised and the selection will be lost
-    if (selIndex !== -1) {
+    //if (selIndex !== -1) {
+    if (NO) { // TODO experimental selection
       Multivio.logger.debug("_selectionDidChange: index not -1: " + selIndex);
       Multivio.masterController.set('currentSearchResultSelectionIndex', 
                                                                 selIndex);
@@ -2071,16 +2078,47 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // NOTE: use 'url' arg of file, and not the referer 
       // (as it can point to a document with multiple files), except in
       // the case of results of all files was selected (see above)
-      this._loadExistingSearchResultsForFile(url);
+      //this._loadExistingSearchResultsForFile(url);
+      // TODO experimental selection: always load ref url because we always want the results of
+      // all files
+      this._loadExistingSearchResultsForFile(this.get('url'));
     
-      /*var newSel = SC.SelectionSet.create();
+      // TODO experimental selection try setting saved selection
+      var newSel = SC.SelectionSet.create();
       newSel.addObject(this.objectAt(mi));
-      Multivio.logger.debug("initialize: restore previous selection after new results");
-      this.set('selection', newSel);*/
+      var cont = this.get('content');
+      Multivio.logger.debug("SELECT initialize: master search file: " + msf);
+      Multivio.logger.debug("SELECT initialize: ref url: " + this.get('url'));
+      Multivio.logger.debug("SELECT initialize: master index: " + mi);
+      Multivio.logger.debug("SELECT initialize: content: " + cont);
+      Multivio.logger.debug("SELECT initialize: object: " + this.objectAt(mi));
+      Multivio.logger.debug("SELECT initialize: restore previous selection after new results");
+      this.set('selection', newSel);
     }
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('searchController initialized with url:' + url);
   },
+  
+  // TODO experimental selection
+  selectionIndexDidChange: function () {
+    
+    // get selection index
+    var idx = Multivio.masterController.get('currentSearchResultSelectionIndex');
+
+    Multivio.logger.debug('search, selectionIndexDidChange: ' + idx);
+    
+    // set the selection to the element in content which has this index
+    if (idx > -1 && idx < this.get('length')) {
+      var nextObject = this.objectAt(idx);
+      
+      Multivio.logger.debug('search, selectionIndexDidChange, next object: ' + nextObject);
+      
+      var newSel = SC.SelectionSet.create();
+      newSel.addObject(nextObject);
+      this.set('selection', newSel);
+    }
+  }.observes('Multivio.masterController.currentSearchResultSelectionIndex'),  
+  
   
   /**
     This function is used to launch an initial search (coming from param

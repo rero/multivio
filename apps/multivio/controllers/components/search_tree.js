@@ -135,6 +135,28 @@ Multivio.searchTreeController = SC.TreeController.create(
     
   }.observes('fileList'),
   
+  // TODO experimental selection
+  selectionIndexDidChange: function () {
+  
+    // get selection index  
+    var idx = Multivio.masterController.get('currentSearchResultSelectionIndex');
+    
+    Multivio.logger.debug('search tree, selectionIndexDidChange: ' + idx);
+    
+    // set the selection to the element in content which has this index
+    if (idx > -1) {
+      var nextObject = this._treeNodeById[idx];
+      
+      Multivio.logger.debug('search tree, selectionIndexDidChange, next object: ' + nextObject);
+      
+      if (!SC.none(nextObject)) {
+        var newSel = SC.SelectionSet.create();
+        newSel.addObject(nextObject);
+        this.set('selection', newSel);
+      }
+    }
+  }.observes('Multivio.masterController.currentSearchResultSelectionIndex'),
+  
   selectionDidChange: function () {
 
     if (!this.get('allowsSelection')) {
@@ -148,20 +170,34 @@ Multivio.searchTreeController = SC.TreeController.create(
 
     var sel = this.get('selection');
     
-    if (SC.none(sel)) return;
+    if (SC.none(sel)) {    
+      return;
+    }
     
     var so = sel.firstObject();
 
     Multivio.logger.debug('searchTreeController, selectionDidChange(), so: ' + so);
 
-    if (SC.none(so)) return;
+    if (SC.none(so)) {
+      Multivio.logger.debug('searchTreeController, selectionDidChange(), try to get selection from index');
+      
+      var ssel = Multivio.searchController.get('selection');
+      
+      Multivio.logger.debug('searchTreeController, selectionDidChange(), ssel: ' + ssel);
+      
+      // TODO experimental selection seems to work in some cases
+      this.selectionIndexDidChange();
+      return;
+    }
 
     // action according to type of node
     if (so.type === 'result') {
 
       Multivio.logger.debug('searchTreeController, selectionDidChange(), send to search ctrl, id: ' + so.id);
 
-      Multivio.searchController.setSelectionIndex(so.id);
+      // TODO experimental selection  set master current selected index instead
+      //Multivio.searchController.setSelectionIndex(so.id);
+      Multivio.masterController.set('currentSearchResultSelectionIndex', so.id);
 
       // TODO send a new query to server with increased 'max_results' param.
     } else if (so.type === 'more') {
@@ -171,7 +207,8 @@ Multivio.searchTreeController = SC.TreeController.create(
     var end = new Date().getMilliseconds();
     Multivio.logger.debug('--- TREE SEL TIME: ' + (end - start));
 
-  }.observes('selection'),
+// TODO experimental selection  }.observes('selection'),
+  }.observes('selection', 'Multivio.searchController.selection'),
   
   /**
     NOTE: make this function observe 'Multivio.searchController.searchResults'
@@ -286,7 +323,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     this.initializeTree();
     
   }.observes('Multivio.searchController.searchResults'),
-  
+
   
   /**
     Initialize this controller and verify if the sub-model can be created. 
@@ -332,6 +369,10 @@ Multivio.searchTreeController = SC.TreeController.create(
 
     // check for existing search results
     this.searchResultsDidChange();
+
+    // TODO experimental selection restore master selection 
+    this.selectionIndexDidChange();
+
 
   },
   
@@ -573,7 +614,7 @@ Multivio.searchTreeController = SC.TreeController.create(
     // rebind the useful stuff
     this.bind('fileList', 'Multivio.searchController.currentFileList');
     
-    this.selection = null;
+    //this.selection = null;
     this.content = null;
     
     // retrieve the old structure and append at the right position the new one
