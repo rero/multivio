@@ -207,8 +207,8 @@ Multivio.searchTreeController = SC.TreeController.create(
     var end = new Date().getMilliseconds();
     Multivio.logger.debug('--- TREE SEL TIME: ' + (end - start));
 
-// TODO experimental selection  }.observes('selection'),
-  }.observes('selection', 'Multivio.searchController.selection'),
+  }.observes('selection'),
+ // TODO experimental selection  }.observes('selection', 'Multivio.searchController.selection'),
   
   /**
     NOTE: make this function observe 'Multivio.searchController.searchResults'

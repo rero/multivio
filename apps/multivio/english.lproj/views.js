@@ -107,6 +107,7 @@ Multivio.views = SC.Page.design(
             masterController: Multivio.masterController,
             selectionController: Multivio.selectionController,
             searchController: Multivio.searchController,
+            searchTreeController: Multivio.searchTreeController,
             paletteController: Multivio.paletteController,
             zoomController: Multivio.zoomController,
             rotateController: Multivio.rotateController

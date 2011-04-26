@@ -35,6 +35,11 @@ Multivio.HighlightContentView = SC.View.extend(
     Reference to the search controller
   */
   searchController: null,
+
+  /**
+    Reference to the search tree controller
+  */
+  searchTreeController: null,
   
   /**
     Reference to the palette controller
@@ -304,7 +309,7 @@ Multivio.HighlightContentView = SC.View.extend(
   /**
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
-
+    
     @observes .masterController.currentSearchResultSelectionIndex
   */
   searchResultSelectionIndexDidChange: function () {
@@ -328,6 +333,27 @@ Multivio.HighlightContentView = SC.View.extend(
     SC.RunLoop.end();
 
   }.observes('.masterController.currentSearchResultSelectionIndex'),
+  
+  /**
+    When the selection of search results changes,
+    update the position of the scroll in the view, if needed.
+
+    Observes the selection of the search tree, because we want to update the
+    scroll of the content to the selected result when we click on the same
+    result in the tree.
+    
+    Note: this is done here because searchResultSelectionIndexDidChange is not
+    triggered when it is set to the same value.
+    
+    @observes .searchTreeController.selection
+  */  
+  treeResultSelectionDidChange: function () {
+    
+    Multivio.logger.debug('highlight_content, tree selection did change');
+    
+    this.updateSearchResultScroll();
+    
+  }.observes('.searchTreeController.selection'),
   
   /**
     Update the position of the scroll in the view if needed.
