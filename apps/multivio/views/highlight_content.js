@@ -739,22 +739,13 @@ Multivio.HighlightContentView = SC.View.extend(
       sc_super();
     }
     else {
-      var current_master_file = this.get('masterController').get('currentFile');
-      var ref_url             = this.get('searchController').get('url');
-      var csf = this.get('searchController').get('currentSearchFile') || ref_url;
-    
-      //Multivio.logger.debug('---render: cmf: ' + current_master_file);
-      //Multivio.logger.debug('---render: ref: ' + ref_url);
-      //Multivio.logger.debug('---render: csf: ' + csf);
-      
+
       // clear view
       this.removeAllChildren();
-      
-      // update highlights only if the search results belong to the current
-      // file, or 'All files' search scope is selected.
-      if (csf !== current_master_file && csf !== ref_url) return;
- 
+       
       //Multivio.logger.debug('---rendering');
+    
+      /**** text selection highlights ****/
     
       // add user selection rectangle and text div
       this.appendChild(this.userSelection);
@@ -766,12 +757,25 @@ Multivio.HighlightContentView = SC.View.extend(
       var i;
           
       // redraw all selection zones
-      // NOTE: 'selections' is an array of zones
       for (i = 0; i < len; i++) {
         this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight', i);
       }
     
-      // get current search results highlights
+      /**** search highlights ****/
+    
+      var current_master_file = this.get('masterController').get('currentFile');
+      var ref_url             = this.get('searchController').get('url');
+      var csf = this.get('searchController').get('currentSearchFile') || ref_url;
+    
+      //Multivio.logger.debug('---render: cmf: ' + current_master_file);
+      //Multivio.logger.debug('---render: ref: ' + ref_url);
+      //Multivio.logger.debug('---render: csf: ' + csf);
+      
+      // update search highlights only if the search results belong to the 
+      // current file, or 'All files' search scope is selected.
+      if (csf !== current_master_file && csf !== ref_url) return;
+
+      // get current search results results
       zones = this.get('searchController').get('content') || [];
       len   = zones.get('length');
     
