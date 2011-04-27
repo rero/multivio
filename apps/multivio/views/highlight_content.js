@@ -406,10 +406,9 @@ Multivio.HighlightContentView = SC.View.extend(
       for (var i = 0; i < listView.get('length'); i++) {
         sr = listView[i];
         // if this is the selected one, scroll it
-        if (sr.id === selectionIndex) {
+        if (sr.type === 'search' && sr.id === selectionIndex) {
           Multivio.logger.debug('updating search result scroll'); 
           sr.scrollToVisible();
-        
           break;
         }
       }
@@ -789,7 +788,8 @@ Multivio.HighlightContentView = SC.View.extend(
           
       // redraw all selection zones
       for (i = 0; i < len; i++) {
-        this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight', i);
+        this._drawHighlightZone(zones.objectAt(i), 
+                              'highlight selection-highlight', i, 'selection');
       }
     
       /**** search highlights ****/
@@ -817,7 +817,7 @@ Multivio.HighlightContentView = SC.View.extend(
       // Note: apply a specific class name for the selected result highlight
       for (i = 0; i < len; i++) {
         cn = (i === index? cl + ' search-selected-highlight' : cl);
-        this._drawHighlightZone(zones.objectAt(i), cn, i);
+        this._drawHighlightZone(zones.objectAt(i), cn, i, 'search');
       }
     
       // highlight pane just redrawn, no need for update anymore
@@ -840,11 +840,13 @@ Multivio.HighlightContentView = SC.View.extend(
     Creates and appends a new view to the highlight pane.
 
     @private
+    @method
     @param {SC.Object} zone the highlight zone
     @param {String} classNames_ the class names for the styles of the highlight
     @param {Number} index index number of the highlight zone
+    @param {String} type type of the zone, ie. 'search' or 'selection'
   */
-  _drawHighlightZone: function (zone, classNames_, index) {
+  _drawHighlightZone: function (zone, classNames_, index, type) {
     
     // check if the zone belongs to the current file
     if (this.get('masterController').get('currentFile') !== zone.url) return;
@@ -864,7 +866,8 @@ Multivio.HighlightContentView = SC.View.extend(
           height: cz.height 
         },
         classNames: classNames_.w(),
-        id: index
+        id: index,
+        type: type
       })
     ));
     
