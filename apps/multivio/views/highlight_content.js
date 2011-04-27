@@ -85,17 +85,7 @@ Multivio.HighlightContentView = SC.View.extend(
   // TODO code review put reference to controller in views.js
   //currentPageBinding: 
   //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
-  
-  /**
-    Variable for a binding to the masterController's isLoadingContent.
-    The binding must be specified when instantiating this view class.
-      
-    @binding {Boolean}
-  */
-  //isLoadingContent: null,
-  //isLoadingContentBinding: 
-  //            SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
-  
+    
   /**
     Variable for a binding to the search result selection in the search
     controller.
@@ -202,6 +192,15 @@ Multivio.HighlightContentView = SC.View.extend(
   */    
   _selectionIndex: null,
   
+  /**
+    Bind to the isLoadingContent property of the masterController.
+    Takes the value YES while content is being loaded.
+
+    @binding {Boolean}
+  */  
+  isLoadingContent: NO, 
+  isLoadingContentBinding: 
+              SC.Binding.oneWay('.masterController.isLoadingContent'),
   
   /**
     Initialize the view, prepare the view for user selection
@@ -307,6 +306,35 @@ Multivio.HighlightContentView = SC.View.extend(
   }.observes('coordinatesNeedUpdate'),
   
   /**
+    Each time the content either starts or finishes loading, 
+    flag the view for a redraw. Render will then:
+      - display the highlights if content finished loading, or
+      - clear the display if content is currently loading.
+
+    @observes isLoadingContent
+  */
+  isLoadingContentDidChange: function () {
+
+    this.set('layerNeedsUpdate', YES);
+    
+  }.observes('isLoadingContent'),
+    
+  /**
+    When the highlight update flag is set, flag the view for a redraw.
+
+    @observes highlightNeedsUpdate
+  */
+  highlightNeedsUpdateDidChange: function () {
+
+    if (this.get('highlightNeedsUpdate')) {
+      // flag the view for a redraw
+      // Note: highlightNeedsUpdate will be reset to NO after a render()
+      this.set('layerNeedsUpdate', YES);
+    }    
+  }.observes('highlightNeedsUpdate'),  
+
+  
+  /**
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
     
@@ -314,22 +342,17 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   searchResultSelectionIndexDidChange: function () {
 
-    var loading = this.get('masterController').get('isLoadingContent');
-
-    if (loading) {
+    if (this.get('isLoadingContent')) {
       Multivio.logger.debug('highlight_content, index did change, loading, skip');
       return;
     }
 
     // update coordinates for the current selection
     // (after the page changes, the coordinates need to be updated anyway)
-    //this.set('coordinatesNeedUpdate', YES);
     SC.RunLoop.begin();
     this.get('searchController').updateCoordinates();
-
     this.updateSearchResultScroll();
-
-    this.set('layerNeedsUpdate', YES);
+    this.set('highlightNeedsUpdate', YES);
     SC.RunLoop.end();
 
   }.observes('.masterController.currentSearchResultSelectionIndex'),
@@ -459,37 +482,7 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('highlightNeedsUpdate', YES);
 
     
-  }.observes('.zoomController.zoomRatio'),
-  
-  /**
-    When content has finished loading (isLoadingContent changes to NO),
-    update search results' scroll and flag the view for a redraw.
-
-    @observes .masterController.isLoadingContent
-  */
-  isLoadingContentDidChange: function () {
-    
-    var loading = this.get('masterController').get('isLoadingContent');
-    var hnu     = this.get('highlightNeedsUpdate');
-    
-    Multivio.logger.debug('HighlightContentView#isLoadingContentDidChange()' + 
-                              ' loading: %@, highlight: %@'.fmt(loading, hnu));
-    
-    // finished loading, update scroll
-    if (!loading) {
-      //Multivio.logger.debug("isLoadingContentDidChange: updating scroll");
-      //this.updateSearchResultScroll();
-    }
-    
-    // if the highlight pane needs an update, 
-    // flag the view for a redraw, which causes render() function to be called.
-    // Update only after 'isLoadingContent' is NO again, 
-    // to wait for the image to finish loading
-    if (hnu && !loading) {
-      this.set('layerNeedsUpdate', YES);
-    }  
-  }.observes('.masterController.isLoadingContent'),
-  
+  }.observes('.zoomController.zoomRatio'),  
   
   /* mouse events */
 
@@ -783,6 +776,11 @@ Multivio.HighlightContentView = SC.View.extend(
       // add user selection rectangle and text div
       this.appendChild(this.userSelection);
       this.appendChild(this.selectedTextDiv);
+    
+      // don't display any highlight while content is loading
+      if (this.get('isLoadingContent')) {
+        return; 
+      }    
     
       // get selections' highlights
       var zones = this.get('selectionController').get('content') || [];

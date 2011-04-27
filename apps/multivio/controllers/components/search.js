@@ -927,7 +927,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   */
   updateCoordinates: function (zoom_update_needed, rotation_update_needed) {
     
-    
     // TODO experimental selection
     if (Multivio.firstResponder !== Multivio.READY) {
       return;
@@ -1373,6 +1372,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // of the new file is done
       Multivio.masterController.set('initialPosition', 
                                                 selectedObject.page_number);
+      // we're going to load some content
+      Multivio.masterController.set('isLoadingContent', YES);
       
       SC.RunLoop.end();
 

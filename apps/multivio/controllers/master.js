@@ -134,14 +134,6 @@ Multivio.masterController = SC.ObjectController.create(
     this.set('currentFileType', null);
   },
 
-  // TODO experimental selection 
-  currentSearchResultSelectionIndexDidChange: function () {
-    var cccp = this.get('currentSearchResultSelectionIndex');
-    
-    Multivio.logger.debug('currentSearchResultSelectionIndexDidChange: ' + cccp);
-    
-  }.observes('currentSearchResultSelectionIndex'),
-
   /**
     Multivio.CDM.metadata has changed.Set new type.
   
