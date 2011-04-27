@@ -747,14 +747,14 @@ Multivio.HighlightContentView = SC.View.extend(
       //Multivio.logger.debug('---render: ref: ' + ref_url);
       //Multivio.logger.debug('---render: csf: ' + csf);
       
+      // clear view
+      this.removeAllChildren();
+      
       // update highlights only if the search results belong to the current
       // file, or 'All files' search scope is selected.
       if (csf !== current_master_file && csf !== ref_url) return;
  
       //Multivio.logger.debug('---rendering');
- 
-      // clear view
-      this.removeAllChildren();
     
       // add user selection rectangle and text div
       this.appendChild(this.userSelection);
