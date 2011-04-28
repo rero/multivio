@@ -196,7 +196,9 @@ Multivio.searchTreeController = SC.TreeController.create(
       Multivio.logger.debug('searchTreeController, selectionDidChange(), send to search ctrl, id: ' + so.id);
 
       // TODO experimental selection  set master current selected index instead
+      // NOTE: need to set selection file before setting selection index
       //Multivio.searchController.setSelectionIndex(so.id);
+      Multivio.masterController.set('currentSearchResultSelectionFile', so.file_position.url);
       Multivio.masterController.set('currentSearchResultSelectionIndex', so.id);
 
       // TODO send a new query to server with increased 'max_results' param.
