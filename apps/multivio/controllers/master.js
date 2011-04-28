@@ -322,6 +322,8 @@ Multivio.masterController = SC.ObjectController.create(
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
+      // TODO test experimental selection
+      this.set('currentSearchResultSelectionIndex', -1);
       this.set('isNew', YES);
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;

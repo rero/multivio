@@ -1238,13 +1238,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @private
     @observes currentSearchFile
   */
-  _currentSearchFileDidChange: function () {
+/*  _currentSearchFileDidChange: function () {
     
     var current_file = this.get('currentSearchFile');
     Multivio.logger.debug('currentSearchFile did change: ' + current_file);
     this._loadExistingSearchResultsForFile(current_file);
     
-  }.observes('currentSearchFile'),
+  }.observes('currentSearchFile'),*/
   
   /**
     If results already exist for this file in the CDM, load them.
@@ -1262,22 +1262,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // look for existing stuff in the CDM
     var all_results = Multivio.CDM.get('searchResults');
-    var new_results = null;    
+    var new_results = Multivio.CDM.clone(all_results);   
     
-    if (!SC.none(all_results)) {
-      if (!SC.none(all_results[url])) {
-        new_results = Multivio.CDM.clone(all_results);
-      } else {
-        // results for this url do not exist, keep results empty
-      }
-    }
+    Multivio.logger.debug("_loadExistingSearchResultsForFile: all_res:" + all_results);
     
     // always update the search results, be it empty or not
-    SC.RunLoop.begin();
+    //SC.RunLoop.begin();
     this.set('_load_url', url);
-    // this should trigger _searchResultsDidChange()
+    // wake up bindings on searchResults
     this.set('searchResults', new_results); 
-    SC.RunLoop.end();
+    //SC.RunLoop.end();
     
     /*
     if (!SC.none(all_results) && !SC.none(all_results[url])) {
@@ -2119,7 +2113,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.set('selection', newSel);
     }
   }.observes('Multivio.masterController.currentSearchResultSelectionIndex'),  
-  
   
   /**
     This function is used to launch an initial search (coming from param
