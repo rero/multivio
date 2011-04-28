@@ -164,8 +164,6 @@ Multivio.searchTreeController = SC.TreeController.create(
       return;
     }
 
-    var start = new Date().getMilliseconds();
-
     Multivio.logger.debug('searchTreeController, selectionDidChange()');
 
     var sel = this.get('selection');
@@ -206,9 +204,6 @@ Multivio.searchTreeController = SC.TreeController.create(
       
     }
     
-    var end = new Date().getMilliseconds();
-    Multivio.logger.debug('--- TREE SEL TIME: ' + (end - start));
-
   }.observes('selection'),
  // TODO experimental selection  }.observes('selection', 'Multivio.searchController.selection'),
   

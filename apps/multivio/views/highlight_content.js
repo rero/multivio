@@ -267,9 +267,7 @@ Multivio.HighlightContentView = SC.View.extend(
   selectedTextStringDidChange: function () {
     
     var t = this.get('selectionController').get('selectedTextString');
-    
-    Multivio.logger.debug('HighlightContentView: selectedTextStringDidChange: ' + t);
-    
+        
     SC.RunLoop.begin();
     // set text in the div (SC.TextFieldView)
     this.selectedTextDiv.set('value', t);
@@ -343,7 +341,6 @@ Multivio.HighlightContentView = SC.View.extend(
   searchResultSelectionIndexDidChange: function () {
 
     if (this.get('isLoadingContent')) {
-      Multivio.logger.debug('highlight_content, index did change, loading, skip');
       return;
     }
 
@@ -371,9 +368,7 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes .searchTreeController.selection
   */  
   treeResultSelectionDidChange: function () {
-    
-    Multivio.logger.debug('highlight_content, tree selection did change');
-    
+        
     this.updateSearchResultScroll();
     
   }.observes('.searchTreeController.selection'),
@@ -384,9 +379,7 @@ Multivio.HighlightContentView = SC.View.extend(
     @private
   */
   updateSearchResultScroll: function () {
-    
-    var start = new Date().getMilliseconds();
-    
+        
     //var selection = this.get('searchResultSelection').firstObject();
     //var selectionIndex = Multivio.searchController.indexOf(selection);
     var selectionIndex = this.get('masterController').get('currentSearchResultSelectionIndex');
@@ -397,8 +390,6 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('_selectionIndex', selectionIndex);
     SC.RunLoop.end();
     
-    Multivio.logger.debug("updateSearchResultScroll selectionIndex: " +
-                                                             selectionIndex);
     if (selectionIndex !== -1) {
       // retrieve the list of the search results visible in the view
       var listView = this.get('childViews');
@@ -407,7 +398,7 @@ Multivio.HighlightContentView = SC.View.extend(
         sr = listView[i];
         // if this is the selected one, scroll it
         if (sr.type === 'search' && sr.id === selectionIndex) {
-          Multivio.logger.debug('updating search result scroll'); 
+          Multivio.logger.debug('update search result scroll' + selectionIndex);
           sr.scrollToVisible();
           break;
         }
@@ -415,10 +406,7 @@ Multivio.HighlightContentView = SC.View.extend(
       // need to redraw the highlight zones to show current selection
       this.set('coordinatesNeedUpdate', YES);
     }
-    
-    var end = new Date().getMilliseconds();
-    Multivio.logger.debug('--- SCROLL TIME: ' + (end - start));
-    
+        
   },
   
   /**
@@ -428,8 +416,6 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes currentPage
   */
   currentPageDidChange: function () {
-
-    Multivio.logger.debug('HL::currentPageDidChange()');
 
     // update the coordinates of the highlights of the current page
     this.set('coordinatesNeedUpdate', YES);
@@ -448,8 +434,6 @@ Multivio.HighlightContentView = SC.View.extend(
   rotateValueDidChange: function () {
 
     var ro = this.get('rotateController').get('currentValue');
-
-    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' + ro);
 
     // notify controllers the rotation change
     this.get('searchController').set('rotateValue', ro);
@@ -470,9 +454,6 @@ Multivio.HighlightContentView = SC.View.extend(
     
     var zoo = this.get('zoomController').get('zoomRatio');
     
-    Multivio.logger.debug('HighlightContentView#zoomFactorDidChange(): %@'.
-                                                fmt(zoo));
-
     // notify controllers the zoom change
     this.get('selectionController').set('zoomFactor', zoo);
     this.get('searchController').set('zoomFactor', zoo);
@@ -758,8 +739,6 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   render: function (context, firstTime) {
 
-    var start = new Date().getMilliseconds();
-
     if (firstTime) {
       sc_super();
     }
@@ -767,9 +746,7 @@ Multivio.HighlightContentView = SC.View.extend(
 
       // clear view
       this.removeAllChildren();
-       
-      //Multivio.logger.debug('---rendering');
-    
+           
       /**** text selection highlights ****/
     
       // add user selection rectangle and text div
@@ -830,10 +807,7 @@ Multivio.HighlightContentView = SC.View.extend(
       // result, keeps scrolling to it)
       //this.updateSearchResultScroll();
     }
-    
-    var end = new Date().getMilliseconds();
-    Multivio.logger.debug('--- RENDER TIME: ' + (end - start));
-    
+        
   },
   
   /**
