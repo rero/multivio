@@ -133,10 +133,10 @@ SC.stringsFor('French', {
   '_helpThum': "Affiche les imagettes des pages du document.",
   '_helpSearch': "Permet de lancer des recherches dans le document. Les résultats\
       apparaissent de façon contextualisée et sont surlignés dans le texte.<br>\
-      Il est possible de lancer des recherches booléennes en séparant les mots à\
-      chercher par \"AND\", par exemple:<br>\
+      Il est possible de lancer des recherches booléennes avec l'opérateur ET\
+      en séparant les mots à chercher par «&nbsp;AND&nbsp;», par exemple:<br>\
       <tt>&nbsp;histoire AND europe</tt><br>\
-      Lors d'une recherche booléenne, Multivio retient les occurrences où\
+      Lors d'une recherche booléenne ET, Multivio retient les occurrences où\
       l'ensemble des mots recherchés se retrouvent à l'intérieur d'une même\
       page.<br>\
       Si le document actuel est composé de plusieurs fichiers, il est possible\
