@@ -697,14 +697,14 @@ Multivio.views = SC.Page.design(
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
         hasHorizontalScroller: NO,
-        contentView: SC.StaticContentView.design({
-        //contentView: SC.LabelView.design({
-          //layout: {top: 2, height: 2500, width:320},
+        //contentView: SC.StaticContentView.design({
+        contentView: SC.LabelView.design({
+          layout: {top: 2, height: 2900, width: 280},
           classNames: "help-panel",
           escapeHTML: NO,
           isTextSelectable: YES,
-          content: ''
-          //value: ''
+          //content: ''
+          value: ''
               +'<h1>' + '_helpTitle'.loc() + '</h1>'
               + '_helpIntro'.loc()
               + '<h4>' + '_helpVerticalBar'.loc() + '</h4>'
