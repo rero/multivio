@@ -534,6 +534,12 @@ Multivio.views = SC.Page.design(
               }
             })
           }).classNames('custom-thumbnail-item-view'.w())
+          /*
+          ,
+          selectionDidChange: function () {
+            this.scrollToVisible(this.getPath('selection.firstChild'));
+          }.observes('selection').cacheable()
+          */
         })
       }),
     
@@ -923,4 +929,16 @@ Multivio.waitingPane = SC.PanelPane.create({
       })
     ]
   }).classNames('mvo-pane'.w())
+});
+
+
+Multivio.newErrorPane = SC.PanelPane.create({
+  layout: { centerX: 0, centerY: 0, width: 700, height: 400 },
+  contentView: SC.LabelView.extend({
+    layout: { top: 50, bottom: 50, right: 50, left: 50 },
+    classNames: 'mvo_info_full',
+    contentBinding: 'Multivio.errorController',
+    contentValueKey: 'message',
+    escapeHTML: NO
+  }).classNames('mvo_info_full_background'.w())
 });

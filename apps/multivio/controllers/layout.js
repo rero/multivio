@@ -280,6 +280,7 @@ Multivio.layoutController = SC.Object.create(
   _showErrorPage: function () {
     SC.RunLoop.begin();
     // Call the layout controller in order to setup the interface components
+    /*
     try {
       this.configureWorkspace('error');
     }
@@ -289,6 +290,10 @@ Multivio.layoutController = SC.Object.create(
     finally {
       SC.RunLoop.end();
     }
+    */
+    SC.RunLoop.begin();
+    Multivio.newErrorPane.append();
+    SC.RunLoop.end();
   },
   
   /**

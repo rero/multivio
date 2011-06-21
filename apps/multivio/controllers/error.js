@@ -36,9 +36,18 @@ Multivio.errorController = SC.ObjectController.create(
   */
   message: function () {
     // retrieve err_name and err_description from the content
-    var errorContent = this.get('content');
-    var errorName = errorContent.err_name;
-    var errorDescription = errorContent.err_description;
+    var errorContent = this.get('content'),
+        errorName,
+        errorDescription;
+
+    if (!SC.none(errorContent)) {
+      errorName = errorContent.err_name;
+      errorDescription = errorContent.err_description;
+    }
+    else {
+      errorName = 'Unknown Error';
+      errorDescription = 'Error description.......';
+    }
 
     var errorMessage = ('_' + errorName).loc();
     // if it's an unknown error get the default message
@@ -58,7 +67,7 @@ Multivio.errorController = SC.ObjectController.create(
       }
       var emailUrl = '<a href=\'mailto:%@?subject=%@&body=%@\'>%@</a>'.fmt(
           support,
-          '_EmailErrorMessageSubject'.loc() + ' - ' + escape(errorDescription) ,
+          '_EmailErrorMessageSubject'.loc() + ' - ' + escape(errorDescription),
           '_EmailErrorMessageHeader'.loc() +
           '%0A%0A%0A%0A%0A' +
           '%0A-------------------------------------%0A' +
@@ -102,7 +111,7 @@ Multivio.errorController = SC.ObjectController.create(
     '</div>' +
     '<div class="mvo_info_full_message">' +
       '%@ <br/><br/>' +
-      '<div id="sc-error-dialog-reload-button" onclick="window.location.href=document.referrer;"' + 
+      '<div id="sc-error-dialog-reload-button" onclick="window.location.reload();"' + 
         'style="' + 
           'text-align: center; ' +
           'border: 1px solid black; ' +

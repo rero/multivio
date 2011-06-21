@@ -30,9 +30,36 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
   */
   childViewsDidChange: function () {
     if (this.get('childViewsNeedLayout')) {
-      this._thumbnailSelectionDidChange();
+      this.scrollToSelection();
     }
   }.observes('childViewsNeedLayout'),
+
+  /**
+  */
+  parentViewDidResize: function () {
+    sc_super();
+    Multivio.logger.debug('Multivio.ThumbnailView.parentViewDidResize');
+    /*
+    this.scrollToSelection();
+    */
+  },
+
+  /**
+    Scrolls the view's content so that the current selection is visible on screen
+  */
+  scrollToSelection: function () {
+    /*
+    var selection = this.get('thumbnailController').get('selection').
+        firstObject();
+    if (!SC.none(selection)) {
+      var selectionIndex = this.get('thumbnailController').indexOf(selection);
+      this.get('contentView').scrollToContentIndex(selectionIndex);
+      Multivio.logger.debug('update thumbnail scroll');
+    }
+    */
+    this.get('contentView').scrollToVisible(
+        this.getPath('contentView.selection.firstChild'));
+  },
 
   /**
     Update the position of the scroll in the view if needed.
@@ -41,13 +68,17 @@ Multivio.ThumbnailView = SC.ScrollView.extend(
     @observes thumbnailSelection
   */
   _thumbnailSelectionDidChange: function () {
-    var selection = this.get('thumbnailController').get('selection').
-        firstObject();
-    if (!SC.none(selection)) {
-      var selectionIndex = this.get('thumbnailController').indexOf(selection);
-      this.get('contentView').scrollToContentIndex(selectionIndex);
-      Multivio.logger.debug('update thumbnail scroll'); 
-    }
+    this.scrollToSelection();
   }.observes('.thumbnailController.selection')
+  
+  /**
+    
+  */
+  /*
+  frameDidChange: function () {
+    this._thumbnailSelectionDidChange();
+    //console.log(this.get('frame'));
+  }.observes('frame')
+  */
 
 });
