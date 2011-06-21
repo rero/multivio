@@ -35,6 +35,11 @@ Multivio.HighlightContentView = SC.View.extend(
     Reference to the search controller
   */
   searchController: null,
+
+  /**
+    Reference to the search tree controller
+  */
+  searchTreeController: null,
   
   /**
     Reference to the palette controller
@@ -80,17 +85,7 @@ Multivio.HighlightContentView = SC.View.extend(
   // TODO code review put reference to controller in views.js
   //currentPageBinding: 
   //    SC.Binding.oneWay("Multivio.masterController.currentPosition"),
-  
-  /**
-    Variable for a binding to the masterController's isLoadingContent.
-    The binding must be specified when instantiating this view class.
-      
-    @binding {Boolean}
-  */
-  //isLoadingContent: null,
-  //isLoadingContentBinding: 
-  //            SC.Binding.oneWay('Multivio.masterController.isLoadingContent'),
-  
+    
   /**
     Variable for a binding to the search result selection in the search
     controller.
@@ -197,6 +192,15 @@ Multivio.HighlightContentView = SC.View.extend(
   */    
   _selectionIndex: null,
   
+  /**
+    Bind to the isLoadingContent property of the masterController.
+    Takes the value YES while content is being loaded.
+
+    @binding {Boolean}
+  */  
+  isLoadingContent: NO, 
+  isLoadingContentBinding: 
+              SC.Binding.oneWay('.masterController.isLoadingContent'),
   
   /**
     Initialize the view, prepare the view for user selection
@@ -263,9 +267,7 @@ Multivio.HighlightContentView = SC.View.extend(
   selectedTextStringDidChange: function () {
     
     var t = this.get('selectionController').get('selectedTextString');
-    
-    Multivio.logger.debug('HighlightContentView: selectedTextStringDidChange: ' + t);
-    
+        
     SC.RunLoop.begin();
     // set text in the div (SC.TextFieldView)
     this.selectedTextDiv.set('value', t);
@@ -302,25 +304,74 @@ Multivio.HighlightContentView = SC.View.extend(
   }.observes('coordinatesNeedUpdate'),
   
   /**
+    Each time the content either starts or finishes loading, 
+    flag the view for a redraw. Render will then:
+      - display the highlights if content finished loading, or
+      - clear the display if content is currently loading.
+
+    @observes isLoadingContent
+  */
+  isLoadingContentDidChange: function () {
+
+    this.set('layerNeedsUpdate', YES);
+    
+  }.observes('isLoadingContent'),
+    
+  /**
+    When the highlight update flag is set, flag the view for a redraw.
+
+    @observes highlightNeedsUpdate
+  */
+  highlightNeedsUpdateDidChange: function () {
+
+    if (this.get('highlightNeedsUpdate')) {
+      // flag the view for a redraw
+      // Note: highlightNeedsUpdate will be reset to NO after a render()
+      this.set('layerNeedsUpdate', YES);
+    }    
+  }.observes('highlightNeedsUpdate'),  
+
+  
+  /**
     When the selection of search results changes,
     update the position of the scroll in the view, if needed.
-
+    
     @observes .masterController.currentSearchResultSelectionIndex
   */
   searchResultSelectionIndexDidChange: function () {
 
+    if (this.get('isLoadingContent')) {
+      return;
+    }
+
     // update coordinates for the current selection
     // (after the page changes, the coordinates need to be updated anyway)
-    //this.set('coordinatesNeedUpdate', YES);
     SC.RunLoop.begin();
     this.get('searchController').updateCoordinates();
-
     this.updateSearchResultScroll();
-
-    this.set('layerNeedsUpdate', YES);
+    this.set('highlightNeedsUpdate', YES);
     SC.RunLoop.end();
 
   }.observes('.masterController.currentSearchResultSelectionIndex'),
+  
+  /**
+    When the selection of search results changes,
+    update the position of the scroll in the view, if needed.
+
+    Observes the selection of the search tree, because we want to update the
+    scroll of the content to the selected result when we click on the same
+    result in the tree.
+    
+    Note: this is done here because searchResultSelectionIndexDidChange is not
+    triggered when it is set to the same value.
+    
+    @observes .searchTreeController.selection
+  */  
+  treeResultSelectionDidChange: function () {
+        
+    this.updateSearchResultScroll();
+    
+  }.observes('.searchTreeController.selection'),
   
   /**
     Update the position of the scroll in the view if needed.
@@ -328,9 +379,7 @@ Multivio.HighlightContentView = SC.View.extend(
     @private
   */
   updateSearchResultScroll: function () {
-    
-    var start = new Date().getMilliseconds();
-    
+        
     //var selection = this.get('searchResultSelection').firstObject();
     //var selectionIndex = Multivio.searchController.indexOf(selection);
     var selectionIndex = this.get('masterController').get('currentSearchResultSelectionIndex');
@@ -341,8 +390,6 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('_selectionIndex', selectionIndex);
     SC.RunLoop.end();
     
-    Multivio.logger.debug("updateSearchResultScroll selectionIndex: " +
-                                                             selectionIndex);
     if (selectionIndex !== -1) {
       // retrieve the list of the search results visible in the view
       var listView = this.get('childViews');
@@ -350,20 +397,16 @@ Multivio.HighlightContentView = SC.View.extend(
       for (var i = 0; i < listView.get('length'); i++) {
         sr = listView[i];
         // if this is the selected one, scroll it
-        if (sr.id === selectionIndex) {
-          Multivio.logger.debug('updating search result scroll'); 
+        if (sr.type === 'search' && sr.id === selectionIndex) {
+          Multivio.logger.debug('update search result scroll' + selectionIndex);
           sr.scrollToVisible();
-        
           break;
         }
       }
       // need to redraw the highlight zones to show current selection
       this.set('coordinatesNeedUpdate', YES);
     }
-    
-    var end = new Date().getMilliseconds();
-    Multivio.logger.debug('--- SCROLL TIME: ' + (end - start));
-    
+        
   },
   
   /**
@@ -373,8 +416,6 @@ Multivio.HighlightContentView = SC.View.extend(
     @observes currentPage
   */
   currentPageDidChange: function () {
-
-    Multivio.logger.debug('HL::currentPageDidChange()');
 
     // update the coordinates of the highlights of the current page
     this.set('coordinatesNeedUpdate', YES);
@@ -393,8 +434,6 @@ Multivio.HighlightContentView = SC.View.extend(
   rotateValueDidChange: function () {
 
     var ro = this.get('rotateController').get('currentValue');
-
-    Multivio.logger.debug('HighlightContentView#rotateValueDidChange(): ' + ro);
 
     // notify controllers the rotation change
     this.get('searchController').set('rotateValue', ro);
@@ -415,9 +454,6 @@ Multivio.HighlightContentView = SC.View.extend(
     
     var zoo = this.get('zoomController').get('zoomRatio');
     
-    Multivio.logger.debug('HighlightContentView#zoomFactorDidChange(): %@'.
-                                                fmt(zoo));
-
     // notify controllers the zoom change
     this.get('selectionController').set('zoomFactor', zoo);
     this.get('searchController').set('zoomFactor', zoo);
@@ -426,37 +462,7 @@ Multivio.HighlightContentView = SC.View.extend(
     this.set('highlightNeedsUpdate', YES);
 
     
-  }.observes('.zoomController.zoomRatio'),
-  
-  /**
-    When content has finished loading (isLoadingContent changes to NO),
-    update search results' scroll and flag the view for a redraw.
-
-    @observes .masterController.isLoadingContent
-  */
-  isLoadingContentDidChange: function () {
-    
-    var loading = this.get('masterController').get('isLoadingContent');
-    var hnu     = this.get('highlightNeedsUpdate');
-    
-    Multivio.logger.debug('HighlightContentView#isLoadingContentDidChange()' + 
-                              ' loading: %@, highlight: %@'.fmt(loading, hnu));
-    
-    // finished loading, update scroll
-    if (!loading) {
-      //Multivio.logger.debug("isLoadingContentDidChange: updating scroll");
-      //this.updateSearchResultScroll();
-    }
-    
-    // if the highlight pane needs an update, 
-    // flag the view for a redraw, which causes render() function to be called.
-    // Update only after 'isLoadingContent' is NO again, 
-    // to wait for the image to finish loading
-    if (hnu && !loading) {
-      this.set('layerNeedsUpdate', YES);
-    }  
-  }.observes('.masterController.isLoadingContent'),
-  
+  }.observes('.zoomController.zoomRatio'),  
   
   /* mouse events */
 
@@ -733,12 +739,38 @@ Multivio.HighlightContentView = SC.View.extend(
   */
   render: function (context, firstTime) {
 
-    var start = new Date().getMilliseconds();
-
     if (firstTime) {
       sc_super();
     }
     else {
+
+      // clear view
+      this.removeAllChildren();
+           
+      /**** text selection highlights ****/
+    
+      // add user selection rectangle and text div
+      this.appendChild(this.userSelection);
+      this.appendChild(this.selectedTextDiv);
+    
+      // don't display any highlight while content is loading
+      if (this.get('isLoadingContent')) {
+        return; 
+      }    
+    
+      // get selections' highlights
+      var zones = this.get('selectionController').get('content') || [];
+      var len   = zones.get('length');
+      var i;
+          
+      // redraw all selection zones
+      for (i = 0; i < len; i++) {
+        this._drawHighlightZone(zones.objectAt(i), 
+                              'highlight selection-highlight', i, 'selection');
+      }
+    
+      /**** search highlights ****/
+    
       var current_master_file = this.get('masterController').get('currentFile');
       var ref_url             = this.get('searchController').get('url');
       var csf = this.get('searchController').get('currentSearchFile') || ref_url;
@@ -747,31 +779,11 @@ Multivio.HighlightContentView = SC.View.extend(
       //Multivio.logger.debug('---render: ref: ' + ref_url);
       //Multivio.logger.debug('---render: csf: ' + csf);
       
-      // update highlights only if the search results belong to the current
-      // file, or 'All files' search scope is selected.
+      // update search highlights only if the search results belong to the 
+      // current file, or 'All files' search scope is selected.
       if (csf !== current_master_file && csf !== ref_url) return;
- 
-      //Multivio.logger.debug('---rendering');
- 
-      // clear view
-      this.removeAllChildren();
-    
-      // add user selection rectangle and text div
-      this.appendChild(this.userSelection);
-      this.appendChild(this.selectedTextDiv);
-    
-      // get selections' highlights
-      var zones = this.get('selectionController').get('content') || [];
-      var len   = zones.get('length');
-      var i;
-          
-      // redraw all selection zones
-      // NOTE: 'selections' is an array of zones
-      for (i = 0; i < len; i++) {
-        this._drawHighlightZone(zones.objectAt(i), 'highlight selection-highlight', i);
-      }
-    
-      // get current search results highlights
+
+      // get current search results results
       zones = this.get('searchController').get('content') || [];
       len   = zones.get('length');
     
@@ -782,7 +794,7 @@ Multivio.HighlightContentView = SC.View.extend(
       // Note: apply a specific class name for the selected result highlight
       for (i = 0; i < len; i++) {
         cn = (i === index? cl + ' search-selected-highlight' : cl);
-        this._drawHighlightZone(zones.objectAt(i), cn, i);
+        this._drawHighlightZone(zones.objectAt(i), cn, i, 'search');
       }
     
       // highlight pane just redrawn, no need for update anymore
@@ -795,21 +807,20 @@ Multivio.HighlightContentView = SC.View.extend(
       // result, keeps scrolling to it)
       //this.updateSearchResultScroll();
     }
-    
-    var end = new Date().getMilliseconds();
-    Multivio.logger.debug('--- RENDER TIME: ' + (end - start));
-    
+        
   },
   
   /**
     Creates and appends a new view to the highlight pane.
 
     @private
+    @method
     @param {SC.Object} zone the highlight zone
     @param {String} classNames_ the class names for the styles of the highlight
     @param {Number} index index number of the highlight zone
+    @param {String} type type of the zone, ie. 'search' or 'selection'
   */
-  _drawHighlightZone: function (zone, classNames_, index) {
+  _drawHighlightZone: function (zone, classNames_, index, type) {
     
     // check if the zone belongs to the current file
     if (this.get('masterController').get('currentFile') !== zone.url) return;
@@ -829,7 +840,8 @@ Multivio.HighlightContentView = SC.View.extend(
           height: cz.height 
         },
         classNames: classNames_.w(),
-        id: index
+        id: index,
+        type: type
       })
     ));
     

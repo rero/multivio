@@ -226,8 +226,8 @@ Multivio.thumbnailController = SC.ArrayController.create(
         var thumbnailToSelect = this.get('_cdmNodeToThumbnail')[newPosition];
         this.set('selection', 
             SC.SelectionSet.create().addObject(thumbnailToSelect));
-        Multivio.logger.info('thumbnailController#positionDidChange: %@'.
-            fmt(this.get('selection').firstObject().pageNumber));
+        // TODO test Multivio.logger.info('thumbnailController#positionDidChange: %@'.
+        //    fmt(this.get('selection').firstObject().pageNumber));
       }
     }
   }.observes('position', 'content'),

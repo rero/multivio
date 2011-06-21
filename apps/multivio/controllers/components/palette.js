@@ -143,6 +143,16 @@ Multivio.paletteController = SC.ObjectController.create(
   },
   */
 
+  /**
+    When switching from grid to list, make sure the selection is visible
+  */
+  /*
+  paletteDidResize: function () {
+    var thumbV =
+        Multivio.getPath('views.thumbnailPalette.contentView.innerThumbnail');
+    thumbV.scrollToSelection();
+  }.observes('views.thumbnailPalette'),
+  */
 
   /**
   */
@@ -151,8 +161,8 @@ Multivio.paletteController = SC.ObjectController.create(
     var layout = pal.layout;
     layout['right'] = null;
     layout['width'] = 150;
-    this.set('isGridThumbnailActive', NO);
     pal.adjust(layout);
+    this.set('isGridThumbnailActive', NO);
   },
 
 
@@ -163,8 +173,8 @@ Multivio.paletteController = SC.ObjectController.create(
     var layout = pal.layout;
     layout['width'] = null;
     layout['right'] = 26;
-    this.set('isGridThumbnailActive', YES);
     pal.adjust(layout);
+    this.set('isGridThumbnailActive', YES);
   },
 
 

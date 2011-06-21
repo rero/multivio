@@ -158,40 +158,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   }.observes('userSelection'),  
 
   /**
-    Receive the selected text from the CDM and
-    store it in the highlight object.
-
-    NOTE: as of now, only using the first object, ignoring any additional
-    objects.
-    
-    NOTE: obsolete
-    
-  */
-  /*selectedTextDidChange: function () {
-    
-    var url = Multivio.masterController.get('currentFile');
-    var t = this.get('selectedText')[url];
-    
-    if (SC.none(t)) return;
-    
-    Multivio.logger.debug('selectedTextDidChange: "' + t.text + '"');
-    
-    if (Multivio.selectionController.get('length') === 0) {
-      Multivio.logger.debug('selectedTextDidChange: no object to store text');
-      return;
-    }
-    
-    // store text
-    Multivio.selectionController.objectAt(0).text = t.text;
-    Multivio.selectionController.set('selectedTextString', t.text);
-    
-    // clear value in CDM so a new request will be sent to the server
-    // for the next selection
-    Multivio.CDM.set('selectedText', undefined);
-        
-  }.observes('selectedText'),*/
-
-  /**
     Returns the text located inside all the highlight zones.
     For each zone, the corresponding text is stored in the highlight object
     in the 'text' field.
@@ -289,7 +255,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
   */
   getSelectionsOnLinesBetweenPoints: function (x1, y1, x2, y2) {
     
-    Multivio.logger.debug('getSelectionsOnLinesBetweenPoints(%@,%@,%@,%@)'.fmt(x1, y1, x2, y2));
+    Multivio.logger.debug(
+          'getSelectionsOnLinesBetweenPoints(%@,%@,%@,%@)'.fmt(x1, y1, x2, y2));
     
     // discard too small selections
     if (Math.abs(x2 - x1) < 3 || Math.abs(y2 - y1) < 3) return [];
@@ -320,10 +287,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
     for (var i = 0; i < lines.length; i++) {
       l = lines[i];
       
-      //Multivio.logger.debug('current line #%@, tlwh: (%@,%@,%@,%@): "%@"'.fmt(i, l.t, l.l, l.w, l.h, l.text));
-      
-      //Multivio.logger.debug('checking start: start:%@, y1:%@, y2:%@, l.t:%@'.fmt(start, y1, y2, l.t));
-      
       // found the first line
       // conditions:
       //    1. start not found yet
@@ -335,7 +298,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
       //  .fmt(l.l, l.r, l.t, x2, y1));
       if (start === -1 && y1 <= l.t && y2 >= l.t && x1 <= l.r) {
         start = i;
-        Multivio.logger.debug('line selection start at line #' + i);
+        Multivio.logger.debug('selection start at line #' + i);
       } 
             
       // found the last line
@@ -353,7 +316,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
           (last_line || (y2 <= line_limit) || x2 <= l.l)) { 
         
         stop = i;
-        Multivio.logger.debug('line selection stop at line #' + i);
+        Multivio.logger.debug('selection stop at line #' + i);
         // store the last line
         // note: don't store last one because we detected it 1 too late,
         // except when there's only 1 line, or when the selection
@@ -520,10 +483,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
       // a line between start and stop of selection        
       if (start !== -1 && stop === -1) {
-        //Multivio.logger.debug('line selection continue');
         result.push(l);
       }
-      
     }
     
     return selected_words;
@@ -540,9 +501,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _currentPositionDidChange: function () {
   
     Multivio.logger.debug('_currentPositionDidChange');
-    // TODO
-    // disabled this (apparently useless, for now) call in order to avoid
-    // charging the server for no reason (mom, 02.02.2011)
     this._getPageIndexing();
   
   }.observes('Multivio.masterController.currentPosition'),
@@ -556,9 +514,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _currentFileDidChange: function () {
 
     Multivio.logger.debug('_currentFileDidChange');
-    // TODO
-    // disabled this (apparently useless, for now) call in order to avoid
-    // charging the server for no reason (mom, 02.02.2011)
     this._getPageIndexing();      
 
   }.observes('Multivio.masterController.currentFile'), 
@@ -596,7 +551,8 @@ Multivio.HighlightController = SC.ArrayController.extend(
 
     // query the server
     if (!SC.none(current_file) && !SC.none(page_nr)) {
-      return Multivio.CDM.getPageIndexing(current_file, page_nr, undefined, undefined);
+      return Multivio.CDM.getPageIndexing(
+                                  current_file, page_nr, undefined, undefined);
     }
     
     return undefined;
@@ -680,7 +636,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     Create a new highlight zone with given coordinates and zoom factor.
     
     'is_original' specifies if the coordinates are given in the original
-     size of the content. This information is used to compute the coordinates
+     size  of the content. This information is used to compute the coordinates
      according to the current zoom factor.
     
     @param {Number} top_ 
@@ -697,8 +653,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
   addHighlight: function (top_, left_, width_, height_, page_, type_,
                                       current_zoom_factor, is_original,
                                       url) {
-
-    //Multivio.logger.debug('addHighlight, tlwh: %@,%@,%@,%@'.fmt(top_, left_, width_, height_));
 
     // discard zones that are too small
     if (width_ <= this.minimalZoneDimension ||
@@ -761,8 +715,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
     Helper function to add a highlight, giving only basic xy params.
   */
   addHighlightHelper: function (x1, y1, x2, y2, is_original) {
-
-    Multivio.logger.debug('addHighlightHelper, x1y1x2y2: %@,%@,%@,%@'.fmt(x1, y1, x2, y2));
 
     // compute tlwh
     var top_ =  y1,
@@ -927,15 +879,17 @@ Multivio.HighlightController = SC.ArrayController.extend(
   */
   updateCoordinates: function (zoom_update_needed, rotation_update_needed) {
     
+    // TODO experimental selection
+    if (Multivio.firstResponder !== Multivio.READY) {
+      return;
+    }
+    
     // get rotation angle for update
     var angle = this.get('rotateValue');
     
     // get zoom factor for update
     var zoom_factor = this.get('zoomFactor');
-    
-    //Multivio.logger.debug('updateCoordinates, angle:' + angle);
-    //Multivio.logger.debug('updateCoordinates, zoom_factor: ' + zoom_factor);
-    
+        
     // get page width and height
     // NOTE: only handling the highlight zones on the current page
     // of the current file, the other ones are not updated
@@ -1104,7 +1058,6 @@ Multivio.HighlightController = SC.ArrayController.extend(
       oneBinding.disconnect();
     }
     this.set('bindings', []);
-    this._positionToThumbnail = {};
     this.position = null;
     this.set('content', null);
     this.set('selection', null);
@@ -1225,22 +1178,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     @default NO
   */
   textualContentHasBeenChecked: NO,
-  
-  /**
-    When search file selection changes,
-    load corresponding search results (if any).
     
-    @private
-    @observes currentSearchFile
-  */
-  _currentSearchFileDidChange: function () {
-    
-    var current_file = this.get('currentSearchFile');
-    Multivio.logger.debug('currentSearchFile did change: ' + current_file);
-    this._loadExistingSearchResultsForFile(current_file);
-    
-  }.observes('currentSearchFile'),
-  
   /**
     If results already exist for this file in the CDM, load them.
     Else, clear content.
@@ -1252,27 +1190,17 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
     // clear results' list
     this.set('content', []);
-    
-    Multivio.logger.debug("_loadExistingSearchResultsForFile: url:" + url);
-    
+        
     // look for existing stuff in the CDM
     var all_results = Multivio.CDM.get('searchResults');
-    var new_results = null;    
-    
-    if (!SC.none(all_results)) {
-      if (!SC.none(all_results[url])) {
-        new_results = Multivio.CDM.clone(all_results);
-      } else {
-        // results for this url do not exist, keep results empty
-      }
-    }
-    
+    var new_results = Multivio.CDM.clone(all_results);   
+        
     // always update the search results, be it empty or not
-    SC.RunLoop.begin();
+    //SC.RunLoop.begin();
     this.set('_load_url', url);
-    // this should trigger _searchResultsDidChange()
+    // wake up bindings on searchResults
     this.set('searchResults', new_results); 
-    SC.RunLoop.end();
+    //SC.RunLoop.end();
     
     /*
     if (!SC.none(all_results) && !SC.none(all_results[url])) {
@@ -1300,31 +1228,16 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   _selectionDidChange: function () {
     
     if (!this.get('allowsSelection')) {
-      Multivio.logger.debug('search _selectionDidChange, selection not allowed, exit');
       return;
     }
-    
-    var start = new Date().getMilliseconds();
-    
+        
     var selSet = this.get('selection');
     var selectedObject = selSet.firstObject();
     var selIndex = this.indexOf(selectedObject);
     
     Multivio.logger.debug("_selectionDidChange: index: " + selIndex);
     Multivio.logger.debug("_selectionDidChange: object: " + selectedObject);
-    
-    // store selection for later use. Storage must be done in master
-    // controller, because if there is a file change, the search controller
-    // will be reinitialised and the selection will be lost
-    if (selIndex !== -1) {
-      Multivio.logger.debug("_selectionDidChange: index not -1: " + selIndex);
-      Multivio.masterController.set('currentSearchResultSelectionIndex', 
-                                                                selIndex);
-      // notify view of change
-      Multivio.getPath('views.mainContentView.content.innerMainContent' + 
-          '.contentView.highlightpane').searchResultSelectionIndexDidChange();
-    } 
-    
+        
     // store current search file in master controler, so
     // that we don't lose this information in case we need to switch
     // files and this controller is reinitialised
@@ -1336,21 +1249,14 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (SC.none(selectedObject)) {
       return NO;
     }
-    
-    Multivio.logger.debug("### selectionDidChange: url: " + selectedObject.url);
-    
+        
     // if necessary, switch to the corresponding document
     // WARNING: changing master's currentFile initialises controllers anew.
     // in initialize(), check for existing results in CDM
     var current_search_file = this.get('currentSearchFile');
     var current_master_file = Multivio.masterController.get('currentFile');
     var ref_file            = this.get('url');
-    
-    Multivio.logger.debug("selectionDidChange: current: " + 
-                                              current_search_file);
-    Multivio.logger.debug("selectionDidChange: master: " + 
-                                              current_master_file);
-    
+        
     //if (current_master_file !== current_search_file) {
     if (current_master_file !== selectedObject.url) {
       SC.RunLoop.begin();
@@ -1366,6 +1272,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // of the new file is done
       Multivio.masterController.set('initialPosition', 
                                                 selectedObject.page_number);
+      // we're going to load some content
+      Multivio.masterController.set('isLoadingContent', YES);
       
       SC.RunLoop.end();
 
@@ -1375,9 +1283,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       Multivio.masterController.set('currentPosition', 
                                                 selectedObject.page_number);
     }
-    
-    var end = new Date().getMilliseconds();
-    Multivio.logger.debug('--- SEARCH SEL TIME: ' + (end - start));
     
     return YES;
     
@@ -1391,9 +1296,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
   */
   setSelectionIndex: function (index) {
-    
-    Multivio.logger.debug("search ctrl, setSelectionIndex " + index);
-    
+        
     var newSel = SC.SelectionSet.create();
     newSel.addObject(this.objectAt(index));
     this.set('selection', newSel);
@@ -1421,13 +1324,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // store last search query for later use
     var query = this.get('currentSearchTerm');
 
-    // force UTF8 enconding of the query in order to avoid problems with
+    // force UTF8 encoding of the query in order to avoid problems with
     // diacritics in Internet Explorer
     if (SC.browser.msie) {
       query = unescape(encodeURIComponent(query));
     }
-
-    Multivio.logger.debug('doSearch, query: ' + query);
 
     this.set('lastSearchQuery', query);
     // clear previous results
@@ -1468,7 +1369,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // Multivio.CDM.searchResults[<referer_url>], in the order of the files
       // as they appear in the list.
       var file_list = this.get('currentFileList');
-      Multivio.logger.debug('doSearch ALL: file_list: %@, length: %@'.fmt(file_list, file_list.length));
+      Multivio.logger.debug('doSearch ALL: file_list: %@, length: %@'.fmt(
+                                                  file_list, file_list.length));
       for (var i = 0; i < file_list.length; i++) {
         
         // don't send request for referer url,
@@ -1633,8 +1535,8 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           // skip referer url, except if there's only one file
           if (file_list.length > 1 && file_list[i].url === ref_url) continue;
           
+          // results undefined for this url, skip
           if (SC.none(res[file_list[i].url])) {
-            Multivio.logger.debug('_searchResultsDidChange, (6) results undefined for this url, skip');
             continue;
           }
           
@@ -1669,14 +1571,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         var selectedObject = this.objectAt(sel);
 
         Multivio.logger.debug(
-          "_searchResultsDidChange restore previous selection after new results: " +
-           selectedObject);
+          "_searchResultsDidChange restore previous selection: " + 
+            selectedObject);
 
         newSel.addObject(selectedObject);
         
         if (!SC.none(selectedObject)) {
-          Multivio.logger.debug('_searchResultsDidChange restore selection, context: ' +
-           selectedObject.context);
           SC.RunLoop.begin();
           this.set('selection', newSel);
           SC.RunLoop.end();
@@ -1714,7 +1614,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (res !== -1 && !SC.none(res)) {
       
       // get total number of search results, not for this file only (ref url)
-      Multivio.logger.debug('---counting all search results');
       var num_all_res, num_res = res.file_position.results.length;
       var all_res = this.get('searchResults');
       num_all_res = 0;
@@ -1749,13 +1648,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         
           // skip 'all files'
           if (files[j].label === '_AllFiles'.loc()) {
-            Multivio.logger.debug('---"All files", skip: ' + u);
             continue;
           }
                         
           // result missing, search not done  
           if (SC.none(all_res) || SC.none(all_res[u])) {
-            //Multivio.logger.debug('---no result, skip: ' + u);
             done = NO;
             continue;
           }
@@ -1772,7 +1669,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         // TODO set state
         this.set('allowsSelection', YES);
         Multivio.searchTreeController.set('allowsSelection', YES);
-        Multivio.logger.debug('End of the search');
         
         if (num_all_res === 0) {
           this.set('searchStatus', '_noResult'.loc());
@@ -1784,36 +1680,13 @@ Multivio.SearchController = Multivio.HighlightController.extend(
         }
       }
       
-      //#CHE
-      // warn user if no result found
-      //if (num_all_res === 0) {
-        /*Multivio.usco.showAlertPaneInfo('_noSearchResultTitle'.loc(), 
-          '_noSearchResultDesc'.loc(), 'OK');*/
-        /*SC.RunLoop.begin();  
-        this.set('searchStatus', '_noResult'.loc());  
-        SC.RunLoop.end();
-      } else {
-        SC.RunLoop.begin();*/ 
-        // TODO #searching
-        // TODO here we shouldn't remove search status if we didn't 
-        // get a response for every file
-        //this.set('searchStatus', '');  
-        //SC.RunLoop.end();
-      //}
-      
+      // add all results in content      
       var a = null, b  = null, c = null, z = null;
       for (var i = 0; i < num_res; i++) {
         z = res.file_position;
         a = z.results[i];
         b = a.index;
         c = b.bounding_box;
-
-        // get native page size
-        //var url = 'page_nr=%@&url=%@'.fmt(b.page, z.url);
-        //var page_size = Multivio.CDM.getImageSize(url);
-        
-        // get angle
-        //var angle = this.get('rotateValue');
 
         // params: label, context, top_, left_, width_, height_, 
         //         file_url, page_, current_zoom_factor
@@ -1828,7 +1701,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       }      
     }
   },
-
 
   /**
     @method
@@ -1965,8 +1837,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     if (!SC.none(new_hl)) {
       new_hl.label = label;
       new_hl.context = context;
-    } else {
-      Multivio.logger.debug("Warning: cannot retrieve label and context ...");
     }
     
     SC.RunLoop.end();
@@ -1980,12 +1850,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   initialize: function (url) {
   
     Multivio.logger.info('searchController:: initialize()');
-  
-    // NOTE: manually binding to avoid conflicts with selectionController
-    // which is a parent class
-    // NOTE2: do not bind here, it was already bound in superclass
-    //this.bind('physicalStructure', 'Multivio.CDM.physicalStructure');
-  
+    
     // set referer url
     this.set('url', Multivio.CDM.getReferer());
 
@@ -2003,7 +1868,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     // get the previously selected file to search in
     var msf = Multivio.masterController.get('currentSearchFile');                     
     
-    Multivio.logger.debug('search init: Master search file: ' + msf);
+    Multivio.logger.debug('search init: master search file: ' + msf);
                                   
     // initialise content, display                           
     this.set('content', []);
@@ -2044,8 +1909,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       this.set('currentFileList', phys);
 
       Multivio.logger.debug('search ctrl init, url: ' + this.get('url'));
-      this.set('debug_file_list', phys);
-      this.set('debug_phys', phys);
       
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);
@@ -2071,16 +1934,41 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // NOTE: use 'url' arg of file, and not the referer 
       // (as it can point to a document with multiple files), except in
       // the case of results of all files was selected (see above)
-      this._loadExistingSearchResultsForFile(url);
+      //this._loadExistingSearchResultsForFile(url);
+      // TODO experimental selection: always load ref url because we always want the results of
+      // all files
+      this._loadExistingSearchResultsForFile(this.get('url'));
     
-      /*var newSel = SC.SelectionSet.create();
+      // TODO experimental selection try setting saved selection
+      var newSel = SC.SelectionSet.create();
       newSel.addObject(this.objectAt(mi));
-      Multivio.logger.debug("initialize: restore previous selection after new results");
-      this.set('selection', newSel);*/
+      var cont = this.get('content');
+      this.set('selection', newSel);
     }
     Multivio.sendAction('addComponent', 'searchController');
     Multivio.logger.info('searchController initialized with url:' + url);
   },
+  
+  // TODO experimental selection
+  selectionIndexDidChange: function () {
+    
+    // get selection index
+    var idx = Multivio.masterController.get('currentSearchResultSelectionIndex');
+
+    Multivio.logger.debug('search, selectionIndexDidChange: ' + idx);
+    
+    // set the selection to the element in content which has this index
+    if (idx > -1 && idx < this.get('length')) {
+      var nextObject = this.objectAt(idx);
+      
+      Multivio.logger.debug('search, selectionIndexDidChange, next object: ' +
+                                                                    nextObject);
+      
+      var newSel = SC.SelectionSet.create();
+      newSel.addObject(nextObject);
+      this.set('selection', newSel);
+    }
+  }.observes('Multivio.masterController.currentSearchResultSelectionIndex'),  
   
   /**
     This function is used to launch an initial search (coming from param
@@ -2102,8 +1990,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     var it = this.get('initial_term');
     var iu = this.get('initial_url');
     
-    Multivio.logger.debug('currentFileListDidChange, is: %@, it: %@, iu: %@'.fmt(is, it, iu));
-
     if (SC.none(is) || !is) return;
     
     // use stored data and clear it right away

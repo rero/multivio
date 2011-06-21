@@ -87,8 +87,17 @@ Multivio.masterController = SC.ObjectController.create(
     If none selected, this value is -1.
   
     @property {currentSearchResultSelectionIndex}
+    @default -1
   */
   currentSearchResultSelectionIndex: -1,
+  /**
+    The URL of the file the currently selected search result belongs to.
+    If none selected, this value is null.
+  
+    @property {currentSearchResultSelectionFile}
+    @default null
+  */
+  currentSearchResultSelectionFile: null,
   
   /**
     The url of the file selected for the search scope. 
@@ -322,6 +331,15 @@ Multivio.masterController = SC.ObjectController.create(
   */ 
   currentFileDidChange: function () {
     if (!SC.none(this.get('currentFile'))) {
+      // TODO test experimental selection
+      // if we are switching a file that the current selection does not
+      // belong to, reset the stored selection because we don't want
+      // to restore it
+      var su = this.get('currentSearchResultSelectionFile');
+      if (!SC.none(su) && su !== this.get('currentFile')) {
+        this.set('currentSearchResultSelectionFile', null);
+        this.set('currentSearchResultSelectionIndex', -1);
+      }
       this.set('isNew', YES);
       // TODO: why not this.set('currentFileType', null) ?
       this.currentFileType = null;
