@@ -157,8 +157,10 @@ Multivio.views = SC.Page.design(
       classNames: 'mvo-front-view-transparent',
     
       childViews: [
+      /*
         'goPreviousFileButton',
         'goNextFileButton',
+        */
         'overviewButton',
         'rotateLeftButton',
         'rotateRightButton',
@@ -173,7 +175,8 @@ Multivio.views = SC.Page.design(
         'zoomFullWidthButton',
         'zoomNativeSizeButton'
       ],
-      
+
+      /*
       goPreviousFileButton: SC.ButtonView.design({
         layout: { centerX: -336, centerY: 0,  width: 32, height: 32 },
         titleMinWidth : 0,
@@ -203,6 +206,7 @@ Multivio.views = SC.Page.design(
         target: "Multivio.navigationController", 
         action: "goToNextFile"
       }),
+      */
       
       overviewButton: SC.ButtonView.design({
         layout: { centerX: -240, centerY: 0,  width: 32, height: 32 },
@@ -934,11 +938,16 @@ Multivio.waitingPane = SC.PanelPane.create({
 
 Multivio.newErrorPane = SC.PanelPane.create({
   layout: { centerX: 0, centerY: 0, width: 700, height: 400 },
-  contentView: SC.LabelView.extend({
-    layout: { top: 50, bottom: 50, right: 50, left: 50 },
+  contentView: SC.View.design({
+    layout: { top: 0, bottom: 0, right: 0, left: 0 },
     classNames: 'mvo_info_full',
-    contentBinding: 'Multivio.errorController',
-    contentValueKey: 'message',
-    escapeHTML: NO
-  }).classNames('mvo_info_full_background'.w())
+    childViews: [
+      SC.LabelView.extend({
+        layout: { top: 50, bottom: 50, right: 50, left: 50 },
+        contentBinding: 'Multivio.errorController',
+        contentValueKey: 'message',
+        escapeHTML: NO
+      }).classNames('mvo_info_full_background'.w())
+    ]
+  })
 });

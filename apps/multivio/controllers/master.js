@@ -69,7 +69,7 @@ Multivio.masterController = SC.ObjectController.create(
   zoomState: null,
   
   listOfFiles: null,
-  currentFileIndex: -1,
+  currentFileIndex: null,
     
   /**
     Binds to the cdm fileMetadata
