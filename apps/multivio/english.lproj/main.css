@@ -684,24 +684,33 @@ For now, styles "borrowed" from Google Quick View
   /*outline: 4px solid #2452C0;*/ /* Note: this color is affected by the semi-transparency of the highlight box */
 }
 
-.sc-theme .help-panel{
- font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
- padding: 13px 5px 5px 13px;
+.sc-theme .help-panel {
+  font: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+  padding: 13px 5px 5px 13px;
 }
-.help-panel h1{
-margin-bottom: 5px;
-}
-
-.sc-theme .help-panel h4{
-margin-top: 10px;
-margin-bottom: 5px;
+.help-panel h1 {
+  margin-bottom: 5px;
 }
 
-.sc-theme .help-panel img{
-margin-right: 5px;
-vertical-align: middle;
-width: 16px;
-height: 16px;
+.sc-theme .help-panel h3 {
+  margin-top: 18px;
+  margin-bottom: 10px;
+}
+
+
+.sc-theme li {
+  list-style: decimal;
+}
+
+.sc-theme .help-panel .help-image {
+  margin: 2px 5px 5px 0;
+  width: 16px;
+  height: 16px;
+  float: left;
+}
+
+.sc-theme .help-panel .help-text {
+  margin: 0 0 10px 25px;
 }
 
 /*

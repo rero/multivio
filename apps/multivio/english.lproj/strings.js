@@ -117,7 +117,7 @@ SC.stringsFor('English', {
 
   // Strings for the help section
   '_helpTitle': "Help",
-  '_helpIntro': "This prototype of Multivio diplays digital documents such as\
+  '_helpIntro': "Multivio is able to display digital documents such as\
       books, articles and images. In order to know more about Multivio go to\
       the website <a href='http://www.multivio.org'>www.multivio.org</a>\
       or contact the team by email at\
@@ -127,6 +127,7 @@ SC.stringsFor('English', {
       corresponding button. The application contains two different groups of\
       buttons: one in the vertical sidebar on the left and the other in the\
       navigation toolbar at the bottom.",
+  '_helpContentsTitle': "Help contents",
   '_helpVerticalBar': "Side toolbar",
   '_helpToc': "Displays the document structure and provides navigation capabilities.",
   '_helpThum': "Displays page thumbnails of the document.",
@@ -143,7 +144,6 @@ SC.stringsFor('English', {
       The search process is case-insensitive (searching for \"europe\" or \"Europe\"\
       produces the same result). Only the first 50 occurrences in each\
       file are shown.",
-  '_helpMetadata': "Displays document metadata: author, title, etc.",
   '_helpDownload': "Downloads the current file.",
   '_helpDisplayBar': "Makes the navigation toolbar remain visible.",
   '_helpNavigationBar': "Navigation toolbar",
@@ -154,14 +154,6 @@ SC.stringsFor('English', {
       allows to move the visible portion around using the mouse. This tool\
       is available only when the content is too large to fit entirely in the\
       screen.",
-  '_helpPan': "Activates or deactivates the \"pan\" mode, which allows the\
-      mouse pointer to grab and move the visible content. This tool is available\
-      only when the content is too large to fit entirely in the screen.<br>\
-      NB: When the \"pan\" mode is inactive it is possible to use the mouse\
-      pointer to select a portion of the text and place it in the clipboard.\
-      This can only be done if the current document contains textual\
-      information, which is not always the case.<br>\
-      (See section \"Mouse actions\" below.)",
   '_helpRotation': "Rotates the current page by 90 degrees anticlockwise\
       or clockwise.",
   '_helpNavigation': "Allows to navigate along the document: next and previous\
@@ -188,11 +180,6 @@ SC.stringsFor('English', {
         <tr>\
           <td>Mouse pointer</td>\
           <td>\
-            <b>When the \"pan\" mode is active</b>:<br>\
-            Clicking and dragging over the document moves the visible portion\
-            of the content in the screen.<br>\
-            (See the description of the \"pan\" tool %@ above.)<br>\
-            <b>In normal mode:</b><br>\
             Clicking and dragging over the document creates an area of text\
             selection, which can be copied to the clipboard using the\
             browser\'s standard \"Copy\" command.<br>\

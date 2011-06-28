@@ -118,8 +118,8 @@ SC.stringsFor('French', {
 
   // Strings for the help section
   '_helpTitle': "Aide",
-  '_helpIntro': "Ce prototype Multivio permet de visualiser des contenus\
-      numériques, qu'il s'agisse de documents (par ex. livres, articles) ou\
+  '_helpIntro': "Multivio permet de visualiser des contenus numériques, qu'il\
+      s'agisse de documents (par ex. livres, articles) ou\
       d'images (par ex. photos, gravures). Pour en savoir plus sur Multivio,\
       consulter le site <a href='http://www.multivio.org'>www.multivio.org</a>\
       ou envoyer un courriel à\
@@ -128,6 +128,7 @@ SC.stringsFor('French', {
       celui-ci par la souris. Dans l'interface, deux ensembles d'icônes\
       permettent de naviguer dans le document : une barre d'outils latérale et\
       une barre de navigation.",
+  '_helpContentsTitle': "Sections de l'aide",
   '_helpVerticalBar': "Barre d'outils latérale",
   '_helpToc': "Affiche le plan du document et permet la navigation.",
   '_helpThum': "Affiche les imagettes des pages du document.",
@@ -145,7 +146,6 @@ SC.stringsFor('French', {
       La recherche ne tient pas compte de la casse (rechercher \"europe\" ou\
       \"Europe\" est équivalent). Seules les 50 premières occurrences de\
       chaque fichier sont montrées.",
-  '_helpMetadata': "Affiche les métadonnées du document: auteur, titre, etc.",
   '_helpDownload': "Télécharge le fichier courant.",
   '_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
   '_helpNavigationBar': "Barre de navigation",
@@ -156,16 +156,6 @@ SC.stringsFor('French', {
       visible. Elle permet aussi de déplacer la zone visible avec la souris.\
       Cet outil n'est disponible que lorsque le contenu dépasse la taille\
       de la fenêtre du navigateur.",
-  '_helpPan': "Active ou désactive le mode \"déplacement\", qui permet de\
-      saisir le contenu avec la souris et de le déplacer.\
-      Cet outil n'est disponible que lorsque le contenu dépasse la taille\
-      de la fenêtre du navigateur.<br>\
-      NB: Quand le mode déplacement est désactivé, il est possible de\
-      sélectionner une zone de texte avec la souris, pour ensuite la copier\
-      dans le presse-papiers. Cette action est possible uniquement si le\
-      document courant est muni de contenu textuel, ce qui n'est pas toujours\
-      le cas.\
-      (Voir la section \"Actions de la souris\" plus bas.)",
   '_helpRotation': "Pivote de 90 degrés la page courante dans le sens indiqué.",
   '_helpNavigation': "Permet la navigation dans le document : page suivante,\
       page précédente, début et fin du document. Il est possible de saisir dans\
@@ -191,11 +181,6 @@ SC.stringsFor('French', {
         <tr>\
           <td>Pointeur de la souris</td>\
           <td>\
-            <b>Quand le mode \"déplacement\" est actif</b>:<br>\
-            L'action de cliquer et glisser le contenu déplace la partie\
-            visible du contenu à l'écran.<br>\
-            (Voir information sur l'outil \"déplacement\" %@ ci-dessus.)<br>\
-            <b>En mode normal:</b><br>\
             L'action de cliquer et glisser sur le document crée une zone de\
             sélection de texte, qui peut être copiée dans le presse-papiers\
             avec la fonction \"copier\" standard du navigateur.<br>\
