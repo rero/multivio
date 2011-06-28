@@ -63,11 +63,11 @@ Multivio.overviewController = SC.ObjectController.create(
       this.bind('visiblePart', SC.Binding.oneWay('Multivio.imageController.visiblePart'));
       
       // create the layout
+      var mcvFrame = Multivio.getPath('views.mainContentView.content').get('frame');
       var layout = [];
       layout.width = 150;
       layout.height = 150;
-      layout.left = Multivio.getPath('views.mainContentView.content').
-          get('frame').x + 15;
+      layout.right = 34;
       layout.bottom = 150;
       
       //retreive palette design and append it

@@ -146,7 +146,7 @@ Multivio.SearchView = SC.View.extend(
     action: 'doClear'
   }),
   
-  resultsScrollView: Multivio.SearchTreeView.design({
+  resultsScrollView: Multivio.SearchTreeView.design(Multivio.innerGradientThinTopBottom, {
 
     layout: { top: 100, left: 0, right: 0, bottom: 0 },
 
@@ -154,7 +154,7 @@ Multivio.SearchView = SC.View.extend(
     hasHorizontalScroller: YES,
     hasVerticalScroller: YES,
     
-    contentView: SC.ListView.design(Multivio.innerGradientThinTopBottom, {
+    contentView: SC.ListView.design({
       layout: { top: 0, left: 0, right: 0, bottom: 0 },
       isEnabledBinding: 'Multivio.searchTreeController.allowsSelection',
       insertionOrientation: SC.VERTICAL_ORIENTATION,

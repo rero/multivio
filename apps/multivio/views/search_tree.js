@@ -98,7 +98,7 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
   }, 
 
   /**
-    Override renderLabel method to set some labels in bold 
+    Override renderLabel method to set some labels in bold
     
     NOTE: 'More' nodes have file_position.index === null, so they get the
     document-label-view class as well.
@@ -119,12 +119,24 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
 
       // try to render the current search term in bold in the label
       var cst = this.searchController.get('currentSearchTerm');
+
       if (SC.typeOf(cst) === SC.T_STRING && SC.typeOf(label) === SC.T_STRING) {
-        var parts = label.split(cst);
+        // split the complete string in parts using "cst" as separator - after
+        // converting evrything to lowercase, so that all cases can be
+        // considered (search is case insensitive)
+        var parts = label.toLowerCase().split(cst.toLowerCase());
         if (SC.typeOf(parts) === SC.T_ARRAY) {
-          text = parts[0];
-          for(var p = 1; p < parts.length; p++) {
-            text = '%@<strong>%@</strong>%@'.fmt(text, cst, parts[p]);
+          // set initial and final positions of the current part
+          var posI = 0;
+          var posF = parts[0].length;
+          text = label.substring(posI, posF);
+          for (var p = 1; p < parts.length; p++) {
+            var cstText = label.substr(posF, cst.length);
+            // re-set initial and final positions of the current part
+            posI = posF + cst.length;
+            posF = posI + parts[p].length;
+            var partText = label.substring(posI, posF);
+            text = text + "<strong>" + cstText + "</strong>" + partText;
           }
         }
       }

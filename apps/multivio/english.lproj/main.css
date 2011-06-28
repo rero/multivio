@@ -96,6 +96,9 @@ color: white;
 }
 
 
+.sc-view.sc-scroller-view {
+  z-index: 200;
+}
 
 .sc-theme .sc-button-view.sc-regular-size.mvo-button.active,
 .sc-theme .sc-button-view.sc-regular-size.mvo-button.active .sc-button-inner,
