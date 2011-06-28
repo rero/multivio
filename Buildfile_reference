@@ -37,3 +37,10 @@ mode :test do
  config :all,
    :url_prefix => 'multivio/client_test'
 end
+
+# URL prefix - development
+mode :dev do
+ config :all,
+   :url_prefix => 'multivio/client_dev'
+end
+
