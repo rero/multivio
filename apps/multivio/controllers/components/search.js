@@ -2013,6 +2013,12 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   }.observes('currentFileList'),
   
   /**
+  */
+  currentSearchFileDidChange: function () {
+    this.doClear();
+  }.observes('currentSearchFile'),
+  
+  /**
     Reset variables and disconnect bindings
   */
   reset: function () {
