@@ -172,7 +172,7 @@ Multivio.paletteController = SC.ObjectController.create(
     var pal = Multivio.getPath('views.thumbnailPalette');
     var layout = pal.layout;
     layout['width'] = null;
-    layout['right'] = 26;
+    layout['right'] = 40;
     pal.adjust(layout);
     this.set('isGridThumbnailActive', YES);
   },
