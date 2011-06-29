@@ -51,7 +51,9 @@ Multivio.initializer = SC.Object.create(
     Multivio.treeController.clear();
     Multivio.masterController.set('currentFile', null);
     // first split url and get parameters
-    var inputUrl = !SC.none(location.hash) ? location.hash : undefined;
+    var inputUrl =
+        (SC.typeOf(location.hash) === SC.T_STRING && location.hash !== '') ?
+        location.hash : undefined;
     if (inputUrl !== undefined) {
       var listOfParams = inputUrl.split('&');
       var params = {};

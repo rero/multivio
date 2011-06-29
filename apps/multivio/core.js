@@ -6,6 +6,18 @@
 ==============================================================================
 */
 
+/**
+  Redefine the general SC exception handler to just use the console while the
+  application is being set up. This prevents SC-related errors to break the
+  application at that phase.
+  
+  Later on, when Multivio.main() is run, the exception handler is properly and
+  permanently redefined.
+*/
+SC.ExceptionHandler.handleException = function (exception) {
+  console.error(exception);
+};
+
 /** 
   @namespace
 
@@ -17,7 +29,7 @@ Multivio = SC.Application.create(
   /** @scope Multivio.prototype */ {
 
   NAMESPACE: 'Multivio',
-  VERSION: '20110628',
+  VERSION: '20110629.dev',
 
   // This is your application store.  You will use this store to access all
   // of your model data.  You can also set a data source on this store to
@@ -29,3 +41,4 @@ Multivio = SC.Application.create(
   // TODO: Add global constants or singleton objects needed by your app here.
 
 });
+
