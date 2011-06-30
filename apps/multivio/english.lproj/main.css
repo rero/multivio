@@ -100,15 +100,15 @@ color: white;
   z-index: 200;
 }
 
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.active,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.active .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.active .sc-button-label {
-  background: #777;
+.sc-theme .sc-button-view.mvo-button.active,
+.sc-theme .sc-button-view.mvo-button.active .sc-button-inner,
+.sc-theme .sc-button-view.mvo-button.active .sc-button-label {
+  background-color: #777;
 }
 
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.disabled .sc-button-label {
+.sc-theme .sc-button-view.mvo-button.disabled,
+.sc-theme .sc-button-view.mvo-button.disabled .sc-button-inner,
+.sc-theme .sc-button-view.mvo-button.disabled .sc-button-label {
   background: none;
   opacity: 0.4;
   moz-opacity : 0.4;
@@ -116,13 +116,15 @@ color: white;
   filter : alpha(opacity=4);
 }
 
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.def.active,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.sel.active,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.def .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.sel .sc-button-inner,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.def .sc-button-label,
-.sc-theme .sc-button-view.sc-regular-size.mvo-button.sel .sc-button-label {
-  background: #bbb;
+.sc-theme .sc-button-view.mvo-button.def,
+.sc-theme .sc-button-view.mvo-button.sel,
+.sc-theme .sc-button-view.mvo-button.def.active,
+.sc-theme .sc-button-view.mvo-button.sel.active,
+.sc-theme .sc-button-view.mvo-button.def .sc-button-inner,
+.sc-theme .sc-button-view.mvo-button.sel .sc-button-inner,
+.sc-theme .sc-button-view.mvo-button.def .sc-button-label,
+.sc-theme .sc-button-view.mvo-button.sel .sc-button-label {
+  background-color: #bbb;
 }
 
 .sc-theme .sc-segment img.icon {

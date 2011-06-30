@@ -41,6 +41,8 @@ SC.stringsFor('French', {
   '_Click to go to Multivio website.': 'Cliquez pour aller sur le site Multivio.',
   '_Current client version:': 'Version actuelle du client:',
   '_Current server version:': 'Version actuelle du serveur:',
+  '_ThumbnailListMode': 'Montrer les miniatures dans une liste',
+  '_ThumbnailGridMode': 'Montrer les miniatures dans une grille',
 
   // Strings for metadata
   '_creator': 'auteur',

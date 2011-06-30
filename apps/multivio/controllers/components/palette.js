@@ -30,7 +30,7 @@ Multivio.paletteController = SC.ObjectController.create(
   
   /**
   */
-  isGridThumbnailActive: NO,
+  thumbnailMode: 'list',
   
   /**
     variable used to say if the toolbar has been actived by the user.
@@ -104,12 +104,6 @@ Multivio.paletteController = SC.ObjectController.create(
       this.activeButton = button;
       thumbnailsView.set('layout', this.paletteLayout(NO));
       thumbnailsView.append();
-      if (this.get('isGridThumbnailActive')) {
-        this.setThumbnailGridMode();
-      }
-      else {
-        this.setThumbnailListMode();
-      }
     }
     else {
       if (this.activeButton !== button) {
@@ -123,60 +117,22 @@ Multivio.paletteController = SC.ObjectController.create(
     }
   },
 
-
-  
   /**
-  adjustThumbnailGrid: function () {
+    Switch the thumbnail palette layout between 'list' and 'grid'
+  */
+  thumbnailModeDidChange: function () {
     var pal = Multivio.getPath('views.thumbnailPalette');
     var layout = pal.layout;
-    if (this.get('isGridThumbnailActive')) {
+    if (this.get('thumbnailMode') === 'list') {
       layout['right'] = null;
       layout['width'] = 150;
-      this.set('isGridThumbnailActive', NO);
     }
     else {
       layout['width'] = null;
-      layout['right'] = 26;
-      this.set('isGridThumbnailActive', YES);
+      layout['right'] = 40;
     }
     pal.adjust(layout);
-  },
-  */
-
-  /**
-    When switching from grid to list, make sure the selection is visible
-  */
-  /*
-  paletteDidResize: function () {
-    var thumbV =
-        Multivio.getPath('views.thumbnailPalette.contentView.innerThumbnail');
-    thumbV.scrollToSelection();
-  }.observes('views.thumbnailPalette'),
-  */
-
-  /**
-  */
-  setThumbnailListMode: function () {
-    var pal = Multivio.getPath('views.thumbnailPalette');
-    var layout = pal.layout;
-    layout['right'] = null;
-    layout['width'] = 150;
-    pal.adjust(layout);
-    this.set('isGridThumbnailActive', NO);
-  },
-
-
-  /**
-  */
-  setThumbnailGridMode: function () {
-    var pal = Multivio.getPath('views.thumbnailPalette');
-    var layout = pal.layout;
-    layout['width'] = null;
-    layout['right'] = 40;
-    pal.adjust(layout);
-    this.set('isGridThumbnailActive', YES);
-  },
-
+  }.observes('thumbnailMode'),
 
   /**
     Tree button has been pressed show the treePalette or hide it

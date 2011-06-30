@@ -41,6 +41,8 @@ SC.stringsFor('English', {
   '_Click to go to Multivio website.': 'Click to go to Multivio website.',
   '_Current client version:': 'Current client version:',
   '_Current server version:': 'Current server version:',
+  '_ThumbnailListMode': 'Show thumbnails in a list',
+  '_ThumbnailGridMode': 'Show thumbnails in a grid',
 
   // Strings for metadata
   '_creator': 'author',

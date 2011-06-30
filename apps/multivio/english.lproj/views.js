@@ -556,10 +556,9 @@ Multivio.views = SC.Page.design(
         renderStyle: "renderImage",
         icon: 'thumbnail_list_mode_new',
         theme: 'mvo-button',
-        isActiveBinding:
-            SC.Binding.not('Multivio.paletteController.isGridThumbnailActive'),
-        target: "Multivio.paletteController",
-        action: "setThumbnailListMode"
+        valueBinding: 'Multivio.paletteController.thumbnailMode',
+        buttonBehavior: SC.TOGGLE_ON_BEHAVIOR,
+        toggleOnValue: 'list'
       }),
       
       thumbnailGridModeButtom: SC.ButtonView.design({
@@ -571,9 +570,9 @@ Multivio.views = SC.Page.design(
         renderStyle: "renderImage",
         icon: 'thumbnail_grid_mode_new',
         theme: 'mvo-button',
-        isActiveBinding: 'Multivio.paletteController.isGridThumbnailActive',
-        target: "Multivio.paletteController",
-        action: "setThumbnailGridMode"
+        valueBinding: 'Multivio.paletteController.thumbnailMode',
+        buttonBehavior: SC.TOGGLE_ON_BEHAVIOR,
+        toggleOnValue: 'grid'
       })
     })
   }),
@@ -687,7 +686,8 @@ Multivio.views = SC.Page.design(
     contentView: Multivio.OverviewView.design({
       layout: { top: 0, bottom: 0, left: 0, right: 0 },
       overviewController: Multivio.overviewController
-    })
+    }),
+    acceptsKeyPane: NO // do not not steal keyboard control from the main pane
   }),
   
   // waiting image
@@ -710,7 +710,7 @@ Multivio.views = SC.Page.design(
         hasHorizontalScroller: NO,
         contentView: SC.StaticContentView.design({
         //contentView: SC.LabelView.design({
-          layout: {top: 2, bottom: 2, /*height: 2900,*/ right: 2 /*width: 280*/},
+          layout: {top: 2, bottom: 2 /*height: 2900*/, right: 2, width: 280},
           classNames: "help-panel",
           escapeHTML: NO,
           isTextSelectable: YES,
@@ -749,11 +749,10 @@ Multivio.views = SC.Page.design(
               + '<p>' + '_mouseActions'.loc('<img class="" style= "" src="' + sc_static("images/icons/24x24/pan_dark_24x24.png") + '"/>') + '</p>'
               + '<h3 id="keyShortcuts">4. ' + '_keyShortcutsTitle'.loc() + '</h3>'
               + '<p>' + '_keyShortcuts'.loc() + '</p>'
-
         })
       })
     })
-  }), //.classNames('shadow_light inner_view'.w()),
+  }),
   
   /**
     Footer view
