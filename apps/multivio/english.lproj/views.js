@@ -708,14 +708,15 @@ Multivio.views = SC.Page.design(
         layout: { top: 2, bottom: 2, left: 2, right: 2 },
         borderStyle: SC.BORDER_NONE,
         hasHorizontalScroller: NO,
-        contentView: SC.StaticContentView.design({
-        //contentView: SC.LabelView.design({
-          layout: {top: 2, bottom: 2 /*height: 2900*/, right: 2, width: 280},
+        //contentView: SC.StaticContentView.design({
+        contentView: SC.LabelView.design({
+          layout: {top: 2, right: 2, width: 280},
           classNames: "help-panel",
           escapeHTML: NO,
           isTextSelectable: YES,
-          content: ''
-          //value: ''
+          useStaticLayout: YES,
+          //content: ''
+          value: ''
               +'<h1>' + '_helpTitle'.loc() + '</h1>'
               + '_helpIntro'.loc()
               + '<h3>' + '_helpContentsTitle'.loc() + '</h3>'
@@ -748,7 +749,11 @@ Multivio.views = SC.Page.design(
               + '<h3 id="mouseActions">3. ' + '_mouseActionsTitle'.loc() + '</h3>'
               + '<p>' + '_mouseActions'.loc('<img class="" style= "" src="' + sc_static("images/icons/24x24/pan_dark_24x24.png") + '"/>') + '</p>'
               + '<h3 id="keyShortcuts">4. ' + '_keyShortcutsTitle'.loc() + '</h3>'
-              + '<p>' + '_keyShortcuts'.loc() + '</p>'
+              + '<p>' + '_keyShortcuts'.loc() + '</p>',
+          isVisibleInWindowDidChange: function () {
+            // force the parent scroll view to update each time the palette is reopened
+            if (this.get('isVisibleInWindow')) this.viewDidResize();
+          }.observes('isVisibleInWindow')
         })
       })
     })
