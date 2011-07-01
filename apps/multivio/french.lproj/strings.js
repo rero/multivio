@@ -147,7 +147,11 @@ SC.stringsFor('French', {
       l'ensemble.<br>\
       La recherche ne tient pas compte de la casse (rechercher \"europe\" ou\
       \"Europe\" est équivalent). Seules les 50 premières occurrences de\
-      chaque fichier sont montrées.",
+      chaque fichier sont montrées.<br>\
+      NB: certains documents ne sont pas munis de contenu textuel;\
+      c'est typiquement le cas de documents papier qui ont été numérisés\
+      uniquement en mode image, sans reconnaissance automatique de\
+      caractères; l'application émet un avertissement si c'est le cas.",
   '_helpDownload': "Télécharge le fichier courant.",
   '_helpDisplayBar': "Affiche la barre de navigation de façon permanente.",
   '_helpNavigationBar': "Barre de navigation",
@@ -186,10 +190,8 @@ SC.stringsFor('French', {
             L'action de cliquer et glisser sur le document crée une zone de\
             sélection de texte, qui peut être copiée dans le presse-papiers\
             avec la fonction \"copier\" standard du navigateur.<br>\
-            NB: certains documents ne sont pas munis de contenu textuel;\
-            c'est typiquement le cas de documents papier qui ont été numérisés\
-            uniquement en mode image, sans reconnaissance automatique de\
-            caractères.\
+            NB: certains documents ne sont pas munis de contenu textuel (voir\
+            aussi la note à propos de l'outil de recherche plus haut).\
           </td>\
         </tr>\
       <tbody/>\

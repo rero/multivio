@@ -145,7 +145,11 @@ SC.stringsFor('English', {
       files at once.<br>\
       The search process is case-insensitive (searching for \"europe\" or \"Europe\"\
       produces the same result). Only the first 50 occurrences in each\
-      file are shown.",
+      file are shown.<br>\
+      NB: certain documents do not contain textual content, which is\
+      usually the case with paper documents scanned in image mode only,\
+      with no character recognition process done afterwards; the application\
+      shows a warning if that is the case.",
   '_helpDownload': "Downloads the current file.",
   '_helpDisplayBar': "Makes the navigation toolbar remain visible.",
   '_helpNavigationBar': "Navigation toolbar",
@@ -185,9 +189,8 @@ SC.stringsFor('English', {
             Clicking and dragging over the document creates an area of text\
             selection, which can be copied to the clipboard using the\
             browser\'s standard \"Copy\" command.<br>\
-            NB: certain documents do not contain textual content, which is\
-            usually the case with paper documents scanned in image mode only,\
-            with no character recognition process done afterwards.\
+            NB: certain documents do not contain textual content (see note\
+            about the search tool above).\
           </td>\
         </tr>\
       <tbody/>\
