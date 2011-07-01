@@ -1882,11 +1882,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // replace escaped characters (such as %20)
       iq = unescape(iq);
 
-      Multivio.logger.debug('search ctrl init, found input query: ' + iq);
-      this.set('currentSearchTerm', iq);
-
       // set file to search (default: all files, using referer url)
       this.set('currentSearchFile', this.get('url'));
+
+      Multivio.logger.debug('search ctrl init, found input query: ' + iq);
+      this.set('currentSearchTerm', iq);
 
       // NOTE: we need to initialize currentFileList before searching
       
@@ -1913,11 +1913,11 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       // clear init search term, avoid loops
       this.set('initSearchTerm', undefined);
 
-      // TODO show search palette
-      //Multivio.logger.debug('search ctrl init, trying to display palette');
+      // show search palette
+      Multivio.logger.debug('search ctrl init, trying to display palette');
       // get search button TODO button should be named in views.js
-      //var sbt = Multivio.getPath('views.leftButtons').get('childViews')[2];
-      //Multivio.paletteController.showSearch(sbt);
+      var sbt = Multivio.getPath('views.leftButtons').get('childViews')[0];
+      Multivio.paletteController.showSearch(sbt);
 
       Multivio.logger.debug('search ctrl init, running search with url: ' + 
                                               this.get('currentSearchFile'));
