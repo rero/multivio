@@ -116,7 +116,7 @@ SC.stringsFor('French', {
   '_More': 'Plus...',
   '_NoTextualContent': 'Aucun contenu textuel',
   '_NotSearchable': "La fonction de recherche n'est apparemment \
-      pas disponible pour ce document",
+      pas disponible pour ce fichier",
 
   // Strings for the help section
   '_helpTitle': "Aide",

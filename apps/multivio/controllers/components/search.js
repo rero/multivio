@@ -1333,7 +1333,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     this.set('lastSearchQuery', query);
     // clear previous results
     this.clearResults();
-    
+
+    // initialize check variable
+    this.set('textualContentHasBeenChecked', NO);
+
     // discard empty strings
     if (SC.none(query) || SC.empty(query.trim())) return NO;
     
@@ -1714,7 +1717,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     
   */
   _checkTextualContent: function () {
-    
+
     if (this.get('textualContentHasBeenChecked')) return;
     
     Multivio.logger.debug('_checkTextualContent');
@@ -1856,9 +1859,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
     // physical structure not yet initialised (do it only once)
     this.set('physicalStructureInitialised', NO);
-
-    // initialise check variable
-    this.set('textualContentHasBeenChecked', NO);
 
     // get previously selected search result
     // (when the controller has been reinitialised after a file change)
