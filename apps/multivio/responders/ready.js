@@ -37,7 +37,8 @@ Multivio.READY = SC.Responder.create(
     // (typically, after changing the current file)
     if (!SC.none(Multivio.masterController.get('initialPosition'))) {
       Multivio.masterController.selectAPosition();
-    } else if (this.showLastPosition) {
+    }
+    else if (this.showLastPosition) {
       Multivio.masterController.selectLastPosition();
       this.showLastPosition = NO;
     }

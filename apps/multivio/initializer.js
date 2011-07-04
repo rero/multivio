@@ -103,6 +103,7 @@ Multivio.initializer = SC.Object.create(
             var ip = parseInt(params[key], 10);
             if (SC.typeOf(ip) === SC.T_NUMBER && ip > 0) {
               Multivio.configurator.set('initialPosition', params[key]);
+              Multivio.masterController.set('initialPosition', params[key]);
             }
             break;
 

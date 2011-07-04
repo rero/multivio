@@ -196,20 +196,24 @@ Multivio.navigationController = SC.ObjectController.create(
   */  
   _currentPageDidChange: function () {
     var newCurrentPage = this.get('currentPage');
+    var nop = this.get('_numberOfPages');
     // convert to int if it's a finite, legal number
     // takes care of strings such as '01', '002', etc
     if (isFinite(newCurrentPage)) {
       newCurrentPage = parseInt(newCurrentPage, 10);
     }
-    if (newCurrentPage < 1 || newCurrentPage > this.get('_numberOfPages') ||
-        isNaN(newCurrentPage)) {
-      Multivio.usco.showAlertPaneWarn(
-          '_Incorrect page number'.loc(),
-          '_Please enter a number between 1 and %@'.loc() +
-          this.get('_numberOfPages'), '_Ok'.loc(), '', this);
-    }
-    else {
-      this.set('position', newCurrentPage);
+    if (SC.typeOf(nop) === SC.T_NUMBER) {
+      if (SC.typeOf(newCurrentPage) !== SC.T_NUMBER ||
+          newCurrentPage < 1 ||
+          newCurrentPage > nop) {
+        Multivio.usco.showAlertPaneWarn(
+            '_Incorrect page number'.loc(),
+            '_Please enter a number between 1 and %@'.loc() + nop,
+            '_Ok'.loc(), '', this);
+      }
+      else {
+        this.set('position', newCurrentPage);
+      }
     }
   }.observes('currentPage'),
   
