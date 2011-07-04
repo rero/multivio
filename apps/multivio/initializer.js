@@ -100,7 +100,10 @@ Multivio.initializer = SC.Object.create(
             break;
           
           case 'position':
-            Multivio.configurator.set('initialPosition', params[key]);
+            var ip = parseInt(params[key], 10);
+            if (SC.typeOf(ip) === SC.T_NUMBER && ip > 0) {
+              Multivio.configurator.set('initialPosition', params[key]);
+            }
             break;
 
           case 'server':
