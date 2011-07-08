@@ -157,12 +157,14 @@ Multivio.masterController = SC.ObjectController.create(
         Multivio.sendAction('fileMetadataDidChange', cf);
         this.set('currentFileType', currentMeta.mime);
         //TO DO che: change this test when the server-side is ready
+        /*
         if (cf === Multivio.CDM.getReferer()) {
           var index = cf.indexOf('express');
           if (index !== -1) {
             this.set('isTimeNavigationEnabled', YES);
           }
         }
+        */
       }
     }
   }.observes('metadata'),
