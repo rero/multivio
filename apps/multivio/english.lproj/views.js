@@ -420,6 +420,7 @@ Multivio.views = SC.Page.design(
         renderStyle: "renderImage",
         icon: 'search_new',
         theme: 'mvo-button',
+        isEnabledBinding: 'Multivio.searchController.isDocumentSearchable',
         target: "Multivio.paletteController",
         action: "showSearch"
       }),

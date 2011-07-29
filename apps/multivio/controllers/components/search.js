@@ -504,6 +504,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
     this._getPageIndexing();
   
   }.observes('Multivio.masterController.currentPosition'),
+
   /**
     When the master file selection changes,
     get the corresponding indexing. This is used for the text selection.
@@ -514,7 +515,7 @@ Multivio.HighlightController = SC.ArrayController.extend(
   _currentFileDidChange: function () {
 
     Multivio.logger.debug('_currentFileDidChange');
-    this._getPageIndexing();      
+    this._getPageIndexing();
 
   }.observes('Multivio.masterController.currentFile'), 
 
@@ -1137,6 +1138,32 @@ Multivio.SearchController = Multivio.HighlightController.extend(
   */
   url: undefined,
   
+  /**
+    Returns YES if the first file in the list of candidate searchable files
+    is a PDF.
+  */
+  isDocumentSearchable: function () {
+    var cfl = this.get('currentFileList'),
+        fileURL = '',
+        typeOfFirstFile = '';
+    if (!SC.none(cfl)) {
+      // cfl.length is never 2; it may be:
+      // 0
+      // 1 (for single files)
+      // > 2 (for multiple files, because the root file is included)
+      if (cfl.length === 1) {
+        fileURL = cfl[0].url;
+      }
+      else if (cfl.length > 2) {
+        fileURL = cfl[1].url;
+      }
+      var md = Multivio.CDM.getFileMetadata(fileURL);
+      if (SC.typeOf(md) === SC.T_HASH) {
+        typeOfFirstFile = Multivio.configurator.getTypeForMimeType(md.mime);
+      }
+    }
+    return (typeOfFirstFile === 'pdf');
+  }.property('currentFileList', 'Multivio.CDM.fileMetadata'),
 
   /** 
     The search results' display state: defines whether the client must
