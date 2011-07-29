@@ -155,7 +155,18 @@ Multivio.configurator = SC.Object.create(
   componentLayouts: {
     'init': {
       baseLayout: 'default',
-      components: [ {name: 'views.footerView', coord: 'A3:C3'}]
+      components: [
+          {name: 'views.footerView', coord: 'A3:C3'},
+          {
+              name: 'views.mainContentView',
+              coord: 'A1:C2',
+              children: [
+                  'views.leftButtons',
+                  'views.bottomButtons',
+                  'views.navigationInfo'
+                ]
+            }
+        ]
     },
     'usage': {
       baseLayout: 'default',

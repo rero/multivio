@@ -22,10 +22,18 @@ Multivio.WAITING = SC.Responder.create(
     Show waiting page
   */
   didBecomeFirstResponder: function () {
-    Multivio.logger.debug('Multivio state is WAITING');
+    Multivio.logger.debug('Multivio entering state WAITING');
     Multivio.layoutController._showWaitingPage();
   },
-  
+
+  /**
+    Remove waiting page
+  */
+  willLoseFirstResponder: function () {
+    Multivio.logger.debug('Multivio leaving state WAITING');
+    Multivio.layoutController._hideWaitingPage();
+  },
+
   /**
     An error occured during waiting state, change state to ERROR
   */

@@ -304,7 +304,9 @@ Multivio.layoutController = SC.Object.create(
   _showWaitingPage: function () {
     // show waiting pane
     SC.RunLoop.begin();
-    Multivio.waitingPane.append();
+    if (!Multivio.waitingPane.get('isPaneAttached')) {
+      Multivio.waitingPane.append();
+    }
     SC.RunLoop.end();
   },
 
@@ -316,7 +318,9 @@ Multivio.layoutController = SC.Object.create(
   _hideWaitingPage: function () {
     // remove waiting pane
     SC.RunLoop.begin();
-    Multivio.waitingPane.remove();
+    if (Multivio.waitingPane.get('isPaneAttached')) {
+      Multivio.waitingPane.remove();
+    }
     SC.RunLoop.end();
   }
 

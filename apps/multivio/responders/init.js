@@ -22,9 +22,18 @@ Multivio.INIT = SC.Responder.create(
     First responder did change.
   */
   didBecomeFirstResponder: function () {
-    Multivio.logger.debug('Multivio state is INIT');
+    Multivio.logger.debug('Multivio entering state INIT');
+    Multivio.getPath('views.navigationInfo').showWaiting();
   },
   
+  /**
+    Prepare to leave
+  */
+  willLoseFirstResponder: function () {
+    Multivio.logger.debug('Multivio leaving state INIT');
+    Multivio.getPath('views.navigationInfo').hideView();
+  },
+
   /**
     Disabled allowSelection property of the treecontroller
   */
@@ -65,5 +74,5 @@ Multivio.INIT = SC.Responder.create(
   addComponent: function (controllerName) {
     Multivio.layoutController.addComponent(controllerName);
   }
-  
+
 });
