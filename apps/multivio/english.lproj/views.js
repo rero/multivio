@@ -730,7 +730,12 @@ Multivio.views = SC.Page.design(
               + '<h3 id="helpVerticalBar">1. ' + '_helpVerticalBar'.loc() + '</h3>'
               + '<img class="help-image" style= "" src="' + sc_static("images/icons/24x24/search_dark_24x24.png") + '"/><div class="help-text">' + '_helpSearch'.loc() + '</div>'
               + '<img class="help-image" style= "" src="' + sc_static("images/icons/24x24/tree_dark_24x24.png") + '"/><div class="help-text">' + '_helpToc'.loc() + '</div>'
-              + '<img class="help-image" style= "" src="' + sc_static("images/icons/24x24/thumbnails_dark_24x24.png") + '"/><div class="help-text">' + '_helpThum'.loc() + '</div>'
+              + '<img class="help-image" style= "" src="' + sc_static("images/icons/24x24/thumbnails_dark_24x24.png") + '"/><div class="help-text">' + '_helpThum'.loc()
+                  + '<div>'
+                  + '<img class="help-image-inline" style= "" src="' + sc_static("images/icons/24x24/thumbnail_list_dark_24x24.png") + '"/>, '
+                  + '<img class="help-image-inline" style= "" src="' + sc_static("images/icons/24x24/thumbnail_grid_dark_24x24.png") + '"/>'
+                  + '</div>'
+              + '</div>'
               + '<img class="help-image" style= "" src="' + sc_static("images/icons/24x24/download_dark_24x24.png") + '"/><div class="help-text">' + '_helpDownload'.loc() + '</div>'
               + '<img class="help-image" style= "" src="' + sc_static("images/icons/24x24/show_toolbar_dark_24x24.png") + '"/><div class="help-text">' + '_helpDisplayBar'.loc() + '</div>'
               + '<h3 id="helpNavigationBar">2. ' + '_helpNavigationBar'.loc() + '</h3>'

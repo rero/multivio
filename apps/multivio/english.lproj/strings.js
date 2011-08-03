@@ -132,7 +132,9 @@ SC.stringsFor('English', {
   '_helpContentsTitle': "Help contents",
   '_helpVerticalBar': "Side toolbar",
   '_helpToc': "Displays the document structure and provides navigation capabilities.",
-  '_helpThum': "Displays page thumbnails of the document.",
+  '_helpThum': "Displays page thumbnails of the document. They can be disposed\
+      either in a list or in a grid, using the two corresponding buttons at the\
+      bottom: ",
   '_helpSearch': "Allows searching inside the document. The results are shown\
       in their context and highlighted in the page.<br>\
       It is possible to perform a Boolean \"AND\" search by separating the\
@@ -221,6 +223,9 @@ SC.stringsFor('English', {
           <td>Jumps to the beginning of the previous/next page.</td>\
         </tr>\
       <tbody/>\
-    </table>"
+    </table>",
+
+    // Miscellaneous
+    '_and': "and",
 
 });

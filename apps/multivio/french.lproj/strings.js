@@ -133,7 +133,9 @@ SC.stringsFor('French', {
   '_helpContentsTitle': "Sections de l'aide",
   '_helpVerticalBar': "Barre d'outils latérale",
   '_helpToc': "Affiche le plan du document et permet la navigation.",
-  '_helpThum': "Affiche les imagettes des pages du document.",
+  '_helpThum': "Affiche les miniatures des pages du document. Elles peuvent être\
+      disposées soit dans une liste soit dans une grille, à l'aide des boutons\
+      correspondants qui se trouvent au fond: ",
   '_helpSearch': "Permet de lancer des recherches dans le document. Les résultats\
       apparaissent de façon contextualisée et sont surlignés dans le texte.<br>\
       Il est possible de lancer des recherches booléennes avec l'opérateur ET\
@@ -222,6 +224,9 @@ SC.stringsFor('French', {
           <td>Permet d'aller au début de la page précédente/suivante.</td>\
         </tr>\
       <tbody/>\
-    </table>"
+    </table>",
+
+    // Miscellaneous
+    '_and': "et"
 
 });

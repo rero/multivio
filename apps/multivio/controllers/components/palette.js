@@ -29,6 +29,7 @@ Multivio.paletteController = SC.ObjectController.create(
   metadata: null,
   
   /**
+    Possible values: 'list' (default), 'grid'
   */
   thumbnailMode: 'list',
   
@@ -103,6 +104,7 @@ Multivio.paletteController = SC.ObjectController.create(
       button.set('isActive', YES);
       this.activeButton = button;
       thumbnailsView.set('layout', this.paletteLayout(NO));
+      this.adjustThumbnailLayoutToMode();
       thumbnailsView.append();
     }
     else {
@@ -118,18 +120,21 @@ Multivio.paletteController = SC.ObjectController.create(
   },
 
   /**
-    Switch the thumbnail palette layout between 'list' and 'grid'
+    Adjust the thumbnail palette layout according to current mode:
+    'list' or 'grid'
   */
-  thumbnailModeDidChange: function () {
+  adjustThumbnailLayoutToMode: function () {
     var pal = Multivio.getPath('views.thumbnailPalette');
+    var ws = SC.RootResponder.responder.computeWindowSize();
     var layout = pal.layout;
     if (this.get('thumbnailMode') === 'list') {
       layout['right'] = null;
       layout['width'] = 150;
     }
     else {
+      // put the thumbnail grid width at 60% of the whole window width
       layout['width'] = null;
-      layout['right'] = 40;
+      layout['right'] = parseInt(ws.width*0.4, 10);
     }
     pal.adjust(layout);
   }.observes('thumbnailMode'),
