@@ -398,6 +398,11 @@ Rules for Multivio's usage page
   z-index:99;
 }
 
+.mvo-search-result-term {
+  font-weight: bold;
+}
+
+
 /* Inner edges */
 
 .top-edge {
@@ -667,16 +672,6 @@ For now, styles "borrowed" from Google Quick View
   -khtml-opacity: 0.50;
   filter: alpha(opacity=50);
   background-color: #999;
-}
-
-.thumb-highlight {
-  cursor: pointer !important;
-  opacity: 0.50;
-  -moz-opacity: 0.50;
-  -khtml-opacity: 0.50;
-  filter: alpha(opacity=50);
-  background-color: #b5d5ff;
-  padding: 3px;
 }
 
 .search-selected-highlight {

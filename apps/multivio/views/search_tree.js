@@ -105,9 +105,9 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     
     @param {Object} context
     @param {String} label
-  */    
+  */
   renderLabel: function (context, label) {
-    
+
     // disable element if needed
     var cl = (this.get('isEnabled')? '': 'disabled');
 
@@ -115,30 +115,15 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
       context.push('<label class="document-label-view %@">'.fmt(cl), label || '', '</label>');
     }
     else {
+      // render the current search term in bold in the label
       var text = label || '';
-
-      // try to render the current search term in bold in the label
       var cst = this.searchController.get('currentSearchTerm');
-
-      if (SC.typeOf(cst) === SC.T_STRING && SC.typeOf(label) === SC.T_STRING) {
-        // split the complete string in parts using "cst" as separator - after
-        // converting evrything to lowercase, so that all cases can be
-        // considered (search is case insensitive)
-        var parts = label.toLowerCase().split(cst.toLowerCase());
-        if (SC.typeOf(parts) === SC.T_ARRAY) {
-          // set initial and final positions of the current part
-          var posI = 0;
-          var posF = parts[0].length;
-          text = label.substring(posI, posF);
-          for (var p = 1; p < parts.length; p++) {
-            var cstText = label.substr(posF, cst.length);
-            // re-set initial and final positions of the current part
-            posI = posF + cst.length;
-            posF = posI + parts[p].length;
-            var partText = label.substring(posI, posF);
-            text = text + "<strong>" + cstText + "</strong>" + partText;
-          }
-        }
+      // split current search term in parts (in case of Boolean search)
+      var cstParts = cst.toLowerCase().split("and");
+      // surrround each component of the search term by the <strong> tag
+      for (var p = 0; p < cstParts.length; p++) {
+        var part = cstParts[p].trim();
+        text = text.replace(part, '<span class="mvo-search-result-term">$&</span>', 'gi');
       }
 
       context.push('<label class="%@">'.fmt(cl));
