@@ -125,7 +125,7 @@ Multivio.paletteController = SC.ObjectController.create(
   */
   adjustThumbnailLayoutToMode: function () {
     var pal = Multivio.getPath('views.thumbnailPalette');
-    var ws = SC.RootResponder.responder.computeWindowSize();
+    var vframe = Multivio.getPath('views.mainContentView.frame');
     var layout = pal.layout;
     if (this.get('thumbnailMode') === 'list') {
       layout['right'] = null;
@@ -134,10 +134,10 @@ Multivio.paletteController = SC.ObjectController.create(
     else {
       // put the thumbnail grid width at 60% of the whole window width
       layout['width'] = null;
-      layout['right'] = parseInt(ws.width*0.4, 10);
+      layout['right'] = parseInt(vframe.width*0.4, 10);
     }
     pal.adjust(layout);
-  }.observes('thumbnailMode'),
+  }.observes('thumbnailMode', 'Multivio.views.mainContentView.frame'),
 
   /**
     Tree button has been pressed show the treePalette or hide it
