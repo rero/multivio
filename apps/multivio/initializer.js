@@ -188,11 +188,11 @@ Multivio.initializer = SC.Object.create(
           fmt(response.get("body")));
       var jsonRes = response.get("body");
       
-      var serverVersion = jsonRes.api_version;
+      var apiVersion = jsonRes.api_version;
       Multivio.configurator.set('serverVersion', jsonRes.version);
       
-      if (!SC.none(serverVersion) && 
-          serverVersion === Multivio.configurator.serverCompatibility) {
+      if (!SC.none(apiVersion) && 
+          apiVersion === Multivio.configurator.serverCompatibility) {
         Multivio.logger.debug('Client and server are compatible');
 
         // TODO: would prefer to change state here, instead of initializing the master
@@ -203,7 +203,7 @@ Multivio.initializer = SC.Object.create(
             'err_name':         'VersionIncompatibility',
             'err_description':  'Versions:' + 
               '<ul>' +
-              '  <li>server = %@</li>'.fmt(serverVersion) +
+              '  <li>server = %@</li>'.fmt(apiVersion) +
               '  <li>client = %@</li>'.fmt(Multivio.VERSION) +
               '</ul>'
           });
