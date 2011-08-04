@@ -31,11 +31,11 @@ body.mvo-white-theme     {
 
 .mvo-dark-gray-theme .multivio_logo,
 .mvo-blue-theme      .multivio_logo {
-  background: transparent static_url('images/multivio_logo_beta_100x31_bw.png');
+  background: transparent static_url('images/multivio_logo_100x21_bw.png');
   cursor: pointer;
 }
 .mvo-white-theme     .multivio_logo {
-  background: transparent static_url('images/multivio_logo_beta_100x31.png');
+  background: transparent static_url('images/multivio_logo_100x21.png');
   cursor: pointer;
 }
 

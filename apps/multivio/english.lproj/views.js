@@ -832,15 +832,15 @@ Multivio.views = SC.Page.design(
       Logo of Multivio
     */
     logoMvoView: SC.View.design({
-      layout: { top: 0, height: 31, right: 0, width: 100 },
+      layout: { top: 0, height: 21, right: 0, width: 100 },
 
       isTextSelectable: YES,
       childViews: [
         SC.View.design({
-          layout:  { top: 0, height: 31, right: 0, left: 0 },
+          layout:  { top: 0, height: 21, right: 0, left: 0 },
           childViews: [
             SC.ImageView.design({
-              layout: { top: 0, height: 31, right: 0, width: 100 },
+              layout: { top: 0, height: 21, right: 0, width: 100 },
               classNames: 'multivio_logo',
               toolTip: '_Click to go to Multivio website.'.loc() + ' ' +
                 '_Current client version:'.loc() + ' ' + Multivio.VERSION
