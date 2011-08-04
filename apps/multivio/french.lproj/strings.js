@@ -114,7 +114,7 @@ SC.stringsFor('French', {
   '_noResult': 'Texte introuvable',
   '_searchInProgress': 'La recherche est en cours...',
   '_listOfResults': '%@%@ résultats trouvés',
-  '_resultPages': 'dans %@%@ pages',
+  '_resultPages': 'dans %@ pages',
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
   '_More': 'Plus...',

@@ -1735,10 +1735,10 @@ Multivio.SearchController = Multivio.HighlightController.extend(
 
       // update number of pages with results
       num_res_pages = Object.keys(resPages).length;
-      if (num_res_pages > 0) {
+      if (num_res_pages > 0 && more !== '+') {
         this.set('searchStatus',
             '_listOfResults'.loc(num_all_res, more) + ' ' +
-            '_resultPages'.loc(num_res_pages, more));
+            '_resultPages'.loc(num_res_pages));
       }
     }
   },

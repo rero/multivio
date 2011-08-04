@@ -114,7 +114,7 @@ SC.stringsFor('English', {
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
   '_listOfResults': '%@%@ results found',
-  '_resultPages': 'in %@%@ pages',
+  '_resultPages': 'in %@ pages',
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
   '_More': 'More...',
@@ -152,7 +152,7 @@ SC.stringsFor('English', {
       The search process is case-insensitive (searching for \"europe\" or \"Europe\"\
       produces the same result). Only the first 50 occurrences in each\
       file are shown. If this limit is exceeded, the reported number of results\
-      is 50+, meaning \"50 or plus\".<br>\
+      is 50+, meaning \"50 or more\".<br>\
       NB: certain documents do not contain textual content, which is\
       usually the case with paper documents scanned in image mode only,\
       with no character recognition process done afterwards; the application\
