@@ -96,6 +96,9 @@ SC.stringsFor('English', {
   '_Ok': 'Ok',
   '_No': 'No',
   '_Cancel': 'Cancel',
+  
+  // Information messages
+  '_Fetching remote data...': 'Fetching remote data...',
 
   // Strings for search and indexing functionality (MVO_SEIN)
   '_doSearch': 'Search',
@@ -110,7 +113,8 @@ SC.stringsFor('English', {
   '_firstOccurrences': 'Only the first %@ occurences are displayed.',
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
-  '_listOfResults': 'List of results (%@%@)',
+  '_listOfResults': '%@%@ results found',
+  '_resultPages': 'in %@%@ pages',
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
   '_More': 'More...',
@@ -133,7 +137,7 @@ SC.stringsFor('English', {
   '_helpVerticalBar': "Side toolbar",
   '_helpToc': "Displays the document structure and provides navigation capabilities.",
   '_helpThum': "Displays page thumbnails of the document. They can be disposed\
-      either in a list or in a grid, using the two corresponding buttons at the\
+      in either a list or a grid, using the two corresponding buttons at the\
       bottom: ",
   '_helpSearch': "Allows searching inside the document. The results are shown\
       in their context and highlighted in the page.<br>\
@@ -147,7 +151,8 @@ SC.stringsFor('English', {
       files at once.<br>\
       The search process is case-insensitive (searching for \"europe\" or \"Europe\"\
       produces the same result). Only the first 50 occurrences in each\
-      file are shown.<br>\
+      file are shown. If this limit is exceeded, the reported number of results\
+      is 50+, meaning \"50 or plus\".<br>\
       NB: certain documents do not contain textual content, which is\
       usually the case with paper documents scanned in image mode only,\
       with no character recognition process done afterwards; the application\

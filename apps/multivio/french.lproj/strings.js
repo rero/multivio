@@ -96,6 +96,9 @@ SC.stringsFor('French', {
   '_Ok': 'Ok',
   '_No': 'Non',
   '_Cancel': 'Annuler',
+  
+  // Information messages
+  '_Fetching remote data...': 'Données distantes en cours de transfert...',
 
   // Strings for search and indexing functionality (MVO_SEIN)
   '_doSearch': 'Rechercher',
@@ -110,7 +113,8 @@ SC.stringsFor('French', {
   '_firstOccurrences': 'Seules les %@ premières occurrences sont affichées.',
   '_noResult': 'Texte introuvable',
   '_searchInProgress': 'La recherche est en cours...',
-  '_listOfResults': 'Liste de résultats (%@%@)',
+  '_listOfResults': '%@%@ résultats trouvés',
+  '_resultPages': 'dans %@%@ pages',
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
   '_More': 'Plus...',
@@ -149,7 +153,8 @@ SC.stringsFor('French', {
       l'ensemble.<br>\
       La recherche ne tient pas compte de la casse (rechercher \"europe\" ou\
       \"Europe\" est équivalent). Seules les 50 premières occurrences de\
-      chaque fichier sont montrées.<br>\
+      chaque fichier sont montrées. Si cette limite est dépassée, le nombre\
+      signalé de résultats sera 50+, ce qui signifie «50 ou plus».<br>\
       NB: certains documents ne sont pas munis de contenu textuel;\
       c'est typiquement le cas de documents papier qui ont été numérisés\
       uniquement en mode image, sans reconnaissance automatique de\

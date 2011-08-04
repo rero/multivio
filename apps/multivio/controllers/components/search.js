@@ -1647,6 +1647,7 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       var num_all_res, num_res = res.file_position.results.length;
       var all_res = this.get('searchResults');
       num_all_res = 0;
+      var num_res_pages = 0;
       var files = this.get('currentFileList');
       var num_files = files.length;
       var ref_url = this.get('url');
@@ -1711,12 +1712,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
       }
       
       // add all results in content      
-      var a = null, b  = null, c = null, z = null;
+      var a = null, b  = null, c = null, z = null,
+          resPages = {};
+      
       for (var i = 0; i < num_res; i++) {
         z = res.file_position;
         a = z.results[i];
         b = a.index;
         c = b.bounding_box;
+        resPages[b.page.toString()] = YES;
 
         // params: label, context, top_, left_, width_, height_, 
         //         file_url, page_, current_zoom_factor
@@ -1727,8 +1731,15 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              z.url,
                              b.page,
                              this.get('zoomFactor'));
-                             
-      }      
+      }
+
+      // update number of pages with results
+      num_res_pages = Object.keys(resPages).length;
+      if (num_res_pages > 0) {
+        this.set('searchStatus',
+            '_listOfResults'.loc(num_all_res, more) + ' ' +
+            '_resultPages'.loc(num_res_pages, more));
+      }
     }
   },
 

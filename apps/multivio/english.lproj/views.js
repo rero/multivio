@@ -718,7 +718,7 @@ Multivio.views = SC.Page.design(
           useStaticLayout: YES,
           //content: ''
           value: ''
-              +'<h1>' + '_helpTitle'.loc() + '</h1>'
+              + '<h1>' + '_helpTitle'.loc() + '</h1>'
               + '_helpIntro'.loc()
               + '<h3>' + '_helpContentsTitle'.loc() + '</h3>'
               + '<ul>'
@@ -911,7 +911,7 @@ Multivio.views = SC.Page.design(
             layout: { centerX: 0, centerY: -33, width: 230, height: 33 },
             classNames: 'mvo-pane loading'.w(),
             tagName: 'div',
-            value: '<h3>Fetching data...</h3>',
+            value: '<h3>' + '_Fetching remote data...'.loc() + '</h3>',
             escapeHTML: NO
           }),
           SC.ImageView.design({
@@ -939,7 +939,7 @@ Multivio.waitingPane = SC.PanelPane.create({
       SC.LabelView.design({
         layout: { centerX: 0, centerY: -33, width: 230, height: 33 },
         classNames: 'mvo-pane sc-large-size'.w(),
-        value: 'Fetching data...'
+        value: '_Fetching remote data...'.loc()
       }),
       SC.ImageView.design({
         layout: { centerX: 0, centerY: 50, width: 36, height: 36 },
