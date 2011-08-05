@@ -75,7 +75,7 @@ SC.stringsFor('English', {
   '_Go back':                         'Go back',
 
   '_EmailErrorMessageSubject':        'Multivio error',
-  '_EmailErrorMessageHeader':         '[Insert your text below, or simply send this message as it is]',
+  '_EmailErrorMessageHeader':         '[Insert your text here, or simply send this message as it is]',
   '_EmailErrorMessageTechnicalInfo':  'Technical information - DO NOT MODIFY',
   
   // Warning messages
@@ -114,7 +114,7 @@ SC.stringsFor('English', {
   '_noResult': 'No result was found',
   '_searchInProgress': 'Searching...',
   '_listOfResults': '%@%@ results found',
-  '_resultPages': 'in %@ pages',
+  '_resultsPages': 'in %@%@ pages',
   '_resultSelection': 'Result %@/%@',
   '_AllFiles': 'All files',
   '_More': 'More...',
@@ -228,9 +228,6 @@ SC.stringsFor('English', {
           <td>Jumps to the beginning of the previous/next page.</td>\
         </tr>\
       <tbody/>\
-    </table>",
-
-    // Miscellaneous
-    '_and': "and",
+    </table>"
 
 });

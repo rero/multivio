@@ -114,7 +114,7 @@ SC.stringsFor('French', {
   '_noResult': 'Texte introuvable',
   '_searchInProgress': 'La recherche est en cours...',
   '_listOfResults': '%@%@ résultats trouvés',
-  '_resultPages': 'dans %@ pages',
+  '_resultsPages': 'dans %@%@ pages',
   '_resultSelection': 'Occurrence %@ sur %@',
   '_AllFiles': 'Tous les fichiers',
   '_More': 'Plus...',
@@ -229,9 +229,6 @@ SC.stringsFor('French', {
           <td>Permet d'aller au début de la page précédente/suivante.</td>\
         </tr>\
       <tbody/>\
-    </table>",
-
-    // Miscellaneous
-    '_and': "et"
+    </table>"
 
 });

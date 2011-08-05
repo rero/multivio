@@ -192,7 +192,7 @@ Multivio.initializer = SC.Object.create(
       Multivio.configurator.set('serverVersion', jsonRes.version);
       
       if (!SC.none(apiVersion) && 
-          apiVersion === Multivio.configurator.serverCompatibility) {
+          apiVersion === Multivio.configurator.serverApiCompatibility) {
         Multivio.logger.debug('Client and server are compatible');
 
         // TODO: would prefer to change state here, instead of initializing the master

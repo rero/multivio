@@ -105,9 +105,9 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
     
     @param {Object} context
     @param {String} label
-  */
+  */    
   renderLabel: function (context, label) {
-
+    
     // disable element if needed
     var cl = (this.get('isEnabled')? '': 'disabled');
 
@@ -115,15 +115,22 @@ Multivio.SearchTreeLabelView = SC.ListItemView.extend(
       context.push('<label class="document-label-view %@">'.fmt(cl), label || '', '</label>');
     }
     else {
-      // render the current search term in bold in the label
       var text = label || '';
+
+      // try to render the current search term in bold in the label
       var cst = this.searchController.get('currentSearchTerm');
-      // split current search term in parts (in case of Boolean search)
-      var cstParts = cst.toLowerCase().split("and");
+      // split current search term in subterms (needed in case of Boolean search)
+      var subterms = cst.toLowerCase().split("and");
+      // function that makes the string replacement (note: this function is
+      // needed because IE seems to ignore the $-like replacement patterns)
+      var replacer = function (str, p1, p2, offset, s) {
+          return '<span class="mvo-search-result-term">' + str + '</span>';
+        };
       // surrround each component of the search term by the <strong> tag
-      for (var p = 0; p < cstParts.length; p++) {
-        var part = cstParts[p].trim();
-        text = text.replace(part, '<span class="mvo-search-result-term">$&</span>', 'gi');
+      for (var s = 0; s < subterms.length; s++) {
+        var subterm = subterms[s].trim();
+        var re = new RegExp(subterm, "gi");
+        text = text.replace(re, replacer);
       }
 
       context.push('<label class="%@">'.fmt(cl));

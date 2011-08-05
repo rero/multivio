@@ -46,7 +46,7 @@ Multivio.errorController = SC.ObjectController.create(
     }
     else {
       errorName = 'Unknown Error';
-      errorDescription = 'Error description.......';
+      errorDescription = '-';
     }
 
     var errorMessage = ('_' + errorName).loc();

@@ -1707,20 +1707,43 @@ Multivio.SearchController = Multivio.HighlightController.extend(
           this._checkTextualContent();
         }
         else {
-          this.set('searchStatus', '_listOfResults'.loc(num_all_res, more));
+          // calculate the number of pages with results
+          var totalPages = 0;
+          // loop inside the (huge) results structure, file by file, in order
+          // to find the page numbers for each occurrence;
+          for (var aRes in all_res) {
+            var fp = all_res[aRes].file_position;
+            if (!SC.none(fp)) {
+              var fileResults = fp.results;
+              if (!SC.none(fileResults)) {
+                var resPages = {};
+                for (var r = 0; r < fileResults.length; r++) {
+                  var pagNum = fileResults[r].index.page.toString();
+                  resPages[pagNum] = YES;
+                }
+              }
+            }
+            // count the number of keys in the hash for this file and add to
+            // the total
+            var count = 0;
+            for (k in resPages) if (resPages.hasOwnProperty(k)) count++;
+            totalPages = totalPages + count;
+          }
+          // print number of results
+          this.set('searchStatus',
+              '_listOfResults'.loc(num_all_res, more) + ' ' +
+              '_resultsPages'.loc(totalPages, more));
         }
       }
       
       // add all results in content      
-      var a = null, b  = null, c = null, z = null,
-          resPages = {};
+      var a = null, b  = null, c = null, z = null;
       
       for (var i = 0; i < num_res; i++) {
         z = res.file_position;
         a = z.results[i];
         b = a.index;
         c = b.bounding_box;
-        resPages[b.page.toString()] = YES;
 
         // params: label, context, top_, left_, width_, height_, 
         //         file_url, page_, current_zoom_factor
@@ -1731,14 +1754,6 @@ Multivio.SearchController = Multivio.HighlightController.extend(
                              z.url,
                              b.page,
                              this.get('zoomFactor'));
-      }
-
-      // update number of pages with results
-      num_res_pages = Object.keys(resPages).length;
-      if (num_res_pages > 0 && more !== '+') {
-        this.set('searchStatus',
-            '_listOfResults'.loc(num_all_res, more) + ' ' +
-            '_resultPages'.loc(num_res_pages));
       }
     }
   },
