@@ -1143,26 +1143,25 @@ Multivio.SearchController = Multivio.HighlightController.extend(
     is a PDF.
   */
   isDocumentSearchable: function () {
+    var foundPDF = NO;
     var cfl = this.get('currentFileList'),
         fileURL = '',
         typeOfFirstFile = '';
-    if (!SC.none(cfl)) {
-      // cfl.length is never 2; it may be:
-      // 0
-      // 1 (for single files)
-      // > 2 (for multiple files, because the root file is included)
-      if (cfl.length === 1) {
-        fileURL = cfl[0].url;
-      }
-      else if (cfl.length > 2) {
-        fileURL = cfl[1].url;
-      }
-      var md = Multivio.CDM.getFileMetadata(fileURL);
-      if (SC.typeOf(md) === SC.T_HASH) {
-        typeOfFirstFile = Multivio.configurator.getTypeForMimeType(md.mime);
+    if (SC.typeOf(cfl) === SC.T_ARRAY) {
+      // try to find at least one PDF file in the list of files
+      for (var f = 0; f < cfl.length; f++) {
+        var fileURL = cfl[f].url;
+        var md = Multivio.CDM.getFileMetadata(fileURL);
+        if (SC.typeOf(md) === SC.T_HASH) {
+          typeOfFile = Multivio.configurator.getTypeForMimeType(md.mime);
+          if (typeOfFile === 'pdf') {
+            foundPDF = YES;
+            break;
+          }
+        }
       }
     }
-    return (typeOfFirstFile === 'pdf');
+    return (foundPDF);
   }.property('currentFileList', 'Multivio.CDM.fileMetadata'),
 
   /** 
