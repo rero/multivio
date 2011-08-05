@@ -233,17 +233,25 @@ Multivio.masterController = SC.ObjectController.create(
     }
     Multivio.logger.debug('MasterController set currentPosition 1');
   },
-  
+
   /**
      Set current position to an initial value. 
    */
   selectAPosition: function () {
     var newPos = this.get('initialPosition');
-    
-    // verify newPos is a valid value else select the first page
-    var curM = this.get('metadata')[this.get('currentFile')];
-    if (isNaN(newPos) || isNaN(curM.nPages) || newPos > curM.nPages) {
-      newPos = 1;
+
+    if (this.get('isGrouped')) {
+      if (newPos < 1 || (!SC.none(this.listOfFiles) && 
+          newPos > this.listOfFiles.length)) {
+        newPos = 1;
+      }
+    }
+    else {
+      // verify newPos is a valid value else select the first page
+      var curM = this.get('metadata')[this.get('currentFile')];
+      if (isNaN(newPos) || isNaN(curM.nPages) || newPos > curM.nPages) {
+        newPos = 1;
+      }
     }
 
     Multivio.logger.debug('MasterController selectAPosition: ' + newPos);
