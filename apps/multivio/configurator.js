@@ -41,7 +41,7 @@ Multivio.configurator = SC.Object.create(
   /**
     The version of the server API that is compatible with the client
   */
-  serverApiCompatibility: '0.4.0',
+  serverApiCompatibility: '1.0.0',
 
   /**
     List of allowed themes

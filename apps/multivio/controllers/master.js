@@ -385,7 +385,7 @@ Multivio.masterController = SC.ObjectController.create(
     //else remove waiting or replace it with the name of the file and the position
     else {
       if (this.get('isNew')) {
-        var fileName = 'unknown';
+        var fileName = '-';
         if (this.get('isGrouped')) {
           var phys = Multivio.CDM.getPhysicalstructure(Multivio.CDM.getReferer());
           var pos = this.get('currentPosition');
