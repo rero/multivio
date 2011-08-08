@@ -128,13 +128,13 @@ Multivio.paletteController = SC.ObjectController.create(
     var vframe = Multivio.getPath('views.mainContentView.frame');
     var layout = pal.layout;
     if (this.get('thumbnailMode') === 'list') {
-      layout['right'] = null;
+      delete layout['right'];
       layout['width'] = 150;
     }
     else {
       // put the thumbnail grid width at 60% of the whole window width
-      layout['width'] = null;
-      layout['right'] = parseInt(vframe.width*0.4, 10);
+      delete layout['width'];
+      layout['right'] = parseInt(vframe.width * 0.4, 10);
     }
     pal.adjust(layout);
   }.observes('thumbnailMode', 'Multivio.views.mainContentView.frame'),
